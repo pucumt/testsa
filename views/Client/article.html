@@ -1,0 +1,71 @@
+{% extends "Client/partial/main.html" %} {% block main %}
+<div class="container">
+  <div class="row article-card">
+    {% if post %}
+    <div class="photo-block" style="background-color: rgb(255, 255, 255);">
+<img src="https://img.yzcdn.cn/upload_files/2016/12/11/FtYY0top_3ooV5l3YQ_v8wcGsr_0.jpg?imageView2/2/w/730/h/0/q/75/format/webp"
+/>
+</div>
+<div class="info article-block">
+  <div class=" clearfix info-title">
+    <h4>{{ post.title }}</h4>
+  </div>
+  <div class=" clearfix info-price">
+    <p class="goods-price">
+      <em>￥{{ post.price }}</em>
+    </p>
+  </div>
+</div>
+<div class="info article-block">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+      <p class="form-control-static">email@example.com</p>
+    </div>
+  </div>
+  <div class=" clearfix info-title">
+    <h4>选择: </h4>
+    <button type="button" class="btn btn-default">8:00 - 10:00</button>
+  </div>
+</div>
+<div class="info article-block" style="margin-bottom: 0">
+<label class=" clearfix info-title ">
+    <h4>商品详情 </h4>
+  </label >
+  <div class=" clearfix info-content">
+	<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);">原价 950元，本课程参加团购返现活动：</p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(192, 0, 0);">满100人</span>
+</span>报名，团购价850元；直接<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-size: 18px; vertical-align: baseline; color: rgb(192, 0, 0);">返现100元；</span>
+</span>
+</p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(192, 0, 0);">满150人</span>
+</span>报名，团购价780元；直接<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-size: 18px; vertical-align: baseline; color: rgb(192, 0, 0);">返现170元</span>
+</span>
+<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-size: 18px; vertical-align: baseline; color: rgb(192, 0, 0);">；</span><br></p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(192, 0, 0);">满200人</span>
+</span>报名，团购价720元；直接<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-size: 18px; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(192, 0, 0);">返现230元；<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(255, 255, 0); background-color: rgb(49, 133, 155);">还赠春季50元数学券；</span>
+</span>
+</span>
+</span>
+</p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(192, 0, 0);">满250人</span>
+</span>报名，团购价700元；直接<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-size: 18px; vertical-align: baseline; color: rgb(192, 0, 0);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;">返现250元；<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline; color: rgb(255, 255, 0); background-color: rgb(49, 133, 155);">还赠春季 100元数学券；</span>
+</span>
+</span>
+</p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; line-height: 22.4px; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);">&nbsp;<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 20px; vertical-align: baseline; color: rgb(112, 48, 160);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; vertical-align: baseline;">人越多越优惠哦</span>
+</span>
+<span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 16.8px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; vertical-align: baseline;">，赶快邀请更多好朋友一起来上课吧！</span>
+</p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; line-height: 22.4px; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 16.8px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; vertical-align: baseline;"><img data-origin-width="540" data-origin-height="2835" class="js-richtext-img-lazy js-view-image-item" src="https://img.yzcdn.cn/upload_files/2016/12/11/Frj9jivucBZz59arY0GHjp579xAr.jpg?imageView2/2/w/730/h/0/q/75/format/webp"
+  data-src="https://img.yzcdn.cn/upload_files/2016/12/11/Frj9jivucBZz59arY0GHjp579xAr.jpg!730x0.jpg" style=""></span>
+</p>
+<p style="margin-top: 0px; padding: 0px; border: 0px; font-stretch: inherit; line-height: 22.4px; font-family: tahoma, arial, 微软雅黑, sans-serif; vertical-align: baseline; color: rgb(51, 51, 51); white-space: normal; background-color: rgb(255, 255, 255);"><span style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: 16.8px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; vertical-align: baseline;"><br></span>
+</p>
+</div>
+</div>
+{% endif %}
+</div>
+</div>
+<script type="text/javascript" src="/default/assets/js/index.js"></script>
+{% endblock %}

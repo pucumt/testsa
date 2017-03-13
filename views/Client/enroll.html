@@ -1,0 +1,32 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll">
+	<div class="row">
+		{% if courses and courses.length>0 %}
+		<ul class="goods-list clearfix list-inline">
+			{% for course in courses %}
+			<li class="goods-card card ">
+				<div id="{{ course.shortid }}" class="good link">
+					<div class="photo-block">
+						<img class="goods-photo" src="https://img.yzcdn.cn/upload_files/2016/12/11/FtYY0top_3ooV5l3YQ_v8wcGsr_0.jpg?imageView2/2/w/730/h/0/q/75/format/webp"
+						/>
+					</div>
+					<div class="good-info">
+						<div><h3>{{ course.title }}</h3></div>
+						<div>{{ course.courseStartDate.toLocaleDateString() }} - {{ course.courseEndDate.toLocaleDateString() }}</div>
+						<div>{{ course.courseTime }}</div>
+						<div>{{ course.courseAddress }}</div>
+					</div>
+					<div class="info-price">
+						<p class="goods-price">
+							{{ course.price }}
+						</p>
+					</div>
+				</div>
+			</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+</div>
+<script type="text/javascript" src="/default/assets/js/enroll.js"></script>
+{% endblock %}

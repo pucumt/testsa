@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>通城都市岛</title>
+<link rel="stylesheet" href="/default/assets/css/bootstrap.css">
+<link rel="stylesheet" href="/default/assets/css/admin.css">
+<script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
+<script type="text/javascript" src="/default/assets/js/index.js"></script>
+</head>
+<body>
+<header class="main-header">
+	<div class="container">
+            <div class="row text-center">
+                <div class="col-sm-24">
+                    <h1>通城都市岛</h1>    
+                </div>
+            </div>
+        </div>
+</header>
+ <div class="site-wrapper">
+<section class="content-wrap">
+        <div class="container">
+        <div class="row main-content" > 
+        <% if (success) { %>
+  <div><%= success %></div>
+<% } %>
+<% if (error) { %>
+  <div><%= error %> </div>
+<% } %>

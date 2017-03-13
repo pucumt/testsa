@@ -1,0 +1,28 @@
+<br />
+<div class="content_body">
+ <div class="panel panel-default">
+ <div class="panel-heading">
+      <h3 class="panel-title">
+         发表评论
+      </h3>
+   </div>
+   <div class="panel-body">
+   <form method="post">
+  <input type="hidden" value="<%= post._id %>" />
+  <textarea class="form-control" name="content" rows="5" maxlength="1000" cols="110"></textarea><br />
+  <input class="btn btn-large btn-primary" type="submit" value="留言" />
+</form>
+</div>
+<ul class="list-group">
+<% comments.forEach(function (comment, index) { %>
+ <li class="list-group-item">
+ <div>
+    <p><%= comment.name %>
+    <span class="info"> 回复于 <%= comment.date.toLocaleString() %></span></p>
+    <p><%- comment.content %></p>
+  </div>
+ </li>
+<% }) %>
+</ul>
+</div>
+</div>

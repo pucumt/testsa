@@ -1,0 +1,34 @@
+<%- include partial/sidebar %>
+<div class="post content_body">
+<h1><%= title%></h1>
+<table class="table table-striped">
+   <thead>
+      <tr>
+         <th style="width:150px;">用户名</th>
+         <th>邮箱</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+   <% if(users && users.length>0){ %>
+<% users.forEach(function (user, index) { %>
+      <tr>
+         <td>
+         <%= user.name %></td>
+         <td>
+         <%= user.email %>
+         </td>
+         <td>
+         <div class="btn-group">
+            <a href="/admin/user/<%= user._id %>" class="btn btn-default">编辑</a>
+            <a href="/admin/user/delete/<%= user._id %>" class="btn btn-default">删除</a>
+          </div>
+          </td>
+      </tr>
+      <% }) %>
+<% } %>
+   </tbody>
+</table>
+<%- include partial/paging %>
+</div>
+<%- include partial/footer %>

@@ -1,0 +1,47 @@
+<%- include partial/sidebar %>
+<div class="post content_body">
+<h1><%= title%></h1>
+<table class="table table-striped">
+   <thead>
+      <tr>
+         <th style="width:550px;">名称</th>
+         <th>状态</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+   <% if(posts && posts.length>0){ %>
+<% posts.forEach(function (post, index) { %>
+      <tr>
+         <td>
+         <a href="/article/<%= post.shortid %>"><%= post.title %></a></td>
+         <td>
+         <% if(post.isPassed){ %>
+         已通过
+         <% }else{ %>
+         待审核
+         <% } %>
+         </td>
+         <td>
+         <div class="btn-group">
+            <% if(post.isPassed){ %>
+               <% if(post.isSuggest){ %>
+               <a href="/admin/post/unsuggest/<%= post.shortid %>" class="btn btn-default">不推荐</a>
+               <% }else{ %>
+                <a href="/admin/post/suggest/<%= post.shortid %>" class="btn btn-default">推荐</a>
+               <% } %>
+            <% }else{ %>
+               <a href="/admin/post/pass/<%= post.shortid %>" class="btn btn-default">通过</a>
+            <% } %>
+            <a href="/admin/post/<%= post.shortid %>" class="btn btn-default">编辑</a>
+            <a href="/admin/post/delete/<%= post.shortid %>" class="btn btn-default">删除</a>
+          </div>
+          </td>
+      </tr>
+      <% }) %>
+<% } %>
+   </tbody>
+</table>
+<%- include partial/paging %>
+</div>
+<%- include partial/footer %>

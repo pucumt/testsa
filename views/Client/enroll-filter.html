@@ -1,0 +1,39 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<form method="post" action="enroll">
+<div class="container enroll-filter">
+	<div class="row text-center">
+		<label style="margin-top: 15px;">选择课程</label>
+	</div>
+	<div class="row">
+		<div class="dropdown selectClass">
+		  	<div class="btn btn-default" id="dropdownMenu1">托班<span class="caret"></span>
+		  	</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="dropdown selectClass">
+		  	<div class="btn btn-default" id="dropdownMenu1">综合<span class="caret"></span>
+		  	</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="dropdown selectClass">
+		  	<div class="btn btn-default" id="dropdownMenu1">2016年活动类<span class="caret"></span>
+		  	</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="dropdown selectClass">
+		  	<div class="btn btn-default" id="dropdownMenu1">请选择班次<span class="caret"></span>
+		  	</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-group">
+	    	<input class="btn btn-large btn-primary btn-full" type="submit" value="开始搜索"/>
+	  	</div>
+	</div>
+</div>
+</form>
+<script type="text/javascript" src="/default/assets/js/enroll.filter.js"></script>
+{% endblock %}

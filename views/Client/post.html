@@ -1,0 +1,58 @@
+<%- include partial/header %>
+<div class="post content_body">
+<form method="post">
+<div class="form-group">
+    <label >链接</label>
+   <input class="form-control" maxlength="100" type="text" name="linkAddr"/>
+  </div>
+<div class="form-group">
+    <label >标题</label>
+   <input class="form-control" maxlength="100" type="text" name="title"/>
+  </div>
+  <div class="form-group">
+    <label >价格</label>
+   <input class="form-control" maxlength="100" type="text" name="price"/>
+  </div>
+  <div class="form-group">
+    <label >图片</label>
+	<div id="container">
+        <a class="btn btn-default btn-lg " id="pickfiles" href="#" >
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>选择文件</span>
+        </a>
+    </div>
+	<input class="form-control" type="text" maxlength="100" id="img" name="img"/>
+  <div class="item-img">
+    <img id="imglink">
+  </div>
+  </div>
+  
+  <div class="form-group">
+    <label >正文</label>
+   <textarea class="form-control" name="post" maxlength="1000" rows="20" cols="100"></textarea>
+  </div>
+  <div class="form-group">
+  <label style="height:34px;">&nbsp;</label>
+    <input class="pull-right btn btn-large btn-primary" type="submit" value="确认爆料"/>
+  </div>
+</form>
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-body">
+            正在上传
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+<script type="text/javascript" language="javascript">
+  $(".upload").on("click", function(){
+    var file = $("#file1");
+    getUptoken(file.val(), file.val().match(/[^\/]*$/)[0], uploadFile);
+  });
+</script>
+<script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
+<script type="text/javascript" src="/default/assets/js/post.js"></script>
+<%- include partial/footer %>
