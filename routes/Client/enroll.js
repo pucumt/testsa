@@ -13,25 +13,26 @@ module.exports = function(app) {
             }
             //test code
             courses = [{
-                shortid: 1,
-                title: "test title1",
-                price: "100",
-                imgFile: "...",
-                courseStartDate: new Date(),
-                courseEndDate: new Date(),
-                courseTime: "周一下午13:30-15:00",
-                courseAddress: "徐汇区柳州路教学点"
-            },
-            {
-                shortid: 2,
-                title: "test title2",
-                price: "120",
-                imgFile: "...",
-                courseStartDate: new Date(),
-                courseEndDate: new Date(),
-                courseTime: "周一下午13:30-15:00",
-                courseAddress: "徐汇区柳州路教学点"
-            }];
+                    shortid: 1,
+                    title: "test title1",
+                    price: "100",
+                    imgFile: "...",
+                    courseStartDate: new Date(),
+                    courseEndDate: new Date(),
+                    courseTime: "周一下午13:30-15:00",
+                    courseAddress: "徐汇区柳州路教学点"
+                },
+                {
+                    shortid: 2,
+                    title: "test title2",
+                    price: "120",
+                    imgFile: "...",
+                    courseStartDate: new Date(),
+                    courseEndDate: new Date(),
+                    courseTime: "周一下午13:30-15:00",
+                    courseAddress: "徐汇区柳州路教学点"
+                }
+            ];
             res.render('Client/enroll.html', {
                 title: '我要报名',
                 courses: courses,
@@ -62,25 +63,26 @@ module.exports = function(app) {
             }
             //test code
             courses = [{
-                shortid: 1,
-                title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
-                price: "100",
-                imgFile: "...",
-                courseStartDate: new Date(),
-                courseEndDate: new Date(),
-                courseTime: "周一下午13:30-15:00",
-                courseAddress: "徐汇区柳州路教学点"
-            },
-            {
-                shortid: 2,
-                title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
-                price: "120",
-                imgFile: "...",
-                courseStartDate: new Date(),
-                courseEndDate: new Date(),
-                courseTime: "周一下午13:30-15:00",
-                courseAddress: "徐汇区柳州路教学点"
-            }];
+                    shortid: 1,
+                    title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
+                    price: "100",
+                    imgFile: "...",
+                    courseStartDate: new Date(),
+                    courseEndDate: new Date(),
+                    courseTime: "周一下午13:30-15:00",
+                    courseAddress: "徐汇区柳州路教学点"
+                },
+                {
+                    shortid: 2,
+                    title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
+                    price: "120",
+                    imgFile: "...",
+                    courseStartDate: new Date(),
+                    courseEndDate: new Date(),
+                    courseTime: "周一下午13:30-15:00",
+                    courseAddress: "徐汇区柳州路教学点"
+                }
+            ];
             res.render('Client/enroll.html', {
                 title: '我要报名',
                 courses: courses,
