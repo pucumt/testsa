@@ -13,17 +13,18 @@
 
 <body>
     <div class="admin-header">
-        <div class="logo">百分百</div>
-        <div class="menu-top">
-            <ul>
-                <li>报名管理</li>
-                <li>学生管理</li>
-                <li>基本设置</li>
+        <div class="logo pull-left">百分百</div>
+        <div class="menu-top pull-left">
+            <ul class="nav nav-pills">
+                <li role="presentation">报名管理</li>
+                <li role="presentation">学生管理</li>
+                <li role="presentation">财务管理</li>
+                <li role="presentation">基本设置</li>
             </ul>
         </div>
-        <div class="userinfo">
-            {{ user.name }}
-            <a href="admin/logout">退出</a>
+        <div class="userinfo pull-right">
+            用户: {{ user.name }}
+            <a href="/admin/logout">退出</a>
         </div>
     </div>
     <div class="admin-left">
@@ -32,6 +33,7 @@
     <div class="admin-main">
         {% block main %}{% endblock %}
     </div>
+    {% block modal %}{% endblock %}
 </body>
 
 </html>

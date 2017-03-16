@@ -1,10 +1,10 @@
 var auth = require("./auth"),
-	checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
-	app.get('/admin/logout', checkLogin);
-	app.get('/admin/logout', function(req, res) {
-		req.session.user = null;
-		res.redirect('/'); //登出成功后跳转到主页
-	});
+    app.get('/admin/logout', checkLogin);
+    app.get('/admin/logout', function(req, res) {
+        req.session.user = null;
+        res.redirect('/admin/login'); //登出成功后跳转到登录页面
+    });
 }
