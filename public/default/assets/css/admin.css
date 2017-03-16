@@ -1,3 +1,9 @@
+* {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
 body {
     background-color: #fff;
     height: 100%;
@@ -137,4 +143,18 @@ body {
     height: 20px;
     padding: 1px 12px;
     font-size: 12px;
+}
+
+.modal .modal-header {
+    background-color: #354b66;
+    color: white;
+}
+
+.modal .close {
+    color: white;
+    opacity: 0.7;
+}
+
+.modal .close:hover {
+    opacity: 1;
 }
