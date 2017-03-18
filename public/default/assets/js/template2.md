@@ -1,10 +1,10 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnSchool").addClass("active");
+    $("#btnAdmin").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
-})
+});
 
 function destroy(){
     var validator = $('#myModal').data('formValidation');
@@ -12,7 +12,7 @@ function destroy(){
     {
         validator.destroy();
     }
-}
+};
 
 function addValidation(callback){
     $('#myModal').formValidation({
@@ -42,7 +42,7 @@ function addValidation(callback){
             }
         }
     });
-}
+};
 
 $("#btnAdd").on("click", function(e) {
     isNew = true;
@@ -59,13 +59,13 @@ $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if(validator.isValid())
     {
-        var postURI = "/admin/schoolArea/add",
+        var postURI = "/admin/#name#/add",
             postObj = {
             name: $('#name').val(),
             address: $('#address').val()
         };
         if (!isNew) {
-            postURI = "/admin/schoolArea/edit";
+            postURI = "/admin/#name#/edit";
             postObj.id = $('#id').val();
         }
         $.post(postURI, postObj, function(data) {
@@ -103,7 +103,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/schoolArea/delete", {
+        $.post("/admin/#name#/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

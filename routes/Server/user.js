@@ -13,7 +13,7 @@ module.exports = function(app) {
                 users = [];
             }
             res.render('Server/adminList.html', {
-                title: '管理员列表',
+                title: '>管理员设置',
                 user: req.session.user,
                 users: users
             });
@@ -59,6 +59,22 @@ module.exports = function(app) {
                 return;
             }
             res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/user/find', checkLogin);
+    app.post('/admin/user/find', function(req, res) {
+        User.get(req.body.username, function(err, user) {
+            if (err) {
+                user = {};
+            }
+            if(user)
+            {
+                res.jsonp({ "valid": false });
+            }
+            else{
+                res.jsonp({ "valid": true });
+            }
         });
     });
 }

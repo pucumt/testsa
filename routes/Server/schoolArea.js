@@ -13,7 +13,7 @@ module.exports = function(app) {
                 schoolAreas = [];
             }
             res.render('Server/schoolAreaList.html', {
-                title: '校区列表',
+                title: '>校区设置',
                 user: req.session.user,
                 schoolAreas: schoolAreas
             });
@@ -58,6 +58,19 @@ module.exports = function(app) {
                 return;
             }
             res.jsonp({ sucess: true });
+        });
+    });
+
+    app.get('/admin/schoolArea/all', checkLogin);
+    app.get('/admin/schoolArea/all', function(req, res) {
+        //判断是否是第一页，并把请求的页数转换成 number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+        //查询并返回第 page 页的 20 篇文章
+        SchoolArea.getAll(null, page, {}, function(err, schoolAreas, total) {
+            if (err) {
+                schoolAreas = [];
+            }
+            res.jsonp(schoolAreas);
         });
     });
 }

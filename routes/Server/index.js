@@ -2,6 +2,10 @@
     logout = require('./logout.js'),
     user = require('./user.js'),
     schoolArea = require('./schoolArea.js'),
+    grade = require('./grade.js'),
+    classRoom = require('./classRoom.js'),
+    teacher = require('./teacher.js'),
+    year = require('./year.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -19,4 +23,8 @@ module.exports = function(app) {
 
     user(app);
     schoolArea(app);
+    grade(app);
+    classRoom(app);
+    teacher(app);
+    year(app);
 };

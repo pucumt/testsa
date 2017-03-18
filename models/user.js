@@ -7,7 +7,8 @@ var userSchema = new mongoose.Schema({
     password: String,
     email: String,
     mobile: String,
-    role: Number
+    role: Number,
+    isDeleted: Boolean
 }, {
     collection: 'users'
 });
@@ -49,7 +50,7 @@ User.prototype.update = function(callback) {
 //读取用户信息
 User.get = function(name, callback) {
     //打开数据库
-    userModel.findOne({ name: name }, function(err, user) {
+    userModel.findOne({ name: name, isDeleted: { $ne: true } }, function(err, user) {
         if (err) {
             return callback(err);
         }
@@ -61,6 +62,11 @@ User.get = function(name, callback) {
 
 //一次获取所有用户信息
 User.getAll = function(name, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
     var query = userModel.count(filter);
     query.exec(function(err, count) {
         query.find()
@@ -72,8 +78,10 @@ User.getAll = function(name, page, filter, callback) {
 
 //删除一个用户
 User.delete = function(name, callback) {
-    userModel.remove({
+    userModel.update({
         name: name
+    }, {
+        isDeleted: true
     }).exec(function(err, user) {
         if (err) {
             return callback(err);

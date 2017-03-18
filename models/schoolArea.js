@@ -4,7 +4,8 @@ var db = mongoose.connection;
 
 var schoolAreaSchema = new mongoose.Schema({
     name: String,
-    address: String
+    address: String,
+    isDeleted: Boolean
 }, {
     collection: 'schoolAreas'
 });
@@ -46,7 +47,7 @@ SchoolArea.prototype.update = function(id, callback) {
 //读取学区信息
 SchoolArea.get = function(id, callback) {
     //打开数据库
-    schoolAreaModel.findOne({ _id: id }, function(err, schoolArea) {
+    schoolAreaModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, schoolArea) {
         if (err) {
             return callback(err);
         }
@@ -58,6 +59,11 @@ SchoolArea.get = function(id, callback) {
 
 //一次获取20个学区信息
 SchoolArea.getAll = function(id, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
     var query = schoolAreaModel.count(filter);
     query.exec(function(err, count) {
         query.find()
@@ -69,8 +75,10 @@ SchoolArea.getAll = function(id, page, filter, callback) {
 
 //删除一个学区
 SchoolArea.delete = function(id, callback) {
-    schoolAreaModel.remove({
+    schoolAreaModel.update({
         _id: id
+    }, {
+        isDeleted: true
     }).exec(function(err, schoolArea) {
         if (err) {
             return callback(err);

@@ -6,7 +6,7 @@
 </div>
 <div class="toolbar">
     <div class="toolbar-list">
-        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>{% include "Server/partial/paging.html" %}
     </div>
 </div>
 <div class="content">
@@ -19,16 +19,16 @@
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if schoolAreas %} {% for area in schoolAreas %}
-            <tr id={{area._id}}>
+            {% if #name#s %} {% for #name# in #name#s %}
+            <tr id={{#name#._id}}>
                 <td>
-                    {{ area.name }}
+                    {{ #name#.name }}
                 </td>
                  <td>
-                    {{ area.address }}
+                    {{ #name#.address }}
                 </td>
                 <td>
-                    <div data-obj={{ area|dump }} class="btn-group">
+                    <div data-obj={{ #name#|dump }} class="btn-group">
                         <a class="btn btn-default btnEdit">编辑</a>
                         <a class="btn btn-default btnDelete">删除</a>
                     </div>
@@ -38,6 +38,8 @@
         </tbody>
     </table>
 </div>
+<input type="hidden" id="total" value="{{ total }}" />
+<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %}
 {% endblock %} {% block modal %}
 <!-- Modal -->
 <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -86,5 +88,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/schoolarea.js"></script>
+<script type="text/javascript" src="/default/assets/js/#name#.js"></script>
 {% endblock %}
