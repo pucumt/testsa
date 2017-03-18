@@ -3,7 +3,7 @@ $("#btnAdmin").on("click", function(e) {
 });
 
 $("#btnSchool").on("click", function(e) {
-    location.href = "/admin/schoolArea";
+    location.href = "/admin/schoolAreaList";
 });
 
 $("#btnGrade").on("click", function(e) {

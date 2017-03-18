@@ -21,6 +21,14 @@ $(document).ready(function() {
                     regexp: {
                         regexp: /^[a-zA-Z0-9_]+$/,
                         message: '用户名只能是字母数字和下划线'
+                    },
+                    remote: {
+                        message: '用戶名已经存在',
+                        url: '/path/to/backend/',
+                        data: {
+                            type: 'email'
+                        },
+                        type: 'POST'
                     }
                 }
             },
@@ -28,7 +36,7 @@ $(document).ready(function() {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
-                        message: 'The password is required and cannot be empty'
+                        message: '密码不能为空'
                     },
                     stringLength: {
                         min: 6,
@@ -53,21 +61,24 @@ $("#btnAdd").on("click", function(e) {
 });
 
 $("#btnSave").on("click", function(e) {
-    $('#myModal').data('formValidation').validate();
-    // var postURI = "/admin/user/add";
-    // if (!isNew) {
-    //     postURI = "/admin/user/edit";
-    // }
-    // $.post(postURI, {
-    //     username: $('#user-name').val(),
-    //     password: hex_md5($('#user-pwd').val())
-    // }, function(data) {
-    //     $('#myModal').modal('hide');
-    //     if (isNew) {
-    //         $('#gridBody').append($('<tr><td>' + data.name + '</td><td><div data="' + data.name +
-    //             '" class="btn-group"><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a></div></td></tr>'));
-    //     }
-    // });
+    var validator = $('#myModal').data('formValidation').validate();
+    if(validator.isValid())
+    {
+        var postURI = "/admin/user/add";
+        if (!isNew) {
+            postURI = "/admin/user/edit";
+        }
+        $.post(postURI, {
+            username: $('#user-name').val(),
+            password: hex_md5($('#user-pwd').val())
+        }, function(data) {
+            $('#myModal').modal('hide');
+            if (isNew) {
+                $('#gridBody').append($('<tr><td>' + data.name + '</td><td><div data="' + data.name +
+                    '" class="btn-group"><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a></div></td></tr>'));
+            }
+        });
+    }
 });
 
 $("#gridBody").on("click", "td .btnEdit", function(e) {

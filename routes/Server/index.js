@@ -1,7 +1,7 @@
 ﻿var login = require('./login.js'),
     logout = require('./logout.js'),
-    //post = require('./post.js'),
     user = require('./user.js'),
+    schoolArea = require('./schoolArea.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -15,10 +15,8 @@ module.exports = function(app) {
     });
 
     login(app);
-
     logout(app);
 
-    //post(app);
-
     user(app);
+    schoolArea(app);
 };
