@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    $("#btnAdmin").on("click", function(e) {
-        location.href = "/admin/adminList";
+    $("#btnenroll").on("click", function(e) {
+        location.href = "/admin/trainClassList";
     });
 
     $("#btnSchool").on("click", function(e) {
@@ -21,13 +21,5 @@ $(document).ready(function() {
 
     $("#btnYear").on("click", function(e) {
         location.href = "/admin/yearList";
-    });
-
-    $("#btnCategory").on("click", function(e) {
-        location.href = "/admin/categoryList";
-    });
-
-    $("#btnSubject").on("click", function(e) {
-        location.href = "/admin/subjectList";
     });
 });

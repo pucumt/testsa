@@ -1,11 +1,16 @@
 ﻿var login = require('./login.js'),
     logout = require('./logout.js'),
+
     user = require('./user.js'),
     schoolArea = require('./schoolArea.js'),
     grade = require('./grade.js'),
     classRoom = require('./classRoom.js'),
     teacher = require('./teacher.js'),
     year = require('./year.js'),
+    category = require('./category.js'),
+    subject = require('./subject.js'),
+
+    trainClass = require('./trainClass.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -27,4 +32,8 @@ module.exports = function(app) {
     classRoom(app);
     teacher(app);
     year(app);
+    category(app);
+    subject(app);
+
+    trainClass(app);
 };
