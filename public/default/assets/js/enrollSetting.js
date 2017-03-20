@@ -1,10 +1,10 @@
 $(document).ready(function() {
-    $("#btnenroll").on("click", function(e) {
+    $("#btnTrainClass").on("click", function(e) {
         location.href = "/admin/trainClassList";
     });
 
-    $("#btnSchool").on("click", function(e) {
-        location.href = "/admin/schoolAreaList";
+    $("#btnExamClass").on("click", function(e) {
+        location.href = "/admin/examClassList";
     });
 
     $("#btnGrade").on("click", function(e) {

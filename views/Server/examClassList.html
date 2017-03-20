@@ -1,0 +1,106 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>{% include "Server/partial/paging.html" %}
+    </div>
+</div>
+<div class="content">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:30%;">测试名称</th>
+                <th style="width:80px">发布</th>
+                <th style="width:120px;">测试日期</th>
+                <th style="width:120px;">测试时间</th>
+                <th style="width:240px;">操作</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+            {% if examClasss %} {% for examClass in examClasss %}
+            <tr id={{examClass._id}}>
+                <td>
+                    {{ examClass.name }}
+                </td>
+                <td>
+                    {% if examClass.isWeixin==1 %} 发布 {% elif examClass.isWeixin==9 %} 停用 {% else %} 新建 {% endif %}
+                </td>
+                <td>
+                    {{ examClass.examDate.toLocaleDateString() }}
+                </td>
+                <td>
+                    {{ examClass.examTime }}
+                </td>
+                <td>
+                    <div data-obj={{ examClass|dump }} class="btn-group">
+                        <a class="btn btn-default btnEdit">编辑</a>
+                        <a class="btn btn-default btnDelete">删除</a> {% if examClass.isWeixin!=1 %}
+                        <a class="btn btn-default btnPublish">发布</a> {% endif %} {% if examClass.isWeixin==1 %}
+                        <a class="btn btn-default btnUnPublish">停用</a> {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %} {% endif %}
+        </tbody>
+    </table>
+</div>
+<input type="hidden" id="total" value="{{ total }}" />
+<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %} {% endblock %} {% block modal %}
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="name" class="control-label">测试名称:</label>
+                        <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="examDate" class="control-label">测试日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="examDate" id="examDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="examTime" class="control-label">测试时间:</label>
+                        <input type="text" maxlength="30" class="form-control" name="examTime" id="examTime">
+                    </div>
+                    <input type="hidden" class="form-control" name="id" id="id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/examClass.js"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

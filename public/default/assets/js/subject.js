@@ -63,6 +63,8 @@ $("#btnSave").on("click", function(e) {
             } else {
                 var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);
+                var $lastDiv = $('#' + data._id + ' td:last-child div');
+                $lastDiv.data("obj", data);
             }
         });
     }

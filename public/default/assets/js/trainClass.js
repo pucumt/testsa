@@ -1,9 +1,10 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnenroll").addClass("active");
+    $("#btnTrainClass").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+    $("#selectModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
     $("#myModal").find(".modal-body").css("overflow-y", "auto");
 
@@ -270,6 +271,8 @@ $("#btnSave").on("click", function(e) {
                     $gradeName = $materialPrice.next().text(data.gradeName),
                     $subjectName = $gradeName.next().text(data.subjectName),
                     $categoryName = $subjectName.next().text(data.categoryName);
+                var $lastDiv = $('#' + data._id + ' td:last-child div');
+                $lastDiv.data("obj", data);
             }
         });
     }

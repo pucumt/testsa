@@ -94,6 +94,8 @@ $("#btnSave").on("click", function(e) {
                 name.text(data.name);
                 var sCount = name.next().text(data.sCount);
                 sCount.next().text(data.schoolArea);
+                var $lastDiv = $('#' + data._id + ' td:last-child div');
+                $lastDiv.data("obj", data);
             }
         });
     }

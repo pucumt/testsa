@@ -11,6 +11,7 @@
     subject = require('./subject.js'),
 
     trainClass = require('./trainClass.js'),
+    examClass = require('./examClass.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -36,4 +37,5 @@ module.exports = function(app) {
     subject(app);
 
     trainClass(app);
+    examClass(app);
 };

@@ -50,7 +50,7 @@ module.exports = function(app) {
             return strResult.replace(/#Name#/g, objCase);
         });
         //generate views
-        modelPath = path.join(root, "views/Server/template2.md"),
+        modelPath = path.join(root, "views/Server/template3.md"),
             targetPath = path.join(root, "views/Server/" + objId + "List.html");
         readFile(modelPath, targetPath, function(str) {
             var strResult = str.replace(/#name#/g, objId);
