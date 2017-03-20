@@ -14,12 +14,13 @@
         <thead>
             <tr>
                 <th>课程名称</th>
+                <th style="width:80px">发布</th>
                 <th style="width:80px">培训费</th>
                 <th style="width:80px">教材费</th>
                 <th style="width:100px">年级</th>
                 <th style="width:100px">科目</th>
                 <th style="width:100px">类别</th>
-                <th style="width:110px">操作</th>
+                <th style="width:240px">操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -29,24 +30,29 @@
                     {{ trainClass.name }}
                 </td>
                 <td>
-                    {{ trainClass.address }}
+                    {% if trainClass.isWeixin==1 %} 发布 {% elif trainClass.isWeixin==9 %} 停用 {% else %} 新建 {% endif %}
                 </td>
                 <td>
-                    {{ trainClass.address }}
+                    {{ trainClass.trainPrice }}
                 </td>
                 <td>
-                    {{ trainClass.address }}
+                    {{ trainClass.materialPrice }}
                 </td>
                 <td>
-                    {{ trainClass.address }}
+                    {{ trainClass.gradeName }}
                 </td>
                 <td>
-                    {{ trainClass.address }}
+                    {{ trainClass.subjectName }}
+                </td>
+                <td>
+                    {{ trainClass.categoryName }}
                 </td>
                 <td>
                     <div data-obj={{ trainClass|dump }} class="btn-group">
                         <a class="btn btn-default btnEdit">编辑</a>
-                        <a class="btn btn-default btnDelete">删除</a>
+                        <a class="btn btn-default btnDelete">删除</a> {% if trainClass.isWeixin!=1 %}
+                        <a class="btn btn-default btnPublish">发布</a> {% endif %} {% if trainClass.isWeixin==1 %}
+                        <a class="btn btn-default btnUnPublish">停用</a> {% endif %}
                     </div>
                 </td>
             </tr>
@@ -57,8 +63,8 @@
 <input type="hidden" id="total" value="{{ total }}" />
 <input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %} {% endblock %} {% block modal %}
 <!-- Modal -->
-<div class="modal fade bs-example-modal-dialog" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-dialog" role="document">
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -67,21 +73,19 @@
             <div class="modal-body">
                 <form>
                     <div class="row">
-                        <div class="col-md-24">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="name" class="control-label">课程名称:</label>
                                 <input type="text" maxlength="30" class="form-control" name="name" id="name">
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="year" class="control-label">年度:</label>
                                 <select name="year" id="year" class="form-control"></select>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="grade" class="control-label">年级:</label>
                                 <select name="grade" id="grade" class="form-control"></select>
@@ -89,69 +93,96 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="subject" class="control-label">科目:</label>
                                 <select name="subject" id="subject" class="form-control"></select>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="category" class="control-label">类别:</label>
                                 <select name="category" id="category" class="form-control"></select>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="trainPrice" class="control-label">培训费:</label>
-                                <select name="trainPrice" id="trainPrice" class="form-control"></select>
+                                <input type="text" maxlength="10" class="form-control" name="trainPrice" id="trainPrice" value="0">
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="materialPrice" class="control-label">教材费:</label>
-                                <select name="materialPrice" id="materialPrice" class="form-control"></select>
+                                <input type="text" maxlength="10" class="form-control" name="materialPrice" id="materialPrice" value="0">
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="trainPrice" class="control-label">开课日期:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                                <label for="courseStartDate" class="control-label">开课日期:</label>
+                                <input type="text" maxlength="30" class="form-control" name="courseStartDate" id="courseStartDate">
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="materialPrice" class="control-label">结课日期:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                                <label for="courseEndDate" class="control-label">结课日期:</label>
+                                <input type="text" maxlength="30" class="form-control" name="courseEndDate" id="courseEndDate">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="courseTime" class="control-label">上课时间:</label>
+                                <input type="text" maxlength="20" class="form-control" name="courseTime" id="courseTime">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalStudentCount" class="control-label">招生人数:</label>
+                                <input type="text" maxlength="10" class="form-control" name="totalStudentCount" id="totalStudentCount" value="0">
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="trainPrice" class="control-label">上课时间:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                                <label for="totalClassCount" class="control-label">课时总数:</label>
+                                <input type="text" maxlength="30" class="form-control" name="totalClassCount" id="totalClassCount" value="0">
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="materialPrice" class="control-label">招生人数:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                                <label for="classRoom" class="control-label">教室:</label>
+                                <div class="btn-group">
+                                    <input type="hidden" class="form-control" name="classRoomid" id="classRoomid">
+                                    <input type="text" maxlength="30" class="form-control" readonly name="classRoom" id="classRoom">
+                                    <button type="button" id="modal_btnClassRoom" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="trainPrice" class="control-label">课时总数:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                                <label for="school" class="control-label">校区:</label>
+                                <input type="hidden" class="form-control" name="schoolid" id="schoolid">
+                                <input type="text" readonly maxlength="30" class="form-control" name="school" id="school">
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="teacher" class="control-label">任课老师:</label>
+                                <div class="btn-group">
+                                    <input type="hidden" class="form-control" name="teacherid" id="teacherid">
+                                    <input type="text" readonly maxlength="30" class="form-control" name="teacher" id="teacher">
+                                    <button type="button" id="modal_btnTeacher" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -162,36 +193,38 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="trainPrice" class="control-label">教室:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="materialPrice" class="control-label">校区:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="trainPrice" class="control-label">任课老师:</label>
-                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                        </div>
-                    </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-dialog" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="selectModalLabel">选择</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:50%">教室名称</th>
+                            <th>校区</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
@@ -216,4 +249,5 @@
 </div>
 
 <script type="text/javascript" src="/default/assets/js/trainClass.js"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

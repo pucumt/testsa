@@ -90,3 +90,16 @@ ClassRoom.delete = function(id, callback) {
         callback(null, classRoom);
     });
 };
+
+//一次获取20个学区信息
+ClassRoom.getAllWithoutPage = function(filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = classRoomModel.find(filter)
+        .exec(function(err, classRooms) {
+            callback(null, classRooms);
+        });
+};

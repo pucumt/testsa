@@ -86,3 +86,13 @@ Grade.delete = function(id, callback) {
         callback(null, grade);
     });
 };
+
+//一次获取所有信息
+Grade.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return gradeModel.find(filter).exec();
+};

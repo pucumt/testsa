@@ -181,3 +181,26 @@ body {
 .modal .close:hover {
     opacity: 1;
 }
+
+.modal .btn-group {
+    display: block;
+}
+
+.modal .btn-group input {
+    width: calc(100% - 34px);
+    float: left;
+}
+
+.modal .btn-group button {
+    width: 34px;
+    height: 34px;
+}
+
+#selectModal .modal-body {
+    overflow-y: auto;
+}
+
+#selectModal .modal-body table tbody tr:hover {
+    cursor: pointer;
+    background-color: #d6dbe0;
+}

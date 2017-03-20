@@ -60,4 +60,5 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
 }

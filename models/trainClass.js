@@ -12,9 +12,9 @@ var trainClassSchema = new mongoose.Schema({
     subjectName: String,
     categoryId: String,
     categoryName: String,
-    totalStudentCount: Number,
-    enrollCount: Number,
-    totalClassCount: Number,
+    totalStudentCount: Number, //招生人数
+    enrollCount: Number, //报名人数
+    totalClassCount: Number, //共多少课时
     trainPrice: Number,
     materialPrice: Number,
     teacherId: String,
@@ -27,7 +27,7 @@ var trainClassSchema = new mongoose.Schema({
     classRoomName: String,
     schoolId: String,
     schoolArea: String,
-    isWeixin: Boolean,
+    isWeixin: Number, //0 new 1 publish 0 stop
     isStop: Boolean,
     isDeleted: Boolean
 }, {
@@ -105,6 +105,34 @@ TrainClass.delete = function(id, callback) {
         _id: id
     }, {
         isDeleted: true
+    }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+
+//发布
+TrainClass.publish = function(id, callback) {
+    trainClassModel.update({
+        _id: id
+    }, {
+        isWeixin: 1
+    }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+
+//停用
+TrainClass.unPublish = function(id, callback) {
+    trainClassModel.update({
+        _id: id
+    }, {
+        isWeixin: 9
     }).exec(function(err, trainClass) {
         if (err) {
             return callback(err);

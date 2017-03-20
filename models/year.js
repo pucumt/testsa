@@ -87,3 +87,13 @@ Year.delete = function(id, callback) {
         callback(null, year);
     });
 };
+
+//一次获取所有信息
+Year.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return yearModel.find(filter).exec();
+};

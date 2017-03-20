@@ -1,6 +1,8 @@
 var settings = require('../settings'),
     mongoose = require('mongoose'),
     uri = 'mongodb://' + settings.host + ':' + settings.port + '/' + settings.db;
+
+mongoose.Promise = global.Promise;
 mongoose.connect(uri);
 
 mongoose.connection.on('connected', function() {

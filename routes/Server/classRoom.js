@@ -68,4 +68,11 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
+    app.get('/admin/classRoomList/withoutpage', checkLogin);
+    app.get('/admin/classRoomList/withoutpage', function(req, res) {
+        ClassRoom.getAllWithoutPage({}, function(err, classRooms) {
+            res.jsonp(classRooms);
+        });
+    });
 }

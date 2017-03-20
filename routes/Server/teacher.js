@@ -66,4 +66,11 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
+    app.get('/admin/teacher/withoutpage', checkLogin);
+    app.get('/admin/teacher/withoutpage', function(req, res) {
+        Teacher.getAllWithoutPage({}, function(err, teachers) {
+            res.jsonp(teachers);
+        });
+    });
 }

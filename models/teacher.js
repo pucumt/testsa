@@ -89,3 +89,16 @@ Teacher.delete = function(id, callback) {
         callback(null, teacher);
     });
 };
+
+//一次获取20个学区信息
+Teacher.getAllWithoutPage = function(filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = teacherModel.find(filter)
+        .exec(function(err, teachers) {
+            callback(null, teachers);
+        });
+};

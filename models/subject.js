@@ -87,3 +87,13 @@ Subject.delete = function(id, callback) {
         callback(null, subject);
     });
 };
+
+//一次获取所有信息
+Subject.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return subjectModel.find(filter).exec();
+};

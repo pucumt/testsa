@@ -87,3 +87,13 @@ Category.delete = function(id, callback) {
         callback(null, category);
     });
 };
+
+//一次获取所有信息
+Category.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return categoryModel.find(filter).exec();
+};
