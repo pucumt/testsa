@@ -59,13 +59,13 @@ $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if(validator.isValid())
     {
-        var postURI = "/admin/#name#/add",
+        var postURI = "/admin/studentInfo/add",
             postObj = {
             name: $('#name').val(),
             address: $('#address').val()
         };
         if (!isNew) {
-            postURI = "/admin/#name#/edit";
+            postURI = "/admin/studentInfo/edit";
             postObj.id = $('#id').val();
         }
         $.post(postURI, postObj, function(data) {
@@ -105,7 +105,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/#name#/delete", {
+        $.post("/admin/studentInfo/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

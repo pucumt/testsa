@@ -78,6 +78,8 @@ $("#btnSave").on("click", function(e) {
                 var name = $('#'+data._id+' td:first-child');
                 name.text(data.name);
                 name.next().text(data.address);
+                var $lastDiv = $('#' + data._id + ' td:last-child div');
+                $lastDiv.data("obj", data);
             }
         });
     }

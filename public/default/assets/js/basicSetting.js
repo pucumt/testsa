@@ -22,12 +22,4 @@ $(document).ready(function() {
     $("#btnYear").on("click", function(e) {
         location.href = "/admin/yearList";
     });
-
-    $("#btnCategory").on("click", function(e) {
-        location.href = "/admin/categoryList";
-    });
-
-    $("#btnSubject").on("click", function(e) {
-        location.href = "/admin/subjectList";
-    });
 });

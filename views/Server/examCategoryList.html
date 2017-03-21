@@ -13,18 +13,18 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:50%;">课程类别</th>
+                <th style="width:50%;">测试类别</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if categorys %} {% for category in categorys %}
-            <tr id={{category._id}}>
+            {% if examCategorys %} {% for examCategory in examCategorys %}
+            <tr id={{examCategory._id}}>
                 <td>
-                    {{ category.name }}
+                    {{ examCategory.name }}
                 </td>
                 <td>
-                    <div data-obj={{ category|dump }} class="btn-group">
+                    <div data-obj={{ examCategory|dump }} class="btn-group">
                         <a class="btn btn-default btnEdit">编辑</a>
                         <a class="btn btn-default btnDelete">删除</a>
                     </div>
@@ -47,7 +47,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">课程类别:</label>
+                        <label for="name" class="control-label">测试类别:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
@@ -79,5 +79,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/category.js"></script>
+<script type="text/javascript" src="/default/assets/js/examCategory.js"></script>
 {% endblock %}

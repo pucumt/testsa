@@ -1,4 +1,4 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -13,18 +13,22 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:50%;">课程类别</th>
+                <th style="width:30%;">校区</th>
+                <th style="width:50%;">地址</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if categorys %} {% for category in categorys %}
-            <tr id={{category._id}}>
+            {% if studentInfos %} {% for studentInfo in studentInfos %}
+            <tr id={{studentInfo._id}}>
                 <td>
-                    {{ category.name }}
+                    {{ studentInfo.name }}
+                </td>
+                 <td>
+                    {{ studentInfo.address }}
                 </td>
                 <td>
-                    <div data-obj={{ category|dump }} class="btn-group">
+                    <div data-obj={{ studentInfo|dump }} class="btn-group">
                         <a class="btn btn-default btnEdit">编辑</a>
                         <a class="btn btn-default btnDelete">删除</a>
                     </div>
@@ -35,7 +39,8 @@
     </table>
 </div>
 <input type="hidden" id="total" value="{{ total }}" />
-<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %} {% endblock %} {% block modal %}
+<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %}
+{% endblock %} {% block modal %}
 <!-- Modal -->
 <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
@@ -47,8 +52,12 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">课程类别:</label>
+                        <label for="name" class="control-label">校区:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="control-label">地址:</label>
+                        <textarea maxlength="100" rows="3" class="form-control" name="address" id="address"></textarea>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -79,5 +88,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/category.js"></script>
+<script type="text/javascript" src="/default/assets/js/studentInfo.js"></script>
 {% endblock %}

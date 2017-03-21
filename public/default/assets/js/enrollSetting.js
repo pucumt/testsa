@@ -1,18 +1,10 @@
 $(document).ready(function() {
-    $("#btnTrainClass").on("click", function(e) {
-        location.href = "/admin/trainClassList";
+    $("#btnAdminEnrollTrain").on("click", function(e) {
+        location.href = "/admin/adminEnrollTrainList";
     });
 
-    $("#btnExamClass").on("click", function(e) {
-        location.href = "/admin/examClassList";
-    });
-
-    $("#btnGrade").on("click", function(e) {
-        location.href = "/admin/gradeList";
-    });
-
-    $("#btnClassroom").on("click", function(e) {
-        location.href = "/admin/classRoomList";
+    $("#btnAdminEnrollExam").on("click", function(e) {
+        location.href = "/admin/adminEnrollExamList";
     });
 
     $("#btnTeacher").on("click", function(e) {

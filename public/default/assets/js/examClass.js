@@ -61,6 +61,39 @@ function addValidation(callback) {
                         message: '测试时间不能超过30个字符'
                     },
                 }
+            },
+            'examCount': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '测试名额不能为空'
+                    },
+                    stringLength: {
+                        max: 10,
+                        message: '测试名额不能超过10个字符'
+                    },
+                    integer: {
+                        message: '填写的不是数字',
+                    }
+                }
+            }
+        }
+    });
+};
+
+function resetDropDown(objId) {
+    $('#myModal').find("#examCategoryName option").remove();
+    $("#myModal #examCategoryName").append("<option value=''></option>");
+    $.get("/admin/examCategory/getAllWithoutPage", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(examCategory) {
+                    var select = "";
+                    if (objId && examCategory._id == objId) {
+                        select = "selected";
+                    }
+                    $("#myModal #examCategoryName").append("<option " + select + " value='" + examCategory._id + "'>" + examCategory.name + "</option>");
+                });
             }
         }
     });
@@ -75,6 +108,8 @@ $("#btnAdd").on("click", function(e) {
     $('#name').val("");
     $('#examDate').val("");
     $('#examTime').val("");
+    $('#examCount').val(0);
+    resetDropDown();
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -85,7 +120,10 @@ $("#btnSave").on("click", function(e) {
             postObj = {
                 name: $('#name').val(),
                 examDate: $('#examDate').val(),
-                examTime: $('#examTime').val()
+                examTime: $('#examTime').val(),
+                examCategoryId: $('#examCategoryName').val(),
+                examCategoryName: $('#examCategoryName').find("option:selected").text(),
+                examCount: $('#examCount').val()
             };
         if (!isNew) {
             postURI = "/admin/examClass/edit";
@@ -93,8 +131,10 @@ $("#btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
+            var examDate = data.examDate && moment(data.examDate).format("YYYY-M-D");
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + data.examDate + "</td><td>" + data.examTime + "</td><td><div data-obj='" + JSON.stringify(data) +
+                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
+                    "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
             } else {
                 var name = $('#' + data._id + ' td:first-child');
@@ -109,8 +149,10 @@ $("#btnSave").on("click", function(e) {
                 }
                 name.text(data.name);
                 var $pub = name.next().text(pubstr),
-                    $examDate = $pub.next().text(data.examDate),
-                    $examTime = $examDate.next().text(data.examTime);
+                    $examDate = $pub.next().text(examDate),
+                    $examTime = $examDate.next().text(data.examTime),
+                    $examCategoryName = $examTime.next().text(data.examCategoryName),
+                    $examCount = $examCategoryName.next().text(data.examCount);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
                 $lastDiv.data("obj", data);
             }
@@ -130,7 +172,9 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     var examDate = entity.examDate && moment(entity.examDate).format("YYYY-M-D");
     $('#examDate').val(examDate);
     $('#examTime').val(entity.examTime);
+    $('#examCount').val(entity.examCount);
     $('#id').val(entity._id);
+    resetDropDown(entity.examCategoryId);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 

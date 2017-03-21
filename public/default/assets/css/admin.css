@@ -151,6 +151,14 @@ body {
     margin-left: 10px;
 }
 
+.admin-main .content .panel {
+    margin: 0 1px;
+}
+
+.admin-main .content .panel .panelButton {
+    margin-top: 25px;
+}
+
 .admin-main .content table {
     border-bottom: 1px solid rgb(128, 128, 128);
     margin-bottom: 5px;
@@ -182,16 +190,19 @@ body {
     opacity: 1;
 }
 
-.modal .btn-group {
+.modal .btn-group,
+.adminEnroll .btn-group {
     display: block;
 }
 
-.modal .btn-group input {
+.modal .btn-group input,
+.adminEnroll .btn-group input {
     width: calc(100% - 34px);
     float: left;
 }
 
-.modal .btn-group button {
+.modal .btn-group button,
+.adminEnroll .btn-group button {
     width: 34px;
     height: 34px;
 }

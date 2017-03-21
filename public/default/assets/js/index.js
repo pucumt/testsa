@@ -1,5 +1,8 @@
 $(document).ready(function() {
     $("#header_btnEnroll").on("click", function(e) {
+        location.href = "/admin/adminEnrollTrainList";
+    });
+    $("#header_btnClass").on("click", function(e) {
         location.href = "/admin/trainClassList";
     });
     $("#header_btnStudent").on("click", function(e) {

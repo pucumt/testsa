@@ -30,6 +30,9 @@ module.exports = function(app) {
             name: req.body.name,
             examDate: req.body.examDate,
             examTime: req.body.examTime,
+            examCategoryId: req.body.examCategoryId,
+            examCategoryName: req.body.examCategoryName,
+            examCount: req.body.examCount,
             isWeixin: 0
         });
 
@@ -47,6 +50,9 @@ module.exports = function(app) {
             name: req.body.name,
             examDate: req.body.examDate,
             examTime: req.body.examTime,
+            examCategoryId: req.body.examCategoryId,
+            examCategoryName: req.body.examCategoryName,
+            examCount: req.body.examCount,
         });
 
         examClass.update(req.body.id, function(err, examClass) {
