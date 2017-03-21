@@ -215,3 +215,16 @@ body {
     cursor: pointer;
     background-color: #d6dbe0;
 }
+
+#InfoSearch .form-group label {
+    width: 46px;
+}
+
+#InfoSearch .form-group input {
+    width: calc(100% - 70px);
+    display: inline-block;
+}
+
+#InfoSearch .form-group {
+    margin-bottom: 0;
+}
