@@ -220,7 +220,8 @@ body {
     width: 46px;
 }
 
-#InfoSearch .form-group input {
+#InfoSearch .form-group input,
+#InfoSearch .form-group select {
     width: calc(100% - 70px);
     display: inline-block;
 }

@@ -7,11 +7,11 @@ $(document).ready(function() {
         location.href = "/admin/adminEnrollExamList";
     });
 
-    $("#btnTeacher").on("click", function(e) {
-        location.href = "/admin/teacherList";
+    $("#btnTrainOrder").on("click", function(e) {
+        location.href = "/admin/trainOrderList";
     });
 
-    $("#btnYear").on("click", function(e) {
-        location.href = "/admin/yearList";
+    $("#btnExamOrder").on("click", function(e) {
+        location.href = "/admin/examOrderList";
     });
 });

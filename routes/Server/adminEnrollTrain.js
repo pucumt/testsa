@@ -6,16 +6,46 @@ var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
 module.exports = function(app) {
     app.get('/admin/adminEnrollTrainList', checkLogin);
     app.get('/admin/adminEnrollTrainList', function(req, res) {
+        res.render('Server/adminEnrollTrainList.html', {
+            title: '>课程报名',
+            user: req.session.user
+        });
+    });
+
+    app.get('/admin/trainOrderList', checkLogin);
+    app.get('/admin/trainOrderList', function(req, res) {
+        res.render('Server/trainOrderList.html', {
+            title: '>课程订单',
+            user: req.session.user
+        });
+    });
+
+    app.post('/admin/adminEnrollTrain/search', checkLogin);
+    app.post('/admin/adminEnrollTrain/search', function(req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        AdminEnrollTrain.getAll(null, page, {}, function(err, adminEnrollTrains, total) {
+        var filter = {};
+        if (req.body.studentName) {
+            var reg = new RegExp(req.body.studentName, 'i')
+            filter.studentName = {
+                $regex: reg
+            };
+        }
+        if (req.body.className) {
+            var reg = new RegExp(req.body.className, 'i')
+            filter.trainName = {
+                $regex: reg
+            };
+        }
+        if (req.body.isSucceed) {
+            filter.isSucceed = req.body.isSucceed;
+        }
+        AdminEnrollTrain.getAll(null, page, filter, function(err, adminEnrollTrains, total) {
             if (err) {
                 adminEnrollTrains = [];
             }
-            res.render('Server/adminEnrollTrainList.html', {
-                title: '>课程报名',
-                user: req.session.user,
+            res.jsonp({
                 adminEnrollTrains: adminEnrollTrains,
                 total: total,
                 page: page,
@@ -98,7 +128,7 @@ module.exports = function(app) {
                                 });
                         } else {
                             //报名失败
-                            res.jsonp({ error: "报名失败" });
+                            res.jsonp({ error: "报名失败,很可能以报满" });
                             return;
                         }
                     });

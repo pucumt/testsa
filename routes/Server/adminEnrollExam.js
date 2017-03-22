@@ -6,16 +6,46 @@ var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
 module.exports = function(app) {
     app.get('/admin/adminEnrollExamList', checkLogin);
     app.get('/admin/adminEnrollExamList', function(req, res) {
+        res.render('Server/adminEnrollExamList.html', {
+            title: '>测试报名',
+            user: req.session.user
+        });
+    });
+
+    app.get('/admin/examOrderList', checkLogin);
+    app.get('/admin/examOrderList', function(req, res) {
+        res.render('Server/examOrderList.html', {
+            title: '>测试订单',
+            user: req.session.user
+        });
+    });
+
+    app.post('/admin/adminEnrollExam/search', checkLogin);
+    app.post('/admin/adminEnrollExam/search', function(req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        AdminEnrollExam.getAll(null, page, {}, function(err, adminEnrollExams, total) {
+        var filter = {};
+        if (req.body.studentName) {
+            var reg = new RegExp(req.body.studentName, 'i')
+            filter.studentName = {
+                $regex: reg
+            };
+        }
+        if (req.body.className) {
+            var reg = new RegExp(req.body.className, 'i')
+            filter.examName = {
+                $regex: reg
+            };
+        }
+        if (req.body.isSucceed) {
+            filter.isSucceed = req.body.isSucceed;
+        }
+        AdminEnrollExam.getAll(null, page, filter, function(err, adminEnrollExams, total) {
             if (err) {
                 adminEnrollExams = [];
             }
-            res.render('Server/adminEnrollExamList.html', {
-                title: '>测试报名',
-                user: req.session.user,
+            res.jsonp({
                 adminEnrollExams: adminEnrollExams,
                 total: total,
                 page: page,
@@ -108,5 +138,16 @@ module.exports = function(app) {
                     });
             });
 
+    });
+
+    app.post('/admin/adminEnrollExam/cancel', checkLogin);
+    app.post('/admin/adminEnrollExam/cancel', function(req, res) {
+        AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
     });
 }

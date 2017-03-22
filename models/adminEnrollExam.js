@@ -87,3 +87,16 @@ AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId) {
     //打开数据库
     return adminEnrollExamModel.findOne({ studentId: studentId, examCategoryId: categoryId, isDeleted: { $ne: true } });
 };
+
+AdminEnrollExam.cancel = function(id, callback) {
+    adminEnrollExamModel.update({
+        _id: id
+    }, {
+        isSucceed: 9
+    }).exec(function(err, adminEnrollExam) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, adminEnrollExam);
+    });
+};
