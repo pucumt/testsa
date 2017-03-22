@@ -67,7 +67,7 @@ function addValidation(callback) {
                         max: 10,
                         message: '培训费不能超过10个字符'
                     },
-                    integer: {
+                    numeric: {
                         message: '填写的不是数字',
                     }
                 }
@@ -82,7 +82,7 @@ function addValidation(callback) {
                         max: 10,
                         message: '材料费不能超过10个字符'
                     },
-                    integer: {
+                    numeric: {
                         message: '填写的不是数字',
                     }
                 }

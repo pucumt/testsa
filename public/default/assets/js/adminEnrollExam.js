@@ -32,7 +32,6 @@ function addValidation(callback) {
                     },
                     stringLength: {
                         min: 11,
-                        max: 11,
                         message: '手机号必须是11位'
                     },
                     integer: {
@@ -130,32 +129,25 @@ $("#btnAddStudent").on("click", function(e) {
 });
 
 $("#btnEnroll").on("click", function(e) {
-    alert("添加失败");
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        alert("添加失败");
-        // var postURI = "/admin/adminEnrollExam/add",
-        //     postObj = {
-        //         name: $('#name').val(),
-        //         address: $('#address').val()
-        //     };
-        // if (!isNew) {
-        //     postURI = "/admin/adminEnrollExam/edit";
-        //     postObj.id = $('#id').val();
-        // }
-        // $.post(postURI, postObj, function(data) {
-        //     $('#myModal').modal('hide');
-        //     if (isNew) {
-        //         $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div data-obj='" + JSON.stringify(data) +
-        //             "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>"));
-        //     } else {
-        //         var name = $('#' + data._id + ' td:first-child');
-        //         name.text(data.name);
-        //         name.next().text(data.address);
-        //         var $lastDiv = $('#' + data._id + ' td:last-child div');
-        //         $lastDiv.data("obj", data);
-        //     }
-        // });
+        var postURI = "/admin/adminEnrollExam/enroll",
+            postObj = {
+                studentId: $('#enrollInfo #studentId').val(),
+                studentName: $('#enrollInfo #studentName').val(),
+                mobile: $('#enrollInfo #mobile').val(),
+                examId: $('#enrollInfo #examId').val(),
+                examName: $('#enrollInfo #examName').val(),
+                examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                examCategoryName: $('#enrollInfo #examCategoryName').val()
+            };
+        $.post(postURI, postObj, function(data) {
+            if (data && data.sucess) {
+                showAlert("报名成功");
+            } else {
+                showAlert(data.error);
+            }
+        });
     }
 });
 
@@ -173,18 +165,11 @@ function setSelectEvent(callback) {
 
 function openStudent(p) {
     $('#selectModal #selectModalLabel').text("选择学生");
-    $selectHeader.empty();
-    $selectBody.empty();
-    $selectSearch.empty();
-    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
-        '<label for="studentName" class="control-label">姓名:</label>' +
-        '<input type="text" maxlength="30" class="form-control" name="studentName" id="studentName"></div></div>' +
-        '<div class="col-md-8"><div class="form-group"><label for="mobile" class="control-label">手机号:</label>' +
-        '<input type="text" maxlength="30" class="form-control" name="mobile" id="mobile"></div></div>' +
-        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
-    $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
     var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
         pStr = p ? "p=" + p : "";
+    $selectHeader.empty();
+    $selectBody.empty();
+    $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
     $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
@@ -208,22 +193,18 @@ function openStudent(p) {
 };
 
 function openExam(p) {
-    $('#selectModal #selectModalLabel').text("选择学生");
-    $selectHeader.empty();
-    $selectBody.empty();
-    $selectSearch.empty();
-    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
-        '<label for="examName" class="control-label">名称:</label>' +
-        '<input type="text" maxlength="30" class="form-control" name="examName" id="examName"></div></div>' +
-        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
-    $selectHeader.append('<tr><th>测试名称</th><th width="50%">测试类别</th></tr>');
+    $('#selectModal #selectModalLabel').text("选择测试");
     var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
         pStr = p ? "p=" + p : "";
+    $selectHeader.empty();
+    $selectBody.empty();
+    $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
-                    '</td><td>' + examClass.examCategoryName + '</td></tr>');
+                    '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
+                    examClass.examCount + '</td></tr>');
             });
             setSelectEvent(function(entity) {
                 $('#enrollInfo #examName').val(entity.name); //
@@ -243,11 +224,23 @@ function openExam(p) {
 var openEntity = "student";
 $("#panel_btnStudent").on("click", function(e) {
     openEntity = "student";
+    $selectSearch.empty();
+    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
+        '<label for="studentName" class="control-label">姓名:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="studentName" id="studentName"></div></div>' +
+        '<div class="col-md-8"><div class="form-group"><label for="mobile" class="control-label">手机号:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="mobile" id="mobile"></div></div>' +
+        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     openStudent();
 });
 
 $("#panel_btnExam").on("click", function(e) {
     openEntity = "exam";
+    $selectSearch.empty();
+    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
+        '<label for="examName" class="control-label">名称:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="examName" id="examName"></div></div>' +
+        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     openExam();
 });
 

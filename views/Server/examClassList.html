@@ -19,6 +19,7 @@
                 <th style="width:120px;">测试时间</th>
                 <th style="width:180px;">测试类别</th>
                 <th style="width:120px;">测试名额</th>
+                <th style="width:120px;">已报名额</th>
                 <th style="width:240px;">操作</th>
             </tr>
         </thead>
@@ -42,6 +43,9 @@
                 </td>
                 <td>
                     {{ examClass.examCount }}
+                </td>
+                <td>
+                    {{ examClass.enrollCount }}
                 </td>
                 <td>
                     <div data-obj={{ examClass|dump }} class="btn-group">

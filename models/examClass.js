@@ -123,3 +123,13 @@ ExamClass.unPublish = function(id, callback) {
         callback(null, examClasss);
     });
 };
+
+ExamClass.enroll = function(id) {
+    return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
+        .then(function(exam) {
+            return examClassModel.update({
+                _id: id,
+                enrollCount: { $lt: exam.examCount }
+            }, { $inc: { enrollCount: 1 } }).exec();
+        });
+};

@@ -1,4 +1,5 @@
 var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+    TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin
 
@@ -63,5 +64,45 @@ module.exports = function(app) {
             }
             res.jsonp({ sucess: true });
         });
+    });
+
+    app.post('/admin/adminEnrollTrain/enroll', checkLogin);
+    app.post('/admin/adminEnrollTrain/enroll', function(req, res) {
+        AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.trainId)
+            .then(function(enrollTrain) {
+                if (enrollTrain) {
+                    res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                    return;
+                }
+
+                TrainClass.enroll(req.body.trainId)
+                    .then(function(trainClass) {
+                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                            //报名成功
+                            var adminEnrollTrain = new AdminEnrollTrain({
+                                studentId: req.body.studentId,
+                                studentName: req.body.studentName,
+                                mobile: req.body.mobile,
+                                trainId: req.body.trainId,
+                                trainName: req.body.trainName,
+                                trainPrice: req.body.trainPrice,
+                                materialPrice: req.body.materialPrice,
+                                discount: req.body.discount,
+                                totalPrice: req.body.totalPrice,
+                                isSucceed: 1
+                            });
+                            adminEnrollTrain.save()
+                                .then(function(enrollExam) {
+                                    res.jsonp({ sucess: true });
+                                    return;
+                                });
+                        } else {
+                            //报名失败
+                            res.jsonp({ error: "报名失败" });
+                            return;
+                        }
+                    });
+            });
+
     });
 }

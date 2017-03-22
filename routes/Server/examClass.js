@@ -33,6 +33,7 @@ module.exports = function(app) {
             examCategoryId: req.body.examCategoryId,
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
+            enrollCount: 0,
             isWeixin: 0
         });
 

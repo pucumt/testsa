@@ -3,8 +3,18 @@ var mongoose = require('./db');
 var db = mongoose.connection;
 
 var adminEnrollTrainSchema = new mongoose.Schema({
-    name: String,
-    address: String,
+    studentId: String,
+    studentName: String,
+    mobile: String,
+    trainId: String,
+    trainName: String,
+    trainPrice: Number,
+    materialPrice: Number,
+    discount: Number,
+    totalPrice: Number,
+    isSucceed: Number, //1 succeed, 9 canceled 
+    isPayed: Boolean,
+    payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
     isDeleted: Boolean
 }, {
     collection: 'adminEnrollTrains'
@@ -19,17 +29,9 @@ function AdminEnrollTrain(option) {
 module.exports = AdminEnrollTrain;
 
 //存储学区信息
-AdminEnrollTrain.prototype.save = function(callback) {
+AdminEnrollTrain.prototype.save = function() {
     var newadminEnrollTrain = new adminEnrollTrainModel(this.option);
-
-    newadminEnrollTrain.save(function(err, adminEnrollTrain) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, adminEnrollTrain);
-
-        //db.close();
-    });
+    return newadminEnrollTrain.save();
 };
 
 AdminEnrollTrain.prototype.update = function(id, callback) {
@@ -47,7 +49,7 @@ AdminEnrollTrain.prototype.update = function(id, callback) {
 //读取学区信息
 AdminEnrollTrain.get = function(id, callback) {
     //打开数据库
-    adminEnrollTrainModel.findOne({ _id: id, isDeleted: { $ne: true }}, function(err, adminEnrollTrain) {
+    adminEnrollTrainModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, adminEnrollTrain) {
         if (err) {
             return callback(err);
         }
@@ -87,4 +89,9 @@ AdminEnrollTrain.delete = function(id, callback) {
         }
         callback(null, adminEnrollTrain);
     });
+};
+
+AdminEnrollTrain.getByStudentAndClass = function(studentId, trainId) {
+    //打开数据库
+    return adminEnrollTrainModel.findOne({ studentId: studentId, trainId: trainId, isDeleted: { $ne: true } });
 };

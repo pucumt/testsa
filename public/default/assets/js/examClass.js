@@ -134,7 +134,7 @@ $("#btnSave").on("click", function(e) {
             var examDate = data.examDate && moment(data.examDate).format("YYYY-M-D");
             if (isNew) {
                 $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
-                    "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td><div data-obj='" + JSON.stringify(data) +
+                    "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td>0</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
             } else {
                 var name = $('#' + data._id + ' td:first-child');

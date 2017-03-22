@@ -140,3 +140,13 @@ TrainClass.unPublish = function(id, callback) {
         callback(null, trainClass);
     });
 };
+
+TrainClass.enroll = function(id) {
+    return trainClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
+        .then(function(exam) {
+            return trainClassModel.update({
+                _id: id,
+                enrollCount: { $lt: exam.totalStudentCount }
+            }, { $inc: { enrollCount: 1 } }).exec();
+        });
+};

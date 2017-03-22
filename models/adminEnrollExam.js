@@ -3,8 +3,16 @@ var mongoose = require('./db');
 var db = mongoose.connection;
 
 var adminEnrollExamSchema = new mongoose.Schema({
-    name: String,
-    address: String,
+    studentId: String,
+    studentName: String,
+    mobile: String,
+    examId: String,
+    examName: String,
+    examCategoryId: String,
+    examCategoryName: String,
+    isSucceed: Number, //1 succeed, 9 canceled 
+    isPayed: Boolean,
+    payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
     isDeleted: Boolean
 }, {
     collection: 'adminEnrollExams'
@@ -19,17 +27,9 @@ function AdminEnrollExam(option) {
 module.exports = AdminEnrollExam;
 
 //存储学区信息
-AdminEnrollExam.prototype.save = function(callback) {
+AdminEnrollExam.prototype.save = function() {
     var newadminEnrollExam = new adminEnrollExamModel(this.option);
-
-    newadminEnrollExam.save(function(err, adminEnrollExam) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, adminEnrollExam);
-
-        //db.close();
-    });
+    return newadminEnrollExam.save();
 };
 
 AdminEnrollExam.prototype.update = function(id, callback) {
@@ -45,16 +45,9 @@ AdminEnrollExam.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-AdminEnrollExam.get = function(id, callback) {
+AdminEnrollExam.get = function(id) {
     //打开数据库
-    adminEnrollExamModel.findOne({ _id: id, isDeleted: { $ne: true }}, function(err, adminEnrollExam) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, adminEnrollExam);
-
-        //db.close();
-    });
+    return adminEnrollExamModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息
@@ -87,4 +80,10 @@ AdminEnrollExam.delete = function(id, callback) {
         }
         callback(null, adminEnrollExam);
     });
+};
+
+//读取学区信息
+AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId) {
+    //打开数据库
+    return adminEnrollExamModel.findOne({ studentId: studentId, examCategoryId: categoryId, isDeleted: { $ne: true } });
 };
