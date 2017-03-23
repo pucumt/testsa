@@ -150,3 +150,12 @@ TrainClass.enroll = function(id) {
             }, { $inc: { enrollCount: 1 } }).exec();
         });
 };
+
+TrainClass.cancel = function(id) {
+    return trainClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
+        .then(function(exam) {
+            return trainClassModel.update({
+                _id: id
+            }, { $inc: { enrollCount: -1 } }).exec();
+        });
+};

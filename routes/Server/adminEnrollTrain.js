@@ -135,4 +135,23 @@ module.exports = function(app) {
             });
 
     });
+
+    app.post('/admin/adminEnrollTrain/cancel', checkLogin);
+    app.post('/admin/adminEnrollTrain/cancel', function(req, res) {
+        TrainClass.cancel(req.body.trainId)
+            .then(function(trainClass) {
+                if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                    AdminEnrollTrain.cancel(req.body.id, function(err, adminEnrollTrain) {
+                        if (err) {
+                            res.jsonp({ error: err });
+                            return;
+                        }
+                        res.jsonp({ sucess: true });
+                    });
+                } else {
+                    res.jsonp({ error: "取消失败" });
+                    return;
+                }
+            });
+    });
 }

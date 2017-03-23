@@ -142,12 +142,20 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollExam/cancel', checkLogin);
     app.post('/admin/adminEnrollExam/cancel', function(req, res) {
-        AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
-            if (err) {
-                res.jsonp({ error: err });
-                return;
-            }
-            res.jsonp({ sucess: true });
-        });
+        ExamClass.cancel(req.body.examId)
+            .then(function(examClass) {
+                if (examClass && examClass.ok && examClass.nModified == 1) {
+                    AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
+                        if (err) {
+                            res.jsonp({ error: err });
+                            return;
+                        }
+                        res.jsonp({ sucess: true });
+                    });
+                } else {
+                    res.jsonp({ error: "取消失败" });
+                    return;
+                }
+            });
     });
 }

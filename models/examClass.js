@@ -133,3 +133,12 @@ ExamClass.enroll = function(id) {
             }, { $inc: { enrollCount: 1 } }).exec();
         });
 };
+
+ExamClass.cancel = function(id) {
+    return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
+        .then(function(exam) {
+            return examClassModel.update({
+                _id: id
+            }, { $inc: { enrollCount: -1 } }).exec();
+        });
+};

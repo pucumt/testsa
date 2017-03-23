@@ -18,12 +18,31 @@ function searchOrder(p) {
     $selectBody.empty();
     $.post("/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
+            var getStatus = function(isSucceed) {
+                    switch (isSucceed) {
+                        case 1:
+                            return "已报名"
+                            break;
+                        case 9:
+                            return "已取消"
+                            break;
+                        case 7:
+                            return "已退费"
+                            break;
+                    }
+                },
+                getButtons = function(isSucceed) {
+                    if (isSucceed == 1) {
+                        return '<a class="btn btn-default btnDelete">取消</a>';
+                    }
+                    return '';
+                };
             data.adminEnrollExams.forEach(function(examOrder) {
                 $selectBody.append('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
-                    (examOrder.isSucceed == 1 ? "已报名" : "已取消") + '</td><td>' +
+                    getStatus(examOrder.isSucceed) + '</td><td>' +
                     examOrder.studentName + '</td><td>' + examOrder.examName + '</td><td>' +
                     examOrder.examCategoryName + '</td><td><div data-obj=' +
-                    JSON.stringify(examOrder) + ' class="btn-group"><a class="btn btn-default btnDelete">取消</a></div></td></tr>');
+                    JSON.stringify(examOrder) + ' class="btn-group">' + getButtons(examOrder.isSucceed) + '</div></td></tr>');
             });
         }
         $("#selectModal #total").val(data.total);
@@ -71,7 +90,8 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         $.post("/admin/adminEnrollExam/cancel", {
-            id: entity._id
+            id: entity._id,
+            examId: entity.examId
         }, function(data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {

@@ -24,8 +24,9 @@
                     <div class="form-group">
                         <label for="isSucceed" class="control-label">已取消:</label>
                         <select name="isSucceed" id="isSucceed" class="form-control">
-                            <option value="9">是</option>
-                            <option value="1">否</option>
+                            <option value="9">已取消</option>
+                            <option value="1">已报名</option>
+                            <option value="7">已退款</option>
                         </select>
                     </div>
                 </div>
@@ -40,14 +41,15 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:180px;">订单号</th>
+                <th>订单号</th>
+                <th style="width:120px;">状态</th>
                 <th style="width:120px;">学生</th>
                 <th style="width:180px;">课程</th>
                 <th style="width:120px;">培训费</th>
                 <th style="width:120px;">教材费</th>
                 <th style="width:120px;">实际收费</th>
                 <th style="width:80px;">已支付</th>
-                <th>操作</th>
+                <th style="width:120px;">操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">

@@ -95,3 +95,16 @@ AdminEnrollTrain.getByStudentAndClass = function(studentId, trainId) {
     //打开数据库
     return adminEnrollTrainModel.findOne({ studentId: studentId, trainId: trainId, isDeleted: { $ne: true } });
 };
+
+AdminEnrollTrain.cancel = function(id, callback) {
+    adminEnrollTrainModel.update({
+        _id: id
+    }, {
+        isSucceed: 9
+    }).exec(function(err, adminEnrollTrain) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, adminEnrollTrain);
+    });
+};
