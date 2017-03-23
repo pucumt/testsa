@@ -1,6 +1,6 @@
 var #Name# = require('../../models/#name#.js'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
     app.get('/admin/#name#List', checkLogin);

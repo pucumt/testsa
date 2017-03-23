@@ -1,7 +1,7 @@
 var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     ExamClass = require('../../models/examClass.js'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
     app.get('/admin/adminEnrollExamList', checkLogin);

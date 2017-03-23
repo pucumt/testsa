@@ -9,7 +9,7 @@ function toxml(nodes) {
     });
     xmlContent = xmlContent + "</xml>";
     return xmlContent;
-}
+};
 
 function mysubstr(body, sstart, sstop) {
     var i = body.indexOf(sstart),
@@ -18,7 +18,7 @@ function mysubstr(body, sstart, sstop) {
         resultBody = subBody.substr(23, j - 23);
 
     return resultBody;
-}
+};
 module.exports = function(app) {
     app.get('/test', function(req, res) {
         res.render('Test/index.html', {

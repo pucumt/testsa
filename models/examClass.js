@@ -27,6 +27,8 @@ module.exports = ExamClass;
 
 //存储学区信息
 ExamClass.prototype.save = function(callback) {
+    this.option.enrollCount = 0;
+    this.option.isWeixin = 0;
     var newexamClass = new examClassModel(this.option);
 
     newexamClass.save(function(err, examClass) {

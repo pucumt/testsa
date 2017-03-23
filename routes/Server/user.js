@@ -1,6 +1,6 @@
 var User = require('../../models/user.js'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
     app.get('/admin/adminList', checkLogin);
@@ -68,11 +68,9 @@ module.exports = function(app) {
             if (err) {
                 user = {};
             }
-            if(user)
-            {
+            if (user) {
                 res.jsonp({ "valid": false });
-            }
-            else{
+            } else {
                 res.jsonp({ "valid": true });
             }
         });

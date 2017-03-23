@@ -13,7 +13,9 @@ var adminEnrollExamSchema = new mongoose.Schema({
     isSucceed: Number, //1 succeed, 9 canceled 
     isPayed: Boolean,
     payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
-    isDeleted: Boolean
+    isDeleted: Boolean,
+    orderDate: Date,
+    CancelDate: Date
 }, {
     collection: 'adminEnrollExams'
 });
@@ -28,6 +30,7 @@ module.exports = AdminEnrollExam;
 
 //存储学区信息
 AdminEnrollExam.prototype.save = function() {
+    this.option.orderDate = new Date();
     var newadminEnrollExam = new adminEnrollExamModel(this.option);
     return newadminEnrollExam.save();
 };
@@ -92,7 +95,8 @@ AdminEnrollExam.cancel = function(id, callback) {
     adminEnrollExamModel.update({
         _id: id
     }, {
-        isSucceed: 9
+        isSucceed: 9,
+        CancelDate: new Date()
     }).exec(function(err, adminEnrollExam) {
         if (err) {
             return callback(err);

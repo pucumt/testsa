@@ -1,7 +1,7 @@
 var StudentAccount = require('../../models/studentAccount.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
     app.get('/admin/studentAccountList', checkLogin);

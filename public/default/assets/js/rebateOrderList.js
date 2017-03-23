@@ -1,9 +1,12 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnTrainOrder").addClass("active");
+    $("#btnRebate").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
     searchOrder();
+
+    $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
+    $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动 
 });
 
 var $selectBody = $('.content table tbody');
@@ -12,7 +15,8 @@ function searchOrder(p) {
     var filter = {
             studentName: $("#InfoSearch #studentName").val(),
             className: $("#InfoSearch #className").val(),
-            isSucceed: $("#InfoSearch #isSucceed").val()
+            isSucceed: $("#InfoSearch #isSucceed").val(),
+            isPayed: true
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
@@ -32,8 +36,8 @@ function searchOrder(p) {
                     }
                 },
                 getButtons = function(isPayed, isSucceed) {
-                    if (!isPayed && isSucceed == 1) {
-                        return '<a class="btn btn-default btnDelete">取消</a>';
+                    if (isPayed && isSucceed !== 9) {
+                        return '<a class="btn btn-default btnRebate">退费</a>';
                     }
                     return '';
                 };
@@ -41,7 +45,7 @@ function searchOrder(p) {
                 $selectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + (trainOrder.isPayed ? "是" : "否") + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div data-obj=' +
+                    trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div data-obj=' +
                     JSON.stringify(trainOrder) + ' class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
             });
         }
@@ -84,23 +88,63 @@ function showComfirm(msg) {
     $('#confirmModal #btnConfirmSave').show();
 };
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+function destroy() {
+    var validator = $('#myModal').data('formValidation');
+    if (validator) {
+        validator.destroy();
+    }
+};
+
+function addValidation(callback) {
+    $('#myModal').formValidation({
+        // List of fields and their validation rules
+        fields: {
+            'price': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '退款金额不能为空'
+                    },
+                    stringLength: {
+                        max: 10,
+                        message: '退款金额不能超过10个字符'
+                    },
+                    numeric: {
+                        message: '填写的不是数字',
+                    }
+                }
+            }
+        }
+    });
+};
+
+$("#gridBody").on("click", "td .btnRebate", function(e) {
+    destroy();
+    addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("确定要取消订单" + entity._id + "吗？");
+    $('#myModalLabel').text("退费");
+    $('#myModal #totalPrice').val(entity.totalPrice);
+    $('#myModal #rebatePrice').val(entity.rebatePrice);
+    $('#myModal #Id').val(entity._id);
+    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+});
 
-    $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/adminEnrollTrain/cancel", {
-            id: entity._id,
-            trainId: entity.trainId
-        }, function(data) {
-            $('#confirmModal').modal('hide');
-            if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("已取消");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnDelete").remove();
-            }
+$("#btnSave").on("click", function(e) {
+    var validator = $('#myModal').data('formValidation').validate();
+    if (validator.isValid()) {
+        var postURI = "/admin/adminEnrollTrain/rebate",
+            postObj = {
+                Id: $('#myModal #Id').val(),
+                price: $('#myModal #price').val()
+            };
+        $.post(postURI, postObj, function(data) {
+            $('#myModal').modal('hide');
+            var name = $('#' + data._id + ' td:first-child');
+            var col2 = name.next().text("已退款");
+            col2.next().next().next().next().next().next().text(data.rebatePrice);
+            var $lastDiv = $('#' + data._id + ' td:last-child div');
+            $lastDiv.data("obj", data);
         });
-    });
+    }
 });

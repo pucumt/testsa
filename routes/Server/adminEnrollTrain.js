@@ -1,7 +1,8 @@
 var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     TrainClass = require('../../models/trainClass.js'),
+    RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
     app.get('/admin/adminEnrollTrainList', checkLogin);
@@ -41,6 +42,9 @@ module.exports = function(app) {
         if (req.body.isSucceed) {
             filter.isSucceed = req.body.isSucceed;
         }
+        if (req.body.isPayed) {
+            filter.isPayed = req.body.isPayed;
+        }
         AdminEnrollTrain.getAll(null, page, filter, function(err, adminEnrollTrains, total) {
             if (err) {
                 adminEnrollTrains = [];
@@ -52,6 +56,14 @@ module.exports = function(app) {
                 isFirstPage: (page - 1) == 0,
                 isLastPage: ((page - 1) * 14 + adminEnrollTrains.length) == total
             });
+        });
+    });
+
+    app.get('/admin/rebateOrderList', checkLogin);
+    app.get('/admin/rebateOrderList', function(req, res) {
+        res.render('Server/rebateOrderList.html', {
+            title: '>退费管理',
+            user: req.session.user
         });
     });
 
@@ -148,6 +160,32 @@ module.exports = function(app) {
                         }
                         res.jsonp({ sucess: true });
                     });
+                } else {
+                    res.jsonp({ error: "取消失败" });
+                    return;
+                }
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/rebate', checkLogin);
+    app.post('/admin/adminEnrollTrain/rebate', function(req, res) {
+        AdminEnrollTrain.rebate(req.body.Id, req.body.price)
+            .then(function(adminEnrollTrain) {
+                if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
+                    var rebateEnrollTrain = new RebateEnrollTrain({
+                        trainOrderId: req.body.Id,
+                        rebatePrice: req.body.price
+                    });
+                    return rebateEnrollTrain.save(req.body.id)
+                        .then(function(data) {
+                            if (data) {
+                                AdminEnrollTrain.get(req.body.Id)
+                                    .then(function(newEnrollTrain) {
+                                        res.jsonp(newEnrollTrain);
+                                        return;
+                                    });
+                            }
+                        });
                 } else {
                     res.jsonp({ error: "取消失败" });
                     return;

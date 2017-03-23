@@ -14,4 +14,9 @@ $(document).ready(function() {
     $("#btnExamOrder").on("click", function(e) {
         location.href = "/admin/examOrderList";
     });
+
+    $("#btnRebate").on("click", function(e) {
+        location.href = "/admin/rebateOrderList";
+    });
+
 });

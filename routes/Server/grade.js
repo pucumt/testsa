@@ -1,6 +1,6 @@
 var Grade = require('../../models/grade.js'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin
+    checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
     app.get('/admin/gradeList', checkLogin);
