@@ -189,9 +189,31 @@
                         <div class="col-md-24">
                             <div class="form-group">
                                 <label for="courseContent" class="control-label">课程描述:</label>
-                                <textarea maxlength="1000" rows="3" class="form-control" name="courseContent" id="courseContent"></textarea>
+                                <textarea maxlength="1000" rows="7" class="form-control" name="courseContent" id="courseContent"></textarea>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-24">
+                            <div class="form-group" style="border-bottom: 1px solid rgb(128, 128, 128)">
+                                <label>依赖项:</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="examCategoryName" class="control-label">测试类别:</label>
+                                <select name="examCategoryName" id="examCategoryName" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="minScore" class="control-label">最低分:</label>
+                                <input type="text" maxlength="10" class="form-control" name="minScore" id="minScore" value="0">
+                            </div>
+                        </div>
+
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

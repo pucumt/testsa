@@ -29,7 +29,10 @@ var trainClassSchema = new mongoose.Schema({
     schoolArea: String,
     isWeixin: Number, //0 new 1 publish 0 stop
     isStop: Boolean,
-    isDeleted: Boolean
+    isDeleted: Boolean,
+    examCategoryId: String,
+    examCategoryName: String,
+    minScore: Number
 }, {
     collection: 'trainClasss'
 });

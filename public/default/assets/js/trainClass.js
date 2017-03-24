@@ -144,8 +144,11 @@ function resetDropDown(objs) {
     $('#myModal').find("#grade option").remove();
     $('#myModal').find("#subject option").remove();
     $('#myModal').find("#category option").remove();
+    $('#myModal').find("#examCategoryName option").remove();
 
-    $.get("/admin/trainClass/yeargradesubjectcategory", function(data) {
+    $("#myModal #examCategoryName").append("<option value=''></option>");
+
+    $.get("/admin/trainClass/yeargradesubjectcategoryexamCategory", function(data) {
         if (data) {
             if (data.years && data.years.length > 0) {
                 data.years.forEach(function(year) {
@@ -183,6 +186,16 @@ function resetDropDown(objs) {
                     $("#myModal #category").append("<option " + select + " value='" + category._id + "'>" + category.name + "</option>");
                 });
             }
+
+            if (data.examCategorys && data.examCategorys.length > 0) {
+                data.examCategorys.forEach(function(category) {
+                    var select = "";
+                    if (objs && category._id == objs.examCategoryid) {
+                        select = "selected";
+                    }
+                    $("#myModal #examCategoryName").append("<option " + select + " value='" + category._id + "'>" + category.name + "</option>");
+                });
+            }
         }
     });
 };
@@ -208,6 +221,7 @@ $("#btnAdd").on("click", function(e) {
     $('#schoolid').val(""); //
     $('#teacher').val(""); //
     $('#teacherid').val(""); //
+    $('#minScore').val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
@@ -240,7 +254,10 @@ $("#btnSave").on("click", function(e) {
                 subjectId: $('#subject').val(),
                 subjectName: $('#subject').find("option:selected").text(),
                 categoryId: $('#category').val(),
-                categoryName: $('#category').find("option:selected").text()
+                categoryName: $('#category').find("option:selected").text(),
+                examCategoryId: $('#examCategoryName').val(),
+                examCategoryName: $('#examCategoryName').find("option:selected").text(),
+                minScore: $('#minScore').val()
             };
         if (!isNew) {
             postURI = "/admin/trainClass/edit";
@@ -303,7 +320,8 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#schoolid').val(entity.schoolId); //
     $('#teacher').val(entity.teacherName); //
     $('#teacherid').val(entity.teacherId); //
-    resetDropDown({ yearid: entity.yearId, gradeid: entity.gradeId, subjectid: entity.subjectId, categoryid: entity.categoryId });
+    $('#minScore').val(entity.minScore);
+    resetDropDown({ yearid: entity.yearId, gradeid: entity.gradeId, subjectid: entity.subjectId, categoryid: entity.categoryId, examCategoryid: entity.examCategoryId });
     $('#id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });

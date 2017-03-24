@@ -1,8 +1,9 @@
 var TrainClass = require('../../models/trainClass.js'),
-    year = require('../../models/year.js'),
-    grade = require('../../models/grade.js'),
-    subject = require('../../models/subject.js'),
-    category = require('../../models/category.js'),
+    Year = require('../../models/year.js'),
+    Grade = require('../../models/grade.js'),
+    Subject = require('../../models/subject.js'),
+    Category = require('../../models/category.js'),
+    ExamCategory = require('../../models/examCategory.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -55,7 +56,10 @@ module.exports = function(app) {
             schoolId: req.body.schoolId,
             schoolArea: req.body.schoolArea,
             isWeixin: 0,
-            enrollCount: 0
+            enrollCount: 0,
+            examCategoryId: req.body.examCategoryId,
+            examCategoryName: req.body.examCategoryName,
+            minScore: req.body.minScore
         });
 
         trainClass.save(function(err, trainClass) {
@@ -91,7 +95,10 @@ module.exports = function(app) {
             classRoomId: req.body.classRoomId,
             classRoomName: req.body.classRoomName,
             schoolId: req.body.schoolId,
-            schoolArea: req.body.schoolArea
+            schoolArea: req.body.schoolArea,
+            examCategoryId: req.body.examCategoryId,
+            examCategoryName: req.body.examCategoryName,
+            minScore: req.body.minScore
         });
 
         trainClass.update(req.body.id, function(err, trainClass) {
@@ -113,38 +120,45 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/admin/trainClass/yeargradesubjectcategory', checkLogin);
-    app.get('/admin/trainClass/yeargradesubjectcategory', function(req, res) {
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamCategory', checkLogin);
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamCategory', function(req, res) {
         var objReturn = {};
-        var p0 = year.getAllWithoutPage()
+        var p0 = Year.getAllWithoutPage()
             .then(function(years) {
                 objReturn.years = years;
             })
             .catch((err) => {
                 console.log('errored');
             });
-        var p1 = grade.getAllWithoutPage()
+        var p1 = Grade.getAllWithoutPage()
             .then(function(grades) {
                 objReturn.grades = grades;
             })
             .catch((err) => {
                 console.log('errored');
             });
-        var p2 = subject.getAllWithoutPage()
+        var p2 = Subject.getAllWithoutPage()
             .then(function(subjects) {
                 objReturn.subjects = subjects;
             })
             .catch((err) => {
                 console.log('errored');
             });
-        var p3 = category.getAllWithoutPage()
+        var p3 = Category.getAllWithoutPage()
             .then(function(categorys) {
                 objReturn.categorys = categorys;
             })
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p0, p1, p2, p3]).then(function() {
+        var p4 = ExamCategory.getAllWithoutPage()
+            .then(function(categorys) {
+                objReturn.examCategorys = categorys;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p0, p1, p2, p3, p4]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {
