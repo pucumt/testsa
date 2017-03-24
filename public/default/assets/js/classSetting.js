@@ -18,4 +18,5 @@ $(document).ready(function() {
     $("#btnExamCategory").on("click", function(e) {
         location.href = "/admin/examCategoryList";
     });
+
 });

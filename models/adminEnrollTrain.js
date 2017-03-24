@@ -13,12 +13,14 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     discount: Number,
     totalPrice: Number,
     rebatePrice: Number, //退费
-    isSucceed: Number, //1 succeed, 9 canceled 7 rebate
+    isSucceed: Number, //1 succeed, 9 canceled
     isPayed: Boolean,
     payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
     isDeleted: Boolean,
     orderDate: Date,
-    CancelDate: Date
+    cancelDate: Date,
+    cancelReason: String,
+    fromId: String
 }, {
     collection: 'adminEnrollTrains'
 });
@@ -92,7 +94,7 @@ AdminEnrollTrain.delete = function(id, callback) {
 
 AdminEnrollTrain.getByStudentAndClass = function(studentId, trainId) {
     //打开数据库
-    return adminEnrollTrainModel.findOne({ studentId: studentId, trainId: trainId, isDeleted: { $ne: true } });
+    return adminEnrollTrainModel.findOne({ studentId: studentId, trainId: trainId, isSucceed: 1, isDeleted: { $ne: true } });
 };
 
 AdminEnrollTrain.cancel = function(id, callback) {
@@ -100,7 +102,7 @@ AdminEnrollTrain.cancel = function(id, callback) {
         _id: id
     }, {
         isSucceed: 9,
-        CancelDate: new Date()
+        cancelDate: new Date()
     }).exec(function(err, adminEnrollTrain) {
         if (err) {
             return callback(err);
@@ -113,7 +115,16 @@ AdminEnrollTrain.rebate = function(id, price) {
     return adminEnrollTrainModel.update({
         _id: id
     }, {
-        isSucceed: 7,
         $inc: { rebatePrice: price }
+    }).exec();
+};
+
+AdminEnrollTrain.changeClass = function(id) {
+    return adminEnrollTrainModel.update({
+        _id: id
+    }, {
+        isSucceed: 9,
+        cancelDate: new Date(),
+        cancelReason: '调班'
     }).exec();
 };

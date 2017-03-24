@@ -67,6 +67,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/changeClassList', checkLogin);
+    app.get('/admin/changeClassList', function(req, res) {
+        res.render('Server/changeClassList.html', {
+            title: '>调班管理',
+            user: req.session.user
+        });
+    });
+
     app.post('/admin/adminEnrollTrain/add', checkLogin);
     app.post('/admin/adminEnrollTrain/add', function(req, res) {
         var adminEnrollTrain = new AdminEnrollTrain({
@@ -140,7 +148,7 @@ module.exports = function(app) {
                                 });
                         } else {
                             //报名失败
-                            res.jsonp({ error: "报名失败,很可能以报满" });
+                            res.jsonp({ error: "报名失败,很可能报满" });
                             return;
                         }
                     });
@@ -191,5 +199,82 @@ module.exports = function(app) {
                     return;
                 }
             });
+    });
+
+    app.post('/admin/adminEnrollTrain/changeClass', checkLogin);
+    app.post('/admin/adminEnrollTrain/changeClass', function(req, res) {
+        AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.trainId)
+            .then(function(enrollTrain) {
+                if (enrollTrain) {
+                    res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                    return;
+                }
+
+                TrainClass.enroll(req.body.trainId)
+                    .then(function(trainClass) {
+                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                            //报名成功
+                            var adminEnrollTrain = new AdminEnrollTrain({
+                                studentId: req.body.studentId,
+                                studentName: req.body.studentName,
+                                mobile: req.body.mobile,
+                                trainId: req.body.trainId,
+                                trainName: req.body.trainName,
+                                trainPrice: req.body.trainPrice,
+                                materialPrice: req.body.materialPrice,
+                                discount: req.body.discount,
+                                totalPrice: req.body.totalPrice,
+                                fromId: req.body.oldTrainId
+                            });
+                            return adminEnrollTrain.save();
+                        } else {
+                            //报名失败
+                            res.jsonp({ error: "报名失败,很可能报满" });
+                            return Promise.reject();
+                        }
+                    })
+                    .then(function(trainClass) {
+                        if (trainClass) {
+                            return TrainClass.cancel(req.body.oldTrainId);
+                        } else {
+                            res.jsonp({ error: "报名订单保存失败" });
+                            return Promise.reject();
+                        }
+                    })
+                    .then(function(trainClass) {
+                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                            return AdminEnrollTrain.changeClass(req.body.oldOrderId);
+                        } else {
+                            res.jsonp({ error: "修改老班级数失败" });
+                            return Promise.reject();
+                        }
+                    })
+                    .then(function(adminEnrollTrain) {
+                        if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
+                            res.jsonp({ sucess: true });
+                            return;
+                        } else {
+                            res.jsonp({ error: "取消老订单失败" });
+                            return Promise.reject();
+                        }
+                    })
+                    .catch(function(err) {
+
+                    });
+            });
+    });
+
+    app.get('/admin/changeClassDetail/:id', checkLogin);
+    app.get('/admin/changeClassDetail/:id', function(req, res) {
+        // req.params.id
+        AdminEnrollTrain.get(req.params.id)
+            .then(function(order) {
+                res.render('Server/changeClassDetail.html', {
+                    title: '>调班管理',
+                    user: req.session.user,
+                    order: order
+                });
+            })
+
     });
 }

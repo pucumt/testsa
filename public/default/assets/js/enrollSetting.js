@@ -19,4 +19,8 @@ $(document).ready(function() {
         location.href = "/admin/rebateOrderList";
     });
 
+    $("#btnChangeClass").on("click", function(e) {
+        location.href = "/admin/changeClassList";
+    });
+
 });

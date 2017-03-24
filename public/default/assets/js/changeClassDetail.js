@@ -1,47 +1,11 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnAdminEnrollExam").addClass("active");
-    // $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
-    // $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+    $("#btnChangeClass").addClass("active");
     addValidation();
 });
 
 function addValidation(callback) {
-    $('#studentInfo').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'studentName': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '学生姓名不能为空'
-                    },
-                    stringLength: {
-                        min: 2,
-                        max: 30,
-                        message: '学生姓名在2-30个字符之间'
-                    }
-                }
-            },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '手机号不能为空'
-                    },
-                    stringLength: {
-                        min: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
-            }
-        }
-    });
-
     $('#enrollInfo').formValidation({
         // List of fields and their validation rules
         fields: {
@@ -74,16 +38,60 @@ function addValidation(callback) {
                     }
                 }
             },
-            'examName': {
+            'trainName': {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
-                        message: '测试名称不能为空'
+                        message: '课程名称不能为空'
                     },
                     stringLength: {
                         min: 2,
                         max: 30,
-                        message: '测试名称在2-30个字符之间'
+                        message: '课程名称在2-30个字符之间'
+                    }
+                }
+            },
+            'trainPrice': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '培训费不能为空'
+                    },
+                    numeric: {
+                        message: '填写的不是数字'
+                    }
+                }
+            },
+            'materialPrice': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '教材费不能为空'
+                    },
+                    numeric: {
+                        message: '填写的不是数字'
+                    }
+                }
+            },
+            'discount': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '折扣不能为空'
+                    },
+                    numeric: {
+                        message: '填写的不是数字',
+                    }
+                }
+            },
+            'totalPrice': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '总费用不能为空'
+                    },
+                    numeric: {
+                        message: '填写的不是数字'
                     }
                 }
             }
@@ -91,41 +99,26 @@ function addValidation(callback) {
     });
 };
 
-$("#btnAddStudent").on("click", function(e) {
-    var validator = $('#studentInfo').data('formValidation').validate();
-    if (validator.isValid()) {
-        var postURI = "/admin/studentAccount/newStudent",
-            postObj = {
-                name: $('#studentInfo #studentName').val(),
-                mobile: $('#studentInfo #mobile').val(),
-                sex: $('#studentInfo #sex').val()
-            };
-        $.post(postURI, postObj, function(data) {
-            if (data && data.sucess) {
-                showAlert("添加成功");
-            } else {
-                showAlert(data.error);
-            }
-        });
-    }
-});
-
 $("#btnEnroll").on("click", function(e) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/adminEnrollExam/enroll",
+        var postURI = "/admin/adminEnrollTrain/changeClass",
             postObj = {
                 studentId: $('#enrollInfo #studentId').val(),
                 studentName: $('#enrollInfo #studentName').val(),
                 mobile: $('#enrollInfo #mobile').val(),
-                examId: $('#enrollInfo #examId').val(),
-                examName: $('#enrollInfo #examName').val(),
-                examCategoryId: $('#enrollInfo #examCategoryId').val(),
-                examCategoryName: $('#enrollInfo #examCategoryName').val()
+                trainId: $('#enrollInfo #trainId').val(),
+                oldTrainId: $('#enrollInfo #oldTrainId').val(),
+                trainName: $('#enrollInfo #trainName').val(),
+                trainPrice: $('#enrollInfo #trainPrice').val(),
+                materialPrice: $('#enrollInfo #materialPrice').val(),
+                discount: $('#enrollInfo #discount').val(),
+                totalPrice: $('#enrollInfo #totalPrice').val(),
+                oldOrderId: $('#enrollInfo #oldOrderId').val()
             };
         $.post(postURI, postObj, function(data) {
             if (data && data.sucess) {
-                showAlert("报名成功");
+                showAlert("调班成功");
             } else {
                 showAlert(data.error);
             }
@@ -174,26 +167,30 @@ function openStudent(p) {
     });
 };
 
-function openExam(p) {
-    $('#selectModal #selectModalLabel').text("选择测试");
+function openTrain(p) {
+    $('#selectModal #selectModalLabel').text("选择课程");
     var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
     $selectBody.empty();
-    $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
-    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
-        if (data && data.examClasss.length > 0) {
-            data.examClasss.forEach(function(examClass) {
-                $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
-                    '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
-                    examClass.examCount + '</td></tr>');
+    $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/类型</th><th width="180px">培训费/教材费</th><th width="120px">报名情况</th></tr>');
+    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+        if (data && data.trainClasss.length > 0) {
+            data.trainClasss.forEach(function(trainClass) {
+                var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
+                    price = trainClass.trainPrice + "/" + trainClass.materialPrice,
+                    countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
+                $selectBody.append('<tr data-obj=' + JSON.stringify(trainClass) + '><td>' + trainClass.name +
+                    '</td><td>' + grade +
+                    '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
             });
             setSelectEvent(function(entity) {
-                $('#enrollInfo #examName').val(entity.name); //
-                $('#enrollInfo #examId').val(entity._id); //
-                $('#enrollInfo #examCategoryName').val(entity.examCategoryName); //
-                $('#enrollInfo #examCategoryId').val(entity.examCategoryId); //
+                $('#enrollInfo #trainName').val(entity.name); //
+                $('#enrollInfo #trainId').val(entity._id); //
+                $('#enrollInfo #trainPrice').val(entity.trainPrice); //
+                $('#enrollInfo #materialPrice').val(entity.materialPrice); //
                 $('#selectModal').modal('hide');
+                setPrice();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -206,6 +203,7 @@ function openExam(p) {
 var openEntity = "student";
 $("#panel_btnStudent").on("click", function(e) {
     openEntity = "student";
+    $('#selectModal .modal-dialog').removeClass("modal-lg");
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
         '<label for="studentName" class="control-label">姓名:</label>' +
@@ -216,21 +214,22 @@ $("#panel_btnStudent").on("click", function(e) {
     openStudent();
 });
 
-$("#panel_btnExam").on("click", function(e) {
-    openEntity = "exam";
+$("#panel_btnTrain").on("click", function(e) {
+    openEntity = "train";
+    $('#selectModal .modal-dialog').addClass("modal-lg");
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
-        '<label for="examName" class="control-label">名称:</label>' +
-        '<input type="text" maxlength="30" class="form-control" name="examName" id="examName"></div></div>' +
+        '<label for="trainName" class="control-label">名称:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="trainName" id="trainName"></div></div>' +
         '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
-    openExam();
+    openTrain();
 });
 
 $("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
     if (openEntity == "student") {
         openStudent();
-    } else if (openEntity == "exam") {
-        openExam();
+    } else if (openEntity == "train") {
+        openTrain();
     }
 });
 
@@ -238,8 +237,8 @@ $("#selectModal .paging .prepage").on("click", function(e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     if (openEntity == "student") {
         openStudent(page);
-    } else if (openEntity == "exam") {
-        openExam(page);
+    } else if (openEntity == "train") {
+        openTrain(page);
     }
 });
 
@@ -247,7 +246,18 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     if (openEntity == "student") {
         openStudent(page);
-    } else if (openEntity == "exam") {
-        openExam(page);
+    } else if (openEntity == "train") {
+        openTrain(page);
     }
 });
+
+function setPrice() {
+    var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
+        discount = parseFloat($("#enrollInfo #discount").val()),
+        realPrice = (trainPrice * discount / 100).toFixed(2);
+
+    $("#enrollInfo #totalPrice").val(realPrice);
+};
+
+$("#enrollInfo #trainPrice").on("change blur", setPrice);
+$("#enrollInfo #discount").on("change blur", setPrice);

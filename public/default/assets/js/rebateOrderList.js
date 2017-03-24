@@ -22,28 +22,15 @@ function searchOrder(p) {
     $selectBody.empty();
     $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
-            var getStatus = function(isSucceed) {
-                    switch (isSucceed) {
-                        case 1:
-                            return "已报名"
-                            break;
-                        case 9:
-                            return "已取消"
-                            break;
-                        case 7:
-                            return "已退费"
-                            break;
-                    }
-                },
-                getButtons = function(isPayed, isSucceed) {
-                    if (isPayed && isSucceed !== 9) {
-                        return '<a class="btn btn-default btnRebate">退费</a>';
-                    }
-                    return '';
-                };
+            var getButtons = function(isPayed, isSucceed) {
+                if (isPayed && isSucceed !== 9) {
+                    return '<a class="btn btn-default btnRebate">退费</a>';
+                }
+                return '';
+            };
             data.adminEnrollTrains.forEach(function(trainOrder) {
                 $selectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
-                    getStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
+                    getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div data-obj=' +
                     JSON.stringify(trainOrder) + ' class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
@@ -68,25 +55,6 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     searchOrder(page);
 });
-
-
-function showAlert(msg) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-    $('#confirmModal #confirmModalLabel').text("提示");
-    $('#confirmModal .modal-body').text(msg);
-
-    $('#confirmModal .modal-footer .btn-default').text("确定");
-    $('#confirmModal #btnConfirmSave').hide();
-};
-
-function showComfirm(msg) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-    $('#confirmModal #confirmModalLabel').text("确认");
-    $('#confirmModal .modal-body').text(msg);
-
-    $('#confirmModal .modal-footer .btn-default').text("取消");
-    $('#confirmModal #btnConfirmSave').show();
-};
 
 function destroy() {
     var validator = $('#myModal').data('formValidation');

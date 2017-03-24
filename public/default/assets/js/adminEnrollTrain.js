@@ -133,24 +133,6 @@ function addValidation(callback) {
     });
 };
 
-function showAlert(msg) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-    $('#confirmModal #confirmModalLabel').text("提示");
-    $('#confirmModal .modal-body').text(msg);
-
-    $('#confirmModal .modal-footer .btn-default').text("确定");
-    $('#confirmModal #btnConfirmSave').hide();
-};
-
-function showComfirm(msg) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-    $('#confirmModal #confirmModalLabel').text("确认");
-    $('#confirmModal .modal-body').text(msg);
-
-    $('#confirmModal .modal-footer .btn-default').text("取消");
-    $('#confirmModal #btnConfirmSave').show();
-};
-
 $("#btnAddStudent").on("click", function(e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
