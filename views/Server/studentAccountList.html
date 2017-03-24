@@ -1,4 +1,4 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -24,7 +24,7 @@
                 <td>
                     {{ studentAccount.name }}
                 </td>
-                 <td>
+                <td>
                     {{ studentAccount.address }}
                 </td>
                 <td>
@@ -39,8 +39,7 @@
     </table>
 </div>
 <input type="hidden" id="total" value="{{ total }}" />
-<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %}
-{% endblock %} {% block modal %}
+<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %} {% endblock %} {% block modal %}
 <!-- Modal -->
 <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">

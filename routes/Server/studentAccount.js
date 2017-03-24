@@ -14,7 +14,7 @@ module.exports = function(app) {
                 studentAccounts = [];
             }
             res.render('Server/studentAccountList.html', {
-                title: '>校区列表',
+                title: '>账号管理',
                 user: req.session.user,
                 studentAccounts: studentAccounts,
                 total: total,
@@ -25,45 +25,45 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/admin/studentAccount/add', checkLogin);
-    app.post('/admin/studentAccount/add', function(req, res) {
-        var studentAccount = new StudentAccount({
-            name: req.body.name,
-            password: req.body.password || "111111"
-        });
+    // app.post('/admin/studentAccount/add', checkLogin);
+    // app.post('/admin/studentAccount/add', function(req, res) {
+    //     var studentAccount = new StudentAccount({
+    //         name: req.body.name,
+    //         password: req.body.password || "111111"
+    //     });
 
-        studentAccount.save(function(err, studentAccount) {
-            if (err) {
-                studentAccount = {};
-            }
-            res.jsonp(studentAccount);
-        });
-    });
+    //     studentAccount.save(function(err, studentAccount) {
+    //         if (err) {
+    //             studentAccount = {};
+    //         }
+    //         res.jsonp(studentAccount);
+    //     });
+    // });
 
-    app.post('/admin/studentAccount/edit', checkLogin);
-    app.post('/admin/studentAccount/edit', function(req, res) {
-        var studentAccount = new StudentAccount({
-            name: req.body.name
-        });
+    // app.post('/admin/studentAccount/edit', checkLogin);
+    // app.post('/admin/studentAccount/edit', function(req, res) {
+    //     var studentAccount = new StudentAccount({
+    //         name: req.body.name
+    //     });
 
-        studentAccount.update(req.body.id, function(err, studentAccount) {
-            if (err) {
-                studentAccount = {};
-            }
-            res.jsonp(studentAccount);
-        });
-    });
+    //     studentAccount.update(req.body.id, function(err, studentAccount) {
+    //         if (err) {
+    //             studentAccount = {};
+    //         }
+    //         res.jsonp(studentAccount);
+    //     });
+    // });
 
-    app.post('/admin/studentAccount/delete', checkLogin);
-    app.post('/admin/studentAccount/delete', function(req, res) {
-        StudentAccount.delete(req.body.id, function(err, studentAccount) {
-            if (err) {
-                res.jsonp({ error: err });
-                return;
-            }
-            res.jsonp({ sucess: true });
-        });
-    });
+    // app.post('/admin/studentAccount/delete', checkLogin);
+    // app.post('/admin/studentAccount/delete', function(req, res) {
+    //     StudentAccount.delete(req.body.id, function(err, studentAccount) {
+    //         if (err) {
+    //             res.jsonp({ error: err });
+    //             return;
+    //         }
+    //         res.jsonp({ sucess: true });
+    //     });
+    // });
 
     app.post('/admin/studentAccount/newStudent', checkLogin);
     app.post('/admin/studentAccount/newStudent', function(req, res) {

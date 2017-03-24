@@ -6,7 +6,7 @@ $(document).ready(function() {
         location.href = "/admin/trainClassList";
     });
     $("#header_btnStudent").on("click", function(e) {
-        location.href = "/admin/schoolAreaList";
+        location.href = "/admin/studentAccountList";
     });
     $("#header_btnFinancial").on("click", function(e) {
         location.href = "/admin/schoolAreaList";

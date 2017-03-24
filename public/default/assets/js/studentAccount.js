@@ -1,20 +1,19 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnAdmin").addClass("active");
+    $("#left_btnAccount").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 });
 
-function destroy(){
+function destroy() {
     var validator = $('#myModal').data('formValidation');
-    if(validator)
-    {
+    if (validator) {
         validator.destroy();
     }
 };
 
-function addValidation(callback){
+function addValidation(callback) {
     $('#myModal').formValidation({
         // List of fields and their validation rules
         fields: {
@@ -57,13 +56,12 @@ $("#btnAdd").on("click", function(e) {
 
 $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
-    if(validator.isValid())
-    {
+    if (validator.isValid()) {
         var postURI = "/admin/studentAccount/add",
             postObj = {
-            name: $('#name').val(),
-            address: $('#address').val()
-        };
+                name: $('#name').val(),
+                address: $('#address').val()
+            };
         if (!isNew) {
             postURI = "/admin/studentAccount/edit";
             postObj.id = $('#id').val();
@@ -71,11 +69,10 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
-                $('#gridBody').append($("<tr id="+data._id+"><td>" + data.name + "</td><td>" + data.address + "</td><td><div data-obj='" + JSON.stringify(data) +
+                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>"));
-            }
-            else{
-                var name = $('#'+data._id+' td:first-child');
+            } else {
+                var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);
                 name.next().text(data.address);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
