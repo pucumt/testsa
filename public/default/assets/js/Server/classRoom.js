@@ -1,10 +1,55 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnClassroom").addClass("active");
+    $("#left_btnClassroom").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    search();
 });
+
+//------------search funfunction
+var $mainSelectBody = $('.content.mainModal table tbody');
+var getButtons = function() {
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    return buttons;
+};
+
+function search(p) {
+    var filter = {
+            name: $(".mainModal #InfoSearch #Name").val()
+        },
+        pStr = p ? "p=" + p : "";
+    $mainSelectBody.empty();
+    $.post("/admin/classRoomList/search?" + pStr, filter, function(data) {
+        if (data && data.classRooms.length > 0) {
+
+            data.classRooms.forEach(function(classRoom) {
+                $mainSelectBody.append('<tr id=' + classRoom._id + '><td>' + classRoom.name + '</td><td>' +
+                    classRoom.sCount + '</td><td>' + classRoom.schoolArea + '</td><td><div data-obj=' +
+                    JSON.stringify(classRoom) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+            });
+        }
+        $("#mainModal #total").val(data.total);
+        $("#mainModal #page").val(data.page);
+        setPaging("#mainModal", data);
+    });
+};
+
+$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+    search();
+});
+
+$("#mainModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) - 1;
+    search(page);
+});
+
+$("#mainModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) + 1;
+    search(page);
+});
+//------------end
 
 function destroy() {
     var validator = $('#myModal').data('formValidation');
@@ -62,11 +107,11 @@ $("#btnAdd").on("click", function(e) {
     destroy();
     addValidation();
     resetSchool();
-    $('#name').removeAttr("disabled");
+    $('#myModal #name').removeAttr("disabled");
     $('#myModalLabel').text("新增教室");
-    $('#name').val("");
-    $('#sCount').val("");
-    $('#school').val("");
+    $('#myModal #name').val("");
+    $('#myModal #sCount').val("");
+    $('#myModal #school').val("");
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -75,14 +120,14 @@ $("#btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/classRoom/add",
             postObj = {
-                name: $('#name').val(),
-                sCount: $('#sCount').val(),
-                schoolId: $('#school').val(),
-                schoolArea: $('#school').find("option:selected").text()
+                name: $('#myModal #name').val(),
+                sCount: $('#myModal #sCount').val(),
+                schoolId: $('#myModal #school').val(),
+                schoolArea: $('#myModal #school').find("option:selected").text()
             };
         if (!isNew) {
             postURI = "/admin/classRoom/edit";
-            postObj.id = $('#id').val();
+            postObj.id = $('#myModal #id').val();
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
@@ -107,13 +152,13 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
-    $('#myModalLabel').text("修改教室");
-    $('#name').val(entity.name);
-    $('#sCount').val(entity.sCount);
-    $('#school').val(entity.schoolArea);
+    $('#myModal #name').attr("disabled", "disabled");
+    $('#myModal #myModalLabel').text("修改教室");
+    $('#myModal #name').val(entity.name);
+    $('#myModal #sCount').val(entity.sCount);
+    $('#myModal #school').val(entity.schoolArea);
     resetSchool(entity.schoolId);
-    $('#id').val(entity._id);
+    $('#myModal #id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 

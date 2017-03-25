@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnExamClass").addClass("active");
+    $("#left_btnExamClass").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
@@ -12,7 +12,69 @@ $(document).ready(function() {
 
         }
     });
+    searchExams();
 });
+
+//------------search funfunction
+
+var $mainSelectBody = $('.content.mainModal table tbody');
+var getButtons = function(isWeixin) {
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    if (isWeixin == 1) {
+        buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
+    } else {
+        buttons += '<a class="btn btn-default btnPublish">发布</a>';
+    }
+    return buttons;
+};
+var getClassStatus = function(isWeixin) {
+    if (isWeixin == 1) {
+        return "发布";
+    } else if (isWeixin == 9) {
+        return "停用";
+    } else {
+        return "新建";
+    }
+
+};
+
+function searchExams(p) {
+    var filter = {
+            name: $(".mainModal #InfoSearch #examName").val()
+        },
+        pStr = p ? "p=" + p : "";
+    $mainSelectBody.empty();
+    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+        if (data && data.examClasss.length > 0) {
+
+            data.examClasss.forEach(function(examClass) {
+                $mainSelectBody.append('<tr id=' + examClass._id + '><td>' + examClass.name + '</td><td>' +
+                    getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
+                    '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
+                    examClass.enrollCount + '</td><td><div data-obj=' +
+                    JSON.stringify(examClass) + ' class="btn-group">' + getButtons(examClass.isWeixin) + '</div></td></tr>');
+            });
+        }
+        $("#mainModal #total").val(data.total);
+        $("#mainModal #page").val(data.page);
+        setPaging("#mainModal", data);
+    });
+};
+
+$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+    searchExams();
+});
+
+$("#mainModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) - 1;
+    searchExams(page);
+});
+
+$("#mainModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) + 1;
+    searchExams(page);
+});
+//------------end
 
 function destroy() {
     var validator = $('#myModal').data('formValidation');

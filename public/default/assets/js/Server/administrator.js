@@ -1,20 +1,19 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnAdmin").addClass("active");
+    $("#left_btnAdmin").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 })
 
-function destroy(){
+function destroy() {
     var validator = $('#myModal').data('formValidation');
-    if(validator)
-    {
+    if (validator) {
         validator.destroy();
     }
 }
 
-function addValidation(callback){
+function addValidation(callback) {
     var userValidator = {
         notEmpty: {
             message: '用户名不能为空'
@@ -29,40 +28,39 @@ function addValidation(callback){
             message: '用户名只能是字母数字和下划线'
         }
     };
-    if(callback)
-    {
+    if (callback) {
         callback(userValidator);
     }
     $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'user-name': {
-                trigger: "blur change",
-                validators: userValidator
-            },
-            'user-pwd': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '密码不能为空'
-                    },
-                    stringLength: {
-                        min: 6,
-                        max: 15,
-                        message: '密码在6-15个字符之间'
-                    },
+            // List of fields and their validation rules
+            fields: {
+                'user-name': {
+                    trigger: "blur change",
+                    validators: userValidator
+                },
+                'user-pwd': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 15,
+                            message: '密码在6-15个字符之间'
+                        },
+                    }
                 }
             }
-        }
-    })
-    .on('success.form.fv', function(e) {
-        // Prevent form submission
-        e.preventDefault();
-        addUser();
-    });
+        })
+        .on('success.form.fv', function(e) {
+            // Prevent form submission
+            e.preventDefault();
+            addUser();
+        });
 }
 
-function addUser(){
+function addUser() {
     var postURI = "/admin/user/add";
     if (!isNew) {
         postURI = "/admin/user/edit";
@@ -82,7 +80,7 @@ function addUser(){
 $("#btnAdd").on("click", function(e) {
     isNew = true;
     destroy();
-    addValidation(function(validator){
+    addValidation(function(validator) {
         validator.remote = {
             message: '用户名已经存在',
             url: '/admin/user/find',
@@ -91,7 +89,7 @@ $("#btnAdd").on("click", function(e) {
                     username: $('#user-name').val()
                 };
             },
-            type: 'POST'    
+            type: 'POST'
         };
     });
 

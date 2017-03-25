@@ -1,10 +1,54 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnTeacher").addClass("active");
+    $("#left_btnTeacher").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    search();
 });
+
+//------------search funfunction
+var $mainSelectBody = $('.content.mainModal table tbody');
+var getButtons = function() {
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    return buttons;
+};
+
+function search(p) {
+    var filter = {
+            name: $(".mainModal #InfoSearch #Name").val()
+        },
+        pStr = p ? "p=" + p : "";
+    $mainSelectBody.empty();
+    $.post("/admin/teacher/search?" + pStr, filter, function(data) {
+        if (data && data.teachers.length > 0) {
+            data.teachers.forEach(function(teacher) {
+                $mainSelectBody.append('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' +
+                    teacher.mobile + '</td><td>' + teacher.address + '</td><td><div data-obj=' +
+                    JSON.stringify(teacher) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+            });
+        }
+        $("#mainModal #total").val(data.total);
+        $("#mainModal #page").val(data.page);
+        setPaging("#mainModal", data);
+    });
+};
+
+$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+    search();
+});
+
+$("#mainModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) - 1;
+    search(page);
+});
+
+$("#mainModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) + 1;
+    search(page);
+});
+//------------end
 
 function destroy() {
     var validator = $('#myModal').data('formValidation');
@@ -55,11 +99,11 @@ $("#btnAdd").on("click", function(e) {
     isNew = true;
     destroy();
     addValidation();
-    $('#name').removeAttr("disabled");
+    $('#myModal #name').removeAttr("disabled");
     $('#myModalLabel').text("新增老师");
-    $('#name').val("");
-    $('#mobile').val("");
-    $('#address').val("");
+    $('#myModal #name').val("");
+    $('#myModal #mobile').val("");
+    $('#myModal #address').val("");
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -68,9 +112,9 @@ $("#btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/teacher/add",
             postObj = {
-                name: $('#name').val(),
-                mobile: $('#mobile').val(),
-                address: $('#address').val()
+                name: $('#myModal #name').val(),
+                mobile: $('#myModal #mobile').val(),
+                address: $('#myModal #address').val()
             };
         if (!isNew) {
             postURI = "/admin/teacher/edit";
@@ -99,12 +143,12 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
+    $('#myModal #name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改老师");
-    $('#name').val(entity.name);
-    $('#mobile').val(entity.mobile);
-    $('#address').val(entity.address);
-    $('#id').val(entity._id);
+    $('#myModal #name').val(entity.name);
+    $('#myModal #mobile').val(entity.mobile);
+    $('#myModal #address').val(entity.address);
+    $('#myModal #id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 

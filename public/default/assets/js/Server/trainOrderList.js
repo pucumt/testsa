@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnTrainOrder").addClass("active");
+    $("#left_btnTrainOrder").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
     searchOrder();
 });

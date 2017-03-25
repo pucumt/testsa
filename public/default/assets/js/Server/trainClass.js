@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnTrainClass").addClass("active");
+    $("#left_btnTrainClass").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
     $("#selectModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -22,8 +22,73 @@ $(document).ready(function() {
 
         }
     });
+
+    searchClass();
 });
 
+//------------search funfunction
+
+var $mainSelectBody = $('.content.mainModal table tbody');
+var getButtons = function(isWeixin) {
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    if (isWeixin == 1) {
+        buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
+    } else {
+        buttons += '<a class="btn btn-default btnPublish">发布</a>';
+    }
+    return buttons;
+};
+var getClassStatus = function(isWeixin) {
+    if (isWeixin == 1) {
+        return "发布";
+    } else if (isWeixin == 9) {
+        return "停用";
+    } else {
+        return "新建";
+    }
+
+};
+
+function searchClass(p) {
+    var filter = {
+            name: $(".mainModal #InfoSearch #className").val()
+        },
+        pStr = p ? "p=" + p : "";
+    $mainSelectBody.empty();
+    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+        if (data && data.trainClasss.length > 0) {
+
+            data.trainClasss.forEach(function(trainClass) {
+                $mainSelectBody.append('<tr id=' + trainClass._id + '><td>' + trainClass.name + '</td><td>' +
+                    getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.trainPrice + '</td><td>' + trainClass.materialPrice +
+                    '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
+                    trainClass.categoryName + '</td><td><div data-obj=' +
+                    JSON.stringify(trainClass) + ' class="btn-group">' + getButtons(trainClass.isWeixin) + '</div></td></tr>');
+            });
+        }
+        $("#mainModal #total").val(data.total);
+        $("#mainModal #page").val(data.page);
+        setPaging("#mainModal", data);
+    });
+};
+
+$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+    searchClass();
+});
+
+$("#mainModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) - 1;
+    searchClass(page);
+});
+
+$("#mainModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) + 1;
+    searchClass(page);
+});
+//------------end
+
+
+//------------new class
 function destroy() {
     var validator = $('#myModal').data('formValidation');
     if (validator) {
@@ -200,34 +265,7 @@ function resetDropDown(objs) {
     });
 };
 
-$("#btnAdd").on("click", function(e) {
-    isNew = true;
-    destroy();
-    addValidation();
-    $('#name').removeAttr("disabled");
-    $('#myModalLabel').text("新增课程");
-    $('#name').val("");
-    $('#trainPrice').val(0);
-    $('#materialPrice').val(0);
-    $('#courseStartDate').val("");
-    $('#courseEndDate').val("");
-    $('#courseTime').val("");
-    $('#totalStudentCount').val(0);
-    $('#totalClassCount').val(0);
-    $('#courseContent').val("");
-    $('#classRoom').val(""); //
-    $('#classRoomid').val(""); //
-    $('#school').val(""); //
-    $('#schoolid').val(""); //
-    $('#teacher').val(""); //
-    $('#teacherid').val(""); //
-    $('#minScore').val(0);
-    resetDropDown();
-    $("#myModal").find(".modal-body").height($(window).height() - 189);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-});
-
-$("#btnSave").on("click", function(e) {
+$("#myModal #btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/trainClass/add",
@@ -272,17 +310,8 @@ $("#btnSave").on("click", function(e) {
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
             } else {
                 var name = $('#' + data._id + ' td:first-child');
-                var pubstr = "新建";
-                switch (data.isWeixin) {
-                    case 1:
-                        pubstr = "发布";
-                        break;
-                    case 9:
-                        pubstr = "停用";
-                        break;
-                }
                 name.text(data.name);
-                var $pub = name.next().text(pubstr),
+                var $pub = name.next().text(getClassStatus(data.isWeixin)),
                     $trainPrice = $pub.next().text(data.trainPrice),
                     $materialPrice = $trainPrice.next().text(data.materialPrice),
                     $gradeName = $materialPrice.next().text(data.gradeName),
@@ -294,8 +323,37 @@ $("#btnSave").on("click", function(e) {
         });
     }
 });
+//------------end
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+//------------main form events
+$("#btnAdd").on("click", function(e) {
+    isNew = true;
+    destroy();
+    addValidation();
+    $('#name').removeAttr("disabled");
+    $('#myModalLabel').text("新增课程");
+    $('#name').val("");
+    $('#trainPrice').val(0);
+    $('#materialPrice').val(0);
+    $('#courseStartDate').val("");
+    $('#courseEndDate').val("");
+    $('#courseTime').val("");
+    $('#totalStudentCount').val(0);
+    $('#totalClassCount').val(0);
+    $('#courseContent').val("");
+    $('#classRoom').val(""); //
+    $('#classRoomid').val(""); //
+    $('#school').val(""); //
+    $('#schoolid').val(""); //
+    $('#teacher').val(""); //
+    $('#teacherid').val(""); //
+    $('#minScore').val(0);
+    resetDropDown();
+    $("#myModal").find(".modal-body").height($(window).height() - 189);
+    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+});
+
+$(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     isNew = false;
     destroy();
     addValidation();
@@ -327,7 +385,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
     $('#confirmModal .modal-body').text("确定要删除吗?");
     $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
 
@@ -345,7 +403,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnPublish", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
     $('#confirmModal .modal-body').text("确定要发布吗?");
     $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
 
@@ -367,7 +425,7 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnUnPublish", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
     $('#confirmModal .modal-body').text("确定要停用吗?");
     $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
 
@@ -389,40 +447,66 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
     });
 });
 
+//------------end
+
+//------------select Form
 var $selectHeader = $('#selectModal .modal-body table thead');
 var $selectBody = $('#selectModal .modal-body table tbody');
+var $selectSearch = $('#selectModal #InfoSearch');
 
-
-$("#modal_btnClassRoom").on("click", function(e) {
+function searchRoom(p) {
+    var filter = {
+            name: $("#selectModal #InfoSearch #Name").val()
+        },
+        pStr = p ? "p=" + p : "";
     $('#selectModal #selectModalLabel').text("选择教室");
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th style="width:50%">教室名称</th><th>校区</th></tr>');
-    $.get("/admin/classRoomList/withoutpage", function(data) {
-        if (data && data.length > 0) {
-            data.forEach(function(classRoom) {
+    $.post("/admin/classRoomList/search?" + pStr, filter, function(data) {
+        if (data && data.classRooms.length > 0) {
+            data.classRooms.forEach(function(classRoom) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(classRoom) + '><td>' + classRoom.name + '</td><td>' + classRoom.schoolArea + '</td></tr>');
             });
             setSelectEvent($selectBody, function(entity) {
-                $('#classRoom').val(entity.name); //
-                $('#classRoomid').val(entity._id); //
-                $('#school').val(entity.schoolArea); //
-                $('#schoolid').val(entity.schoolId); //
+                $('#myModal #classRoom').val(entity.name); //
+                $('#myModal #classRoomid').val(entity._id); //
+                $('#myModal #school').val(entity.schoolArea); //
+                $('#myModal #schoolid').val(entity.schoolId); //
                 $('#selectModal').modal('hide');
             });
         }
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $("#selectModal #total").val(data.total);
+        $("#selectModal #page").val(data.page);
+        setPaging("#selectModal", data);
     });
+};
+
+var openEntity = "classRoom";
+$("#modal_btnClassRoom").on("click", function(e) {
+    openEntity = "classRoom";
+    $selectSearch.empty();
+    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
+        '<label for="Name" class="control-label">名称:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="Name" id="Name"></div></div>' +
+        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
+    searchRoom();
+    $("#selectModal .modal-body").height($(window).height() - 189);
+    $('#selectModal').modal({ backdrop: 'static', keyboard: false });
 });
 
-$("#modal_btnTeacher").on("click", function(e) {
+function searchTeacher(p) {
+    var filter = {
+            name: $("#selectModal #InfoSearch #Name").val()
+        },
+        pStr = p ? "p=" + p : "";
     $('#selectModal #selectModalLabel').text("选择老师");
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th style="width:50%">老师姓名</th></tr>');
-    $.get("/admin/teacher/withoutpage", function(data) {
-        if (data && data.length > 0) {
-            data.forEach(function(teacher) {
+    $.post("/admin/teacher/search?" + pStr, filter, function(data) {
+        if (data && data.teachers.length > 0) {
+            data.teachers.forEach(function(teacher) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(teacher) + '><td>' + teacher.name + '</td></tr>');
             });
             setSelectEvent($selectBody, function(entity) {
@@ -431,7 +515,48 @@ $("#modal_btnTeacher").on("click", function(e) {
                 $('#selectModal').modal('hide');
             });
         }
-        $("#selectModal .modal-body").height($(window).height() - 189);
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $("#selectModal #total").val(data.total);
+        $("#selectModal #page").val(data.page);
+        setPaging("#selectModal", data);
     });
+};
+
+$("#modal_btnTeacher").on("click", function(e) {
+    openEntity = "teacher";
+    $selectSearch.empty();
+    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
+        '<label for="Name" class="control-label">名字:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="Name" id="Name"></div></div>' +
+        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
+    searchTeacher();
+    $("#selectModal .modal-body").height($(window).height() - 189);
+    $('#selectModal').modal({ backdrop: 'static', keyboard: false });
 });
+
+
+$("#selectModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#selectModal #page").val()) - 1;
+    if (openEntity == "classRoom") {
+        searchRoom(page);
+    } else if (openEntity == "teacher") {
+        searchTeacher(page);
+    }
+});
+
+$("#selectModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#selectModal #page").val()) + 1;
+    if (openEntity == "classRoom") {
+        searchRoom(page);
+    } else if (openEntity == "teacher") {
+        searchTeacher(page);
+    }
+});
+
+$("#selectModal #InfoSearch").on("click", " #btnSearch", function(e) {
+    if (openEntity == "classRoom") {
+        searchRoom();
+    } else if (openEntity == "teacher") {
+        searchTeacher();
+    }
+});
+//------------end
