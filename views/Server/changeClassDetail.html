@@ -86,6 +86,12 @@
                         </div>
                     </div>
                     <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="comment" class="control-label">备注:</label>
+                            <textarea maxlength="1000" rows="3" class="form-control" name="comment" id="comment"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <input type="hidden" class="form-control" name="oldOrderId" id="oldOrderId" value={{order._id}}>
                         <button type="button" id="btnEnroll" class="btn btn-primary panelButton">调班</button>
                     </div>
@@ -166,5 +172,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/changeClassDetail.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/changeClassDetail.js"></script>
 {% endblock %}

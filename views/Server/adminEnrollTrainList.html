@@ -118,9 +118,13 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <button type="button" id="btnEnroll" class="btn btn-primary panelButton">报名</button>
+                        <div class="form-group">
+                            <label for="comment" class="control-label">备注:</label>
+                            <textarea maxlength="1000" rows="3" class="form-control" name="comment" id="comment"></textarea>
+                        </div>
                     </div>
                     <div class="col-md-6">
+                        <button type="button" id="btnEnroll" class="btn btn-primary panelButton">报名</button>
                     </div>
                 </div>
             </div>
@@ -199,5 +203,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/adminEnrollTrain.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminEnrollTrain.js"></script>
 {% endblock %}

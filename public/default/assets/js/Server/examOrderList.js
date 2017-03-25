@@ -34,7 +34,7 @@ function searchOrder(p) {
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
-        setPaging(data);
+        setPaging("#selectModal", data);
     });
 };
 

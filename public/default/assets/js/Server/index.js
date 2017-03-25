@@ -16,7 +16,7 @@ $(document).ready(function() {
     });
 });
 
-var getTrainOrderStatus = function(isSucceed) {
+window.getTrainOrderStatus = function(isSucceed) {
     switch (isSucceed) {
         case 1:
             return "已报名"
@@ -27,21 +27,28 @@ var getTrainOrderStatus = function(isSucceed) {
     }
 };
 
-
-function showAlert(msg) {
+window.showAlert = function(msg, title) {
     $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-    $('#confirmModal #confirmModalLabel').text("提示");
+    $('#confirmModal #confirmModalLabel').text(title || "提示");
     $('#confirmModal .modal-body').text(msg);
 
     $('#confirmModal .modal-footer .btn-default').text("确定");
     $('#confirmModal #btnConfirmSave').hide();
 };
 
-function showComfirm(msg) {
+window.showComfirm = function(msg, title) {
     $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-    $('#confirmModal #confirmModalLabel').text("确认");
+    $('#confirmModal #confirmModalLabel').text(title || "确认");
     $('#confirmModal .modal-body').text(msg);
 
     $('#confirmModal .modal-footer .btn-default').text("取消");
     $('#confirmModal #btnConfirmSave').show();
+};
+
+window.setSelectEvent = function($selectBody, callback) {
+    $selectBody.off("click").on("click", "tr", function(e) {
+        var obj = e.currentTarget;
+        var entity = $(obj).data("obj");
+        callback(entity);
+    });
 };

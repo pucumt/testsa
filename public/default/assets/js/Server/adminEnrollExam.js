@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnAdminEnrollExam").addClass("active");
+    $("#left_btnAdminEnrollExam").addClass("active");
     // $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     // $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
     addValidation();
@@ -137,14 +137,6 @@ var $selectHeader = $('#selectModal .modal-body table thead');
 var $selectBody = $('#selectModal .modal-body table tbody');
 var $selectSearch = $('#selectModal #InfoSearch');
 
-function setSelectEvent(callback) {
-    $selectBody.off("click").on("click", "tr", function(e) {
-        var obj = e.currentTarget;
-        var entity = $(obj).data("obj");
-        callback(entity);
-    });
-};
-
 function openStudent(p) {
     $('#selectModal #selectModalLabel').text("选择学生");
     var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
@@ -159,7 +151,7 @@ function openStudent(p) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');
             });
-            setSelectEvent(function(entity) {
+            setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
                 $('#enrollInfo #studentId').val(entity._id); //
                 $('#enrollInfo #mobile').val(entity.mobile); //
@@ -169,7 +161,7 @@ function openStudent(p) {
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
-        setPaging(data);
+        setPaging("#selectModal", data);
         $('#selectModal').modal({ backdrop: 'static', keyboard: false });
     });
 };
@@ -188,7 +180,7 @@ function openExam(p) {
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
                     examClass.examCount + '</td></tr>');
             });
-            setSelectEvent(function(entity) {
+            setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #examName').val(entity.name); //
                 $('#enrollInfo #examId').val(entity._id); //
                 $('#enrollInfo #examCategoryName').val(entity.examCategoryName); //
@@ -198,7 +190,7 @@ function openExam(p) {
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
-        setPaging(data);
+        setPaging("#selectModal", data);
         $('#selectModal').modal({ backdrop: 'static', keyboard: false });
     });
 };

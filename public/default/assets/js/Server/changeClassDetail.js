@@ -1,45 +1,11 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnAdminEnrollTrain").addClass("active");
+    $("#left_btnChangeClass").addClass("active");
     addValidation();
 });
 
 function addValidation(callback) {
-    $('#studentInfo').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'studentName': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '学生姓名不能为空'
-                    },
-                    stringLength: {
-                        min: 2,
-                        max: 30,
-                        message: '学生姓名在2-30个字符之间'
-                    }
-                }
-            },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '手机号不能为空'
-                    },
-                    stringLength: {
-                        min: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
-            }
-        }
-    });
-
     $('#enrollInfo').formValidation({
         // List of fields and their validation rules
         fields: {
@@ -133,43 +99,27 @@ function addValidation(callback) {
     });
 };
 
-$("#btnAddStudent").on("click", function(e) {
-    var validator = $('#studentInfo').data('formValidation').validate();
-    if (validator.isValid()) {
-        var postURI = "/admin/studentAccount/newStudent",
-            postObj = {
-                name: $('#studentInfo #studentName').val(),
-                mobile: $('#studentInfo #mobile').val(),
-                sex: $('#studentInfo #sex').val()
-            };
-        $.post(postURI, postObj, function(data) {
-            if (data && data.sucess) {
-                showAlert("添加成功");
-            } else {
-                showAlert(data.error);
-            }
-        });
-    }
-});
-
 $("#btnEnroll").on("click", function(e) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/adminEnrollTrain/enroll",
+        var postURI = "/admin/adminEnrollTrain/changeClass",
             postObj = {
                 studentId: $('#enrollInfo #studentId').val(),
                 studentName: $('#enrollInfo #studentName').val(),
                 mobile: $('#enrollInfo #mobile').val(),
                 trainId: $('#enrollInfo #trainId').val(),
+                oldTrainId: $('#enrollInfo #oldTrainId').val(),
                 trainName: $('#enrollInfo #trainName').val(),
                 trainPrice: $('#enrollInfo #trainPrice').val(),
                 materialPrice: $('#enrollInfo #materialPrice').val(),
                 discount: $('#enrollInfo #discount').val(),
-                totalPrice: $('#enrollInfo #totalPrice').val()
+                totalPrice: $('#enrollInfo #totalPrice').val(),
+                oldOrderId: $('#enrollInfo #oldOrderId').val(),
+                comment: $('#enrollInfo #comment').val()
             };
         $.post(postURI, postObj, function(data) {
             if (data && data.sucess) {
-                showAlert("报名成功");
+                showAlert("调班成功");
             } else {
                 showAlert(data.error);
             }
@@ -180,14 +130,6 @@ $("#btnEnroll").on("click", function(e) {
 var $selectHeader = $('#selectModal .modal-body table thead');
 var $selectBody = $('#selectModal .modal-body table tbody');
 var $selectSearch = $('#selectModal #InfoSearch');
-
-function setSelectEvent(callback) {
-    $selectBody.off("click").on("click", "tr", function(e) {
-        var obj = e.currentTarget;
-        var entity = $(obj).data("obj");
-        callback(entity);
-    });
-};
 
 function openStudent(p) {
     $('#selectModal #selectModalLabel').text("选择学生");
@@ -203,7 +145,7 @@ function openStudent(p) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');
             });
-            setSelectEvent(function(entity) {
+            setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
                 $('#enrollInfo #studentId').val(entity._id); //
                 $('#enrollInfo #mobile').val(entity.mobile); //
@@ -213,7 +155,7 @@ function openStudent(p) {
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
-        setPaging(data);
+        setPaging("#selectModal", data);
         $('#selectModal').modal({ backdrop: 'static', keyboard: false });
     });
 };
@@ -235,7 +177,7 @@ function openTrain(p) {
                     '</td><td>' + grade +
                     '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
             });
-            setSelectEvent(function(entity) {
+            setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #trainName').val(entity.name); //
                 $('#enrollInfo #trainId').val(entity._id); //
                 $('#enrollInfo #trainPrice').val(entity.trainPrice); //
@@ -246,7 +188,7 @@ function openTrain(p) {
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
-        setPaging(data);
+        setPaging("#selectModal", data);
         $('#selectModal').modal({ backdrop: 'static', keyboard: false });
     });
 };

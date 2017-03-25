@@ -392,13 +392,6 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
 var $selectHeader = $('#selectModal .modal-body table thead');
 var $selectBody = $('#selectModal .modal-body table tbody');
 
-function setSelectEvent(callback) {
-    $selectBody.off("click").on("click", "tr", function(e) {
-        var obj = e.currentTarget;
-        var entity = $(obj).data("obj");
-        callback(entity);
-    });
-};
 
 $("#modal_btnClassRoom").on("click", function(e) {
     $('#selectModal #selectModalLabel').text("选择教室");
@@ -410,7 +403,7 @@ $("#modal_btnClassRoom").on("click", function(e) {
             data.forEach(function(classRoom) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(classRoom) + '><td>' + classRoom.name + '</td><td>' + classRoom.schoolArea + '</td></tr>');
             });
-            setSelectEvent(function(entity) {
+            setSelectEvent($selectBody, function(entity) {
                 $('#classRoom').val(entity.name); //
                 $('#classRoomid').val(entity._id); //
                 $('#school').val(entity.schoolArea); //
@@ -432,7 +425,7 @@ $("#modal_btnTeacher").on("click", function(e) {
             data.forEach(function(teacher) {
                 $selectBody.append('<tr data-obj=' + JSON.stringify(teacher) + '><td>' + teacher.name + '</td></tr>');
             });
-            setSelectEvent(function(entity) {
+            setSelectEvent($selectBody, function(entity) {
                 $('#teacher').val(entity.name); //
                 $('#teacherid').val(entity._id); //
                 $('#selectModal').modal('hide');

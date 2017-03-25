@@ -23,7 +23,7 @@ function searchOrder(p) {
     $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             var getButtons = function(isPayed, isSucceed) {
-                if (isPayed && isSucceed !== 9) {
+                if (isPayed && isSucceed !== 9) { //isPayed &&
                     return '<a class="btn btn-default btnRebate">退费</a>';
                 }
                 return '';
@@ -38,7 +38,7 @@ function searchOrder(p) {
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
-        setPaging(data);
+        setPaging("#selectModal", data);
     });
 };
 
@@ -104,7 +104,8 @@ $("#btnSave").on("click", function(e) {
         var postURI = "/admin/adminEnrollTrain/rebate",
             postObj = {
                 Id: $('#myModal #Id').val(),
-                price: $('#myModal #price').val()
+                price: $('#myModal #price').val(),
+                comment: $('#myModal #comment').val()
             };
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');

@@ -139,7 +139,8 @@ module.exports = function(app) {
                                 materialPrice: req.body.materialPrice,
                                 discount: req.body.discount,
                                 totalPrice: req.body.totalPrice,
-                                isSucceed: 1
+                                isSucceed: 1,
+                                comment: req.body.comment
                             });
                             adminEnrollTrain.save()
                                 .then(function(enrollExam) {
@@ -182,7 +183,8 @@ module.exports = function(app) {
                 if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
                     var rebateEnrollTrain = new RebateEnrollTrain({
                         trainOrderId: req.body.Id,
-                        rebatePrice: req.body.price
+                        rebatePrice: req.body.price,
+                        comment: req.body.comment
                     });
                     return rebateEnrollTrain.save(req.body.id)
                         .then(function(data) {
@@ -195,7 +197,7 @@ module.exports = function(app) {
                             }
                         });
                 } else {
-                    res.jsonp({ error: "取消失败" });
+                    res.jsonp({ error: "退费失败" });
                     return;
                 }
             });
@@ -224,7 +226,8 @@ module.exports = function(app) {
                                 materialPrice: req.body.materialPrice,
                                 discount: req.body.discount,
                                 totalPrice: req.body.totalPrice,
-                                fromId: req.body.oldTrainId
+                                fromId: req.body.oldTrainId,
+                                comment: req.body.comment
                             });
                             return adminEnrollTrain.save();
                         } else {

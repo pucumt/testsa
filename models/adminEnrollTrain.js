@@ -19,7 +19,7 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     isDeleted: Boolean,
     orderDate: Date,
     cancelDate: Date,
-    cancelReason: String,
+    comment: String,
     fromId: String
 }, {
     collection: 'adminEnrollTrains'
@@ -124,7 +124,6 @@ AdminEnrollTrain.changeClass = function(id) {
         _id: id
     }, {
         isSucceed: 9,
-        cancelDate: new Date(),
-        cancelReason: '调班'
+        cancelDate: new Date()
     }).exec();
 };
