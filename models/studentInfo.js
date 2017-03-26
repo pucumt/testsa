@@ -93,3 +93,14 @@ StudentInfo.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return studentInfoModel.findOne(filter);
 };
+
+StudentInfo.deleteFilter = function(filter, callback) {
+    studentInfoModel.update(filter, {
+        isDeleted: true
+    }).exec(function(err, studentInfo) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, studentInfo);
+    });
+};

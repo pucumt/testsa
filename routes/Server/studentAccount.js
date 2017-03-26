@@ -16,6 +16,33 @@ module.exports = function(app) {
             res.render('Server/studentAccountList.html', {
                 title: '>账号管理',
                 user: req.session.user,
+                // studentAccounts: studentAccounts,
+                // total: total,
+                // page: page,
+                // isFirstPage: (page - 1) == 0,
+                // isLastPage: ((page - 1) * 14 + studentAccounts.length) == total
+            });
+        });
+    });
+
+    app.post('/admin/studentAccountList/search', checkLogin);
+    app.post('/admin/studentAccountList/search', function(req, res) {
+        //判断是否是第一页，并把请求的页数转换成 number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+
+        var filter = {};
+        if (req.body.name) {
+            var reg = new RegExp(req.body.name, 'i')
+            filter.name = {
+                $regex: reg
+            };
+        }
+        //查询并返回第 page 页的 20 篇文章
+        StudentAccount.getAll(null, page, filter, function(err, studentAccounts, total) {
+            if (err) {
+                studentAccounts = [];
+            }
+            res.jsonp({
                 studentAccounts: studentAccounts,
                 total: total,
                 page: page,
@@ -25,45 +52,62 @@ module.exports = function(app) {
         });
     });
 
-    // app.post('/admin/studentAccount/add', checkLogin);
-    // app.post('/admin/studentAccount/add', function(req, res) {
-    //     var studentAccount = new StudentAccount({
-    //         name: req.body.name,
-    //         password: req.body.password || "111111"
-    //     });
+    app.post('/admin/studentAccount/reset', checkLogin);
+    app.post('/admin/studentAccount/reset', function(req, res) {
+        var studentAccount = new StudentAccount({
+            password: "111111"
+        });
+        studentAccount.update(req.body.id, function(err, studentAccount) {
+            if (err) {
+                studentAccount = {};
+            }
+            res.jsonp({ sucess: true });
+            return;
+        });
+    });
 
-    //     studentAccount.save(function(err, studentAccount) {
-    //         if (err) {
-    //             studentAccount = {};
-    //         }
-    //         res.jsonp(studentAccount);
-    //     });
-    // });
+    app.post('/admin/studentAccount/edit', checkLogin);
+    app.post('/admin/studentAccount/edit', function(req, res) {
+        var filter = {
+            _id: { $ne: req.body.id },
+            name: req.body.name
+        };
+        StudentAccount.getFilter(filter)
+            .then(function(account) {
+                if (account) {
+                    res.jsonp({ error: "账号已经存在" });
+                    return;
+                } else {
+                    var studentAccount = new StudentAccount({ name: req.body.name });
+                    studentAccount.update(req.body.id, function(err, studentAccount) {
+                        if (err) {
+                            studentAccount = {};
+                        }
+                        res.jsonp(studentAccount);
+                        return;
+                    });
+                }
+            });
+    });
 
-    // app.post('/admin/studentAccount/edit', checkLogin);
-    // app.post('/admin/studentAccount/edit', function(req, res) {
-    //     var studentAccount = new StudentAccount({
-    //         name: req.body.name
-    //     });
-
-    //     studentAccount.update(req.body.id, function(err, studentAccount) {
-    //         if (err) {
-    //             studentAccount = {};
-    //         }
-    //         res.jsonp(studentAccount);
-    //     });
-    // });
-
-    // app.post('/admin/studentAccount/delete', checkLogin);
-    // app.post('/admin/studentAccount/delete', function(req, res) {
-    //     StudentAccount.delete(req.body.id, function(err, studentAccount) {
-    //         if (err) {
-    //             res.jsonp({ error: err });
-    //             return;
-    //         }
-    //         res.jsonp({ sucess: true });
-    //     });
-    // });
+    app.post('/admin/studentAccount/delete', checkLogin);
+    app.post('/admin/studentAccount/delete', function(req, res) {
+        //delete students first
+        var filter = { accountId: req.body.id };
+        StudentInfo.deleteFilter(filter, function(err, studentInfo) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            StudentAccount.delete(req.body.id, function(err, studentAccount) {
+                if (err) {
+                    res.jsonp({ error: err });
+                    return;
+                }
+                res.jsonp({ sucess: true });
+            });
+        })
+    });
 
     app.post('/admin/studentAccount/newStudent', checkLogin);
     app.post('/admin/studentAccount/newStudent', function(req, res) {

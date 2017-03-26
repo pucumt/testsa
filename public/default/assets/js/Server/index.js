@@ -27,8 +27,11 @@ window.getTrainOrderStatus = function(isSucceed) {
     }
 };
 
-window.showAlert = function(msg, title) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+window.showAlert = function(msg, title, isModal) {
+    if (!isModal) {
+        $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+    }
+
     $('#confirmModal #confirmModalLabel').text(title || "提示");
     $('#confirmModal .modal-body').text(msg);
 
@@ -36,8 +39,10 @@ window.showAlert = function(msg, title) {
     $('#confirmModal #btnConfirmSave').hide();
 };
 
-window.showComfirm = function(msg, title) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+window.showComfirm = function(msg, title, isModal) {
+    if (!isModal) {
+        $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+    }
     $('#confirmModal #confirmModalLabel').text(title || "确认");
     $('#confirmModal .modal-body').text(msg);
 
