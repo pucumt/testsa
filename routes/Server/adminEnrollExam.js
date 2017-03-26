@@ -1,5 +1,8 @@
 var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     ExamClass = require('../../models/examClass.js'),
+    StudentInfo = require('../../models/studentInfo.js'),
+    StudentAccount = require('../../models/studentAccount.js'),
+    ClassRoom = require('../../models/classRoom.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -16,6 +19,22 @@ module.exports = function(app) {
     app.get('/admin/examOrderList', function(req, res) {
         res.render('Server/examOrderList.html', {
             title: '>测试订单',
+            user: req.session.user
+        });
+    });
+
+    app.get('/admin/cardSearch', checkLogin);
+    app.get('/admin/cardSearch', function(req, res) {
+        res.render('Server/cardSearch.html', {
+            title: '>准考证查询',
+            user: req.session.user
+        });
+    });
+
+    app.get('/admin/ScoreInput', checkLogin);
+    app.get('/admin/ScoreInput', function(req, res) {
+        res.render('Server/ScoreInput.html', {
+            title: '>成绩录入',
             user: req.session.user
         });
     });
@@ -53,6 +72,26 @@ module.exports = function(app) {
                 isLastPage: ((page - 1) * 14 + adminEnrollExams.length) == total
             });
         });
+    });
+
+    app.post('/admin/adminEnrollExam/searchCard', checkLogin);
+    app.post('/admin/adminEnrollExam/searchCard', function(req, res) {
+        StudentAccount.getFilter({ name: req.body.mobile })
+            .then(function(account) {
+                if (account) {
+                    return StudentInfo.getFilter({ accountId: account._id, name: req.body.studentName });
+                }
+            })
+            .then(function(student) {
+                if (student) {
+                    return AdminEnrollExam.getAllWithoutPaging({ studentId: student._id, isSucceed: 1 });
+                }
+            })
+            .then(function(adminEnrollExams) {
+                res.jsonp({
+                    adminEnrollExams: adminEnrollExams
+                });
+            });
     });
 
     app.post('/admin/adminEnrollExam/add', checkLogin);
@@ -157,5 +196,47 @@ module.exports = function(app) {
                     return;
                 }
             });
+    });
+
+    app.post('/admin/adminEnrollExam/searchExam', checkLogin);
+    app.post('/admin/adminEnrollExam/searchExam', function(req, res) {
+        var returnResult = {};
+        AdminEnrollExam.get(req.body.id)
+            .then(function(examOrder) {
+                if (examOrder) {
+                    returnResult.examName = examOrder.examName;
+                    returnResult.classRoomId = examOrder.classRoomId;
+                    returnResult.classRoomName = examOrder.classRoomName;
+                    returnResult.examNo = examOrder.examNo;
+                    returnResult.score = examOrder.score;
+                    return ExamClass.get(examOrder.examId);
+                }
+            })
+            .then(function(examClass) {
+                if (examClass) {
+                    returnResult.examDate = examClass.examDate;
+                    returnResult.examTime = examClass.examTime;
+                    return ClassRoom.get(returnResult.classRoomId);
+                }
+            }).then(function(classRoom) {
+                if (classRoom) {
+                    returnResult.schoolArea = classRoom.schoolArea;
+                }
+                return res.jsonp(returnResult);
+            });
+    });
+
+    app.post('/admin/adminEnrollExam/ScoreInput', checkLogin);
+    app.post('/admin/adminEnrollExam/ScoreInput', function(req, res) {
+        var adminEnrollExam = new AdminEnrollExam({
+            score: req.body.score,
+        });
+
+        adminEnrollExam.update(req.body.id, function(err, adminEnrollExam) {
+            if (err) {
+                adminEnrollExam = {};
+            }
+            res.jsonp(adminEnrollExam);
+        });
     });
 }

@@ -15,7 +15,11 @@ var adminEnrollExamSchema = new mongoose.Schema({
     payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
     isDeleted: Boolean,
     orderDate: Date,
-    CancelDate: Date
+    CancelDate: Date,
+    score: Number,
+    classRoomId: String,
+    classRoomName: String,
+    examNo: Number
 }, {
     collection: 'adminEnrollExams'
 });
@@ -103,4 +107,20 @@ AdminEnrollExam.cancel = function(id, callback) {
         }
         callback(null, adminEnrollExam);
     });
+};
+
+//一次获取20个学区信息
+AdminEnrollExam.getAllWithoutPaging = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return adminEnrollExamModel.find(filter);
+};
+
+AdminEnrollExam.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return adminEnrollExamModel.findOne(filter);
 };

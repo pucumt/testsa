@@ -3,16 +3,16 @@ $(document).ready(function() {
         location.href = "/admin/studentAccountList";
     });
 
-    $("#btnCategory").on("click", function(e) {
-        location.href = "/admin/categoryList";
+    $("#left_btnStudent").on("click", function(e) {
+        location.href = "/admin/studentsList";
     });
 
-    $("#btnSubject").on("click", function(e) {
-        location.href = "/admin/subjectList";
+    $("#left_btnCard").on("click", function(e) {
+        location.href = "/admin/cardSearch";
     });
 
-    $("#btnExamClass").on("click", function(e) {
-        location.href = "/admin/examClassList";
+    $("#left_btnScoreInput").on("click", function(e) {
+        location.href = "/admin/ScoreInput";
     });
 
     $("#btnExamCategory").on("click", function(e) {

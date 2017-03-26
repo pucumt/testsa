@@ -12,6 +12,7 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     materialPrice: Number,
     discount: Number,
     totalPrice: Number,
+    realMaterialPrice: Number,
     rebatePrice: Number, //退费
     isSucceed: Number, //1 succeed, 9 canceled
     isPayed: Boolean,

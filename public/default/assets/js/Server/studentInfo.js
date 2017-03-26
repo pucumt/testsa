@@ -1,20 +1,62 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnAdmin").addClass("active");
+    $("#left_btnStudent").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    search();
 });
 
-function destroy(){
+//------------search funfunction
+var $mainSelectBody = $('.content.mainModal table tbody');
+var getButtons = function() {
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    return buttons;
+};
+
+function search(p) {
+    var filter = {
+            name: $(".mainModal #InfoSearch #Name").val()
+        },
+        pStr = p ? "p=" + p : "";
+    $mainSelectBody.empty();
+    $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+        if (data && data.studentInfos.length > 0) {
+            data.studentInfos.forEach(function(studentInfo) {
+                $mainSelectBody.append('<tr id=' + studentInfo._id + '><td>' + studentInfo.name + '</td><td>' + studentInfo.mobile + '</td><td><div data-obj=' +
+                    JSON.stringify(studentInfo) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+            });
+        }
+        $("#mainModal #total").val(data.total);
+        $("#mainModal #page").val(data.page);
+        setPaging("#mainModal", data);
+    });
+};
+
+$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+    search();
+});
+
+$("#mainModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) - 1;
+    search(page);
+});
+
+$("#mainModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) + 1;
+    search(page);
+});
+//------------end
+
+function destroy() {
     var validator = $('#myModal').data('formValidation');
-    if(validator)
-    {
+    if (validator) {
         validator.destroy();
     }
 };
 
-function addValidation(callback){
+function addValidation(callback) {
     $('#myModal').formValidation({
         // List of fields and their validation rules
         fields: {
@@ -22,62 +64,48 @@ function addValidation(callback){
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
-                        message: '校区不能为空'
-                    },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '校区在4-30个字符之间'
+                        message: '姓名不能为空'
                     }
                 }
             },
-            'address': {
+            'mobile': {
                 trigger: "blur change",
                 validators: {
                     stringLength: {
-                        max: 100,
-                        message: '地址不能超过100个字符'
+                        min: 11,
+                        message: '手机号必须是11位'
                     },
+                    integer: {
+                        message: '填写的不是数字',
+                    }
                 }
             }
         }
     });
 };
 
-$("#btnAdd").on("click", function(e) {
-    isNew = true;
-    destroy();
-    addValidation();
-    $('#name').removeAttr("disabled");
-    $('#myModalLabel').text("新增校区");
-    $('#name').val("");
-    $('#address').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-});
-
 $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
-    if(validator.isValid())
-    {
-        var postURI = "/admin/studentInfo/add",
+    if (validator.isValid()) {
+        var postURI = "/admin/studentInfo/edit",
             postObj = {
-            name: $('#name').val(),
-            address: $('#address').val()
-        };
-        if (!isNew) {
-            postURI = "/admin/studentInfo/edit";
-            postObj.id = $('#id').val();
-        }
+                name: $('#myModal #name').val(),
+                mobile: $('#myModal #mobile').val(),
+                studentNo: $('#myModal #studentNo').val(),
+                sex: $('#myModal #sex').val(),
+                School: $('#myModal #School').val(),
+                address: $('#myModal #address').val(),
+                discount: $('#myModal #discount').val(),
+                id: $('#myModal #id').val()
+            };
         $.post(postURI, postObj, function(data) {
-            $('#myModal').modal('hide');
-            if (isNew) {
-                $('#gridBody').append($("<tr id="+data._id+"><td>" + data.name + "</td><td>" + data.address + "</td><td><div data-obj='" + JSON.stringify(data) +
-                    "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>"));
-            }
-            else{
-                var name = $('#'+data._id+' td:first-child');
+            if (data.error) {
+                showAlert(data.error);
+            } else {
+                $('#myModal').modal('hide');
+                var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);
-                name.next().text(data.address);
+                name.next().text(data.mobile);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
                 $lastDiv.data("obj", data);
             }
@@ -91,19 +119,23 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
-    $('#myModalLabel').text("修改校区");
-    $('#name').val(entity.name);
-    $('#address').val(entity.address);
-    $('#id').val(entity._id);
+    $('#myModal #myModalLabel').text("修改信息");
+    $('#myModal #name').val(entity.name);
+    $('#myModal #mobile').val(entity.mobile);
+    $('#myModal #studentNo').val(entity.studentNo);
+    $('#myModal #sex').val(entity.sex ? 1 : 0);
+    $('#myModal #School').val(entity.School);
+    $('#myModal #address').val(entity.address);
+    $('#myModal #discount').val(entity.discount);
+    $('#myModal #id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
+    showComfirm("真的要删除" + entity.name + "吗？");
+
     $("#btnConfirmSave").off("click").on("click", function(e) {
         $.post("/admin/studentInfo/delete", {
             id: entity._id
@@ -111,6 +143,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
+                showAlert("删除成功", null, true);
             }
         });
     });

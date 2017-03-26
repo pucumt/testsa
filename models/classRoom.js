@@ -47,16 +47,9 @@ ClassRoom.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ClassRoom.get = function(id, callback) {
+ClassRoom.get = function(id) {
     //打开数据库
-    classRoomModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, classRoom) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, classRoom);
-
-        //db.close();
-    });
+    return classRoomModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

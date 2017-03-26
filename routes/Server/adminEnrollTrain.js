@@ -139,6 +139,7 @@ module.exports = function(app) {
                                 materialPrice: req.body.materialPrice,
                                 discount: req.body.discount,
                                 totalPrice: req.body.totalPrice,
+                                realMaterialPrice: req.body.realMaterialPrice,
                                 isSucceed: 1,
                                 comment: req.body.comment
                             });

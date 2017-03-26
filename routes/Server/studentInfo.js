@@ -3,39 +3,11 @@ var StudentInfo = require('../../models/studentInfo.js'),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
-    app.get('/admin/studentInfoList', checkLogin);
-    app.get('/admin/studentInfoList', function(req, res) {
-        //判断是否是第一页，并把请求的页数转换成 number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        StudentInfo.getAll(null, page, {}, function(err, studentInfos, total) {
-            if (err) {
-                studentInfos = [];
-            }
-            res.render('Server/studentInfoList.html', {
-                title: '>校区列表',
-                user: req.session.user,
-                studentInfos: studentInfos,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + studentInfos.length) == total
-            });
-        });
-    });
-
-    app.post('/admin/studentInfo/add', checkLogin);
-    app.post('/admin/studentInfo/add', function(req, res) {
-        var studentInfo = new StudentInfo({
-            name: req.body.name,
-            address: req.body.address
-        });
-
-        studentInfo.save(function(err, studentInfo) {
-            if (err) {
-                studentInfo = {};
-            }
-            res.jsonp(studentInfo);
+    app.get('/admin/studentsList', checkLogin);
+    app.get('/admin/studentsList', function(req, res) {
+        res.render('Server/studentInfoList.html', {
+            title: '>学生管理',
+            user: req.session.user
         });
     });
 
@@ -44,7 +16,12 @@ module.exports = function(app) {
         var studentInfo = new StudentInfo({
             name: req.body.name,
             address: req.body.address,
-            School: req.body.address
+            mobile: req.body.mobile,
+            studentNo: req.body.studentNo,
+            sex: req.body.sex,
+            School: req.body.School,
+            address: req.body.address,
+            discount: req.body.discount
         });
 
         studentInfo.update(req.body.id, function(err, studentInfo) {

@@ -6,22 +6,9 @@ var StudentAccount = require('../../models/studentAccount.js'),
 module.exports = function(app) {
     app.get('/admin/studentAccountList', checkLogin);
     app.get('/admin/studentAccountList', function(req, res) {
-        //判断是否是第一页，并把请求的页数转换成 number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        StudentAccount.getAll(null, page, {}, function(err, studentAccounts, total) {
-            if (err) {
-                studentAccounts = [];
-            }
-            res.render('Server/studentAccountList.html', {
-                title: '>账号管理',
-                user: req.session.user,
-                // studentAccounts: studentAccounts,
-                // total: total,
-                // page: page,
-                // isFirstPage: (page - 1) == 0,
-                // isLastPage: ((page - 1) * 14 + studentAccounts.length) == total
-            });
+        res.render('Server/studentAccountList.html', {
+            title: '>学生管理',
+            user: req.session.user
         });
     });
 

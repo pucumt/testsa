@@ -10,7 +10,8 @@ var studentInfoSchema = new mongoose.Schema({
     School: String,
     sex: Boolean, //0 男 1 女
     isDeleted: Boolean,
-    accountId: String
+    accountId: String,
+    discount: Number //原始购买打折(特价课程除外)
 }, {
     collection: 'studentInfos'
 });

@@ -122,7 +122,18 @@ function addValidation(callback) {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
-                        message: '总费用不能为空'
+                        message: '实收培训费用不能为空'
+                    },
+                    numeric: {
+                        message: '填写的不是数字'
+                    }
+                }
+            },
+            'realMaterialPrice': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '实收教材费用不能为空'
                     },
                     numeric: {
                         message: '填写的不是数字'
@@ -166,6 +177,7 @@ $("#btnEnroll").on("click", function(e) {
                 materialPrice: $('#enrollInfo #materialPrice').val(),
                 discount: $('#enrollInfo #discount').val(),
                 totalPrice: $('#enrollInfo #totalPrice').val(),
+                realMaterialPrice: $('#enrollInfo #realMaterialPrice').val(),
                 comment: $('#enrollInfo #comment').val()
             };
         $.post(postURI, postObj, function(data) {
@@ -201,7 +213,9 @@ function openStudent(p) {
                 $('#enrollInfo #studentId').val(entity._id); //
                 $('#enrollInfo #mobile').val(entity.mobile); //
                 $('#enrollInfo #sex').val(entity.sex ? 1 : 0); //
+                $('#enrollInfo #discount').val(entity.discount ? entity.discount : 100); //
                 $('#selectModal').modal('hide');
+                setPrice();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -233,6 +247,7 @@ function openTrain(p) {
                 $('#enrollInfo #trainId').val(entity._id); //
                 $('#enrollInfo #trainPrice').val(entity.trainPrice); //
                 $('#enrollInfo #materialPrice').val(entity.materialPrice); //
+                $('#enrollInfo #realMaterialPrice').val(entity.materialPrice); //
                 $('#selectModal').modal('hide');
                 setPrice();
             });

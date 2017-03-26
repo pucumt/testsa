@@ -54,16 +54,9 @@ ExamClass.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ExamClass.get = function(id, callback) {
+ExamClass.get = function(id) {
     //打开数据库
-    examClassModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, examClass) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, examClass);
-
-        //db.close();
-    });
+    return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

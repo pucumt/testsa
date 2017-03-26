@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#btnRebate").addClass("active");
+    $("#left_btnRebate").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
     searchOrder();
 
