@@ -229,3 +229,19 @@ body {
 #InfoSearch .form-group {
     margin-bottom: 0;
 }
+
+.content.mainModal #schoolUl,
+.content.mainModal #schoolUl ul {
+    list-style-type: none;
+}
+
+.content.mainModal #schoolUl .count {
+    margin-left: 15px;
+}
+
+.content.mainModal #schoolUl .count input {
+    width: 50px;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

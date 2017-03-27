@@ -15,6 +15,10 @@ $(document).ready(function() {
         location.href = "/admin/classRoomList";
     });
 
+    $("#left_btnExamroom").on("click", function(e) {
+        location.href = "/admin/examRoomList";
+    });
+
     $("#left_btnTeacher").on("click", function(e) {
         location.href = "/admin/teacherList";
     });

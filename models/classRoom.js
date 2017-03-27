@@ -92,6 +92,9 @@ ClassRoom.getAllWithoutPage = function(filter, callback) {
         filter = { isDeleted: { $ne: true } };
     }
     var query = classRoomModel.find(filter)
+        .sort({
+            schoolId: 1
+        })
         .exec(function(err, classRooms) {
             callback(null, classRooms);
         });

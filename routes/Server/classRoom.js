@@ -5,22 +5,9 @@ var ClassRoom = require('../../models/classRoom.js'),
 module.exports = function(app) {
     app.get('/admin/classRoomList', checkLogin);
     app.get('/admin/classRoomList', function(req, res) {
-        //判断是否是第一页，并把请求的页数转换成 number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        ClassRoom.getAll(null, page, {}, function(err, classRooms, total) {
-            if (err) {
-                classRooms = [];
-            }
-            res.render('Server/classRoomList.html', {
-                title: '教室设置',
-                user: req.session.user,
-                classRooms: classRooms,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + classRooms.length) == total
-            });
+        res.render('Server/classRoomList.html', {
+            title: '教室设置',
+            user: req.session.user
         });
     });
 
