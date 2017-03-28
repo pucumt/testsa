@@ -10,17 +10,11 @@ $(document).ready(function() {
 
     $("#courseStartDate").datepicker({
         changeMonth: true,
-        dateFormat: "yy-mm-dd",
-        onClose: function(selectedDate) {
-
-        }
+        dateFormat: "yy-mm-dd"
     });
     $("#courseEndDate").datepicker({
         changeMonth: true,
-        dateFormat: "yy-mm-dd",
-        onClose: function(selectedDate) {
-
-        }
+        dateFormat: "yy-mm-dd"
     });
 
     searchClass();

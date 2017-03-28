@@ -42,16 +42,9 @@ ExamRoom.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ExamRoom.get = function(id, callback) {
+ExamRoom.get = function(id) {
     //打开数据库
-    examRoomModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, examRoom) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, examRoom);
-
-        //db.close();
-    });
+    return examRoomModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

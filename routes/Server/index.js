@@ -20,6 +20,7 @@
 
     studentAccount = require('./studentAccount.js'),
     studentInfo = require('./studentInfo.js'),
+    coupon = require('./coupon.js'),
 
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -59,4 +60,5 @@ module.exports = function(app) {
     //student
     studentAccount(app);
     studentInfo(app);
+    coupon(app);
 };

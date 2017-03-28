@@ -124,3 +124,13 @@ AdminEnrollExam.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return adminEnrollExamModel.findOne(filter);
 };
+
+AdminEnrollExam.getAllEnrolledWithoutPaging = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+        filter.isSucceed = 1;
+    } else {
+        filter = { isSucceed: 1, isDeleted: { $ne: true } };
+    }
+    return adminEnrollExamModel.find(filter);
+};

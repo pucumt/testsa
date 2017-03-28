@@ -15,8 +15,8 @@ $(document).ready(function() {
         location.href = "/admin/ScoreInput";
     });
 
-    $("#btnExamCategory").on("click", function(e) {
-        location.href = "/admin/examCategoryList";
+    $("#left_btnCoupon").on("click", function(e) {
+        location.href = "/admin/couponList";
     });
 
 });

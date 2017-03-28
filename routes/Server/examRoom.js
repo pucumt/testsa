@@ -1,5 +1,6 @@
 var ExamRoom = require('../../models/examRoom.js'),
     ExamClass = require('../../models/examClass.js'),
+    AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -30,8 +31,7 @@ module.exports = function(app) {
     app.post('/admin/examRoom/edit', checkLogin);
     app.post('/admin/examRoom/edit', function(req, res) {
         var examRoom = new ExamRoom({
-            name: req.body.name,
-            address: req.body.address
+            classRooms: JSON.parse(req.body.classRooms)
         });
 
         examRoom.update(req.body.id, function(err, examRoom) {
@@ -110,4 +110,106 @@ module.exports = function(app) {
                 }
             });
     });
+
+    app.get('/admin/examRoom/:id', checkLogin);
+    app.get('/admin/examRoom/:id', function(req, res) {
+        ExamRoom.get(req.params.id)
+            .then(function(examRoom) {
+                if (examRoom) {
+                    return examRoom;
+                }
+            })
+            .then(function(examRoom) {
+                if (examRoom) {
+                    res.render('Server/examRoomDetail.html', {
+                        title: '>考场管理',
+                        user: req.session.user,
+                        examRoom: examRoom
+                    });
+                }
+            });
+    });
+
+    app.post('/admin/examRoom/assign', checkLogin);
+    app.post('/admin/examRoom/assign', function(req, res) {
+        var examRoom = new ExamRoom({
+            classRooms: JSON.parse(req.body.classRooms)
+        });
+
+        examRoom.update(req.body.id, function(err, examRoom) {
+            if (err) {
+                examRoom = {};
+            }
+            ExamRoom.get(examRoom._id)
+                .then(function(examRoom) {
+                    getStudents(examRoom.examId)
+                        .then(function(students) {
+                            var sites = getSites(examRoom);
+                            if (students > sites) {
+                                res.jsonp({ error: "座位数少于报名人数，无法分配" });
+                                return;
+                            }
+
+                            assignStudents(examRoom)
+                                .then(function(result) {
+                                    if (result) {
+                                        res.jsonp({ sucess: true });
+                                    }
+                                });
+                        });
+
+                });
+        });
+    });
+
+    function getSites(examRoom) {
+        var sites = 0;
+        examRoom.classRooms.forEach(function(classRoom) {
+            sites += parseInt(classRoom.examCount);
+        });
+        return sites;
+    };
+
+    function getStudents(examId) {
+        return ExamClass.get(examId)
+            .then(function(examClass) {
+                return examClass.enrollCount;
+            });
+    };
+
+    function assignStudents(examRoom) {
+        return AdminEnrollExam.getAllEnrolledWithoutPaging({ examId: examRoom.examId })
+            .then(function(orders) {
+                var i = 0;
+                examRoom.classRooms.forEach(function(classRoom) {
+                    if (i >= orders.length) {
+                        return;
+                    }
+
+                    var count = parseInt(classRoom.examCount);
+                    for (var x = 0; x < count; x++) {
+                        if (i >= orders.length) {
+                            return;
+                        }
+                        setSeatsToOrder(orders[i], classRoom, x + 1);
+                        i++;
+                    }
+                });
+                return true;
+            });
+    };
+
+    function setSeatsToOrder(order, classRoom, siteNo) {
+        var adminEnrollExam = new AdminEnrollExam({
+            classRoomId: classRoom.classRoomId,
+            classRoomName: classRoom.classRoomName,
+            examNo: siteNo
+        });
+
+        adminEnrollExam.update(order._id, function(err, adminEnrollExam) {
+            if (err) {
+                adminEnrollExam = {};
+            }
+        });
+    };
 }

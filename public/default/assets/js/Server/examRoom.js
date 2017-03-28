@@ -4,6 +4,8 @@ $(document).ready(function() {
     $("#left_btnExamroom").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    search();
 });
 
 //------------search funfunction
@@ -23,8 +25,7 @@ function search(p) {
         if (data && data.examRooms.length > 0) {
 
             data.examRooms.forEach(function(examRoom) {
-                $mainSelectBody.append('<tr id=' + examRoom._id + '><td>' + examRoom.name + '</td><td>' +
-                    examRoom.sCount + '</td><td>' + examRoom.schoolArea + '</td><td><div data-obj=' +
+                $mainSelectBody.append('<tr id=' + examRoom._id + '><td>' + examRoom.examName + '</td><td><div data-obj=' +
                     JSON.stringify(examRoom) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
             });
         }
@@ -104,7 +105,9 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnEdit", function(e) {
-
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/examRoom/" + entity._id;
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
