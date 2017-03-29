@@ -3,8 +3,9 @@ var isNew = true;
 $(document).ready(function() {
     $("#left_btnAdminEnrollTrain").addClass("active");
     addValidation();
+    resetDropDown();
 });
-
+//grade/getAll
 function addValidation(callback) {
     $('#studentInfo').formValidation({
         // List of fields and their validation rules
@@ -151,7 +152,9 @@ $("#btnAddStudent").on("click", function(e) {
             postObj = {
                 name: $('#studentInfo #studentName').val(),
                 mobile: $('#studentInfo #mobile').val(),
-                sex: $('#studentInfo #sex').val()
+                sex: $('#studentInfo #sex').val(),
+                gradeId: $('#studentInfo #grade').val(),
+                gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
         $.post(postURI, postObj, function(data) {
             if (data && data.sucess) {
@@ -320,3 +323,16 @@ function setPrice() {
 
 $("#enrollInfo #trainPrice").on("change blur", setPrice);
 $("#enrollInfo #discount").on("change blur", setPrice);
+
+function resetDropDown() {
+    $('#studentInfo').find("#grade option").remove();
+    $.get("/admin/grade/getAll", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(grade) {
+                    $("#studentInfo #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
+                });
+            }
+        }
+    });
+};

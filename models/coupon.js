@@ -7,6 +7,11 @@ var couponSchema = new mongoose.Schema({
     category: String,
     couponStartDate: Date,
     couponEndDate: Date,
+    gradeId: String,
+    gradeName: String,
+    subjectId: String,
+    subjectName: String,
+    reducePrice: Number,
     isDeleted: Boolean
 }, {
     collection: 'coupons'
@@ -47,16 +52,9 @@ Coupon.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Coupon.get = function(id, callback) {
+Coupon.get = function(id) {
     //打开数据库
-    couponModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, coupon) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, coupon);
-
-        //db.close();
-    });
+    return couponModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

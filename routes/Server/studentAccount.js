@@ -124,7 +124,9 @@ module.exports = function(app) {
                     name: req.body.name,
                     sex: req.body.sex,
                     accountId: accountId,
-                    mobile: req.body.mobile
+                    mobile: req.body.mobile,
+                    gradeId: req.body.gradeId,
+                    gradeName: req.body.gradeName
                 });
 
                 return studentInfo.save();

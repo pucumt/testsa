@@ -60,6 +60,9 @@ module.exports = function(app) {
         if (req.body.isSucceed) {
             filter.isSucceed = req.body.isSucceed;
         }
+        if (req.body.studentId) {
+            filter.studentId = req.body.studentId;
+        }
         AdminEnrollExam.getAll(null, page, filter, function(err, adminEnrollExams, total) {
             if (err) {
                 adminEnrollExams = [];

@@ -17,7 +17,12 @@ module.exports = function(app) {
             name: req.body.name,
             category: req.body.category,
             couponStartDate: req.body.couponStartDate,
-            couponEndDate: req.body.couponEndDate
+            couponEndDate: req.body.couponEndDate,
+            gradeId: req.body.gradeId,
+            gradeName: req.body.gradeName,
+            subjectId: req.body.subjectId,
+            subjectName: req.body.subjectName,
+            reducePrice: req.body.reducePrice
         });
 
         coupon.save(function(err, coupon) {
@@ -34,7 +39,12 @@ module.exports = function(app) {
             name: req.body.name,
             category: req.body.category,
             couponStartDate: req.body.couponStartDate,
-            couponEndDate: req.body.couponEndDate
+            couponEndDate: req.body.couponEndDate,
+            gradeId: req.body.gradeId,
+            gradeName: req.body.gradeName,
+            subjectId: req.body.subjectId,
+            subjectName: req.body.subjectName,
+            reducePrice: req.body.reducePrice
         });
 
         coupon.update(req.body.id, function(err, coupon) {
@@ -83,4 +93,5 @@ module.exports = function(app) {
             });
         });
     });
+
 }

@@ -11,7 +11,9 @@ var studentInfoSchema = new mongoose.Schema({
     sex: Boolean, //0 男 1 女
     isDeleted: Boolean,
     accountId: String,
-    discount: Number //原始购买打折(特价课程除外)
+    discount: Number, //原始购买打折(特价课程除外)
+    gradeId: String,
+    gradeName: String
 }, {
     collection: 'studentInfos'
 });
@@ -44,16 +46,9 @@ StudentInfo.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-StudentInfo.get = function(id, callback) {
+StudentInfo.get = function(id) {
     //打开数据库
-    studentInfoModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, studentInfo) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, studentInfo);
-
-        //db.close();
-    });
+    return studentInfoModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

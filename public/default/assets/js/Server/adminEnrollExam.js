@@ -5,7 +5,9 @@ $(document).ready(function() {
     // $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     // $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
     addValidation();
+    resetDropDown();
 });
+//grade/getAll
 
 function addValidation(callback) {
     $('#studentInfo').formValidation({
@@ -98,7 +100,9 @@ $("#btnAddStudent").on("click", function(e) {
             postObj = {
                 name: $('#studentInfo #studentName').val(),
                 mobile: $('#studentInfo #mobile').val(),
-                sex: $('#studentInfo #sex').val()
+                sex: $('#studentInfo #sex').val(),
+                gradeId: $('#studentInfo #grade').val(),
+                gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
         $.post(postURI, postObj, function(data) {
             if (data && data.sucess) {
@@ -243,3 +247,16 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
         openExam(page);
     }
 });
+
+function resetDropDown() {
+    $('#studentInfo').find("#grade option").remove();
+    $.get("/admin/grade/getAll", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(grade) {
+                    $("#studentInfo #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
+                });
+            }
+        }
+    });
+};

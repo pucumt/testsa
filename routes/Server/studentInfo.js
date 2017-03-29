@@ -11,6 +11,20 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/studentDetail/:id', checkLogin);
+    app.get('/admin/studentDetail/:id', function(req, res) {
+        // StudentInfo.get(req.params.id).then(function(studentInfo) {
+        //     if (studentInfo) {
+        res.render('Server/studentDetail.html', {
+            title: '>学生管理',
+            user: req.session.user,
+            id: req.params.id
+        });
+        //     }
+        // });
+    });
+
+
     app.post('/admin/studentInfo/edit', checkLogin);
     app.post('/admin/studentInfo/edit', function(req, res) {
         var studentInfo = new StudentInfo({
@@ -21,7 +35,9 @@ module.exports = function(app) {
             sex: req.body.sex,
             School: req.body.School,
             address: req.body.address,
-            discount: req.body.discount
+            discount: req.body.discount,
+            gradeId: req.body.gradeId,
+            gradeName: req.body.gradeName
         });
 
         studentInfo.update(req.body.id, function(err, studentInfo) {
@@ -71,6 +87,15 @@ module.exports = function(app) {
                 isFirstPage: (page - 1) == 0,
                 isLastPage: ((page - 1) * 14 + studentInfos.length) == total
             });
+        });
+    });
+
+    app.get('/admin/studentInfo/:id', checkLogin);
+    app.get('/admin/studentInfo/:id', function(req, res) {
+        StudentInfo.get(req.params.id).then(function(studentInfo) {
+            if (studentInfo) {
+                res.jsonp(studentInfo);
+            }
         });
     });
 }

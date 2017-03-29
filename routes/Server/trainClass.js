@@ -166,6 +166,31 @@ module.exports = function(app) {
             });
     });
 
+    app.get('/admin/trainClass/gradesubject', checkLogin);
+    app.get('/admin/trainClass/gradesubject', function(req, res) {
+        var objReturn = {};
+        var p1 = Grade.getAllWithoutPage()
+            .then(function(grades) {
+                objReturn.grades = grades;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p2 = Subject.getAllWithoutPage()
+            .then(function(subjects) {
+                objReturn.subjects = subjects;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p1, p2]).then(function() {
+                res.jsonp(objReturn);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
     app.post('/admin/trainClass/publish', checkLogin);
     app.post('/admin/trainClass/publish', function(req, res) {
         TrainClass.publish(req.body.id, function(err, trainClass) {

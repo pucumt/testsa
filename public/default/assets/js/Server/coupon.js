@@ -36,7 +36,8 @@ function search(p) {
             data.coupons.forEach(function(coupon) {
                 $mainSelectBody.append('<tr id=' + coupon._id + '><td>' + coupon.name + '</td><td>' +
                     coupon.category + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
-                    moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td><div data-obj=' +
+                    moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' + coupon.gradeName + '</td><td>' +
+                    coupon.subjectName + '</td><td>' + coupon.reducePrice + '</td><td><div data-obj=' +
                     JSON.stringify(coupon) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
             });
         }
@@ -122,6 +123,9 @@ $("#btnAdd").on("click", function(e) {
     $('#myModal #category').val("固定");
     $('#myModal #couponStartDate').val(moment().format("YYYY-M-D"));
     $('#myModal #couponEndDate').val(moment().format("YYYY-M-D"));
+    $('#myModal #reducePrice').val(0);
+    resetDropDown();
+    $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -133,7 +137,12 @@ $("#btnSave").on("click", function(e) {
                 name: $('#name').val(),
                 category: $('#myModal #category').val(),
                 couponStartDate: $('#myModal #couponStartDate').val(),
-                couponEndDate: $('#myModal #couponEndDate').val()
+                couponEndDate: $('#myModal #couponEndDate').val(),
+                gradeId: $('#grade').val(),
+                gradeName: $('#grade').find("option:selected").text(),
+                subjectId: $('#subject').val(),
+                subjectName: $('#subject').find("option:selected").text(),
+                reducePrice: $('#myModal #reducePrice').val(),
             };
         if (!isNew) {
             postURI = "/admin/coupon/edit";
@@ -144,6 +153,7 @@ $("#btnSave").on("click", function(e) {
             if (isNew) {
                 $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.category + "</td><td>" +
                     moment(data.couponStartDate).format("YYYY-M-D") + "</td><td>" + moment(data.couponEndDate).format("YYYY-M-D") +
+                    "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.reducePrice +
                     "</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'>" + getButtons() + "</div></td></tr>"));
             } else {
@@ -152,6 +162,9 @@ $("#btnSave").on("click", function(e) {
                 var category = name.next().text(data.category);
                 var start = category.next().text(data.couponStartDate);
                 var end = start.next().text(data.couponEndDate);
+                var grade = end.next().text(data.gradeName);
+                var subject = grade.next().text(data.subjectName);
+                var price = subject.next().text(data.reducePrice);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
                 $lastDiv.data("obj", data);
             }
@@ -171,6 +184,9 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModal #couponStartDate').val(moment(entity.couponStartDate).format("YYYY-M-D"));
     $('#myModal #couponEndDate').val(moment(entity.couponEndDate).format("YYYY-M-D"));
     $('#id').val(entity._id);
+    $('#myModal #reducePrice').val(entity.reducePrice);
+    resetDropDown({ gradeid: entity.gradeId, subjectid: entity.subjectId });
+    $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -190,3 +206,41 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
         });
     });
 });
+
+$("#gridBody").on("click", "td .btnAssign", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/couponAssign/" + entity._id;
+});
+
+
+/**---------------dropdowns------------------- */
+function resetDropDown(objs) {
+    $('#myModal').find("#grade option").remove();
+    $('#myModal').find("#subject option").remove();
+    $("#myModal #examCategoryName").append("<option value=''></option>");
+
+    $.get("/admin/trainClass/gradesubject", function(data) {
+        if (data) {
+            if (data.grades && data.grades.length > 0) {
+                data.grades.forEach(function(grade) {
+                    var select = "";
+                    if (objs && grade._id == objs.gradeid) {
+                        select = "selected";
+                    }
+                    $("#myModal #grade").append("<option " + select + " value='" + grade._id + "'>" + grade.name + "</option>");
+                });
+            }
+            if (data.subjects && data.subjects.length > 0) {
+                data.subjects.forEach(function(subject) {
+                    var select = "";
+                    if (objs && subject._id == objs.subjectid) {
+                        select = "selected";
+                    }
+                    $("#myModal #subject").append("<option " + select + " value='" + subject._id + "'>" + subject.name + "</option>");
+                });
+            }
+        }
+    });
+};
+/**---------------dropdowns - end------------------- */

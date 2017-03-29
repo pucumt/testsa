@@ -45,6 +45,9 @@ module.exports = function(app) {
         if (req.body.isPayed) {
             filter.isPayed = req.body.isPayed;
         }
+        if (req.body.studentId) {
+            filter.studentId = req.body.studentId;
+        }
         AdminEnrollTrain.getAll(null, page, filter, function(err, adminEnrollTrains, total) {
             if (err) {
                 adminEnrollTrains = [];
