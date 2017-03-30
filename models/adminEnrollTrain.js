@@ -11,12 +11,12 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     trainPrice: Number,
     materialPrice: Number,
     discount: Number,
-    totalPrice: Number,
-    realMaterialPrice: Number,
+    totalPrice: Number, //实际培训费
+    realMaterialPrice: Number, //实际教材费
     rebatePrice: Number, //退费
     isSucceed: Number, //1 succeed, 9 canceled
     isPayed: Boolean,
-    payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
+    payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 online zhifubao 9 online weixin
     isDeleted: Boolean,
     orderDate: Date,
     cancelDate: Date,
@@ -144,5 +144,14 @@ AdminEnrollTrain.changeClass = function(id) {
     }, {
         isSucceed: 9,
         cancelDate: new Date()
+    }).exec();
+};
+
+AdminEnrollTrain.pay = function(id, payWay) {
+    return adminEnrollTrainModel.update({
+        _id: id
+    }, {
+        isPayed: true,
+        payWay: payWay
     }).exec();
 };

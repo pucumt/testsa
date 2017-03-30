@@ -149,7 +149,11 @@ module.exports = function(app) {
                             });
                             adminEnrollTrain.save()
                                 .then(function(enrollExam) {
-                                    res.jsonp({ sucess: true });
+                                    res.render('Server/payList.html', {
+                                        title: '>订单支付',
+                                        user: req.session.user,
+                                        trainOrder: enrollExam
+                                    });
                                     return;
                                 });
                             //修改优惠券状态
@@ -286,5 +290,29 @@ module.exports = function(app) {
                 });
             })
 
+    });
+
+    app.get('/admin/payList/:id', checkLogin);
+    app.get('/admin/payList/:id', function(req, res) {
+        AdminEnrollTrain.get(req.params.id)
+            .then(function(trainOrder) {
+                res.render('Server/payList.html', {
+                    title: '>订单支付',
+                    user: req.session.user,
+                    trainOrder: trainOrder
+                });
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/pay', checkLogin);
+    app.post('/admin/adminEnrollTrain/pay', function(req, res) {
+        AdminEnrollTrain.pay(req.body.id, req.body.payWay)
+            .then(function(result) {
+                if (result && result.nModified == 1) {
+                    res.jsonp({ sucess: true });
+                    return;
+                }
+                res.jsonp({ error: "付款失败" });
+            });
     });
 }

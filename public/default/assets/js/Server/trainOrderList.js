@@ -19,10 +19,11 @@ function searchOrder(p) {
     $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             var getButtons = function(isPayed, isSucceed) {
+                var buttons = "";
                 if (!isPayed && isSucceed == 1) {
-                    return '<a class="btn btn-default btnDelete">取消</a>';
+                    buttons = '<a class="btn btn-default btnPay">支付</a><a class="btn btn-default btnDelete">取消</a>';
                 }
-                return '';
+                return buttons;
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {
                 $selectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
@@ -71,4 +72,10 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
             }
         });
     });
+});
+
+$("#gridBody").on("click", "td .btnPay", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/payList/" + entity._id;
 });
