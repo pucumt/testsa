@@ -2,6 +2,7 @@ var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     TrainClass = require('../../models/trainClass.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
     CouponAssign = require('../../models/couponAssign.js'),
+    payHelper = require('../../util/payHelper.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -157,7 +158,9 @@ module.exports = function(app) {
                                     return;
                                 });
                             //修改优惠券状态
-                            CouponAssign.use(req.body.couponId);
+                            if (req.body.couponId) {
+                                CouponAssign.use(req.body.couponId);
+                            }
                         } else {
                             //报名失败
                             res.jsonp({ error: "报名失败,很可能报满" });
@@ -313,6 +316,23 @@ module.exports = function(app) {
                     return;
                 }
                 res.jsonp({ error: "付款失败" });
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/payCode', checkLogin);
+    app.post('/admin/adminEnrollTrain/payCode', function(req, res) {
+        AdminEnrollTrain.get(req.body.id)
+            .then(function(order) {
+                if (order) {
+                    var payParas = {
+                        out_trade_no: order._id,
+                        body: order.trainName,
+                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100
+                    };
+                    payHelper.pay(payParas, res);
+                    return;
+                }
+                res.jsonp({ error: "生成付款码失败" });
             });
     });
 }

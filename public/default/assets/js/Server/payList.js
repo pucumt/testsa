@@ -19,6 +19,17 @@ $("#btnPay").on("click", function(e) {
             showComfirm("确定已收订单" + entity._id + "的款项吗？");
             break;
         case "9":
+            $.post("/admin/adminEnrollTrain/payCode", {
+                id: entity._id
+            }, function(data) {
+                if (data.error) {
+                    showAlert("生成付款码失败");
+                } else {
+                    $('#myModalLabel').text("微信扫码支付");
+                    $('#myModal .modal-body img').attr('src', data.imgCode);
+                    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+                }
+            });
             break;
     }
 });

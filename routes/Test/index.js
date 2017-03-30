@@ -28,17 +28,17 @@ module.exports = function(app) {
 
     app.post('/test', function(req, res) {
         var paras = [],
-            strPay = "service=pay.weixin.native&mch_id=7551000001&out_trade_no=" + req.body.orderId +
+            strPay = "service=pay.weixin.native&mch_id=101560037142&out_trade_no=" + req.body.orderId +
             "&body=" + req.body.body1 + "&total_fee=" + req.body.orderAmount + "&mch_create_ip=127.0.0.1&notify_url=http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp" +
-            "&nonce_str=testnonce&key=9d101c97133837e13dde2d32a5054abb";
-        strPay = "body=1&mch_create_ip=127.0.0.1&mch_id=7551000001&nonce_str=51cps&notify_url=http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp&out_trade_no=201744227237&service=pay.weixin.native&total_fee=1&key=9d101c97133837e13dde2d32a5054abb";
+            "&nonce_str=testnonce&key=e6371d360d79eb9fa4c25c7f91d2bc6b";
+        strPay = "body=1&mch_create_ip=127.0.0.1&mch_id=101560037142&nonce_str=51cps&notify_url=http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp&out_trade_no=201744227240&service=pay.weixin.native&total_fee=1&key=e6371d360d79eb9fa4c25c7f91d2bc6b";
 
         paras.push({ key: 'body', value: '1' });
         paras.push({ key: 'mch_create_ip', value: '127.0.0.1' });
-        paras.push({ key: 'mch_id', value: '7551000001' });
+        paras.push({ key: 'mch_id', value: '101560037142' });
         paras.push({ key: 'nonce_str', value: '51cps' });
         paras.push({ key: 'notify_url', value: 'http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp' });
-        paras.push({ key: 'out_trade_no', value: '201744227237' });
+        paras.push({ key: 'out_trade_no', value: '201744227240' });
         paras.push({ key: 'service', value: 'pay.weixin.native' });
         paras.push({ key: 'total_fee', value: '1' });
         // paras.push({ key: 'key', value: '9d101c97133837e13dde2d32a5054abb' });
