@@ -245,3 +245,8 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.coupon #InfoSearch .form-group .btn-group input {
+    width: calc(100% - 70px);
+    float: left;
+}

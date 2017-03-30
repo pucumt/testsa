@@ -169,6 +169,13 @@ $("#btnAddStudent").on("click", function(e) {
 $("#btnEnroll").on("click", function(e) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
+
+        var couponId;
+        checkCoupons(function(index) {
+            if (this.checked) {
+                couponId = $(this).data("obj")._id;
+            }
+        });
         var postURI = "/admin/adminEnrollTrain/enroll",
             postObj = {
                 studentId: $('#enrollInfo #studentId').val(),
@@ -181,7 +188,8 @@ $("#btnEnroll").on("click", function(e) {
                 discount: $('#enrollInfo #discount').val(),
                 totalPrice: $('#enrollInfo #totalPrice').val(),
                 realMaterialPrice: $('#enrollInfo #realMaterialPrice').val(),
-                comment: $('#enrollInfo #comment').val()
+                comment: $('#enrollInfo #comment').val(),
+                couponId: couponId
             };
         $.post(postURI, postObj, function(data) {
             if (data && data.sucess) {
@@ -219,6 +227,7 @@ function openStudent(p) {
                 $('#enrollInfo #discount').val(entity.discount ? entity.discount : 100); //
                 $('#selectModal').modal('hide');
                 setPrice();
+                renderCoupon();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -252,7 +261,9 @@ function openTrain(p) {
                 $('#enrollInfo #materialPrice').val(entity.materialPrice); //
                 $('#enrollInfo #realMaterialPrice').val(entity.materialPrice); //
                 $('#selectModal').modal('hide');
+                $('#enrollInfo #trainId').data("obj", entity);
                 setPrice();
+                renderCoupon();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -314,9 +325,18 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
 });
 
 function setPrice() {
-    var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
+    var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()) || 0,
         discount = parseFloat($("#enrollInfo #discount").val()),
-        realPrice = (trainPrice * discount / 100).toFixed(2);
+        reducePrice = 0;
+    checkCoupons(function(index) {
+        if (this.checked) {
+            var $this = $(this);
+            reducePrice = $this.data("obj").reducePrice;
+            trainPrice = trainPrice - reducePrice;
+            discount = 100;
+        }
+    });
+    realPrice = (trainPrice * discount / 100).toFixed(2);
 
     $("#enrollInfo #totalPrice").val(realPrice);
 };
@@ -335,4 +355,74 @@ function resetDropDown() {
             }
         }
     });
+};
+
+var $couponSelectBody = $('.content #enrollInfo table tbody');
+
+function renderCoupon() {
+    var studentName = $("#enrollInfo #studentName").val(),
+        className = $("#enrollInfo #trainName").val();
+    if (studentName != "" && className != "") {
+        searchCoupon();
+        setPaingNextPre("#enrollInfo", searchCoupon);
+    }
+};
+
+function searchCoupon(p) {
+    var obj = $("#enrollInfo #trainId").data("obj");
+    var filter = {
+            studentId: $("#enrollInfo #studentId").val(),
+            gradeId: obj.gradeId,
+            subjectId: obj.subjectId
+        },
+        pStr = p ? "p=" + p : "";
+    $couponSelectBody.empty();
+    $.post("/admin/couponAssignList/searchUseful?" + pStr, filter, function(data) {
+        if (data && data.couponAssigns.length > 0) {
+            data.couponAssigns.forEach(function(coupon) {
+                var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
+                $couponSelectBody.append('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" data-obj=' + JSON.stringify(coupon) + ' id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + coupon.couponName + '</td><td>' + dateStr +
+                    '</td><td>' + coupon.reducePrice + '</td></tr>');
+            });
+        }
+        $(".couponModal #total").val(data.total);
+        $(".couponModal #page").val(data.page);
+        setPaging(".couponModal", data);
+    });
+};
+
+function setPaingNextPre(modal, searchFuc) {
+    $(modal + " .paging .prepage").off("click").on("click", function(e) {
+        var page = parseInt($(modal + " #page").val()) - 1;
+        searchFuc(page);
+    });
+
+    $(modal + " .paging .nextpage").off("click").on("click", function(e) {
+        var page = parseInt($(modal + " #page").val()) + 1;
+        searchFuc(page);
+    });
+};
+
+$("#enrollInfo table #gridBody").on("change", "tr td input", function() {
+    setPrice();
+});
+
+$("#enrollInfo #onsale").on("change", function(e) {
+    if ($("#enrollInfo #onsale").val() == 0) {
+        checkCoupons(function(index) {
+            if (this.checked) {
+                this.checked = false;
+            }
+            $(this).attr("disabled", "disabled");
+        });
+    } else {
+        checkCoupons(function(index) {
+            $(this).removeAttr("disabled");
+        });
+    }
+    setPrice();
+});
+
+function checkCoupons(func) {
+    $(":input[name='coupon']").each(func);
 };

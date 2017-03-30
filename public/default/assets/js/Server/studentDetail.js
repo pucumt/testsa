@@ -112,7 +112,7 @@ function renderGrids() {
     setPaingNextPre(".examModal", searchExam);
 
     searchCoupon();
-    setPaingNextPre(".examModal", searchCoupon);
+    setPaingNextPre(".couponModal", searchCoupon);
 };
 
 function searchClass(p) {
@@ -123,9 +123,9 @@ function searchClass(p) {
     $classSelectBody.empty();
     $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
-            data.adminEnrollTrains.forEach(function(tranOrder) {
-                $classSelectBody.append('<tr id=' + tranOrder._id + '><td>' + tranOrder._id + '</td><td>' + tranOrder.studentName +
-                    '</td><td>' + tranOrder.trainName + '</td></tr>');
+            data.adminEnrollTrains.forEach(function(trainOrder) {
+                $classSelectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' + trainOrder.studentName +
+                    '</td><td>' + trainOrder.trainName + '</td><td>' + getTrainOrderStatus(trainOrder.isSucceed) + '</td></tr>');
             });
         }
         $(".classModal #total").val(data.total);
@@ -145,7 +145,8 @@ function searchExam(p) {
             data.adminEnrollExams.forEach(function(examOrder) {
                 $examSelectBody.append('<tr id=' + examOrder._id + ' data-obj=' +
                     JSON.stringify(examOrder) + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName +
-                    '</td><td>' + examOrder.examName + '</td><td>' + (examOrder.score || '') + '</td></tr>');
+                    '</td><td>' + examOrder.examName + '</td><td>' + getTrainOrderStatus(examOrder.isSucceed) +
+                    '</td><td>' + (examOrder.score || '') + '</td></tr>');
             });
         }
         $(".examModal #total").val(data.total);
@@ -165,7 +166,7 @@ function searchCoupon(p) {
             data.couponAssigns.forEach(function(coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
                 $couponSelectBody.append('<tr id=' + coupon._id + '><td>' + coupon.couponName + '</td><td>' + dateStr +
-                    '</td><td>' + coupon.gradeName + '</td><td>' + coupon.subjectName + '</td></tr>');
+                    '</td><td>' + coupon.gradeName + '</td><td>' + coupon.subjectName + '</td><td>' + (coupon.isUsed ? "已使用" : "未使用") + '</td><td>' + coupon.reducePrice + '</td></tr>');
             });
         }
         $(".couponModal #total").val(data.total);
@@ -175,12 +176,12 @@ function searchCoupon(p) {
 };
 
 function setPaingNextPre(modal, searchFuc) {
-    $(modal + " .paging .prepage").on("click", function(e) {
+    $(modal + " .paging .prepage").off("click").on("click", function(e) {
         var page = parseInt($(modal + " #page").val()) - 1;
         searchFuc(page);
     });
 
-    $(modal + " .paging .nextpage").on("click", function(e) {
+    $(modal + " .paging .nextpage").off("click").on("click", function(e) {
         var page = parseInt($(modal + " #page").val()) + 1;
         searchFuc(page);
     });

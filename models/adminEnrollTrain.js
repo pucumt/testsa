@@ -79,6 +79,24 @@ AdminEnrollTrain.getAll = function(id, page, filter, callback) {
     });
 };
 
+AdminEnrollTrain.getAllOfStudent = function(id, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = adminEnrollTrainModel.count(filter);
+    query.exec(function(err, count) {
+        query.find()
+            .skip((page - 1) * 14)
+            .limit(14)
+            .select({ studentId: 1, studentName: 1 })
+            .exec(function(err, adminEnrollTrains) {
+                callback(null, adminEnrollTrains, count);
+            });
+    });
+};
+
 //删除一个学区
 AdminEnrollTrain.delete = function(id, callback) {
     adminEnrollTrainModel.update({

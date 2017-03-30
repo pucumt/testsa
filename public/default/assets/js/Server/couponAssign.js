@@ -8,24 +8,28 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
-    return buttons;
-};
 
 function search(p) {
     var filter = {
-            name: $(".mainModal #InfoSearch #Name").val()
+            gradeId: $(".mainModal #InfoSearch #gradeId").val(),
+            trainId: $(".mainModal #InfoSearch #trainId").val(),
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/couponAssignList/search?" + pStr, filter, function(data) {
-        if (data && data.couponAssigns.length > 0) {
-
-            data.couponAssigns.forEach(function(couponAssign) {
-                $mainSelectBody.append('<tr id=' + couponAssign._id + '><td>' + couponAssign.name + '</td><td>' +
-                    couponAssign.sCount + '</td><td>' + couponAssign.schoolArea + '</td><td><div data-obj=' +
-                    JSON.stringify(couponAssign) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+    $.post("/admin/studentInfo/searchByGradeClass?" + pStr, filter, function(data) {
+        if (data && data.students.length > 0) {
+            $.post("/admin/couponAssignList/withoutpage/onlystudentId", { couponId: $('#id').val() }, function(assigns) {
+                data.students.forEach(function(student) {
+                    var id = (student.studentId || student._id),
+                        name = (student.studentName || student.name),
+                        checked = "";
+                    if (assigns.filter(function(assign) {
+                            return assign.studentId == student._id;
+                        }).length > 0) {
+                        checked = "checked";
+                    }
+                    $mainSelectBody.append('<tr><td><input id=' + id + ' ' + checked + ' type="checkbox" name="student" value=' + id + '></td><td>' + name + '</td></tr>');
+                });
             });
         }
         $("#mainModal #total").val(data.total);
@@ -49,109 +53,86 @@ $("#mainModal .paging .nextpage").on("click", function(e) {
 });
 //------------end
 
-function destroy() {
-    var validator = $('#myModal').data('formValidation');
-    if (validator) {
-        validator.destroy();
-    }
-};
-
-function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '校区不能为空'
-                    },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '校区在4-30个字符之间'
-                    }
-                }
-            },
-            'address': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 100,
-                        message: '地址不能超过100个字符'
-                    },
-                }
-            }
-        }
-    });
-};
-
-$("#btnAdd").on("click", function(e) {
-    isNew = true;
-    destroy();
-    addValidation();
-    $('#name').removeAttr("disabled");
-    $('#myModalLabel').text("新增校区");
-    $('#name').val("");
-    $('#address').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-});
-
 $("#btnSave").on("click", function(e) {
-    var validator = $('#myModal').data('formValidation').validate();
-    if (validator.isValid()) {
-        var postURI = "/admin/couponAssign/add",
-            postObj = {
-                name: $('#name').val(),
-                address: $('#address').val()
-            };
-        if (!isNew) {
-            postURI = "/admin/couponAssign/edit";
-            postObj.id = $('#id').val();
-        }
-        $.post(postURI, postObj, function(data) {
-            $('#myModal').modal('hide');
-            if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div data-obj='" + JSON.stringify(data) +
-                    "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>"));
-            } else {
-                var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
-                name.next().text(data.address);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
-            }
-        });
-    }
-});
+    var obj = $('#id'),
+        entity = obj.data("obj"),
+        postURI = "/admin/couponAssign/assign",
+        postCoupon = {
+            couponId: entity._id,
+            couponName: entity.name,
+            gradeId: entity.gradeId,
+            gradeName: entity.gradeName,
+            subjectId: entity.subjectId,
+            subjectName: entity.subjectName,
+            reducePrice: entity.reducePrice,
+            couponStartDate: entity.couponStartDate,
+            couponEndDate: entity.couponEndDate
+        };
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
-    isNew = false;
-    destroy();
-    addValidation();
-    var obj = e.currentTarget;
-    var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
-    $('#myModalLabel').text("修改校区");
-    $('#name').val(entity.name);
-    $('#address').val(entity.address);
-    $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-});
-
-$("#gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
-    var obj = e.currentTarget;
-    var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/couponAssign/delete", {
-            id: entity._id
-        }, function(data) {
-            $('#confirmModal').modal('hide');
-            if (data.sucess) {
-                $(obj).parents()[2].remove();
-            }
+    var students = [];
+    $(":input[name='student']").each(function(index) {
+        var $this = $(this);
+        students.push({
+            studentId: $this.val(),
+            checked: this.checked
         });
     });
+
+    $.post(postURI, {
+        coupon: JSON.stringify(postCoupon),
+        students: JSON.stringify(students)
+    }, function(data) {
+        if (data && data.sucess) {
+            showAlert("保存成功");
+        }
+    });
+});
+
+$("#btnReturn").on("click", function() {
+    location.href = "/admin/couponList";
+});
+
+var $selectHeader = $('#selectModal .modal-body table thead');
+var $selectBody = $('#selectModal .modal-body table tbody');
+var $selectSearch = $('#selectModal #InfoSearch');
+
+function openTrain(p) {
+    $('#selectModal #selectModalLabel').text("选择课程");
+    var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
+        pStr = p ? "p=" + p : "";
+    $selectHeader.empty();
+    $selectBody.empty();
+    $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/类型</th><th width="180px">培训费/教材费</th><th width="120px">报名情况</th></tr>');
+    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+        if (data && data.trainClasss.length > 0) {
+            data.trainClasss.forEach(function(trainClass) {
+                var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
+                    price = trainClass.trainPrice + "/" + trainClass.materialPrice,
+                    countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
+                $selectBody.append('<tr data-obj=' + JSON.stringify(trainClass) + '><td>' + trainClass.name +
+                    '</td><td>' + grade +
+                    '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
+            });
+            setSelectEvent($selectBody, function(entity) {
+                $('#InfoSearch #trainName').val(entity.name); //
+                $('#InfoSearch #trainId').val(entity._id); //
+                $('#selectModal').modal('hide');
+            });
+        }
+        $("#selectModal #total").val(data.total);
+        $("#selectModal #page").val(data.page);
+        setPaging("#selectModal", data);
+        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+    });
+};
+
+$("#panel_btnTrain").on("click", function(e) {
+    openEntity = "train";
+    $('#selectModal .modal-dialog').addClass("modal-lg");
+    $selectSearch.empty();
+    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
+        '<label for="trainName" class="control-label">名称:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="trainName" id="trainName"></div></div>' +
+        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
+    openTrain();
 });

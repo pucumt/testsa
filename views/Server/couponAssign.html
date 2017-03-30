@@ -3,15 +3,36 @@
     <h1>
         {{ title }}>>{{ coupon.name }}
     </h1>
+    <input type="hidden" id="id" name="id" data-obj={{ coupon|dump }} value={{ coupon._id }} />
 </div>
-<div class="panel panel-default mainModal">
+<div class="panel panel-default mainModal coupon">
     <div class="panel-body">
         <form id="InfoSearch">
             <div class="row form-horizontal">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="Name" class="control-label">考场:</label>
+                        <label for="Name" class="control-label">学生:</label>
                         <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="grade" class="control-label">年级:</label>
+                        <input type="text" maxlength="30" readonly class="form-control" name="grade" id="grade" value={{coupon.gradeName}}>
+                        <input type="hidden" class="form-control" name="gradeId" id="gradeId" value={{coupon.gradeId}}>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="trainName" class="control-label">班级:</label>
+                        <div class="btn-group">
+                            <input type="hidden" class="form-control" name="trainId" id="trainId">
+                            <input type="text" maxlength="30" readonly class="form-control" name="trainName" id="trainName">
+                            <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -24,15 +45,15 @@
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnSave" class="btn btn-default btn-sm">保存</button>
+        <button id="btnReturn" class="btn btn-default btn-sm">返回</button>
     </div>
 </div>
 <div class="content mainModal">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:180px;">学生</th>
-                <th style="width:180px;">手机</th>
-                <th>操作</th>
+                <th style="width:80px;">选择</th>
+                <th>学生</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -45,29 +66,53 @@
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
-<div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+<div class="modal fade bs-example-modal-dialog" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                <h4 class="modal-title" id="selectModalLabel">选择</h4>
             </div>
             <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="name" class="control-label">校区:</label>
-                        <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form id="InfoSearch">
+                            <div class="row form-horizontal">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="studentName" class="control-label">姓名:</label>
+                                        <input type="text" maxlength="30" class="form-control" name="studentName" id="studentName">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="mobile" class="control-label">手机号:</label>
+                                        <input type="text" maxlength="30" class="form-control" name="mobile" id="mobile">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="address" class="control-label">地址:</label>
-                        <textarea maxlength="100" rows="3" class="form-control" name="address" id="address"></textarea>
-                    </div>
-                    <input type="hidden" class="form-control" name="id" id="id">
-                </form>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>学生姓名</th>
+                            <th>电话号码</th>
+                            <th width="120px">性别</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <input type="hidden" id="total" value="0" />
+                <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>

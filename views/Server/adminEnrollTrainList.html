@@ -52,7 +52,6 @@
         <div class="panel panel-default">
             <div class="panel-heading">报名信息</div>
             <div class="panel-body">
-
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -140,13 +139,33 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <button type="button" id="btnEnroll" class="btn btn-primary panelButton">报名</button>
-                        <!--<button type="button" id="btnLock" class="btn btn-primary panelButton">锁定名额</button>
-                        <button type="button" id="btnLockEnroll" class="btn btn-primary panelButton">锁定报名</button>-->
+                        <div class="form-group">
+                            <label for="onsale" class="control-label">优惠:</label>
+                            <select name="onsale" id="onsale" class="form-control">
+                            <option value="0">打折</option>
+                            <option value="1">优惠券</option>
+                        </select>
+                        </div>
                     </div>
                     <div class="col-md-6">
-
+                        <button type="button" id="btnEnroll" class="btn btn-primary panelButton">报名</button>
                     </div>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">选择</th>
+                            <th style="width:200px">优惠券</th>
+                            <th style="width:200px">有效期</th>
+                            <th>金额</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridBody">
+                    </tbody>
+                </table>
+                <div>
+                    <input type="hidden" id="total" value="0" />
+                    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
                 </div>
             </div>
         </div>
@@ -225,4 +244,5 @@
 </div>
 
 <script type="text/javascript" src="/default/assets/js/Server/adminEnrollTrain.js"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

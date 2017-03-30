@@ -1,6 +1,7 @@
 var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     TrainClass = require('../../models/trainClass.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
+    CouponAssign = require('../../models/couponAssign.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -151,6 +152,8 @@ module.exports = function(app) {
                                     res.jsonp({ sucess: true });
                                     return;
                                 });
+                            //修改优惠券状态
+                            CouponAssign.use(req.body.couponId);
                         } else {
                             //报名失败
                             res.jsonp({ error: "报名失败,很可能报满" });

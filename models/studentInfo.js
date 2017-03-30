@@ -69,6 +69,24 @@ StudentInfo.getAll = function(id, page, filter, callback) {
     });
 };
 
+StudentInfo.getAllOfStudent = function(id, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = studentInfoModel.count(filter);
+    query.exec(function(err, count) {
+        query.find()
+            .skip((page - 1) * 14)
+            .limit(14)
+            .select({ 'name': 1 })
+            .exec(function(err, studentInfos) {
+                callback(null, studentInfos, count);
+            });
+    });
+};
+
 //删除一个学区
 StudentInfo.delete = function(id, callback) {
     studentInfoModel.update({

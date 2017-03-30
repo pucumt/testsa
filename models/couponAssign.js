@@ -30,6 +30,8 @@ module.exports = CouponAssign;
 
 //存储学区信息
 CouponAssign.prototype.save = function(callback) {
+    this.option.isUsed = false;
+    this.option.isDeleted = false;
     var newcouponAssign = new couponAssignModel(this.option);
 
     newcouponAssign.save(function(err, couponAssign) {
@@ -92,8 +94,27 @@ CouponAssign.delete = function(id, callback) {
     });
 };
 
-CouponAssign.getFlter = function(filter) {
+CouponAssign.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     //打开数据库
     return couponAssignModel.findOne(filter);
+};
+
+CouponAssign.getAllStudentIdWithoutPage = function(filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    couponAssignModel.find(filter)
+        .select({ studentId: 1, _id: 0 })
+        .exec(function(err, couponAssigns) {
+            callback(null, couponAssigns);
+        });
+};
+
+CouponAssign.use = function(id) {
+    return couponAssignModel.update({
+        _id: id
+    }, { isUsed: true }).exec();
 };
