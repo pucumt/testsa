@@ -92,6 +92,9 @@ AdminEnrollExam.delete = function(id, callback) {
 //读取学区信息
 AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId) {
     //打开数据库
+    if (!categoryId) {
+        return Promise.resolve(false);
+    }
     return adminEnrollExamModel.findOne({ studentId: studentId, examCategoryId: categoryId, isDeleted: { $ne: true } });
 };
 

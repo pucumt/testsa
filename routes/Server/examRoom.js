@@ -206,9 +206,9 @@ module.exports = function(app) {
             examNo: siteNo
         });
 
-        adminEnrollExam.update(order._id, function(err, adminEnrollExam) {
+        adminEnrollExam.update(order._id, function(err, result) {
             if (err) {
-                adminEnrollExam = {};
+                result = {};
             }
         });
     };

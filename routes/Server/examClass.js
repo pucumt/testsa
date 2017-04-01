@@ -34,7 +34,8 @@ module.exports = function(app) {
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
             enrollCount: 0,
-            isWeixin: 0
+            isWeixin: 0,
+            courseContent: req.body.courseContent
         });
 
         examClass.save(function(err, examClass) {
@@ -54,6 +55,7 @@ module.exports = function(app) {
             examCategoryId: req.body.examCategoryId,
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
+            courseContent: req.body.courseContent
         });
 
         examClass.update(req.body.id, function(err, examClass) {

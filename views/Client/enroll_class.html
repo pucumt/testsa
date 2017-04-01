@@ -1,0 +1,71 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container">
+    <div class="row article-card">
+        {% if course %}
+        <div class="photo-block" style="background-color: rgb(255, 255, 255);">
+            <img src="https://img.yzcdn.cn/upload_files/2016/12/11/FtYY0top_3ooV5l3YQ_v8wcGsr_0.jpg?imageView2/2/w/730/h/0/q/75/format/webp" />
+        </div>
+        <div class="info article-block">
+            <div class=" clearfix info-title">
+                <h4>{{ post.title }}</h4>
+            </div>
+            <div class=" clearfix info-price">
+                <p class="goods-price">
+                    <em>￥{{ post.price }}</em>
+                </p>
+            </div>
+        </div>
+        <div class="info article-block">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static">email@example.com</p>
+                </div>
+            </div>
+            <div class=" clearfix info-title">
+                <h4>选择: </h4>
+                <button type="button" class="btn btn-default">8:00 - 10:00</button>
+            </div>
+        </div>
+        <div class="info article-block" style="margin-bottom: 0">
+            <label class=" clearfix info-title ">
+        <h4>商品详情 </h4>
+      </label >
+      <div class=" clearfix info-content">
+        
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!--modal-->
+<!--<form method="post" action="enroll">-->
+<div class="container enroll-filter">
+	<div class="row text-center">
+		<label style="margin-top: 15px;">选择课程</label>
+        </div>
+        <div class="row">
+            <div class="dropdown selectClass">
+                <div class="btn btn-default" id="drpGrade">年级<span class="caret"></span>
+                </div>
+                <input type="hidden" id="gradeId" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="dropdown selectClass">
+                <div class="btn btn-default" id="drpSubject">科目<span class="caret"></span>
+                </div>
+                <input type="hidden" id="subjectId" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <input class="btn btn-large btn-primary btn-full" type="submit" value="开始搜索" />
+            </div>
+        </div>
+    </div>
+    <!--</form>-->
+
+    <script type="text/javascript" src="/default/assets/js/Client/enroll.filter.js"></script>
+    {% endblock %}

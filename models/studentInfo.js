@@ -28,6 +28,7 @@ module.exports = StudentInfo;
 
 //存储学区信息
 StudentInfo.prototype.save = function() {
+    this.option.isDeleted = false;
     var newstudentInfo = new studentInfoModel(this.option);
 
     return newstudentInfo.save();
@@ -106,6 +107,12 @@ StudentInfo.getFilter = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
     return studentInfoModel.findOne(filter);
+};
+
+StudentInfo.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return studentInfoModel.find(filter);
 };
 
 StudentInfo.deleteFilter = function(filter, callback) {

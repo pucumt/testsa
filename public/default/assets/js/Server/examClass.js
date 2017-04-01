@@ -95,8 +95,8 @@ function addValidation(callback) {
                     },
                     stringLength: {
                         min: 3,
-                        max: 30,
-                        message: '测试名称在3-30个字符之间'
+                        max: 50,
+                        message: '测试名称在3-50个字符之间'
                     }
                 }
             },
@@ -171,6 +171,7 @@ $("#btnAdd").on("click", function(e) {
     $('#examDate').val("");
     $('#examTime').val("");
     $('#examCount').val(0);
+    $('#courseContent').val("");
     resetDropDown();
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
@@ -185,7 +186,8 @@ $("#btnSave").on("click", function(e) {
                 examTime: $('#examTime').val(),
                 examCategoryId: $('#examCategoryName').val(),
                 examCategoryName: $('#examCategoryName').find("option:selected").text(),
-                examCount: $('#examCount').val()
+                examCount: $('#examCount').val(),
+                courseContent: $('#courseContent').val()
             };
         if (!isNew) {
             postURI = "/admin/examClass/edit";
@@ -228,7 +230,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
+    // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改测试");
     $('#name').val(entity.name);
     var examDate = entity.examDate && moment(entity.examDate).format("YYYY-M-D");
@@ -236,6 +238,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#examTime').val(entity.examTime);
     $('#examCount').val(entity.examCount);
     $('#id').val(entity._id);
+    $('#courseContent').val(entity.courseContent);
     resetDropDown(entity.examCategoryId);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });

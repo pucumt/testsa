@@ -1,120 +1,99 @@
-var Course = require('../../models/course.js');
+var ExamClass = require('../../models/examClass.js'),
+    AdminEnrollExam = require('../../models/adminEnrollExam.js'),
+    StudentInfo = require('../../models/studentInfo.js'),
+    auth = require("./auth"),
+    checkLogin = auth.checkLogin,
+    checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function(app) {
-    app.get('/enroll', function(req, res) {
-        // number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        Course.get20(null, page, {
-            isPassed: true
-        }, function(err, posts, total) {
-            if (err) {
-                posts = [];
-            }
-            //test code
-            courses = [{
-                    shortid: 1,
-                    title: "test title1",
-                    price: "100",
-                    imgFile: "...",
-                    courseStartDate: new Date(),
-                    courseEndDate: new Date(),
-                    courseTime: "周一下午13:30-15:00",
-                    courseAddress: "徐汇区柳州路教学点"
-                },
-                {
-                    shortid: 2,
-                    title: "test title2",
-                    price: "120",
-                    imgFile: "...",
-                    courseStartDate: new Date(),
-                    courseEndDate: new Date(),
-                    courseTime: "周一下午13:30-15:00",
-                    courseAddress: "徐汇区柳州路教学点"
-                }
-            ];
-            res.render('Client/enroll.html', {
-                title: '我要报名',
-                courses: courses,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 20 + courses.length) == total,
-                user: req.session.user
-            });
-        });
-    });
-
-    app.get('/enrollfilter', function(req, res) {
-        res.render('Client/enroll-filter.html', {
-            title: '选课程',
+    app.get('/enrollExam', function(req, res) {
+        res.render('Client/enroll_exam.html', {
+            title: '考试报名',
             user: req.session.user
         });
     });
 
-    app.post('/enroll', function(req, res) {
+    app.get('/enrollClass', function(req, res) {
+        res.render('Client/enroll_class.html', {
+            title: '课程报名',
+            user: req.session.user
+        });
+    });
+
+    app.get('/enroll/exam', function(req, res) {
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        Course.get20(null, page, {
-            isPassed: true
-        }, function(err, posts, total) {
+        //查询并返回第 page 页的 14 篇文章
+        ExamClass.getAll(null, page, { isWeixin: 1 }, function(err, examClasss, total) {
             if (err) {
-                posts = [];
+                examClasss = [];
             }
-            //test code
-            courses = [{
-                    shortid: 1,
-                    title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
-                    price: "100",
-                    imgFile: "...",
-                    courseStartDate: new Date(),
-                    courseEndDate: new Date(),
-                    courseTime: "周一下午13:30-15:00",
-                    courseAddress: "徐汇区柳州路教学点"
-                },
-                {
-                    shortid: 2,
-                    title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
-                    price: "120",
-                    imgFile: "...",
-                    courseStartDate: new Date(),
-                    courseEndDate: new Date(),
-                    courseTime: "周一下午13:30-15:00",
-                    courseAddress: "徐汇区柳州路教学点"
-                }
-            ];
-            res.render('Client/enroll.html', {
-                title: '我要报名',
-                courses: courses,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 20 + courses.length) == total,
-                user: req.session.user
+            res.jsonp({
+                examClasss: examClasss,
+                isLastPage: ((page - 1) * 14 + examClasss.length) == total
             });
         });
     });
 
-    app.get('/enrolldetail/:id', function(req, res) {
-        //查询并返回id的文章
-        Course.getOne(req.params.id, function(err, course) {
-            if (err) {
-                course = {};
-            }
-            course = {
-                shortid: 1,
-                title: "活动类托班综合托班宝宝能力评估(2020幼升小)",
-                price: "100",
-                imgFile: "...",
-                courseStartDate: new Date(),
-                courseEndDate: new Date(),
-                courseTime: "周一下午13:30-15:00",
-                courseAddress: "徐汇区柳州路教学点",
-                courseContent: "这是一节体验课程"
-            };
-            res.render('Client/enroll-detail.html', {
-                title: '文章',
-                course: course
+    app.get('/enroll/exam/:id', function(req, res) {
+        ExamClass.get(req.params.id)
+            .then(function(exam) {
+                res.render('Client/enroll_exam_detail.html', {
+                    title: '考试报名',
+                    exam: exam
+                });
             });
-        });
+    });
+
+    app.post('/enroll/exam/enroll', checkLogin);
+    app.post('/enroll/exam/enroll', function(req, res) {
+        ExamClass.get(req.body.id)
+            .then(function(examClass) {
+                if (examClass) {
+                    //     AdminEnrollExam.getByStudentAndCategory(req.session.user.studentId, examClass.examCategoryId)
+                    //         .then(function(enrollExam) {
+                    //             if (enrollExam) {
+                    //                 res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                    //                 return;
+                    //             }
+
+                    //             ExamClass.enroll(req.body.examId)
+                    //                 .then(function(examClass) {
+                    //                     if (examClass && examClass.ok && examClass.nModified == 1) {
+                    //                         //报名成功
+                    //                         var adminEnrollExam = new AdminEnrollExam({
+                    //                             studentId: req.body.studentId,
+                    //                             studentName: req.body.studentName,
+                    //                             mobile: req.body.mobile,
+                    //                             examId: req.body.examId,
+                    //                             examName: req.body.examName,
+                    //                             examCategoryId: req.body.examCategoryId,
+                    //                             examCategoryName: req.body.examCategoryName,
+                    //                             isSucceed: 1
+                    //                         });
+                    //                         adminEnrollExam.save()
+                    //                             .then(function(enrollExam) {
+                    //                                 res.jsonp({ sucess: true });
+                    //                                 return;
+                    //                             });
+                    //                     } else {
+                    //                         //报名失败
+                    //                         res.jsonp({ error: "报名失败" });
+                    //                         return;
+                    //                     }
+                    //                 });
+                    //         });
+                }
+            });
+    });
+
+    app.get('/enroll/students', checkJSONLogin);
+    app.get('/enroll/students', function(req, res) {
+        var filter = { accountId: req.session.user._id };
+        StudentInfo.getFilters(filter)
+            .then(function(students) {
+                res.jsonp({ students: students });
+                return;
+            });
     });
 };

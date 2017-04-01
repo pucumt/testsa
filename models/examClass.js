@@ -9,6 +9,7 @@ var examClassSchema = new mongoose.Schema({
     examTime: String,
     examCategoryId: String,
     examCategoryName: String,
+    courseContent: String,
     examCount: Number,
     enrollCount: Number,
     isDeleted: Boolean,
@@ -122,10 +123,12 @@ ExamClass.unPublish = function(id, callback) {
 ExamClass.enroll = function(id) {
     return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
         .then(function(exam) {
-            return examClassModel.update({
-                _id: id,
-                enrollCount: { $lt: exam.examCount }
-            }, { $inc: { enrollCount: 1 } }).exec();
+            if (exam) {
+                return examClassModel.update({
+                    _id: id,
+                    enrollCount: { $lt: exam.examCount }
+                }, { $inc: { enrollCount: 1 } }).exec();
+            }
         });
 };
 

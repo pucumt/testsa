@@ -1,35 +1,9 @@
 ﻿{% extends "Client/partial/main.html" %} {% block main %}
 <div class="container">
-	<div class="row nav-bar">
-		<div class="nav-bar-header" style="background-image: url(https://img.yzcdn.cn/upload_files/2015/09/17/FocYjskBXYoQBSow9zQ-B2VglzwP.jpg);">
-			<div class="nav-bar-title">南通百分百教育</div>
-			<div class="nav-bar-avatar">
-				<img src="https://img.yzcdn.cn/upload_files/2015/09/17/99cfaf416b3621fc3a1ce797f73c525d.jpeg?imageView2/2/w/200/h/200/q/75/format/webp">
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		{% if posts and posts.length>0 %}
-		<ul class="goods-list clearfix list-inline">
-			{% for post in posts %}
-			<li class="goods-card card ">
-				<a href="article/{{ post.shortid }}" class="goods link clearfix" target="_blank">
-					<div class="photo-block" style="background-color: rgb(255, 255, 255);">
-						<img class="goods-photo" src="https://img.yzcdn.cn/upload_files/2016/12/11/FtYY0top_3ooV5l3YQ_v8wcGsr_0.jpg?imageView2/2/w/730/h/0/q/75/format/webp"
-						/>
-					</div>
-					<div class="info clearfix info-price">
-						<p class="goods-price">
-							<em>￥{{ post.price }}</em>
-						</p>
-					</div>
-					<button type="button" class="goods-buy btn btn-danger btn-xs">立刻购买</button>
-				</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-	</div>
+    <div class="row">
+        <button type="button" id="btnExam" class="btn btn-primary">测试报名</button>
+        <button type="button" id="btnClass" class="btn btn-primary">课程报名</button>
+        <button type="button" id="btnPersonal" class="btn btn-primary">个人中心</button>
+    </div>
 </div>
-<script type="text/javascript" src="/default/assets/js/index.js"></script>
 {% endblock %}

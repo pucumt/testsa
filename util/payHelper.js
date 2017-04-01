@@ -48,8 +48,8 @@ var Pay = {
         };
 
         var reqPay = https.request(options, (resPay) => {
-            console.log('statusCode:', resPay.statusCode);
-            console.log('headers:', resPay.headers);
+            //console.log('statusCode:', resPay.statusCode);
+            //console.log('headers:', resPay.headers);
 
             resPay.on('data', (d) => {
                 var body = d.toString(),
