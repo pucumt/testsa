@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/teacherList.html', {
                 title: '>老师设置',
-                user: req.session.user,
+                user: req.session.admin,
                 teachers: teachers,
                 total: total,
                 page: page,

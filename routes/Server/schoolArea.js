@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/schoolAreaList.html', {
                 title: '>校区设置',
-                user: req.session.user,
+                user: req.session.admin,
                 schoolAreas: schoolAreas
             });
         });

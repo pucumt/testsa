@@ -11,7 +11,7 @@ module.exports = function(app) {
     app.get('/admin/adminEnrollExamList', function(req, res) {
         res.render('Server/adminEnrollExamList.html', {
             title: '>测试报名',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -19,7 +19,7 @@ module.exports = function(app) {
     app.get('/admin/examOrderList', function(req, res) {
         res.render('Server/examOrderList.html', {
             title: '>测试订单',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -27,7 +27,7 @@ module.exports = function(app) {
     app.get('/admin/cardSearch', function(req, res) {
         res.render('Server/cardSearch.html', {
             title: '>准考证查询',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -35,7 +35,7 @@ module.exports = function(app) {
     app.get('/admin/ScoreInput', function(req, res) {
         res.render('Server/ScoreInput.html', {
             title: '>成绩录入',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 

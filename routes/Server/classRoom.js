@@ -7,7 +7,7 @@ module.exports = function(app) {
     app.get('/admin/classRoomList', function(req, res) {
         res.render('Server/classRoomList.html', {
             title: '教室设置',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 

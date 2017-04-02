@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/gradeList.html', {
                 title: '>年级设置',
-                user: req.session.user,
+                user: req.session.admin,
                 grades: grades
             });
         });

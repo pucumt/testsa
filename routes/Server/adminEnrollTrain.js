@@ -11,7 +11,7 @@ module.exports = function(app) {
     app.get('/admin/adminEnrollTrainList', function(req, res) {
         res.render('Server/adminEnrollTrainList.html', {
             title: '>课程报名',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -19,7 +19,7 @@ module.exports = function(app) {
     app.get('/admin/trainOrderList', function(req, res) {
         res.render('Server/trainOrderList.html', {
             title: '>课程订单',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -68,7 +68,7 @@ module.exports = function(app) {
     app.get('/admin/rebateOrderList', function(req, res) {
         res.render('Server/rebateOrderList.html', {
             title: '>退费管理',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -76,7 +76,7 @@ module.exports = function(app) {
     app.get('/admin/changeClassList', function(req, res) {
         res.render('Server/changeClassList.html', {
             title: '>调班管理',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -152,7 +152,7 @@ module.exports = function(app) {
                                 .then(function(enrollExam) {
                                     res.render('Server/payList.html', {
                                         title: '>订单支付',
-                                        user: req.session.user,
+                                        user: req.session.admin,
                                         trainOrder: enrollExam
                                     });
                                     return;
@@ -288,7 +288,7 @@ module.exports = function(app) {
             .then(function(order) {
                 res.render('Server/changeClassDetail.html', {
                     title: '>调班管理',
-                    user: req.session.user,
+                    user: req.session.admin,
                     order: order
                 });
             })
@@ -301,7 +301,7 @@ module.exports = function(app) {
             .then(function(trainOrder) {
                 res.render('Server/payList.html', {
                     title: '>订单支付',
-                    user: req.session.user,
+                    user: req.session.admin,
                     trainOrder: trainOrder
                 });
             });

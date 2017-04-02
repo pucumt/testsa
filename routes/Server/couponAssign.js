@@ -10,7 +10,7 @@ module.exports = function(app) {
             if (coupon) {
                 res.render('Server/couponAssign.html', {
                     title: '>优惠券分配',
-                    user: req.session.user,
+                    user: req.session.admin,
                     coupon: coupon
                 });
             }

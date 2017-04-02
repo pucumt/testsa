@@ -31,7 +31,7 @@ module.exports = function(app) {
     app.get('/admin', function(req, res) {
         res.render('Server/adminEnrollTrainList.html', {
             title: '主页',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 

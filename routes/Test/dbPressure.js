@@ -13,7 +13,7 @@ module.exports = function(app) {
             }
             res.jsonp({
                 title: '测试成功',
-                user: req.session.user,
+                user: req.session.admin,
                 grades: grades,
                 counts: req.body.counts
             });

@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/categoryList.html', {
                 title: '>课程类别',
-                user: req.session.user,
+                user: req.session.admin,
                 categorys: categorys,
                 total: total,
                 page: page,

@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/examClassList.html', {
                 title: '>测试设置',
-                user: req.session.user,
+                user: req.session.admin,
                 examClasss: examClasss,
                 total: total,
                 page: page,

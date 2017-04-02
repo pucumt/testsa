@@ -19,7 +19,7 @@ module.exports = function(app) {
             }
             res.render('Server/trainClassList.html', {
                 title: '>课程设置',
-                user: req.session.user,
+                user: req.session.admin,
                 trainClasss: trainClasss,
                 total: total,
                 page: page,

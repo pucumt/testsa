@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/subjectList.html', {
                 title: '>课程科目',
-                user: req.session.user,
+                user: req.session.admin,
                 subjects: subjects,
                 total: total,
                 page: page,

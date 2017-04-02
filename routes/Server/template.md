@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/#name#List.html', {
                 title: '>校区列表',
-                user: req.session.user,
+                user: req.session.admin,
                 #name#s: #name#s
             });
         });

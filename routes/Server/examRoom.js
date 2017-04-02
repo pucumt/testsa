@@ -9,7 +9,7 @@ module.exports = function(app) {
     app.get('/admin/examRoomList', function(req, res) {
         res.render('Server/examRoomList.html', {
             title: '>考场列表',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -104,7 +104,7 @@ module.exports = function(app) {
                 if (examRoom) {
                     res.render('Server/examRoomDetail.html', {
                         title: '>考场管理',
-                        user: req.session.user,
+                        user: req.session.admin,
                         examRoom: examRoom
                     });
                 }
@@ -123,7 +123,7 @@ module.exports = function(app) {
                 if (examRoom) {
                     res.render('Server/examRoomDetail.html', {
                         title: '>考场管理',
-                        user: req.session.user,
+                        user: req.session.admin,
                         examRoom: examRoom
                     });
                 }

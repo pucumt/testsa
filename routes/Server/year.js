@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/yearList.html', {
                 title: '>年度设置',
-                user: req.session.user,
+                user: req.session.admin,
                 years: years,
                 total: total,
                 page: page,

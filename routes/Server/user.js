@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
             res.render('Server/adminList.html', {
                 title: '>管理员设置',
-                user: req.session.user,
+                user: req.session.admin,
                 users: users
             });
         });

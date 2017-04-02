@@ -8,7 +8,7 @@ module.exports = function(app) {
     app.get('/admin/studentsList', function(req, res) {
         res.render('Server/studentInfoList.html', {
             title: '>学生管理',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
@@ -18,7 +18,7 @@ module.exports = function(app) {
         //     if (studentInfo) {
         res.render('Server/studentDetail.html', {
             title: '>学生管理',
-            user: req.session.user,
+            user: req.session.admin,
             id: req.params.id
         });
         //     }

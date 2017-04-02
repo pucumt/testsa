@@ -7,7 +7,7 @@ module.exports = function(app) {
     app.get('/admin/couponList', function(req, res) {
         res.render('Server/couponList.html', {
             title: '>优惠设置',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 

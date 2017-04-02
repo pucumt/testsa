@@ -2,31 +2,30 @@ var Post = require('../../models/post.js'),
     Comment = require('../../models/comment.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-	shortid = require('shortid');
+    shortid = require('shortid');
 
 module.exports = function(app) {
-	app.get('/article/:id', function(req, res) {
-		//查询并返回第 page 页的 20 篇文章
+    app.get('/article/:id', function(req, res) {
+        //查询并返回第 page 页的 20 篇文章
         Post.getOne(req.params.id, true, function(err, post, comments) {
             if (err) {
                 post = {};
             }
-            if(comments==null)
-            {
+            if (comments == null) {
                 comments = [];
             }
             res.render('Client/article', {
                 title: '文章',
                 post: post,
-                comments: comments, 
-                user: req.session.user
+                comments: comments,
+                user: req.session.admin
             });
         });
-	});
+    });
 
     app.post('/article/:id', checkLogin)
     app.post('/article/:id', function(req, res) {
-        var currentUser = req.session.user,
+        var currentUser = req.session.admin,
             comment = new Comment({
                 postid: req.params.id,
                 content: req.body.content,
@@ -37,7 +36,7 @@ module.exports = function(app) {
             if (err) {
                 return res.redirect('/');
             }
-            res.redirect('/article/'+comment.option.postid); //发表成功跳转到主页
+            res.redirect('/article/' + comment.option.postid); //发表成功跳转到主页
         });
     });
 }

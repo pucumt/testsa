@@ -8,7 +8,7 @@ module.exports = function(app) {
     app.get('/admin/studentAccountList', function(req, res) {
         res.render('Server/studentAccountList.html', {
             title: '>学生管理',
-            user: req.session.user
+            user: req.session.admin
         });
     });
 
