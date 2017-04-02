@@ -95,7 +95,7 @@ AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId) {
     if (!categoryId) {
         return Promise.resolve(false);
     }
-    return adminEnrollExamModel.findOne({ studentId: studentId, examCategoryId: categoryId, isDeleted: { $ne: true } });
+    return adminEnrollExamModel.findOne({ studentId: studentId, examCategoryId: categoryId, isSucceed: 1, isDeleted: { $ne: true } });
 };
 
 AdminEnrollExam.cancel = function(id, callback) {

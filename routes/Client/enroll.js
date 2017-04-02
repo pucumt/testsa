@@ -47,42 +47,45 @@ module.exports = function(app) {
 
     app.post('/enroll/exam/enroll', checkLogin);
     app.post('/enroll/exam/enroll', function(req, res) {
-        ExamClass.get(req.body.id)
+        ExamClass.get(req.body.examId)
             .then(function(examClass) {
                 if (examClass) {
-                    //     AdminEnrollExam.getByStudentAndCategory(req.session.user.studentId, examClass.examCategoryId)
-                    //         .then(function(enrollExam) {
-                    //             if (enrollExam) {
-                    //                 res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
-                    //                 return;
-                    //             }
-
-                    //             ExamClass.enroll(req.body.examId)
-                    //                 .then(function(examClass) {
-                    //                     if (examClass && examClass.ok && examClass.nModified == 1) {
-                    //                         //报名成功
-                    //                         var adminEnrollExam = new AdminEnrollExam({
-                    //                             studentId: req.body.studentId,
-                    //                             studentName: req.body.studentName,
-                    //                             mobile: req.body.mobile,
-                    //                             examId: req.body.examId,
-                    //                             examName: req.body.examName,
-                    //                             examCategoryId: req.body.examCategoryId,
-                    //                             examCategoryName: req.body.examCategoryName,
-                    //                             isSucceed: 1
-                    //                         });
-                    //                         adminEnrollExam.save()
-                    //                             .then(function(enrollExam) {
-                    //                                 res.jsonp({ sucess: true });
-                    //                                 return;
-                    //                             });
-                    //                     } else {
-                    //                         //报名失败
-                    //                         res.jsonp({ error: "报名失败" });
-                    //                         return;
-                    //                     }
-                    //                 });
-                    //         });
+                    //studentId
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, examClass.examCategoryId)
+                        .then(function(enrollExam) {
+                            if (enrollExam) {
+                                res.jsonp({ error: "你已经报过名了，此测试不允许多次报名" });
+                                return;
+                            }
+                            StudentInfo.get(req.body.studentId)
+                                .then(function(student) {
+                                    ExamClass.enroll(req.body.examId)
+                                        .then(function(result) {
+                                            if (result && result.ok && result.nModified == 1) {
+                                                //报名成功
+                                                var adminEnrollExam = new AdminEnrollExam({
+                                                    studentId: student._id,
+                                                    studentName: student.name,
+                                                    mobile: student.mobile,
+                                                    examId: examClass._id,
+                                                    examName: examClass.name,
+                                                    examCategoryId: examClass.examCategoryId,
+                                                    examCategoryName: examClass.examCategoryName,
+                                                    isSucceed: 1
+                                                });
+                                                adminEnrollExam.save()
+                                                    .then(function(enrollExam) {
+                                                        res.jsonp({ sucess: true });
+                                                        return;
+                                                    });
+                                            } else {
+                                                //报名失败
+                                                res.jsonp({ error: "报名失败" });
+                                                return;
+                                            }
+                                        });
+                                });
+                        });
                 }
             });
     });

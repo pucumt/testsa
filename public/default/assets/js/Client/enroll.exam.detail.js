@@ -1,4 +1,5 @@
-var newStudent = true;
+var newStudent = true,
+    editStudent;
 $(document).ready(function() {
     $("#btnEnroll").on("click", function(e) {
         $.get("/enroll/students", function(data) {
@@ -11,6 +12,12 @@ $(document).ready(function() {
                 if (data.students) {
                     $("#bgBack").show();
                     $("#Enroll-select").show();
+                    $ul.empty();
+                    if (data.students.length > 0) {
+                        var student = data.students[0];
+                        renderStudents(data.students, student._id);
+                        setSelectedStudent(student);
+                    }
                     return;
                 }
             }
@@ -29,6 +36,7 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("新建学生信息");
         $("#Enroll-student").hide();
+        resetDropDown();
         newStudent = true;
     });
 
@@ -45,29 +53,83 @@ $(document).ready(function() {
     $("#Enroll-student-edit #btnSave").on("click", function(e) {
         var validator = $('#studentInfo').data('formValidation').validate();
         if (validator.isValid()) {
-            var postURI = "/admin/studentInfo/add",
+            var postURI = "/studentInfo/add",
                 postObj = {
                     name: $('#studentInfo #studentName').val(),
                     mobile: $('#studentInfo #mobile').val(),
-                    sex: $('#studentInfo #sex').val(),
+                    sex: $('#studentInfo #sex').val() == "1" ? true : false,
                     School: $('#studentInfo #School').val(),
                     address: $('#studentInfo #address').val(),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
                 };
             if (!newStudent) {
-                postURI = "/admin/studentInfo/edit";
-                postObj.id = $('#id').val();
+                postURI = "/studentInfo/edit";
+                postObj.id = editStudent._id;
             }
             $.post(postURI, postObj, function(data) {
                 var entity;
                 if (newStudent) {
                     entity = data.student;
+                    renderNewStudent(entity);
                 } else {
                     entity = postObj;
                     entity._id = postObj.id;
+                    resetOKStudent(entity);
+                    $ul.find("#" + entity._id).data("obj", entity);
                 }
                 setSelectedStudent(entity);
+            });
+        }
+    });
+
+    $("#Enroll-student .student .student-list").on("click", "li .glyphicon-edit", function(e) {
+        var obj = e.currentTarget;
+        var entity = $(obj).parent().data("obj");
+        editStudent = entity;
+        destroy();
+        addValidation();
+        $("#Enroll-student-edit").show();
+        $("#Enroll-student-edit div.title .title").text("修改学生信息");
+        $("#Enroll-student").hide();
+        $('#studentInfo #studentName').val(entity.name);
+        $('#studentInfo #mobile').val(entity.mobile);
+        $('#studentInfo #sex').val(entity.sex ? 1 : 0);
+        $('#studentInfo #School').val(entity.School);
+        $('#studentInfo #address').val(entity.address);
+        resetDropDown(null, function() {
+            $('#studentInfo #grade').val(entity.gradeId);
+        });
+        newStudent = false;
+
+        e.stopPropagation();
+    });
+
+    $("#Enroll-student .student .student-list").on("click", "li", function(e) {
+        var obj = e.currentTarget;
+        var entity = $(obj).data("obj");
+        resetOKStudent(entity);
+        setSelectedStudent(entity);
+    });
+
+    $("#Enroll-select #btnNext").on("click", function(e) {
+        if ($("#Enroll-select .student .name").text() == "") {
+            $("#Enroll-student").show();
+            $("#Enroll-select").hide();
+        } else {
+            var filter = { examId: $("#id").val(), studentId: $("#Enroll-select #studentId").val() };
+            $.post("/enroll/exam/enroll", filter, function(data) {
+                if (data.sucess) {
+                    $("#Enroll-select").hide();
+                    showAlert("报名成功！", null, function() {
+                        location.href = "/enroll/exam/" + $("#id").val();
+                    });
+                } else {
+                    $("#Enroll-select").hide();
+                    showAlert(data.error, null, function() {
+                        $("#bgBack").hide();
+                    });
+                }
             });
         }
     });
@@ -108,12 +170,20 @@ function addValidation() {
     });
 };
 
-function setSelectedStudent(entity) {
+function setSelectedStudent(stdent) {
     $("#Enroll-student-edit").hide();
     $("#Enroll-student").hide();
     $("#Enroll-select").show();
-    $("#Enroll-select .student .name").text(entity.name);
-    $("#Enroll-select #studentId").val(entity._id);
+    $("#Enroll-select .student .name").text(stdent.name);
+    $("#Enroll-select #studentId").val(stdent._id);
+};
+
+function resetOKStudent(stdent) {
+    var $ok = $ul.find(".glyphicon-ok");
+    if ($ok.length > 0) {
+        $ok.remove();
+    }
+    $ul.find("#" + stdent._id).prepend('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
 };
 
 var $ul = $("#Enroll-student .student .student-list");
@@ -126,9 +196,38 @@ function renderStudents(students, id) {
             if (student._id == id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
             }
-            d.append('<li>' + selected + '<span class="name">' + student.name +
-                '</span><span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span></li>');
+            d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '>' + selected + '<span class="name">' + student.name +
+                '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
         });
+        $ul.append(d);
     }
+};
 
+function renderNewStudent(student) {
+    var $ok = $ul.find(".glyphicon-ok");
+    if ($ok.length > 0) {
+        $ok.remove();
+    }
+    if (students.length > 0) {
+        $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
+            '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
+    }
+};
+
+function resetDropDown(id, callback) {
+    $('#studentInfo').find("#grade option").remove();
+    $.get("/admin/grade/getAll", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(grade) {
+                    var select = "";
+                    if (grade._id == id) {
+                        select = "selected";
+                    }
+                    $("#studentInfo #grade").append("<option " + select + " value='" + grade._id + "'>" + grade.name + "</option>");
+                });
+            }
+            callback && callback();
+        }
+    });
 };

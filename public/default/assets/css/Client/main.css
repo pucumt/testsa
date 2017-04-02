@@ -176,10 +176,44 @@ footer,
     opacity: 1;
 }
 
+#confirmModal {
+    padding: 0 25px;
+    /*overflow: hidden;*/
+    position: absolute;
+    z-index: 1000;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    visibility: visible;
+    opacity: 1;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+}
+
+#confirmModal .modal-content {
+    margin: auto;
+    background: white;
+    transform: translate3d(0px, 0px, 0px);
+    transition: all 300ms ease;
+    /*margin-top: 20px;*/
+}
+
 #Enroll-select .student {
     height: 40px;
 }
 
+#Enroll-student .student .student-list {
+    border-top: solid 1px #ddd;
+}
+
+#Enroll-student .student .student-list li {
+    border-bottom: solid 1px #ddd;
+    padding: 5px;
+    font-size: 14px;
+}
+
 #Enroll-student .student .glyphicon-ok {
     color: #d9534f;
+    margin-right: 10px;
 }
