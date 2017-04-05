@@ -38,21 +38,29 @@ footer,
 
 .enroll-filter .btn {
     border-radius: 0;
-    height: 44px;
+    height: 40px;
+    width: 100%;
 }
 
 .enroll-filter .row {
     margin-bottom: 20px;
 }
 
-.enroll-filter .dropdown.selectClass .btn {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.enroll .pageTitle {
+    text-align: center;
+    height: 40px;
+    background-color: #d9534f;
+    line-height: 40px;
+    color: white;
+    margin: 0 -15px;
+    padding-right: 20px;
+    font-size: 15px;
 }
 
-.btn-full {
-    width: 100%;
+.enroll .pageTitle .glyphicon-menu-left {
+    font-size: 20px;
+    margin-left: 5px;
+    margin-top: 10px;
 }
 
 .enroll .enroll-submit {
@@ -62,7 +70,7 @@ footer,
     position: fixed;
     bottom: 0;
     left: 0;
-    height: 50px;
+    height: 41px;
     color: #666;
 }
 
@@ -155,7 +163,7 @@ footer,
 #Enroll-student #btnNewStudent,
 #Enroll-student-edit #btnSave {
     width: 100%;
-    height: 49px;
+    height: 40px;
     border-radius: 0;
 }
 
@@ -197,6 +205,11 @@ footer,
     transform: translate3d(0px, 0px, 0px);
     transition: all 300ms ease;
     /*margin-top: 20px;*/
+}
+
+#Enroll-select .title .glyphicon-remove-circle {
+    margin-top: -10px;
+    font-size: 20px;
 }
 
 #Enroll-select .student {

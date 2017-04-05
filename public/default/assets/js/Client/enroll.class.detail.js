@@ -2,7 +2,7 @@ var newStudent = true,
     editStudent;
 $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/enrollExam";
+        location.href = "/enrollClass";
     });
 
     $("#btnEnroll").on("click", function(e) {
@@ -117,25 +117,7 @@ $(document).ready(function() {
     });
 
     $("#Enroll-select #btnNext").on("click", function(e) {
-        if ($("#Enroll-select .student .name").text() == "") {
-            $("#Enroll-student").show();
-            $("#Enroll-select").hide();
-        } else {
-            var filter = { examId: $("#id").val(), studentId: $("#Enroll-select #studentId").val() };
-            $.post("/enroll/exam/enroll", filter, function(data) {
-                if (data.sucess) {
-                    $("#Enroll-select").hide();
-                    showAlert("报名成功！", null, function() {
-                        location.href = "/enroll/exam/" + $("#id").val();
-                    });
-                } else {
-                    $("#Enroll-select").hide();
-                    showAlert(data.error, null, function() {
-                        $("#bgBack").hide();
-                    });
-                }
-            });
-        }
+        location.href = "/enroll/order?classId=" + $("#id").val() + "&studentId=" + $("#Enroll-select #studentId").val();
     });
 
     $("#Enroll-select .title .glyphicon-remove-circle").on("click", function(e) {

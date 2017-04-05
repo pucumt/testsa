@@ -1,0 +1,57 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll">
+    <div class="pageTitle">
+        课程订单
+    </div>
+    <div class="row exam-detail">
+        <ul class="exam-list clearfix list-unstyled">
+            {% if trainClass %}
+            <li class="exam-card card " style="margin-bottom: 0" data-obj="{{ trainClass|dump }}">
+                <div id="{{ trainClass._id }}" class="exam link">
+                    <div class="exam-info">
+                        <div>
+                            <h3>{{ trainClass.name }}</h3>
+                        </div>
+                        <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString() }} </div>
+                        <div>上课时间：{{ trainClass.courseTime }} </div>
+                    </div>
+                </div>
+            </li> {% endif %}
+        </ul>
+        <input type="hidden" id="classId" value="{{ classId }}" />
+        <input type="hidden" id="studentId" value="{{ studentId }}" />
+        <div class="form-group coupon" style="display: none;">
+            <label for="coupon" class="control-label">优惠:</label>
+            <select style="margin-left:20px; width: calc(100% - 20px);" name="coupon" id="coupon" class="form-control">
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label">合计:</label>
+            <span class="total"></span>元
+        </div>
+    </div>
+    <div class="enroll-submit exam">
+        <button id="btnPay" class="btn btn-danger" type="button">立刻支付</button>
+    </div>
+</div>
+<div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
+<div class="modal" id="confirmModal" style="display:none; height: 100%;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                出错了！
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js"></script>
+<script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
+{% endblock %}

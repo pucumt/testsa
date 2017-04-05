@@ -150,6 +150,10 @@ module.exports = function(app) {
                             });
                             adminEnrollTrain.save()
                                 .then(function(enrollExam) {
+                                    //修改优惠券状态
+                                    if (req.body.couponId) {
+                                        CouponAssign.use(req.body.couponId, enrollExam._id);
+                                    }
                                     res.render('Server/payList.html', {
                                         title: '>订单支付',
                                         user: req.session.admin,
@@ -157,10 +161,6 @@ module.exports = function(app) {
                                     });
                                     return;
                                 });
-                            //修改优惠券状态
-                            if (req.body.couponId) {
-                                CouponAssign.use(req.body.couponId);
-                            }
                         } else {
                             //报名失败
                             res.jsonp({ error: "报名失败,很可能报满" });

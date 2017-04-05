@@ -15,7 +15,8 @@ var couponAssignSchema = new mongoose.Schema({
     couponEndDate: Date,
     isDeleted: Boolean,
     isUsed: Boolean,
-    isExpired: Boolean
+    isExpired: Boolean,
+    orderId: String //just used in train class now
 }, {
     collection: 'couponAssigns'
 });
@@ -100,6 +101,16 @@ CouponAssign.getFilter = function(filter) {
     return couponAssignModel.findOne(filter);
 };
 
+CouponAssign.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return couponAssignModel.find(filter)
+        .exec();
+};
+
 CouponAssign.getAllStudentIdWithoutPage = function(filter, callback) {
     if (filter) {
         filter.isDeleted = { $ne: true };
@@ -113,8 +124,8 @@ CouponAssign.getAllStudentIdWithoutPage = function(filter, callback) {
         });
 };
 
-CouponAssign.use = function(id) {
+CouponAssign.use = function(id, orderId) {
     return couponAssignModel.update({
         _id: id
-    }, { isUsed: true }).exec();
+    }, { isUsed: true, orderId: orderId }).exec();
 };

@@ -1,30 +1,30 @@
 ﻿{% extends "Client/partial/main-header.html" %} {% block main %}
 <div class="container enroll">
     <div class="pageTitle">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>测试内容
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>课程内容
     </div>
     <div class="row exam-detail">
-        {% if exam %}
+        {% if trainClass %}
         <div class="exam link">
             <div class="exam-info">
                 <div>
-                    <h2>{{ exam.name }}</h2>
+                    <h2>{{ trainClass.name }}</h2>
                 </div>
-                <div>日期：{{ exam.examDate.toLocaleDateString() }}&nbsp;&nbsp;时间：{{ exam.examTime }}</div>
+                <div>课程日期：{{ trainClass.courseStartDate.toLocaleDateString() }} - {{ trainClass.courseEndDate.toLocaleDateString() }}</div>
                 <div class="enroll-info">
-                    <p class="exam-count">已报{{ exam.enrollCount }}&nbsp;&nbsp;共{{exam.examCount}} {% if exam.enrollCount == exam.examCount %}
+                    <p class="exam-count">已报{{ trainClass.enrollCount }}&nbsp;&nbsp;共{{trainClass.totalStudentCount}} {% if trainClass.enrollCount == trainClass.totalStudentCount %}
                         <span class="full">(已满)</span>{% endif %}
                     </p>
                 </div>
             </div>
             <div class="exam-content">
-                <div class="title">考试须知：</div>
-                <div class="content"> {{ exam.courseContent }} </div>
+                <div class="title">课程介绍：</div>
+                <div class="content"> {{ trainClass.courseContent }} </div>
             </div>
-            <input type="hidden" id="id" value="{{ exam._id }}" />
+            <input type="hidden" id="id" value="{{ trainClass._id }}" />
         </div>{% endif %}
     </div>
-    {% if exam.enrollCount != exam.examCount %}
+    {% if trainClass.enrollCount != trainClass.totalStudentCount %}
     <div class="enroll-submit exam">
         <button id="btnEnroll" class="btn btn-danger" type="button">立刻报名</button>
     </div>
@@ -112,6 +112,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.exam.detail.js"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.class.detail.js"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}

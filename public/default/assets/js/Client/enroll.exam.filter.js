@@ -49,12 +49,6 @@ $("#btnMore").on("click", function(e) {
     loadData(page);
 });
 
-$(".enroll ").on("click", function(e) {
-    //测试须知
-    var page = parseInt($("#page").val()) + 1;
-    loadData(page);
-});
-
 $selectBody.on("click", "li", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
