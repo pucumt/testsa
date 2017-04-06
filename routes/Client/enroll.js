@@ -160,6 +160,17 @@ module.exports = function(app) {
             });
     });
 
+    app.get('/enroll/grade/all', function(req, res) {
+        Grade.getAllWithoutPage()
+            .then(function(grades) {
+                res.jsonp(grades);
+                return;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
     app.get('/enroll/order', checkLogin);
     app.get('/enroll/order', function(req, res) {
         //req.query.classId studentId

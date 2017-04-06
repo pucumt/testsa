@@ -68,7 +68,10 @@ $("#btnPay").on("click", function(e) {
             }
 
             if (data.error) {
-                showAlert(data.error);
+                $("#bgBack").show();
+                showAlert(data.error, null, function() {
+                    $("#bgBack").hide();
+                });
                 return;
             }
             if (data.orderId) {

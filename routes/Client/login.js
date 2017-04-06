@@ -25,7 +25,7 @@ module.exports = function(app) {
                     return res.redirect('/login'); //用户不存在则跳转到登录页
                 }
                 //检查密码是否一致
-                if (user.password != req.body.password) {
+                if (user.password != password) {
                     return res.redirect('/login'); //密码错误则跳转到登录页
                 }
                 //用户名密码都匹配后，将用户信息存入 session

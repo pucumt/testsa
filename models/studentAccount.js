@@ -38,16 +38,9 @@ StudentAccount.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-StudentAccount.get = function(id, callback) {
+StudentAccount.get = function(id) {
     //打开数据库
-    studentAccountModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, studentAccount) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, studentAccount);
-
-        //db.close();
-    });
+    return studentAccountModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

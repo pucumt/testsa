@@ -5,7 +5,9 @@ $(document).ready(function() {
     $("#btnClass").on("click", function(e) {
         location.href = "/enrollClass";
     });
-
+    $("#btnPersonal").on("click", function(e) {
+        location.href = "/personalCenter";
+    });
     var hideConfirmForm;
 
     window.showAlert = function(msg, title, callback) {

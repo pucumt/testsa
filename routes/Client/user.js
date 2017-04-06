@@ -68,4 +68,31 @@ module.exports = function(app) {
             });
         });
     });
+
+    app.get('/personalCenter/students', checkLogin);
+    app.get('/personalCenter/students', function(req, res) {
+        var currentUser = req.session.user;
+        res.render('Client/personalCenter_students.html', {
+            title: '学生列表',
+            user: req.session.user
+        });
+    });
+
+    app.get('/personalCenter/coupon', checkLogin);
+    app.get('/personalCenter/coupon', function(req, res) {
+        var currentUser = req.session.user;
+        res.render('Client/personalCenter_coupon.html', {
+            title: '优惠券列表',
+            user: req.session.user
+        });
+    });
+
+    app.get('/personalCenter/order', checkLogin);
+    app.get('/personalCenter/order', function(req, res) {
+        var currentUser = req.session.user;
+        res.render('Client/personalCenter_order.html', {
+            title: '订单列表',
+            user: req.session.user
+        });
+    });
 }

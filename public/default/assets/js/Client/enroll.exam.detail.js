@@ -217,7 +217,7 @@ function renderNewStudent(student) {
     if ($ok.length > 0) {
         $ok.remove();
     }
-    if (students.length > 0) {
+    if (student) {
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
             '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
     }
@@ -225,7 +225,7 @@ function renderNewStudent(student) {
 
 function resetDropDown(id, callback) {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/admin/grade/getAll", function(data) {
+    $.get("/enroll/grade/all", function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {

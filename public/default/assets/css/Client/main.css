@@ -230,3 +230,46 @@ footer,
     color: #d9534f;
     margin-right: 10px;
 }
+
+.enroll.personalCenter .account {
+    text-align: center;
+    margin: 10px -15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #f8f8f8;
+}
+
+.enroll.personalCenter .account .reset {
+    margin-left: 20px;
+    font-weight: normal;
+}
+
+.enroll.personalCenter {
+    background-color: #e7e9ec;
+}
+
+.enroll.personalCenter .students,
+.enroll.personalCenter .coupon,
+.enroll.personalCenter .order,
+.enroll.personalCenter .exam {
+    margin: 10px -15px;
+    padding: 8px 15px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #f8f8f8;
+}
+
+.enroll.personalCenter .exam {
+    margin-bottom: 0;
+}
+
+#Enroll-student.personalCenter {
+    position: relative;
+    padding: 0 15px;
+}
+
+.enroll.personalCenter .enroll-submit {
+    position: relative;
+}
