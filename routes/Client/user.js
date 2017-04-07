@@ -95,4 +95,36 @@ module.exports = function(app) {
             user: req.session.user
         });
     });
+
+    app.get('/personalCenter/coupon/all', checkJSONLogin);
+    app.get('/personalCenter/coupon/all', function(req, res) {
+        var currentUser = req.session.user;
+        StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
+            var now = new Date((new Date()).toLocaleDateString());
+            if (students.length <= 0) {
+                res.jsonp([]);
+                return;
+            }
+            var coupons = [],
+                parray = [];
+            students.forEach(function(student) {
+                var filter = {
+                    studentId: student._id,
+                    isUsed: { $ne: true },
+                    couponEndDate: { $gte: now }
+                };
+                var p = CouponAssign.getAllWithoutPage(filter)
+                    .then(function(assigns) {
+                        assigns.forEach(function(assign) {
+                            coupons.push({ studentName: student.name, couponName: assign.couponName });
+                        });
+                    });
+                parray.push(p);
+            });
+            Promise.all(parray).then(function() {
+                res.jsonp(coupons);
+                return;
+            });
+        });
+    });
 }

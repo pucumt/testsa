@@ -273,3 +273,53 @@ footer,
 .enroll.personalCenter .enroll-submit {
     position: relative;
 }
+
+.enroll.personalCenter .couponlist .student-list li {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.enroll.personalCenter .couponlist .student-list li,
+.enroll.personalCenter .orderList .student-list li {
+    border-bottom: 1px solid #ccc;
+}
+
+.enroll.personalCenter .couponlist .student-list span.studentName {
+    display: inline-block;
+    width: 180px;
+}
+
+
+/*.enroll.personalCenter .orderList ul {
+    margin-top: 15px;
+}*/
+
+.enroll.personalCenter .orderList ul li {
+    margin-top: 15px;
+    background-color: white;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .detail {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .title {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    padding-left: 20px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .price span {
+    margin-bottom: 10px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList {
+    background-color: #f8f8f8;
+    margin-left: -15px;
+    margin-right: -15px;
+}

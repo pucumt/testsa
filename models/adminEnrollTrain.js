@@ -155,3 +155,13 @@ AdminEnrollTrain.pay = function(id, payWay) {
         payWay: payWay
     }).exec();
 };
+
+AdminEnrollTrain.getFilters = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return adminEnrollTrainModel.find(filter)
+        .exec();
+};
