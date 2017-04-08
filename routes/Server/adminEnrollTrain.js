@@ -341,13 +341,13 @@ module.exports = function(app) {
         AdminEnrollTrain.pay(req.body.id, 9)
             .then(function(result) {
                 if (result && result.nModified == 1) {
-                    res.write("success");
+                    res.end("success");
                     return;
                 }
-                res.write("failure1");
+                res.end("failure1");
                 return;
             });
-        res.write("failure2");
+        res.end("failure2");
         return;
     });
 }
