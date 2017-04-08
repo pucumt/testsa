@@ -14,22 +14,10 @@ $(document).ready(function() {
     $(".enroll.personalCenter .orderList ul").on("click", "li .title", function(e) {
         GotoDetail(e);
     });
-
-    $(".enroll.personalCenter .orderList ul ").on("click", "#btnPay", function(e) {
-        var curObj = $(e.currentTarget),
-            orderId = curObj.parents("li").attr("orderId");
-        $.post("/personalCenter/order/pay", {
-            id: orderId
-        }, function(data) {
-            if (data.error) {
-                showAlert("生成付款码失败");
-            } else {}
-        });
-    });
 });
 
 function loadOrders() {
-    $.get("/personalCenter/order/all", function(data) {
+    $.get("/personalCenter/exam/all", function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -39,7 +27,7 @@ function loadOrders() {
             if (data.length > 0) {
                 renderOrders(data);
             } else {
-                $ul.text("还没有课程订单");
+                $ul.text("还没有测试订单");
             }
         }
     });
@@ -53,12 +41,11 @@ function renderOrders(orders) {
         // d.append('<li class="header"><span class="studentName">学生</span><span class="">优惠券</span></li>');
         orders.forEach(function(order) {
             var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
-                status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>';
+                status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '';
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学生:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
-                moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' + order.className +
-                '</div><div class="price"><button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-danger btn-xs">详情</button><span class="pull-right">总金额:' +
-                price + '元</span>' + status + '</div></div></li>');
+                moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
+                order.className + '</div><div class="price"><button type="button" id="btnDetail" class="btn btn-danger btn-xs pull-right">详情</button>' + status + '</div></div></li>');
         });
         $ul.append(d);
     }
@@ -67,5 +54,5 @@ function renderOrders(orders) {
 function GotoDetail(e) {
     var curObj = $(e.currentTarget),
         $li = curObj.parents("li");
-    location.href = "/personalCenter/order/id/" + $li.attr("orderId");
+    location.href = "/personalCenter/exam/id/" + $li.attr("orderId");
 }

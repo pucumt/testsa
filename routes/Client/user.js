@@ -96,6 +96,15 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/personalCenter/exam', checkLogin);
+    app.get('/personalCenter/exam', function(req, res) {
+        var currentUser = req.session.user;
+        res.render('Client/personalCenter_exam.html', {
+            title: '测试列表',
+            user: req.session.user
+        });
+    });
+
     app.get('/personalCenter/coupon/all', checkJSONLogin);
     app.get('/personalCenter/coupon/all', function(req, res) {
         var currentUser = req.session.user;

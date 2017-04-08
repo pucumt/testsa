@@ -76,7 +76,7 @@ TrainClass.prototype.update = function(id, callback) {
 //读取学区信息
 TrainClass.get = function(id) {
     //打开数据库
-    return trainClassModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return trainClassModel.findOne({ _id: id });
 };
 
 //一次获取20个学区信息

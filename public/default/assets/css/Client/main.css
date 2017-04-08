@@ -299,10 +299,10 @@ footer,
     background-color: white;
     padding-left: 15px;
     padding-right: 15px;
+    border-top: 1px solid #ddd;
 }
 
 #Enroll-student.enroll.personalCenter .orderList ul li .detail {
-    border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     padding: 10px 0;
 }
@@ -314,7 +314,8 @@ footer,
     padding-left: 20px;
 }
 
-#Enroll-student.enroll.personalCenter .orderList ul li .price span {
+#Enroll-student.enroll.personalCenter .orderList ul li .price span,
+#Enroll-student.enroll.personalCenter .orderList ul li .price button {
     margin-bottom: 10px;
 }
 

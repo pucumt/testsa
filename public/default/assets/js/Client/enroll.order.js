@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+        location.href = "/enroll/class/" + $("#classId").val();
+    });
+
     renderData();
     $(".enroll .exam-detail #coupon").on("change blur", setPrice);
 });
@@ -76,6 +80,13 @@ $("#btnPay").on("click", function(e) {
             }
             if (data.orderId) {
                 //show paycode
+                $.post("/personalCenter/order/pay", {
+                    id: data.orderId
+                }, function(data) {
+                    if (data.error) {
+                        showAlert("生成付款码失败");
+                    } else {}
+                });
             }
         }
     });

@@ -58,7 +58,7 @@ AdminEnrollTrain.prototype.update = function(id, callback) {
 //读取学区信息
 AdminEnrollTrain.get = function(id) {
     //打开数据库
-    return adminEnrollTrainModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return adminEnrollTrainModel.findOne({ _id: id });
 };
 
 //一次获取20个学区信息

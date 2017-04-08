@@ -54,7 +54,7 @@ AdminEnrollExam.prototype.update = function(id, callback) {
 //读取学区信息
 AdminEnrollExam.get = function(id) {
     //打开数据库
-    return adminEnrollExamModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return adminEnrollExamModel.findOne({ _id: id });
 };
 
 //一次获取20个学区信息
@@ -135,5 +135,11 @@ AdminEnrollExam.getAllEnrolledWithoutPaging = function(filter) {
     } else {
         filter = { isSucceed: 1, isDeleted: { $ne: true } };
     }
+    return adminEnrollExamModel.find(filter);
+};
+
+AdminEnrollExam.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
     return adminEnrollExamModel.find(filter);
 };

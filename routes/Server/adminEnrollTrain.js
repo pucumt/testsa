@@ -335,4 +335,19 @@ module.exports = function(app) {
                 res.jsonp({ error: "生成付款码失败" });
             });
     });
+
+    app.post('/admin/pay/notify', function(req, res) {
+
+        AdminEnrollTrain.pay(req.body.id, 9)
+            .then(function(result) {
+                if (result && result.nModified == 1) {
+                    res.write("success");
+                    return;
+                }
+                res.write("failure1");
+                return;
+            });
+        res.write("failure2");
+        return;
+    });
 }
