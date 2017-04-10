@@ -6,7 +6,7 @@ $(document).ready(function() {
     });
 
     $("#btnEnroll").on("click", function(e) {
-        $.get("/enroll/students", function(data) {
+        $.post("/enroll/students", { originalUrl: "/enroll/exam/" + $("#id").val() }, function(data) {
             if (data) {
                 if (data.notLogin) {
                     location.href = "/login";
@@ -38,7 +38,7 @@ $(document).ready(function() {
         destroy();
         addValidation();
         $("#Enroll-student-edit").show();
-        $("#Enroll-student-edit div.title .title").text("新建学生信息");
+        $("#Enroll-student-edit div.title .title").text("新建学员信息");
         $("#Enroll-student").hide();
         resetDropDown();
         newStudent = true;
@@ -66,6 +66,7 @@ $(document).ready(function() {
                     address: $('#studentInfo #address').val(),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
+                    originalUrl: "/enroll/exam/" + $("#id").val()
                 };
             if (!newStudent) {
                 postURI = "/studentInfo/edit";
@@ -94,7 +95,7 @@ $(document).ready(function() {
         destroy();
         addValidation();
         $("#Enroll-student-edit").show();
-        $("#Enroll-student-edit div.title .title").text("修改学生信息");
+        $("#Enroll-student-edit div.title .title").text("修改学员信息");
         $("#Enroll-student").hide();
         $('#studentInfo #studentName').val(entity.name);
         $('#studentInfo #mobile').val(entity.mobile);
@@ -126,7 +127,7 @@ $(document).ready(function() {
                 if (data.sucess) {
                     $("#Enroll-select").hide();
                     showAlert("报名成功！", null, function() {
-                        location.href = "/enroll/exam/" + $("#id").val();
+                        location.href = "/enroll/exam/card/" + $("#id").val();
                     });
                 } else {
                     $("#Enroll-select").hide();

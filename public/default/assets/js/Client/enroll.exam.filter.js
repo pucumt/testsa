@@ -39,7 +39,8 @@ function generateLi(examClass) {
     $infoContainer.append($('<div><h3>' + examClass.name + '</h3></div>'));
     $infoContainer.append($('<div>日期：' + moment(examClass.examDate).format("YYYY-M-D") + '&nbsp;&nbsp;时间：' + examClass.examTime + '</div>'));
     var isFull = examClass.enrollCount == examClass.examCount ? "<span class='full'>(已满)</span>" : "";
-    $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + examClass.enrollCount + '&nbsp;&nbsp;共' + examClass.examCount + isFull + '</p><button type="button" class="btn btn-danger btn-xs">报名</button></div>'));
+    $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + examClass.enrollCount + '&nbsp;&nbsp;共' + examClass.examCount + isFull +
+        '</p><span><button type="button" class="btn btn-danger btn-xs btnEnroll">报名</button><button type="button" class="btn btn-danger btn-xs btnExam">准考证</button><button type="button" class="btn btn-danger btn-xs btnScore">成绩</button></span></div>'));
     //$infoContainer.append($('<div>' + examClass.address + '</div>'));
     return $li;
 };
@@ -53,4 +54,20 @@ $selectBody.on("click", "li", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
     location.href = "/enroll/exam/" + entity._id;
+});
+
+$selectBody.on("click", "li .btnExam", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parents("li").data("obj");
+    location.href = "enroll/exam/card/" + entity._id;
+
+    e.stopPropagation();
+});
+
+$selectBody.on("click", "li .btnScore", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parents("li").data("obj");
+    location.href = "enroll/exam/score/" + entity._id;
+
+    e.stopPropagation();
 });

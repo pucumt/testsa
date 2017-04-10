@@ -9,7 +9,9 @@ $(document).ready(function() {
 });
 
 function loadCoupons() {
-    $.get("/personalCenter/coupon/all", function(data) {
+    $.post("/personalCenter/coupon/all", {
+        originalUrl: "/personalCenter/coupon"
+    }, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";

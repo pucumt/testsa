@@ -19,7 +19,8 @@ $(document).ready(function() {
         var curObj = $(e.currentTarget),
             orderId = curObj.parents("li").attr("orderId");
         $.post("/personalCenter/order/pay", {
-            id: orderId
+            id: orderId,
+            originalUrl: "/personalCenter/order"
         }, function(data) {
             if (data.error) {
                 showAlert("生成付款码失败");
@@ -29,7 +30,7 @@ $(document).ready(function() {
 });
 
 function loadOrders() {
-    $.get("/personalCenter/order/all", function(data) {
+    $.post("/personalCenter/order/all", { originalUrl: "/personalCenter/order" }, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";

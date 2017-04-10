@@ -146,7 +146,7 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollExam/enroll', checkLogin);
     app.post('/admin/adminEnrollExam/enroll', function(req, res) {
-        AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId)
+        AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
             .then(function(enrollExam) {
                 if (enrollExam) {
                     res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });

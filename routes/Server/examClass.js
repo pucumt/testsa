@@ -35,7 +35,8 @@ module.exports = function(app) {
             examCount: req.body.examCount,
             enrollCount: 0,
             isWeixin: 0,
-            courseContent: req.body.courseContent
+            courseContent: req.body.courseContent,
+            subjects: req.body.subjects ? JSON.parse(req.body.subjects) : []
         });
 
         examClass.save(function(err, examClass) {
@@ -55,7 +56,8 @@ module.exports = function(app) {
             examCategoryId: req.body.examCategoryId,
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
-            courseContent: req.body.courseContent
+            courseContent: req.body.courseContent,
+            subjects: req.body.subjects ? JSON.parse(req.body.subjects) : []
         });
 
         examClass.update(req.body.id, function(err, examClass) {

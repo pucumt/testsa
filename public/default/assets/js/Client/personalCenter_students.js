@@ -39,6 +39,26 @@ $(document).ready(function() {
         e.stopPropagation();
     });
 
+    $("#Enroll-student .student .student-list").on("click", "li .glyphicon-trash", function(e) {
+        var obj = e.currentTarget;
+        var entity = $(obj).parent().data("obj");
+        showComfirm("真的要删除" + entity.name + "吗？");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/studentInfo/delete", {
+                id: entity._id
+            }, function(data) {
+                $('#confirmModal').modal('hide');
+                if (data.sucess) {
+                    $(obj).parents()[2].remove();
+                    showAlert("删除成功", null, true);
+                }
+            });
+        });
+
+        e.stopPropagation();
+    });
+
+
     $("#Enroll-student-edit .glyphicon").on("click", function(e) {
         $("#Enroll-student-edit").hide();
         $("#Enroll-student").show();
@@ -56,6 +76,7 @@ $(document).ready(function() {
                     address: $('#studentInfo #address').val(),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
+                    originalUrl: "/personalCenter/students"
                 };
             if (!newStudent) {
                 postURI = "/studentInfo/edit";
@@ -80,7 +101,7 @@ $(document).ready(function() {
 });
 
 function loadStudents() {
-    $.get("/enroll/students", function(data) {
+    $.post("/enroll/students", { originalUrl: "/personalCenter/students" }, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -105,7 +126,7 @@ function renderStudents(students) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
             d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + student.name +
-                '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
+                '</span><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span><span class="glyphicon glyphicon-edit pull-right" style="margin-right:30px" aria-hidden="true"></span></li>');
         });
         $ul.append(d);
     }

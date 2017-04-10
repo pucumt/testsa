@@ -9,7 +9,8 @@ $(document).ready(function() {
     $("#btnPay").on("click", function(e) {
         var orderId = $(e.currentTarget).attr("orderId");
         $.post("/personalCenter/order/pay", {
-            id: orderId
+            id: orderId,
+            originalUrl: "/personalCenter/order/id/" + orderId
         }, function(data) {
             if (data.error) {
                 showAlert("生成付款码失败");

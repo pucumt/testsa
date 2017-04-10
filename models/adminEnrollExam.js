@@ -16,7 +16,12 @@ var adminEnrollExamSchema = new mongoose.Schema({
     isDeleted: Boolean,
     orderDate: Date,
     CancelDate: Date,
-    score: Number,
+    scores: [{
+        subjectId: String,
+        subjectName: String,
+        score: Number,
+        report: String
+    }],
     classRoomId: String,
     classRoomName: String,
     examNo: Number
@@ -90,12 +95,16 @@ AdminEnrollExam.delete = function(id, callback) {
 };
 
 //读取学区信息
-AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId) {
+AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId, examId) {
     //打开数据库
-    if (!categoryId) {
-        return Promise.resolve(false);
+    var filter = { studentId: studentId, isSucceed: 1, isDeleted: { $ne: true } };
+    if (categoryId) {
+        filter.examCategoryId = categoryId;
+    } else {
+        filter.examId = examId;
     }
-    return adminEnrollExamModel.findOne({ studentId: studentId, examCategoryId: categoryId, isSucceed: 1, isDeleted: { $ne: true } });
+
+    return adminEnrollExamModel.findOne(filter);
 };
 
 AdminEnrollExam.cancel = function(id, callback) {

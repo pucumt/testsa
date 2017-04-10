@@ -8,7 +8,8 @@ $(document).ready(function() {
         if (validator.isValid()) {
             $.post("/personalCenter/resetPWD", {
                 oldPassword: hex_md5($('#resetForm #oldPassword').val()),
-                password: hex_md5($('#resetForm #password').val())
+                password: hex_md5($('#resetForm #password').val()),
+                originalUrl: "/personalCenter/resetPWD"
             }, function(data) {
                 if (data) {
                     if (data.notLogin) {

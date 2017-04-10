@@ -1,6 +1,9 @@
 var StudentInfo = require('../../models/studentInfo.js'),
     CouponAssign = require('../../models/couponAssign.js'),
     TrainClass = require('../../models/trainClass.js'),
+    ExamClass = require('../../models/examClass.js'),
+    AdminEnrollExam = require('../../models/adminEnrollExam.js'),
+    ClassRoom = require('../../models/classRoom.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -44,6 +47,17 @@ module.exports = function(app) {
                 studentInfo = {};
             }
             res.jsonp({ succeed: true });
+        });
+    });
+
+    app.post('/studentInfo/delete', checkJSONLogin);
+    app.post('/studentInfo/delete', function(req, res) {
+        StudentInfo.delete(req.body.id, function(err, studentInfo) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
         });
     });
 
@@ -105,8 +119,8 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/personalCenter/coupon/all', checkJSONLogin);
-    app.get('/personalCenter/coupon/all', function(req, res) {
+    app.post('/personalCenter/coupon/all', checkJSONLogin);
+    app.post('/personalCenter/coupon/all', function(req, res) {
         var currentUser = req.session.user;
         StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
             var now = new Date((new Date()).toLocaleDateString());
@@ -135,5 +149,133 @@ module.exports = function(app) {
                 return;
             });
         });
+    });
+
+    app.get('/enroll/exam/card/:id', checkLogin);
+    app.get('/enroll/exam/card/:id', function(req, res) {
+        ExamClass.get(req.params.id).then(function(train) {
+                if (train) {
+                    var currentUser = req.session.user;
+                    StudentInfo.getFilters({ accountId: currentUser._id })
+                        .then(function(students) {
+                            if (students && students.length > 0) {
+                                var pArray = [];
+                                students.forEach(function(student) {
+                                    var p = AdminEnrollExam.getFilter({
+                                        studentId: student._id,
+                                        examId: train._id
+                                    }).then(function(order) {
+                                        if (order) {
+                                            student.order = order;
+                                            if (order.classRoomId) {
+                                                return ClassRoom.get(order.classRoomId).then(function(classRoom) {
+                                                    if (classRoom) {
+                                                        order.room = classRoom;
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                    pArray.push(p);
+                                });
+
+                                Promise.all(pArray).then(function() {
+                                    res.render('Client/enroll_exam_card.html', {
+                                        title: '准考证',
+                                        user: req.session.user,
+                                        train: train,
+                                        students: students
+                                    });
+                                }).catch(function(error) {
+                                    res.render('error.html', {
+                                        title: '准考证',
+                                        error: error
+                                    });
+                                });
+                            } else {
+                                res.render('Client/enroll_exam_card.html', {
+                                    title: '准考证',
+                                    user: req.session.user,
+                                    train: train
+                                });
+                            }
+                        }).catch(function(error) {
+                            res.render('error.html', {
+                                title: '准考证',
+                                error: error
+                            });
+                        });
+                }
+            })
+            .catch(function(error) {
+                res.render('error.html', {
+                    title: '准考证',
+                    error: error
+                });
+            });
+    });
+
+    app.get('/enroll/exam/score/:id', checkLogin);
+    app.get('/enroll/exam/score/:id', function(req, res) {
+        ExamClass.get(req.params.id).then(function(train) {
+                if (train) {
+                    var currentUser = req.session.user;
+                    StudentInfo.getFilters({ accountId: currentUser._id })
+                        .then(function(students) {
+                            if (students && students.length > 0) {
+                                var pArray = [];
+                                students.forEach(function(student) {
+                                    var p = AdminEnrollExam.getFilter({
+                                        studentId: student._id,
+                                        examId: train._id
+                                    }).then(function(order) {
+                                        if (order) {
+                                            student.order = order;
+                                            if (order.classRoomId) {
+                                                return ClassRoom.get(order.classRoomId).then(function(classRoom) {
+                                                    if (classRoom) {
+                                                        order.room = classRoom;
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                    pArray.push(p);
+                                });
+
+                                Promise.all(pArray).then(function() {
+                                    res.render('Client/enroll_exam_score.html', {
+                                        title: '成绩',
+                                        user: req.session.user,
+                                        train: train,
+                                        students: students
+                                    });
+                                }).catch(function(error) {
+                                    res.render('error.html', {
+                                        title: '成绩',
+                                        error: error
+                                    });
+                                });
+                            } else {
+                                res.render('Client/enroll_exam_score.html', {
+                                    title: '成绩',
+                                    user: req.session.user,
+                                    train: train
+                                });
+                            }
+                        }).catch(function(error) {
+                            res.render('error.html', {
+                                title: '成绩',
+                                error: error
+                            });
+                        });
+                }
+            })
+            .catch(function(error) {
+                res.render('error.html', {
+                    title: '成绩',
+                    error: error
+                });
+            });
     });
 }

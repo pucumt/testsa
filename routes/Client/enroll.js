@@ -41,7 +41,7 @@ module.exports = function(app) {
     });
 
     app.post('/enroll/class', function(req, res) {
-        debugger;
+        //debugger;
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         var filter = { isWeixin: 1 };
@@ -88,7 +88,7 @@ module.exports = function(app) {
             .then(function(examClass) {
                 if (examClass) {
                     //studentId
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, examClass.examCategoryId)
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, examClass.examCategoryId, examClass._id)
                         .then(function(enrollExam) {
                             if (enrollExam) {
                                 res.jsonp({ error: "你已经报过名了，此测试不允许多次报名" });
@@ -127,8 +127,8 @@ module.exports = function(app) {
             });
     });
 
-    app.get('/enroll/students', checkJSONLogin);
-    app.get('/enroll/students', function(req, res) {
+    app.post('/enroll/students', checkJSONLogin);
+    app.post('/enroll/students', function(req, res) {
         var filter = { accountId: req.session.user._id };
         StudentInfo.getFilters(filter)
             .then(function(students) {

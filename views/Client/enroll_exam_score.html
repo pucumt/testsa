@@ -1,0 +1,43 @@
+{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll personalCenter" id="Enroll-student">
+    <div class="pageTitle">
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>成绩及报告
+        <input type="hidden" id="id" value="{{ train._id }}" />
+    </div>
+    <div class="orderList">
+        <ul class="student-list clearfix list-unstyled">
+            {% if students and students.length>0 %} {% for student in students %} {% if student.order %}
+            <li class="clearfix" style="padding-bottom: 10px;">
+                <div>
+                    <div class="detail">
+                        <div class="studentName">学生:{{ student.order.studentName }}</div>
+                    </div>
+                    <div class="title">考试:{{ student.order.examName }}</div>
+                    {% if train %}
+                    <div class="classDetail">
+                        <div class="">日期:&nbsp;&nbsp;{{ train.examDate.toLocaleDateString() }} </div>
+                        <div class="">时间:&nbsp;&nbsp;{{ train.examTime }}</div>
+                        {% if student.order.room %}
+                        <div class="">考号:&nbsp;&nbsp;{{ student.order.examNo }}</div>
+                        <div class="">教室:&nbsp;&nbsp;{{ student.order.room.name }}</div>
+                        <div class="">校区:&nbsp;&nbsp;{{ student.order.room.schoolArea }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %} {% if student.order.scores and student.order.scores.length>0 %} {% for score in student.order.scores %}
+                    <div class="score">
+                        <div>科目:{{ score.subjectName }} 成绩:{{ score.score }} 报告:{{ score.report }}</div>
+                    </div>
+                    {% endfor %} {% else %}
+                    <div class="score">
+                        <div>成绩稍后显示</div>
+                    </div>
+                    {% endif %}
+                    <button type="button" class="btn btn-danger btn-xs btnEnroll pull-right">报名</button>
+                </div>
+            </li>
+            {% endif %} {% endfor %} {% endif %}
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.exam.score.js"></script>
+{% endblock %}

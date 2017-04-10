@@ -35,7 +35,6 @@ var getClassStatus = function(isWeixin) {
     } else {
         return "新建";
     }
-
 };
 
 function searchExams(p) {
@@ -161,6 +160,25 @@ function resetDropDown(objId) {
     });
 };
 
+function resetCheckBox(subjects) {
+    $('#myModal').find(".subject").empty();
+    $.get("/admin/subject/getAllWithoutPage", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(subject) {
+                    var select = "";
+                    if (subjects && subjects.some(function(entity) {
+                            return entity.subjectId == subject._id;
+                        })) {
+                        select = "checked";
+                    }
+                    $("#myModal .subject").append('<label class="checkbox-inline"><input type="checkbox" id=' + subject._id + ' ' + select + ' value=' + subject.name + '> ' + subject.name + '</label>');
+                });
+            }
+        }
+    });
+};
+
 $("#btnAdd").on("click", function(e) {
     isNew = true;
     destroy();
@@ -173,12 +191,19 @@ $("#btnAdd").on("click", function(e) {
     $('#examCount').val(0);
     $('#courseContent').val("");
     resetDropDown();
+    resetCheckBox();
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
 $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
+        var subjects = [];
+        $("#myModal .subject .checkbox-inline input").each(function(index) {
+            if (this.checked) {
+                subjects.push({ subjectId: $(this).attr("id"), subjectName: $(this).val() });
+            }
+        });
         var postURI = "/admin/examClass/add",
             postObj = {
                 name: $('#name').val(),
@@ -187,7 +212,8 @@ $("#btnSave").on("click", function(e) {
                 examCategoryId: $('#examCategoryName').val(),
                 examCategoryName: $('#examCategoryName').find("option:selected").text(),
                 examCount: $('#examCount').val(),
-                courseContent: $('#courseContent').val()
+                courseContent: $('#courseContent').val(),
+                subjects: subjects.length > 0 ? JSON.stringify(subjects) : []
             };
         if (!isNew) {
             postURI = "/admin/examClass/edit";
@@ -240,6 +266,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#id').val(entity._id);
     $('#courseContent').val(entity.courseContent);
     resetDropDown(entity.examCategoryId);
+    resetCheckBox(entity.subjects);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 

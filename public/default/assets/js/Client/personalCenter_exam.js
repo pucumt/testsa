@@ -17,7 +17,7 @@ $(document).ready(function() {
 });
 
 function loadOrders() {
-    $.get("/personalCenter/exam/all", function(data) {
+    $.post("/personalCenter/exam/all", { originalUrl: "/personalCenter/exam" }, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";

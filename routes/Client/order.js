@@ -10,8 +10,8 @@ var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function(app) {
-    app.get('/personalCenter/order/all', checkJSONLogin);
-    app.get('/personalCenter/order/all', function(req, res) {
+    app.post('/personalCenter/order/all', checkJSONLogin);
+    app.post('/personalCenter/order/all', function(req, res) {
         var currentUser = req.session.user;
         StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
             var orders = [],
@@ -44,8 +44,8 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/personalCenter/exam/all', checkJSONLogin);
-    app.get('/personalCenter/exam/all', function(req, res) {
+    app.post('/personalCenter/exam/all', checkJSONLogin);
+    app.post('/personalCenter/exam/all', function(req, res) {
         var currentUser = req.session.user;
         StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
             var orders = [],

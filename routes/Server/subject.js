@@ -62,4 +62,15 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
+    app.get('/admin/subject/getAllWithoutPage', checkLogin);
+    app.get('/admin/subject/getAllWithoutPage', function(req, res) {
+        Subject.getAllWithoutPage()
+            .then(function(subjects) {
+                res.jsonp(subjects);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
 }

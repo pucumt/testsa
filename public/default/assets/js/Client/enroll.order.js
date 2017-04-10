@@ -10,7 +10,8 @@ $(document).ready(function() {
 function renderData() {
     var filter = {
         classId: $("#classId").val(),
-        studentId: $("#studentId").val()
+        studentId: $("#studentId").val(),
+        originalUrl: "/enroll/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
     };
     $.post("/studentInfo/coupon", filter, function(data) {
         if (data) {
@@ -64,6 +65,8 @@ $("#btnPay").on("click", function(e) {
         studentId: $("#studentId").val(),
         coupon: $('.enroll .exam-detail .coupon #coupon').val()
     };
+    filter.originalUrl = "/enroll/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
+
     $.post("/enroll/pay", filter, function(data) {
         if (data) {
             if (data.notLogin) {
@@ -81,7 +84,8 @@ $("#btnPay").on("click", function(e) {
             if (data.orderId) {
                 //show paycode
                 $.post("/personalCenter/order/pay", {
-                    id: data.orderId
+                    id: data.orderId,
+                    originalUrl: "/enroll/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
                 }, function(data) {
                     if (data.error) {
                         showAlert("生成付款码失败");

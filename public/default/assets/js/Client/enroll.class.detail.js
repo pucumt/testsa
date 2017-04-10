@@ -6,26 +6,27 @@ $(document).ready(function() {
     });
 
     $("#btnEnroll").on("click", function(e) {
-        $.get("/enroll/students", function(data) {
-            if (data) {
-                if (data.notLogin) {
-                    location.href = "/login";
-                    return;
-                }
-
-                if (data.students) {
-                    $("#bgBack").show();
-                    $("#Enroll-select").show();
-                    $ul.empty();
-                    if (data.students.length > 0) {
-                        var student = data.students[0];
-                        renderStudents(data.students, student._id);
-                        setSelectedStudent(student);
+        $.post("/enroll/students", { originalUrl: "/enroll/class/" + $("#id").val() },
+            function(data) {
+                if (data) {
+                    if (data.notLogin) {
+                        location.href = "/login";
+                        return;
                     }
-                    return;
+
+                    if (data.students) {
+                        $("#bgBack").show();
+                        $("#Enroll-select").show();
+                        $ul.empty();
+                        if (data.students.length > 0) {
+                            var student = data.students[0];
+                            renderStudents(data.students, student._id);
+                            setSelectedStudent(student);
+                        }
+                        return;
+                    }
                 }
-            }
-        });
+            });
     });
 
     //<span class="name"></span><span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
@@ -66,6 +67,7 @@ $(document).ready(function() {
                     address: $('#studentInfo #address').val(),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
+                    originalUrl: "/enroll/class/" + $("#id").val()
                 };
             if (!newStudent) {
                 postURI = "/studentInfo/edit";

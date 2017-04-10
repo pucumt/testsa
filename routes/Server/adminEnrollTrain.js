@@ -321,6 +321,7 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollTrain/payCode', checkLogin);
     app.post('/admin/adminEnrollTrain/payCode', function(req, res) {
+
         AdminEnrollTrain.get(req.body.id)
             .then(function(order) {
                 if (order) {
