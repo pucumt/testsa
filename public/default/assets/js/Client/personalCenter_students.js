@@ -42,15 +42,20 @@ $(document).ready(function() {
     $("#Enroll-student .student .student-list").on("click", "li .glyphicon-trash", function(e) {
         var obj = e.currentTarget;
         var entity = $(obj).parent().data("obj");
-        showComfirm("真的要删除" + entity.name + "吗？");
+        $("#bgBack").show();
+        showComfirm("真的要删除" + entity.name + "吗？", null, function() {
+            $("#bgBack").hide();
+        });
+
         $("#btnConfirmSave").off("click").on("click", function(e) {
             $.post("/studentInfo/delete", {
                 id: entity._id
             }, function(data) {
-                $('#confirmModal').modal('hide');
                 if (data.sucess) {
-                    $(obj).parents()[2].remove();
-                    showAlert("删除成功", null, true);
+                    $(obj).parents("li").remove();
+                    showAlert("删除成功", null, function() {
+                        $("#bgBack").hide();
+                    });
                 }
             });
         });
@@ -192,6 +197,6 @@ function renderNewStudent(student) {
     }
     if (student) {
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + student.name +
-            '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
+            '</span><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span><span class="glyphicon glyphicon-edit pull-right" style="margin-right:30px" aria-hidden="true"></span></li>');
     }
 };

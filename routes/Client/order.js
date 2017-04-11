@@ -140,4 +140,27 @@ module.exports = function(app) {
                 res.jsonp({ error: "生成付款码失败" });
             });
     });
+
+    app.post('/cancel/exam', checkJSONLogin);
+    app.post('/cancel/exam', function(req, res) {
+        AdminEnrollExam.get(req.body.id).then(function(order) {
+            if (order) {
+                ExamClass.cancel(order.examId)
+                    .then(function(examClass) {
+                        if (examClass && examClass.ok && examClass.nModified == 1) {
+                            AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
+                                if (err) {
+                                    res.jsonp({ error: err });
+                                    return;
+                                }
+                                res.jsonp({ sucess: true });
+                            });
+                        } else {
+                            res.jsonp({ error: "取消失败" });
+                            return;
+                        }
+                    });
+            }
+        });
+    });
 }

@@ -17,7 +17,8 @@ var examClassSchema = new mongoose.Schema({
     subjects: [{
         subjectId: String,
         subjectName: String
-    }]
+    }],
+    seatNumber: Number
 }, {
     collection: 'examClasss'
 });
@@ -128,10 +129,10 @@ ExamClass.enroll = function(id) {
     return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
         .then(function(exam) {
             if (exam) {
-                return examClassModel.update({
+                return examClassModel.update({ //return examClassModel.findOneAndUpdate({
                     _id: id,
                     enrollCount: { $lt: exam.examCount }
-                }, { $inc: { enrollCount: 1 } }).exec();
+                }, { $inc: { enrollCount: 1 } }).exec(); // }, { $inc: { enrollCount: 1 } }, { new: true }).exec();
             }
         });
 };

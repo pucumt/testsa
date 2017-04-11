@@ -14,6 +14,10 @@ $(document).ready(function() {
     $(".enroll.personalCenter .orderList ul").on("click", "li .title", function(e) {
         GotoDetail(e);
     });
+
+    $(".enroll.personalCenter .orderList ul").on("click", "#btnCancel", function(e) {
+        CancelOrder(e);
+    });
 });
 
 function loadOrders() {
@@ -45,7 +49,7 @@ function renderOrders(orders) {
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学生:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
                 moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
-                order.className + '</div><div class="price"><button type="button" id="btnDetail" class="btn btn-danger btn-xs pull-right">详情</button>' + status + '</div></div></li>');
+                order.className + '</div><div class="price"><button type="button" id="btnCancel" style="margin-left:40px;" class="btn btn-danger btn-xs pull-right">取消</button><button type="button" id="btnDetail" class="btn btn-danger btn-xs pull-right">详情</button>' + status + '</div></div></li>');
         });
         $ul.append(d);
     }
@@ -55,4 +59,28 @@ function GotoDetail(e) {
     var curObj = $(e.currentTarget),
         $li = curObj.parents("li");
     location.href = "/personalCenter/exam/id/" + $li.attr("orderId");
+}
+
+function CancelOrder(e) {
+    var curObj = $(e.currentTarget),
+        $li = curObj.parents("li"),
+        orderId = $li.attr("orderId");
+    $("#bgBack").show();
+    showComfirm("确定要取消测试" + orderId + "吗？", null, function() {
+        $("#bgBack").hide();
+    });
+
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/cancel/exam", {
+            id: orderId,
+            originalUrl: "/personalCenter/exam"
+        }, function(data) {
+            if (data.sucess) {
+                $li.remove();
+                showAlert("取消成功", null, function() {
+                    $("#bgBack").hide();
+                });
+            }
+        });
+    });
 }

@@ -194,7 +194,7 @@ footer,
 }
 
 #confirmModal {
-    padding: 0 25px;
+    padding: 0;
     /*overflow: hidden;*/
     position: absolute;
     z-index: 1000;
@@ -208,8 +208,15 @@ footer,
     background: transparent;
 }
 
+#confirmModal .modal-dialog {
+    position: fixed;
+    top: 20px;
+    width: 100%;
+    margin: 0;
+}
+
 #confirmModal .modal-content {
-    margin: auto;
+    margin: 0 20px;
     background: white;
     transform: translate3d(0px, 0px, 0px);
     transition: all 300ms ease;
@@ -328,6 +335,10 @@ footer,
 #Enroll-student.enroll.personalCenter .orderList ul li .price span,
 #Enroll-student.enroll.personalCenter .orderList ul li .price button {
     margin-bottom: 10px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .price button {
+    width: 80px;
 }
 
 #Enroll-student.enroll.personalCenter .orderList {
