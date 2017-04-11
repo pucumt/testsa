@@ -19,7 +19,7 @@
             </div>
             <div class="exam-content">
                 <div class="title">考试须知：</div>
-                <div class="content"> {{ exam.courseContent }} </div>
+                <div class="content"> {{ exam.courseContent| safe }}</div>
             </div>
             <input type="hidden" id="id" value="{{ exam._id }}" />
         </div>{% endif %}

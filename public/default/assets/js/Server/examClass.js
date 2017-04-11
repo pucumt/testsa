@@ -47,6 +47,7 @@ function searchExams(p) {
         if (data && data.examClasss.length > 0) {
 
             data.examClasss.forEach(function(examClass) {
+                examClass.courseContent = htmlEncode(examClass.courseContent);
                 $mainSelectBody.append('<tr id=' + examClass._id + '><td>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
@@ -222,6 +223,7 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             var examDate = data.examDate && moment(data.examDate).format("YYYY-M-D");
+            data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
                 $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
                     "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td>0</td><td><div data-obj='" + JSON.stringify(data) +
@@ -264,7 +266,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#examTime').val(entity.examTime);
     $('#examCount').val(entity.examCount);
     $('#id').val(entity._id);
-    $('#courseContent').val(entity.courseContent);
+    $('#courseContent').val(htmlDecode(entity.courseContent));
     resetDropDown(entity.examCategoryId);
     resetCheckBox(entity.subjects);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });

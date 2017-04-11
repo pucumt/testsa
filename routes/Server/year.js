@@ -1,10 +1,16 @@
 var Year = require('../../models/year.js'),
+    xlsx = require("node-xlsx"),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    path = require('path'),
+    checkLogin = auth.checkLogin,
+    serverPath = __dirname;
 
 module.exports = function(app) {
     app.get('/admin/yearList', checkLogin);
     app.get('/admin/yearList', function(req, res) {
+        //var list = xlsx.parse(path.join(serverPath, "../../../1.xlsx"));
+        //list[0].data[0] [0] [1] [2]
+
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
