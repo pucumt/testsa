@@ -89,7 +89,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#Enroll-student .student .student-list").on("click", "li .glyphicon-edit", function(e) {
+    $("#Enroll-student .student .student-list").on("click", "li .btn-edit", function(e) {
         var obj = e.currentTarget;
         var entity = $(obj).parent().data("obj");
         editStudent = entity;
@@ -190,7 +190,7 @@ function renderStudents(students, id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
             }
             d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '>' + selected + '<span class="name">' + student.name +
-                '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
+                '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
         });
         $ul.append(d);
     }
@@ -203,7 +203,7 @@ function renderNewStudent(student) {
     }
     if (student) {
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
-            '</span><span class="glyphicon glyphicon-edit pull-right" aria-hidden="true"></span></li>');
+            '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }
 };
 

@@ -22,6 +22,7 @@
     studentInfo = require('./studentInfo.js'),
     coupon = require('./coupon.js'),
     couponAssign = require('./couponAssign.js'),
+    uploadFile = require('./uploadFile.js'),
 
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -63,4 +64,6 @@ module.exports = function(app) {
     studentInfo(app);
     coupon(app);
     couponAssign(app);
+
+    uploadFile(app);
 };

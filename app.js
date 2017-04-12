@@ -8,7 +8,7 @@ var path = require('path'),
     session = require('express-session'),
     //MongoStore = require('connect-mongo')(session),
     //flash = require('connect-flash'),
-    multer = require('multer'),
+    // multer = require('multer'),
 
     routes = require('./routes/index.js'),
     settings = require('./settings'),
@@ -41,12 +41,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 //define upload address
-app.use(multer({
-    dest: './public/images',
-    rename: function(fieldname, filename) {
-        return filename;
-    }
-}));
+// app.use(multer({
+//     dest: './public/uploads'
+// }));
+// var upload = multer({ dest: './public/uploads/' });
 
 app.use(cookieParser());
 //session could save in mongo store, but sometimes it doesn't work

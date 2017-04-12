@@ -31,60 +31,75 @@ function search(p) {
 $(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
     search();
 });
-//------------end
 
-$(".mainModal #gridBody").on("click", "tr", function(e) {
-    destroy();
-    addValidation();
-
-    var obj = e.currentTarget;
-    var entity = $(obj).data("obj");
-    $('#myModal #myModalLabel').text("考试信息");
-    $('#myModal #name').text(entity.examName);
-    $('#myModal #classRoomName').text(entity.classRoomName);
-    $('#myModal #examNo').text(entity.examNo);
-    $('#myModal #score').val(entity.score);
-    $('#myModal #id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+$("#editfile #btnResult").on("click", function(e) {
+    location.href = "/admin/score";
 });
 
-function destroy() {
-    var validator = $('#myModal').data('formValidation');
-    if (validator) {
-        validator.destroy();
-    }
-}
+$("#editfile #btnReport").on("click", function(e) {
 
-function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'score': {
-                trigger: "blur change",
-                validators: {
-                    numeric: {
-                        message: '填写的不是数字',
-                    }
-                }
-            }
+});
+//------------end
+
+var $selectHeader = $('#selectModal .modal-body table thead');
+var $selectBody = $('#selectModal .modal-body table tbody');
+var $selectSearch = $('#selectModal #InfoSearch');
+
+function openExam(p) {
+    $('#selectModal #selectModalLabel').text("选择测试");
+    var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
+        pStr = p ? "p=" + p : "";
+    $selectHeader.empty();
+    $selectBody.empty();
+    $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
+    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+        if (data && data.examClasss.length > 0) {
+            data.examClasss.forEach(function(examClass) {
+                $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
+                    '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
+                    examClass.examCount + '</td></tr>');
+            });
+            setSelectEvent($selectBody, function(entity) {
+                $('#editfile #examName').val(entity.name); //
+                $('#editfile #examId').val(entity._id); //
+                $('#selectModal').modal('hide');
+                resetDropDown(entity.subjects);
+            });
         }
+        $("#selectModal #total").val(data.total);
+        $("#selectModal #page").val(data.page);
+        setPaging("#selectModal", data);
+        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
     });
 };
 
-$("#myModal #btnSave").on("click", function(e) {
-    var validator = $('#myModal').data('formValidation').validate();
-    if (validator.isValid()) {
-        var postURI = "/admin/adminEnrollExam/ScoreInput",
-            postObj = {
-                score: $('#myModal #score').val(),
-                id: $('#myModal #id').val()
-            };
-        $.post(postURI, postObj, function(data) {
-            $('#myModal').modal('hide');
-            if (data) {
-                var $lastDiv = $('#' + $('#myModal #id').val() + ' td:last-child');
-                $lastDiv.text($('#myModal #score').val());
-            }
-        });
-    }
+$("#panel_btnExam").on("click", function(e) {
+    openEntity = "exam";
+    $selectSearch.empty();
+    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
+        '<label for="examName" class="control-label">名称:</label>' +
+        '<input type="text" maxlength="30" class="form-control" name="examName" id="examName"></div></div>' +
+        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
+    openExam();
 });
+
+$("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
+    openExam();
+});
+
+$("#selectModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#selectModal #page").val()) - 1;
+    openExam(page);
+});
+
+$("#selectModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#selectModal #page").val()) + 1;
+    openExam(page);
+});
+
+function resetDropDown(data) {
+    $('#editfile').find("#subject option").remove();
+    data.forEach(function(subject) {
+        $("#editfile #subject").append("<option value='" + subject.subjectId + "'>" + subject.subjectName + "</option>");
+    });
+};

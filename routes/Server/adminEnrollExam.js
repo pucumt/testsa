@@ -79,22 +79,41 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollExam/searchCard', checkLogin);
     app.post('/admin/adminEnrollExam/searchCard', function(req, res) {
-        StudentAccount.getFilter({ name: req.body.mobile })
-            .then(function(account) {
-                if (account) {
-                    return StudentInfo.getFilter({ accountId: account._id, name: req.body.studentName });
-                }
-            })
-            .then(function(student) {
-                if (student) {
-                    return AdminEnrollExam.getAllWithoutPaging({ studentId: student._id, isSucceed: 1 });
-                }
-            })
-            .then(function(adminEnrollExams) {
+        var filter = {},
+            pAccount = Promise.resolve();
+        if (req.body.mobile) {
+            pAccount = StudentAccount.getFilter({ name: req.body.mobile });
+        }
+        pAccount.then(function(account) {
+            if (account) {
+                filter.accountId = account._id;
+            }
+            if (req.body.studentName) {
+                filter.name = req.body.studentName;
+            }
+            if (isEmptyObject(filter)) {
                 res.jsonp({
-                    adminEnrollExams: adminEnrollExams
+                    adminEnrollExams: []
                 });
-            });
+            } else {
+                return StudentInfo.getFilters(filter).then(function(students) {
+                    if (students.length > 0) {
+                        var ids = students.map(function(student) {
+                            return student._id;
+                        });
+                        return AdminEnrollExam.getAllWithoutPaging({ studentId: { $in: ids }, isSucceed: 1 })
+                            .then(function(adminEnrollExams) {
+                                res.jsonp({
+                                    adminEnrollExams: adminEnrollExams
+                                });
+                            });
+                    }
+                    res.jsonp({
+                        adminEnrollExams: []
+                    });
+                });
+            }
+        });
     });
 
     app.post('/admin/adminEnrollExam/add', checkLogin);
@@ -146,40 +165,45 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollExam/enroll', checkLogin);
     app.post('/admin/adminEnrollExam/enroll', function(req, res) {
-        AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
-            .then(function(enrollExam) {
-                if (enrollExam) {
-                    res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
-                    return;
-                }
+        ExamClass.get(req.body.examId)
+            .then(function(examClass) {
+                if (examClass) {
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
+                        .then(function(enrollExam) {
+                            if (enrollExam) {
+                                res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                                return;
+                            }
 
-                ExamClass.enroll(req.body.examId)
-                    .then(function(examClass) {
-                        if (examClass && examClass.ok && examClass.nModified == 1) {
-                            //报名成功
-                            var adminEnrollExam = new AdminEnrollExam({
-                                studentId: req.body.studentId,
-                                studentName: req.body.studentName,
-                                mobile: req.body.mobile,
-                                examId: req.body.examId,
-                                examName: req.body.examName,
-                                examCategoryId: req.body.examCategoryId,
-                                examCategoryName: req.body.examCategoryName,
-                                isSucceed: 1
-                            });
-                            adminEnrollExam.save()
-                                .then(function(enrollExam) {
-                                    res.jsonp({ sucess: true });
-                                    return;
+                            ExamClass.enroll(req.body.examId)
+                                .then(function(result) {
+                                    if (result && result.ok && result.nModified == 1) {
+                                        //报名成功
+                                        var adminEnrollExam = new AdminEnrollExam({
+                                            studentId: req.body.studentId,
+                                            studentName: req.body.studentName,
+                                            mobile: req.body.mobile,
+                                            examId: req.body.examId,
+                                            examName: req.body.examName,
+                                            examCategoryId: req.body.examCategoryId,
+                                            examCategoryName: req.body.examCategoryName,
+                                            isSucceed: 1,
+                                            scores: examClass.subjects
+                                        });
+                                        adminEnrollExam.save()
+                                            .then(function(enrollExam) {
+                                                res.jsonp({ sucess: true });
+                                                return;
+                                            });
+                                    } else {
+                                        //报名失败
+                                        res.jsonp({ error: "报名失败" });
+                                        return;
+                                    }
                                 });
-                        } else {
-                            //报名失败
-                            res.jsonp({ error: "报名失败" });
-                            return;
-                        }
-                    });
+                        });
+                }
             });
-
     });
 
     app.post('/admin/adminEnrollExam/cancel', checkLogin);
@@ -242,4 +266,12 @@ module.exports = function(app) {
             res.jsonp(adminEnrollExam);
         });
     });
+
+    function isEmptyObject(e) {
+        var t;
+        for (t in e) {
+            return false;
+        }
+        return true;
+    };
 }

@@ -108,7 +108,8 @@ module.exports = function(app) {
                                                     examName: examClass.name,
                                                     examCategoryId: examClass.examCategoryId,
                                                     examCategoryName: examClass.examCategoryName,
-                                                    isSucceed: 1
+                                                    isSucceed: 1,
+                                                    scores: examClass.subjects
                                                 });
                                                 adminEnrollExam.save()
                                                     .then(function(enrollExam) {

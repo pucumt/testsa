@@ -242,6 +242,12 @@ footer,
     font-size: 14px;
 }
 
+#Enroll-student .student .student-list li .glyphicon {
+    /*width: 60px;
+    text-align: center;
+    border: 1px solid #cccccc;*/
+}
+
 #Enroll-student .student .glyphicon-ok {
     color: #d9534f;
     margin-right: 10px;
