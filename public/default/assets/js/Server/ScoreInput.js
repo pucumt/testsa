@@ -35,10 +35,36 @@ $(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
 $("#editfile #btnResult").on("click", function(e) {
     location.href = "/admin/score";
 });
+$("#editfile #btnClear").on("click", function(e) {
+    $.get("/admin/score/clearAll", function(data) {
+        if (data && data.sucess) {
+            showAlert("删除失败记录成功");
+        }
+    });
+});
 
 $("#editfile #btnReport").on("click", function(e) {
-
+    var file = document.getElementById('upfileReport').files;
+    postReport(file, 0);
 });
+
+function postReport(file, i) {
+    if (file.length == i) {
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("report", file[i]);
+    $.ajax({
+        type: "POST",
+        data: formData,
+        url: "/admin/report",
+        contentType: false,
+        processData: false,
+    }).then(function(data) {
+        postReport(file, i + 1);
+    });
+};
 //------------end
 
 var $selectHeader = $('#selectModal .modal-body table thead');

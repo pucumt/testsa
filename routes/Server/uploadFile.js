@@ -34,25 +34,26 @@ module.exports = function(app) {
                                                 return true;
                                             }
                                         });
+                                        order.save();
                                     } else {
-                                        failedScore(score, examId, subject);
+                                        failedScore(score[0], score[1], score[2], examId, subject);
                                     }
                                 });
                         } else {
-                            failedScore(score, examId, subject);
+                            failedScore(score[0], score[1], score[2], examId, subject);
                         }
                     });
             } else {
-                failedScore(score, examId, subject);
+                failedScore(score[0], score[1], score[2], examId, subject);
             }
         });
     };
 
-    function failedScore(score, examId, subject) {
+    function failedScore(name, mobile, score, examId, subject) {
         var newScoreFails = new ScoreFails({
-            name: score[0],
-            mobile: score[1],
-            score: score[2],
+            name: name, //score[0],
+            mobile: mobile, //score[1],
+            score: score, //score[2],
             examId: examId,
             subject: subject
         });
@@ -62,8 +63,15 @@ module.exports = function(app) {
     app.get('/admin/score', checkLogin);
     app.get('/admin/score', function(req, res) {
         res.render('Server/scoreResult.html', {
-            title: '>成绩导入结果',
+            title: '>成绩导入结果失败列表',
             user: req.session.admin
+        });
+    });
+
+    app.get('/admin/score/clearAll', checkLogin);
+    app.get('/admin/score/clearAll', function(req, res) {
+        ScoreFails.clearAll().then(function() {
+            res.jsonp({ sucess: true });
         });
     });
 
@@ -86,5 +94,46 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
+    });
+
+    function updateReport(name, mobile, examId, subject, fileName) {
+        StudentAccount.getFilter({ name: mobile }).then(function(account) {
+            if (account) {
+                StudentInfo.getFilter({ accountId: account._id, name: name })
+                    .then(function(student) {
+                        if (student) {
+                            AdminEnrollExam.getFilter({ examId: examId, studentId: student._id })
+                                .then(function(order) {
+                                    if (order) {
+                                        order.scores.some(function(orderScore) {
+                                            if (orderScore.subjectId == subject) {
+                                                orderScore.report = fileName;
+                                                return true;
+                                            }
+                                        });
+                                        order.save();
+                                        res.jsonp({});
+                                    } else {
+                                        failedScore(name, mobile, "0", examId, subject);
+                                        res.jsonp({});
+                                    }
+                                });
+                        } else {
+                            failedScore(name, mobile, "0", examId, subject);
+                            res.jsonp({});
+                        }
+                    });
+            } else {
+                failedScore(name, mobile, "0", examId, subject);
+                res.jsonp({});
+            }
+        });
+    };
+    //upload.single('report'), 
+    app.post('/admin/report', upload.single('report'), function(req, res, next) {
+        var fileNames = req.file.filename.split("_");
+        updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject);
+
+        //res.redirect('/admin/score');
     });
 }

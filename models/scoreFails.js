@@ -35,3 +35,7 @@ ScoreFail.getAllWithoutPaging = function(filter) {
     }
     return scoreFailModel.find(filter);
 };
+
+ScoreFail.clearAll = function() {
+    return scoreFailModel.remove();
+};
