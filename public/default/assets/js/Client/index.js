@@ -8,6 +8,11 @@ $(document).ready(function() {
     $("#btnPersonal").on("click", function(e) {
         location.href = "/personalCenter";
     });
+
+    $("#btnOpenId").on("click", function(e) {
+        location.href = "/openIdGeter";
+    });
+
     var hideConfirmForm;
 
     window.showAlert = function(msg, title, callback) {
