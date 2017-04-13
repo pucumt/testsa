@@ -8,7 +8,7 @@ module.exports = function(app) {
         // 第一步：用户同意授权，获取code
         var router = 'get_wx_access_token';
         // 这是编码后的地址
-        var return_uri = 'http%3A%2F%2www.dushidao.com%2Fget_wx_access_token'; // + router;
+        var return_uri = 'http%3A%2F%2Fwww.dushidao.com%3A3000%2Fget_wx_access_token'; // + router;
         var scope = 'snsapi_base';
 
         res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=STATE#wechat_redirect');
@@ -28,7 +28,7 @@ module.exports = function(app) {
                     var openid = data.openid;
 
                     res.render('Test/openIdGeter.html', {
-                        title: 'openId测试 成功'
+                        title: 'openId测试 成功' + openid
                     });
                 } else {
                     console.log(response.statusCode);
