@@ -180,6 +180,25 @@ function resetCheckBox(subjects) {
     });
 };
 
+function resetExamArea(areas) {
+    $('#myModal').find(".examArea").empty();
+    $.get("/admin/examAreaList/getAllWithoutPage", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(subject) {
+                    var select = "";
+                    if (subjects && subjects.some(function(entity) {
+                            return entity.subjectId == subject._id;
+                        })) {
+                        select = "checked";
+                    }
+                    $("#myModal .subject").append('<label class="checkbox-inline"><input type="checkbox" id=' + subject._id + ' ' + select + ' value=' + subject.name + '> ' + subject.name + '</label>');
+                });
+            }
+        }
+    });
+};
+
 $("#btnAdd").on("click", function(e) {
     isNew = true;
     destroy();

@@ -5,7 +5,8 @@
     schoolArea = require('./schoolArea.js'),
     grade = require('./grade.js'),
     classRoom = require('./classRoom.js'),
-    examRoom = require('./examRoom.js'),
+    //examRoom = require('./examRoom.js'),
+    examArea = require('./examArea.js'),
     teacher = require('./teacher.js'),
     year = require('./year.js'),
 
@@ -44,7 +45,8 @@ module.exports = function(app) {
     schoolArea(app);
     grade(app);
     classRoom(app);
-    examRoom(app);
+    //examRoom(app);
+    examArea(app);
     teacher(app);
     year(app);
     category(app);

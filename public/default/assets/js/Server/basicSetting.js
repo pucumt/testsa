@@ -16,7 +16,7 @@ $(document).ready(function() {
     });
 
     $("#left_btnExamroom").on("click", function(e) {
-        location.href = "/admin/examRoomList";
+        location.href = "/admin/examAreaList";
     });
 
     $("#left_btnTeacher").on("click", function(e) {
