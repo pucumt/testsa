@@ -4,8 +4,33 @@ $(document).ready(function() {
     $("#left_btnScoreInput").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    addValidation();
 });
 
+function addValidation() {
+    $('#editfile').formValidation({
+        // List of fields and their validation rules
+        fields: {
+            'examName': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '测试名称不能为空'
+                    }
+                }
+            },
+            'subject': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '科目不能为空'
+                    }
+                }
+            }
+        }
+    });
+};
 //------------search funfunction
 
 var $mainSelectBody = $('.content.mainModal table tbody');
@@ -43,18 +68,48 @@ $("#editfile #btnClear").on("click", function(e) {
     });
 });
 
+$("#editfile #btnScore").on("click", function(e) {
+    var validator = $('#editfile').data('formValidation').validate();
+    if (validator.isValid()) {
+        var file = document.getElementById('upfile').files;
+        if (file.length > 0) {
+            var formData = new FormData();
+            formData.append("avatar", file[0]);
+            formData.append("examId", $("#editfile #examId").val());
+            formData.append("subject", $("#editfile #subject").val());
+            $.ajax({
+                type: "POST",
+                data: formData,
+                url: "/admin/score",
+                contentType: false,
+                processData: false,
+            }).then(function(data) {
+                location.href = "/admin/score";
+            });
+        }
+    }
+});
+
 $("#editfile #btnReport").on("click", function(e) {
-    var file = document.getElementById('upfileReport').files;
-    postReport(file, 0);
+    var validator = $('#editfile').data('formValidation').validate();
+    if (validator.isValid()) {
+        var file = document.getElementById('upfileReport').files;
+        if (file.length > 0) {
+            postReport(file, 0);
+        }
+    }
 });
 
 function postReport(file, i) {
     if (file.length == i) {
+        location.href = "/admin/score";
         return;
     }
 
     var formData = new FormData();
     formData.append("report", file[i]);
+    formData.append("examId", $("#editfile #examId").val());
+    formData.append("subject", $("#editfile #subject").val());
     $.ajax({
         type: "POST",
         data: formData,

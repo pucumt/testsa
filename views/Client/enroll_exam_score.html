@@ -25,13 +25,9 @@
                     </div>
                     {% endif %} {% if student.order.scores and student.order.scores.length>0 %} {% for score in student.order.scores %}
                     <div class="score">
-                        <div>科目:{{ score.subjectName }} 成绩:{{ score.score }} 报告:{{ score.report }}</div>
+                        <div>科目:{{ score.subjectName }} 成绩:{{ score.score }} {% if score.report %} 报告:<a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
                     </div>
-                    {% endfor %} {% else %}
-                    <div class="score">
-                        <div>成绩稍后显示</div>
-                    </div>
-                    {% endif %}
+                    {% endfor %} {% endif %}
                     <button type="button" class="btn btn-danger btn-xs btnEnroll pull-right">报名</button>
                 </div>
             </li>

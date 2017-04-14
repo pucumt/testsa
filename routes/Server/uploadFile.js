@@ -82,7 +82,8 @@ module.exports = function(app) {
         for (var i = 1; i < length; i++) {
             updateScore(list[0].data[i], req.body.examId, req.body.subject);
         }
-        res.redirect('/admin/score');
+        // res.redirect('/admin/score');
+        res.jsonp({});
     });
 
     app.get('/admin/score/getAllWithoutPage', checkLogin);
@@ -132,7 +133,7 @@ module.exports = function(app) {
     //upload.single('report'), 
     app.post('/admin/report', upload.single('report'), function(req, res, next) {
         var fileNames = req.file.filename.split("_");
-        updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject);
+        updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject, req.file.filename);
 
         //res.redirect('/admin/score');
     });

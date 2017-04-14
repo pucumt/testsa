@@ -26,7 +26,12 @@
                     </div>
                     {% endif %}
                     <div class="price">
-                        <span class="pull-right">成绩:{{ order.score }}</span></div>
+                        {% if order.scores and order.scores.length>0 %} {% for score in order.scores %}
+                        <div class="score">
+                            <div>科目:{{ score.subjectName }} 成绩:{{ score.score }} {% if score.report %} 报告:<a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
+                        </div>
+                        {% endfor %} {% endif %}
+                    </div>
                 </div>
             </li>
             {% endif %}
