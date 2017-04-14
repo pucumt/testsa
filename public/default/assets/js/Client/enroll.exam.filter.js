@@ -31,7 +31,7 @@ function generateLi(examClass) {
     examClass.courseContent = htmlEncode(examClass.courseContent);
     var $li = $('<li class="exam-card card " data-obj=' + JSON.stringify(examClass) + '></li>'),
         $goodContainer = $('<div id=' + examClass._id + ' class="exam link"></div>'),
-        $infoContainer = $('<div class="exam-info"></div>');
+        $infoContainer = $('<div class="exam-info clearfix"></div>');
     //$countContainer = $('<div class="info-count"></div>');
 
     $li.append($goodContainer);
@@ -41,7 +41,8 @@ function generateLi(examClass) {
     $infoContainer.append($('<div>日期：' + moment(examClass.examDate).format("YYYY-M-D") + '&nbsp;&nbsp;时间：' + examClass.examTime + '</div>'));
     var isFull = examClass.enrollCount == examClass.examCount ? "<span class='full'>(已满)</span>" : "";
     $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + examClass.enrollCount + '&nbsp;&nbsp;共' + examClass.examCount + isFull +
-        '</p><span><button type="button" class="btn btn-primary btn-xs btnEnroll">报名</button><button type="button" class="btn btn-primary btn-xs btnExam">准考证</button><button type="button" class="btn btn-primary btn-xs btnScore">成绩</button></span></div>'));
+        '</p><span></span></div>'));
+    $infoContainer.append('<div class="enroll-buttons pull-right"><button type="button" class="btn btn-primary btn-xs btnEnroll">报名</button><button type="button" class="btn btn-primary btn-xs btnExam">准考证</button><button type="button" class="btn btn-primary btn-xs btnScore">成绩</button></div>');
     //$infoContainer.append($('<div>' + examClass.address + '</div>'));
     return $li;
 };

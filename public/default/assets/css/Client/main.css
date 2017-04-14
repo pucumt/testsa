@@ -86,13 +86,17 @@ footer,
     background-color: #f8f8f8;
 }
 
+.enroll .exam-list .exam-card .enroll-buttons .btn {
+    margin-left: 15px;
+}
+
 .enroll .exam-list .exam-card .exam .exam-info .enroll-info {
     display: flex;
     justify-content: space-between;
 }
 
 .enroll .exam-list .exam-card .exam .exam-info .enroll-info span .btn {
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .enroll .exam-list .exam-card div.exam .exam-info,
