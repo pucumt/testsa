@@ -17,12 +17,12 @@ function addValidation(callback) {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
-                        message: '学生姓名不能为空'
+                        message: '学员姓名不能为空'
                     },
                     stringLength: {
                         min: 2,
                         max: 30,
-                        message: '学生姓名在2-30个字符之间'
+                        message: '学员姓名在2-30个字符之间'
                     }
                 }
             },
@@ -51,12 +51,12 @@ function addValidation(callback) {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
-                        message: '学生姓名不能为空'
+                        message: '学员姓名不能为空'
                     },
                     stringLength: {
                         min: 2,
                         max: 30,
-                        message: '学生姓名在2-30个字符之间'
+                        message: '学员姓名在2-30个字符之间'
                     }
                 }
             },

@@ -97,7 +97,7 @@ module.exports = function(app) {
             });
     });
 
-    function updateReport(name, mobile, examId, subject, fileName) {
+    function updateReport(name, mobile, examId, subject, fileName, res) {
         StudentAccount.getFilter({ name: mobile }).then(function(account) {
             if (account) {
                 StudentInfo.getFilter({ accountId: account._id, name: name })
@@ -118,22 +118,28 @@ module.exports = function(app) {
                                         failedScore(name, mobile, "0", examId, subject);
                                         res.jsonp({});
                                     }
+                                }).catch(function(error) {
+                                    res.jsonp({ error: error });
                                 });
                         } else {
                             failedScore(name, mobile, "0", examId, subject);
                             res.jsonp({});
                         }
+                    }).catch(function(error) {
+                        res.jsonp({ error: error });
                     });
             } else {
                 failedScore(name, mobile, "0", examId, subject);
                 res.jsonp({});
             }
+        }).catch(function(error) {
+            res.jsonp({ error: error });
         });
     };
     //upload.single('report'), 
     app.post('/admin/report', upload.single('report'), function(req, res, next) {
         var fileNames = req.file.filename.split("_");
-        updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject, req.file.filename);
+        updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject, req.file.filename, res);
 
         //res.redirect('/admin/score');
     });

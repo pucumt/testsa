@@ -40,7 +40,11 @@ module.exports = function(app) {
                     //如果不存在则新增用户
                     newUser.save().then(function(user) {
                         if (user) {
-                            return res.redirect('/login'); //注册成功
+                            //将用户信息存入 session
+                            req.session.user = user;
+                            res.redirect(req.session.originalUrl ? req.session.originalUrl : '/'); //登陆成功后跳转到主页
+                            //return res.redirect('/login'); //注册成功
+                            return;
                         }
                         return res.render('Client/reg.html', {
                             title: '注册',

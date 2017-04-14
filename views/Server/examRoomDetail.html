@@ -1,16 +1,16 @@
 {% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
-        {{ title }}>>{{examRoom.examName}}
-        <input type="hidden" id="examId" value="{{examRoom.examId}}" />
-        <input type="hidden" id="id" value="{{examRoom._id}}" />
-        <input type="hidden" id="entity" data-obj={{examRoom.classRooms|dump}} />
+        {{ title }}>>{{ examRoom.examName }}
+        <input type="hidden" id="examId" value="{{ examRoom.examId }}" />
+        <input type="hidden" id="id" value="{{ examRoom._id }}" />
+        <input type="hidden" id="entity" data-obj={{ examRoom.classRooms|dump }} />
     </h1>
 </div>
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnSave" class="btn btn-default btn-sm">保存</button>
-        <button id="btnAssign" class="btn btn-default btn-sm">分配考号</button>
+        <button id="btnAssign" style="display: none" class="btn btn-default btn-sm">分配考号</button>
         <button id="btnReturn" class="btn btn-default btn-sm">返回</button>
     </div>
 </div>

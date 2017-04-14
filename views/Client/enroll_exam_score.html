@@ -10,7 +10,7 @@
             <li class="clearfix" style="padding-bottom: 10px;">
                 <div>
                     <div class="detail">
-                        <div class="studentName">学生:{{ student.order.studentName }}</div>
+                        <div class="studentName">学员:{{ student.order.studentName }}</div>
                     </div>
                     <div class="title">考试:{{ student.order.examName }}</div>
                     {% if train %}
@@ -28,7 +28,7 @@
                         <div>科目:{{ score.subjectName }} 成绩:{{ score.score }} {% if score.report %} 报告:<a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
                     </div>
                     {% endfor %} {% endif %}
-                    <button type="button" class="btn btn-danger btn-xs btnEnroll pull-right">报名</button>
+                    <button type="button" class="btn btn-primary btn-xs btnEnroll pull-right">报名</button>
                 </div>
             </li>
             {% endif %} {% endfor %} {% endif %}

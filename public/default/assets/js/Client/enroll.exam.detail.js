@@ -163,18 +163,6 @@ function addValidation() {
                         message: '姓名不能为空'
                     }
                 }
-            },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        min: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
             }
         }
     });
@@ -207,7 +195,7 @@ function renderStudents(students, id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
             }
             d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '>' + selected + '<span class="name">' + student.name +
-                '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+                '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
         });
         $ul.append(d);
     }
@@ -220,7 +208,7 @@ function renderNewStudent(student) {
     }
     if (student) {
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
-            '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+            '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }
 };
 

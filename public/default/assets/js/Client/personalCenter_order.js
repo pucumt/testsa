@@ -51,11 +51,11 @@ var $ul = $("#Enroll-student .orderList .student-list");
 function renderOrders(orders) {
     if (orders.length > 0) {
         var d = $(document.createDocumentFragment());
-        // d.append('<li class="header"><span class="studentName">学生</span><span class="">优惠券</span></li>');
+        // d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
         orders.forEach(function(order) {
             var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
                 status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>';
-            d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学生:' + order.studentName +
+            d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
                 moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' + order.className +
                 '</div><div class="price"><button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-danger btn-xs">详情</button><span class="pull-right">总金额:' +

@@ -39,7 +39,7 @@ $(document).ready(function() {
         destroy();
         addValidation();
         $("#Enroll-student-edit").show();
-        $("#Enroll-student-edit div.title .title").text("新建学生信息");
+        $("#Enroll-student-edit div.title .title").text("新建学员信息");
         $("#Enroll-student").hide();
         resetDropDown();
         newStudent = true;
@@ -96,7 +96,7 @@ $(document).ready(function() {
         destroy();
         addValidation();
         $("#Enroll-student-edit").show();
-        $("#Enroll-student-edit div.title .title").text("修改学生信息");
+        $("#Enroll-student-edit div.title .title").text("修改学员信息");
         $("#Enroll-student").hide();
         $('#studentInfo #studentName').val(entity.name);
         $('#studentInfo #mobile').val(entity.mobile);
@@ -144,18 +144,6 @@ function addValidation() {
                 validators: {
                     notEmpty: {
                         message: '姓名不能为空'
-                    }
-                }
-            },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        min: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
                     }
                 }
             }

@@ -87,7 +87,7 @@ module.exports = function(app) {
     app.get('/personalCenter/students', function(req, res) {
         var currentUser = req.session.user;
         res.render('Client/personalCenter_students.html', {
-            title: '学生列表',
+            title: '学员',
             user: req.session.user
         });
     });
