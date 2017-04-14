@@ -131,7 +131,7 @@ function renderStudents(students) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
             d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + student.name +
-                '</span><button type="button" class="btn btn-danger btn-delete btn-xs pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+                '</span><button type="button" class="btn btn-primary btn-delete btn-xs pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
         });
         $ul.append(d);
     }
@@ -185,6 +185,6 @@ function renderNewStudent(student) {
     }
     if (student) {
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + student.name +
-            '</span><button type="button" class="btn btn-danger btn-xs btn-delete pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+            '</span><button type="button" class="btn btn-primary btn-xs btn-delete pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }
 };
