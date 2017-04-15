@@ -19,12 +19,8 @@ var examClassSchema = new mongoose.Schema({
         subjectName: String
     }],
     seatNumber: Number,
-    examAreas: [{
-        examAreaId: String,
-        examAreaName: String,
-        areaCount: Number, //容纳考生数
-        enrollCount: Number //容纳考生数
-    }]
+    examAreaId: String,
+    examAreaName: String
 }, {
     collection: 'examClasss'
 });

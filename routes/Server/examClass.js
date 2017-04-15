@@ -36,8 +36,9 @@ module.exports = function(app) {
             enrollCount: 0,
             isWeixin: 0,
             courseContent: req.body.courseContent,
-            subjects: req.body.subjects ? JSON.parse(req.body.subjects) : [],
-            examAreas: req.body.examAreas ? JSON.parse(req.body.examAreas) : []
+            subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : []),
+            examAreaId: req.body.examAreaId,
+            examAreaName: req.body.examAreaName
         });
 
         examClass.save(function(err, examClass) {
@@ -58,8 +59,9 @@ module.exports = function(app) {
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
             courseContent: req.body.courseContent,
-            subjects: req.body.subjects ? JSON.parse(req.body.subjects) : [],
-            examAreas: req.body.examAreas ? JSON.parse(req.body.examAreas) : []
+            subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : []),
+            examAreaId: req.body.examAreaId,
+            examAreaName: req.body.examAreaName
         });
 
         examClass.update(req.body.id, function(err, examClass) {
