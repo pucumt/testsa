@@ -250,3 +250,17 @@ body {
     width: calc(100% - 70px);
     float: left;
 }
+
+#myModal .modal-body ul.examArea {
+    list-style: none;
+    padding-left: 0;
+}
+
+#myModal .modal-body ul.examArea li {
+    margin-bottom: 5px;
+}
+
+#myModal .modal-body ul.examArea li #areaCount {
+    display: inline-block;
+    width: 60px;
+}

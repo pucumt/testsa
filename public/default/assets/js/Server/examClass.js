@@ -185,14 +185,18 @@ function resetExamArea(areas) {
     $.get("/admin/examAreaList/getAllWithoutPage", function(data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(subject) {
-                    var select = "";
-                    if (subjects && subjects.some(function(entity) {
-                            return entity.subjectId == subject._id;
+                data.forEach(function(examArea) {
+                    var areaCount = 0;
+                    if (areas && areas.some(function(entity) {
+                            if (entity.examAreaId == examArea._id) {
+                                areaCount = entity.areaCount;
+                                return true;
+                            }
                         })) {
-                        select = "checked";
+                        $("#myModal .examArea").append('<li><label class="checkbox-inline"><input type="checkbox" checked id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" name="areaCount" id="areaCount" value=' + areaCount + '>名额</li>');
+                    } else {
+                        $("#myModal .examArea").append('<li><label class="checkbox-inline"><input type="checkbox" id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" name="areaCount" id="areaCount" >名额</li>');
                     }
-                    $("#myModal .subject").append('<label class="checkbox-inline"><input type="checkbox" id=' + subject._id + ' ' + select + ' value=' + subject.name + '> ' + subject.name + '</label>');
                 });
             }
         }
@@ -212,18 +216,38 @@ $("#btnAdd").on("click", function(e) {
     $('#courseContent').val("");
     resetDropDown();
     resetCheckBox();
+    resetExamArea();
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
 $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
-        var subjects = [];
+        var subjects = [],
+            examAreas = [],
+            someError;
+        $("#myModal .examArea .checkbox-inline input").each(function(index) {
+            if (this.checked) {
+                var areaCount = $(this).parents("li").find("#areaCount").val();
+                if (areaCount == "") {
+                    someError = true;
+                    $(this).parents("li").find("#areaCount").focus();
+                    return;
+                }
+                examAreas.push({ examAreaId: $(this).attr("id"), examAreaName: $(this).val(), areaCount: areaCount });
+            }
+        });
+
+        if (someError) {
+            showAlert("考场名额填写不正确");
+            return;
+        }
         $("#myModal .subject .checkbox-inline input").each(function(index) {
             if (this.checked) {
                 subjects.push({ subjectId: $(this).attr("id"), subjectName: $(this).val() });
             }
         });
+
         var postURI = "/admin/examClass/add",
             postObj = {
                 name: $('#name').val(),
@@ -233,7 +257,8 @@ $("#btnSave").on("click", function(e) {
                 examCategoryName: $('#examCategoryName').find("option:selected").text(),
                 examCount: $('#examCount').val(),
                 courseContent: $('#courseContent').val(),
-                subjects: subjects.length > 0 ? JSON.stringify(subjects) : []
+                subjects: subjects.length > 0 ? JSON.stringify(subjects) : [],
+                examAreas: examAreas.length > 0 ? JSON.stringify(examAreas) : []
             };
         if (!isNew) {
             postURI = "/admin/examClass/edit";
@@ -241,7 +266,7 @@ $("#btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
-            var examDate = data.examDate && moment(data.examDate).format("YYYY-M-D");
+            var examDate = data.examDate && moment(data.examDate, "YYYY-M-D").format("YYYY-M-D");
             data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
                 $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
@@ -288,6 +313,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#courseContent').val(htmlDecode(entity.courseContent));
     resetDropDown(entity.examCategoryId);
     resetCheckBox(entity.subjects);
+    resetExamArea(entity.examAreas);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
