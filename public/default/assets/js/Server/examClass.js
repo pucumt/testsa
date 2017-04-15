@@ -185,6 +185,7 @@ function resetExamArea(areas) {
     $.get("/admin/examAreaList/getAllWithoutPage", function(data) {
         if (data) {
             if (data && data.length > 0) {
+                var d = $(document.createDocumentFragment());
                 data.forEach(function(examArea) {
                     var areaCount = 0;
                     if (areas && areas.some(function(entity) {
@@ -193,11 +194,12 @@ function resetExamArea(areas) {
                                 return true;
                             }
                         })) {
-                        $("#myModal .examArea").append('<li><label class="checkbox-inline"><input type="checkbox" checked id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" name="areaCount" id="areaCount" value=' + areaCount + '>名额</li>');
+                        d.append('<li><label class="checkbox-inline"><input type="checkbox" checked id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" class="areaCount" value=' + areaCount + '>名额</li>');
                     } else {
-                        $("#myModal .examArea").append('<li><label class="checkbox-inline"><input type="checkbox" id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" name="areaCount" id="areaCount" >名额</li>');
+                        d.append('<li><label class="checkbox-inline"><input type="checkbox" id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" class="areaCount" >名额</li>');
                     }
                 });
+                $("#myModal .examArea").append(d);
             }
         }
     });
@@ -228,10 +230,10 @@ $("#btnSave").on("click", function(e) {
             someError;
         $("#myModal .examArea .checkbox-inline input").each(function(index) {
             if (this.checked) {
-                var areaCount = $(this).parents("li").find("#areaCount").val();
-                if (areaCount == "") {
+                var areaCount = $(this).parents("li").find(".areaCount").val();
+                if (areaCount == "" || (!Number(areaCount))) {
                     someError = true;
-                    $(this).parents("li").find("#areaCount").focus();
+                    $(this).parents("li").find(".areaCount").focus();
                     return;
                 }
                 examAreas.push({ examAreaId: $(this).attr("id"), examAreaName: $(this).val(), areaCount: areaCount });

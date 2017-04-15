@@ -22,7 +22,8 @@ var examClassSchema = new mongoose.Schema({
     examAreas: [{
         examAreaId: String,
         examAreaName: String,
-        areaCount: Number //容纳考生数
+        areaCount: Number, //容纳考生数
+        enrollCount: Number //容纳考生数
     }]
 }, {
     collection: 'examClasss'

@@ -260,7 +260,7 @@ body {
     margin-bottom: 5px;
 }
 
-#myModal .modal-body ul.examArea li #areaCount {
+#myModal .modal-body ul.examArea li .areaCount {
     display: inline-block;
     width: 60px;
 }
