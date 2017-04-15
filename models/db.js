@@ -1,16 +1,9 @@
 var settings = require('../settings'),
     mongoose = require('mongoose'),
-    uri = 'mongodb://' + settings.host + ':' + settings.port + '/' + settings.db;
-// var options = {
-//     db: { native_parser: true },
-//     server: { poolSize: 5 },
-//     auth: {
-//         user: "bfb",
-//         pass: "bfb123"
-//     }
-// };
+    uri = 'mongodb://xxx:xxx@' + settings.host + ':' + settings.port + '/' + settings.db;
+
 mongoose.Promise = global.Promise;
-mongoose.connect(uri); //, options
+mongoose.connect(uri);
 
 mongoose.connection.on('connected', function() {
     console.log('Mongoose connected to ' + uri);
