@@ -24,9 +24,9 @@ function addValidation(callback) {
                         message: '年级不能为空'
                     },
                     stringLength: {
-                        min: 4,
+                        min: 3,
                         max: 30,
-                        message: '年级在4-30个字符之间'
+                        message: '年级在3-30个字符之间'
                     }
                 }
             }
@@ -76,7 +76,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
+    //$('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改年级");
     $('#name').val(entity.name);
     $('#id').val(entity._id);

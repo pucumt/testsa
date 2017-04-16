@@ -8,6 +8,7 @@ var studentInfoSchema = new mongoose.Schema({
     mobile: String,
     studentNo: String, //学号
     School: String,
+    className: String,
     sex: Boolean, //0 男 1 女
     isDeleted: Boolean,
     accountId: String,

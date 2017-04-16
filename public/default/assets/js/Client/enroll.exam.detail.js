@@ -21,6 +21,8 @@ $(document).ready(function() {
                         var student = data.students[0];
                         renderStudents(data.students, student._id);
                         setSelectedStudent(student);
+                    } else {
+                        $("#Enroll-select .student .name").text("请先添加学员");
                     }
                     return;
                 }
@@ -63,7 +65,7 @@ $(document).ready(function() {
                     mobile: $('#studentInfo #mobile').val(),
                     sex: $('#studentInfo #sex').val() == "1" ? true : false,
                     School: $('#studentInfo #School').val(),
-                    address: $('#studentInfo #address').val(),
+                    className: $('#studentInfo #className').val(),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
                     originalUrl: "/enroll/exam/" + $("#id").val()
@@ -101,7 +103,7 @@ $(document).ready(function() {
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(entity.School);
-        $('#studentInfo #address').val(entity.address);
+        $('#studentInfo #className').val(entity.className);
         resetDropDown(null, function() {
             $('#studentInfo #grade').val(entity.gradeId);
         });
@@ -118,7 +120,7 @@ $(document).ready(function() {
     });
 
     $("#Enroll-select #btnNext").on("click", function(e) {
-        if ($("#Enroll-select .student .name").text() == "") {
+        if ($("#Enroll-select .student .name").text() == "" || $("#Enroll-select #studentId").val() == "") {
             $("#Enroll-student").show();
             $("#Enroll-select").hide();
         } else {
@@ -161,6 +163,22 @@ function addValidation() {
                 validators: {
                     notEmpty: {
                         message: '姓名不能为空'
+                    }
+                }
+            },
+            'School': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '学校不能为空'
+                    }
+                }
+            },
+            'className': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '班级不能为空'
                     }
                 }
             }

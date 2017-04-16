@@ -13,11 +13,10 @@ module.exports = function(app) {
     app.post('/studentInfo/add', function(req, res) {
         var studentInfo = new StudentInfo({
             name: req.body.name,
-            address: req.body.address,
             mobile: req.body.mobile,
             sex: req.body.sex,
             School: req.body.School,
-            address: req.body.address,
+            className: req.body.className,
             gradeId: req.body.gradeId,
             gradeName: req.body.gradeName,
             accountId: req.session.user._id
@@ -33,11 +32,10 @@ module.exports = function(app) {
     app.post('/studentInfo/edit', function(req, res) {
         var studentInfo = new StudentInfo({
             name: req.body.name,
-            address: req.body.address,
             mobile: req.body.mobile,
             sex: req.body.sex,
             School: req.body.School,
-            address: req.body.address,
+            className: req.body.className,
             gradeId: req.body.gradeId,
             gradeName: req.body.gradeName
         });

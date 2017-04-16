@@ -40,6 +40,22 @@ function addValidation(callback) {
                         message: '填写的不是数字',
                     }
                 }
+            },
+            'School': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '学校不能为空'
+                    }
+                }
+            },
+            'className': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '班级不能为空'
+                    }
+                }
             }
         }
     });
@@ -101,6 +117,8 @@ $("#btnAddStudent").on("click", function(e) {
                 name: $('#studentInfo #studentName').val(),
                 mobile: $('#studentInfo #mobile').val(),
                 sex: $('#studentInfo #sex').val(),
+                School: $('#studentInfo #School').val(),
+                className: $('#studentInfo #className').val(),
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
