@@ -23,7 +23,7 @@ var path = require('path'),
 
     app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 2369);
 app.set('views', path.join(__dirname, 'views'));
 nunjucks.configure('views', {
     autoescape: true,
