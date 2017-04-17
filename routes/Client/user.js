@@ -159,6 +159,7 @@ module.exports = function(app) {
                             if (students && students.length > 0) {
                                 var pArray = [];
                                 students.forEach(function(student) {
+                                    student.accountMobile = currentUser.name;
                                     var p = AdminEnrollExam.getFilter({
                                         studentId: student._id,
                                         examId: train._id

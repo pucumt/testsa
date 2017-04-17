@@ -1,0 +1,14 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="content mainModal">
+    <div>请点击<a href="/downloads/{{ name }}">下载</a></div>
+</div>
+{% endblock %} {% block modal %}
+
+<script type="text/javascript" src="/default/assets/js/Server/scoreResult.js"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

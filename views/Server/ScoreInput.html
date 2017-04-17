@@ -13,7 +13,7 @@
                         <label for="examName" class="control-label">测试名称:</label>
                         <div class="btn-group">
                             <input type="hidden" class="form-control" name="examId" id="examId">
-                            <input type="text" maxlength="30" readonly class="form-control" name="examName" id="examName">
+                            <input type="text" readonly class="form-control" name="examName" id="examName">
                             <button type="button" id="panel_btnExam" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span>
                                 <span class="sr-only">Toggle Dropdown</span>
@@ -44,6 +44,7 @@
                         <div style="padding-top: 0;">
                             <input name="avatar" id='upfile' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" type='file' />
                             <button type="button" id="btnScore" class="btn btn-primary">提交成绩</button>
+                            <button type="button" id="btnExportScore" class="btn btn-primary">导出成绩模板</button>
                         </div>
                     </div>
                 </div>
@@ -55,6 +56,7 @@
                         <div style="padding-top: 0;">
                             <input name="report" id='upfileReport' style="display:inline-block;" multiple="multiple" type='file' />
                             <button type="button" id="btnReport" class="btn btn-primary">提交报告</button>
+                            <button type="button" id="btnExportReport" class="btn btn-primary">导出报告模板</button>
                         </div>
                     </div>
                 </div>

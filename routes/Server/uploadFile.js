@@ -1,11 +1,17 @@
 var xlsx = require("node-xlsx"),
     path = require('path'),
     multer = require('multer'),
+    fs = require('fs'),
     StudentAccount = require('../../models/studentAccount.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     ScoreFails = require('../../models/scoreFails.js'),
     AdminEnrollExam = require('../../models/adminEnrollExam.js'),
+    ExamClass = require('../../models/examClass.js'),
     auth = require("./auth"),
+    archiver = require('archiver'),
+    archive = archiver('zip', {
+        store: true // Sets the compression method to STORE. 
+    }),
     checkLogin = auth.checkLogin,
     serverPath = __dirname,
     storage = multer.diskStorage({
@@ -142,5 +148,85 @@ module.exports = function(app) {
         updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject, req.file.filename, res);
 
         //res.redirect('/admin/score');
+    });
+
+    app.post('/admin/export/scoreTemplate', function(req, res) {
+        var data = [
+            ['姓名', '联系方式', '成绩']
+        ];
+        var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
+            .then(function(orders) {
+                if (orders.length > 0) {
+                    var PArray = [];
+                    orders.forEach(function(order) {
+                        var Px = StudentInfo.get(order.studentId).then(function(student) {
+                            return StudentAccount.get(student.accountId).then(function(account) {
+                                data.push([student.name, account.name]);
+                            });
+                        });
+                        PArray.push(Px);
+                    });
+                    return Promise.all(PArray);
+                }
+            });
+
+        p.then(function() {
+            var buffer = xlsx.build([{ name: "成绩", data: data }]),
+                fileName = req.body.exam + '_' + req.body.subject + '.xlsx';
+            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            res.jsonp({ sucess: true });
+            // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
+        });
+    });
+
+    app.get('/admin/export/scoreTemplate', checkLogin);
+    app.get('/admin/export/scoreTemplate', function(req, res) {
+        res.render('Server/scoreTemplate.html', {
+            title: '>成绩模板导出',
+            user: req.session.admin,
+            name: decodeURI(req.query.name)
+        });
+    });
+
+    app.post('/admin/export/reportTemplate', function(req, res) {
+        var disPath = path.join(serverPath, "../../public/downloads/", req.body.examId);
+        var src = path.join(serverPath, "../../public/downloads/reportTemplate.docx");
+        var copyFile = function() {
+            var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
+                .then(function(orders) {
+                    if (orders.length > 0) {
+                        var PArray = [];
+                        orders.forEach(function(order) {
+                            var Px = StudentInfo.get(order.studentId).then(function(student) {
+                                return StudentAccount.get(student.accountId).then(function(account) {
+                                    var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam + '.docx';
+                                    fs.createReadStream(src).pipe(fs.createWriteStream(path.join(disPath, fileName)));
+                                });
+                            });
+                            PArray.push(Px);
+                        });
+                        return Promise.all(PArray);
+                    }
+                });
+            p.then(function() {
+                var output = fs.createWriteStream(path.join(serverPath, "../../public/downloads/", req.body.examId + ".zip"));
+                archive.pipe(output);
+                archive.directory(disPath, "");
+                archive.finalize();
+                res.jsonp({ sucess: true });
+            });
+        };
+        fs.exists(disPath, function(exists) {
+            // 已存在
+            if (exists) {
+                copyFile();
+            }
+            // 不存在
+            else {
+                fs.mkdir(disPath, function() {
+                    copyFile();
+                });
+            }
+        });
     });
 }
