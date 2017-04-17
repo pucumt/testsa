@@ -40,6 +40,7 @@ function renderStudent() {
             renderAccount(data.accountId);
             $("#studentInfo #discount").val(data.discount);
             $("#studentInfo #School").val(data.School);
+            $("#studentInfo #className").val(data.className);
             $("#studentInfo #address").val(data.address);
         }
     });
@@ -91,6 +92,7 @@ $("#studentInfo #btnSave").on("click", function(e) {
                 studentNo: $('#studentInfo #studentNo').val(),
                 sex: $('#studentInfo #sex').val(),
                 School: $('#studentInfo #School').val(),
+                className: $("#studentInfo #className").val(),
                 address: $('#studentInfo #address').val(),
                 discount: $('#studentInfo #discount').val(),
                 id: $('#id').val(),

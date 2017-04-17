@@ -35,7 +35,7 @@ module.exports = function(app) {
             studentNo: req.body.studentNo,
             sex: req.body.sex,
             School: req.body.School,
-            address: req.body.address,
+            className: req.body.className,
             discount: req.body.discount,
             gradeId: req.body.gradeId,
             gradeName: req.body.gradeName
