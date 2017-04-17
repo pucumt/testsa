@@ -144,4 +144,13 @@ module.exports = function(app) {
                 return;
             });
     });
+
+    app.get('/admin/studentAccount/:id', checkLogin);
+    app.get('/admin/studentAccount/:id', function(req, res) {
+        StudentAccount.get(req.params.id).then(function(account) {
+            if (account) {
+                res.jsonp(account);
+            }
+        });
+    });
 }

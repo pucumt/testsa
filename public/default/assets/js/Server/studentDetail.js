@@ -37,9 +37,18 @@ function renderStudent() {
             $("#studentInfo #studentNo").val(data.studentNo);
             $("#studentInfo #sex").val(data.sex ? 1 : 0);
             resetDropDown(data.gradeId);
+            renderAccount(data.accountId);
             $("#studentInfo #discount").val(data.discount);
             $("#studentInfo #School").val(data.School);
             $("#studentInfo #address").val(data.address);
+        }
+    });
+};
+
+function renderAccount(id) {
+    $.get("/admin/studentAccount/" + id, function(data) {
+        if (data) {
+            $(".mainModal .panel-heading .account").text(data.name);
         }
     });
 };
