@@ -100,8 +100,8 @@ function addValidation(callback) {
                     },
                     stringLength: {
                         min: 2,
-                        max: 30,
-                        message: '测试名称在2-30个字符之间'
+                        max: 50,
+                        message: '测试名称在2-50个字符之间'
                     }
                 }
             }

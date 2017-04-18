@@ -7,7 +7,7 @@ var home = require('./home.js'),
     reg = require('./reg.js');
 
 module.exports = function(app) {
-    home(app);
+    // home(app);
     enroll(app);
     login(app);
     reg(app);
