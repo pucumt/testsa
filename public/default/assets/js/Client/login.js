@@ -20,8 +20,4 @@ $(document).ready(function() {
             }
         }
     });
-
-    $('#loginForm .btn-default').on("click", function(e) {
-        location.href = "/reg";
-    });
 });
