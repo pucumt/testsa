@@ -168,6 +168,7 @@ function openExam(p) {
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
+                examClass.courseContent = "";
                 $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
                     examClass.examCount + '</td></tr>');
