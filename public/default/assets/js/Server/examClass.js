@@ -180,24 +180,26 @@ function resetCheckBox(subjects) {
     });
 };
 
-function resetExamArea(areaid) {
+function resetExamArea(examId) {
     $('#myModal').find(".examArea").empty();
-    $.get("/admin/examAreaList/getAllWithoutPage", function(data) {
+    $.post("/admin/examClassExamArea/withAllexamArea", { examId: examId }, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 var d = $(document.createDocumentFragment());
+                var examCount = 0;
                 data.forEach(function(examArea) {
-                    if (areaid && areaid == examArea._id) {
-                        d.append('<li><label class="radio-inline"><input type="radio" name="examAreas" checked id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label></li>');
+                    if (areas && areas.some(function(entity) {
+                            if (entity.examAreaId == examArea._id) {
+                                examCount = entity.examCount;
+                                return true;
+                            }
+                        })) {
+                        d.append('<li><label class="checkbox-inline"><input type="checkbox" id=' + examArea._id + ' checked value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" class="areaCount" value=' + examCount + '>名额</li>');
                     } else {
-                        d.append('<li><label class="radio-inline"><input type="radio" name="examAreas" id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label></li>');
+                        d.append('<li><label class="checkbox-inline"><input type="checkbox" id=' + examArea._id + ' value=' + examArea.name + ' >' + examArea.name + '</label><input type="text" maxlength="10" class="areaCount" >名额</li>');
                     }
                 });
                 $("#myModal .examArea").append(d);
-
-                if (!areaid) {
-                    $("#myModal .examArea .radio-inline input")[0].checked = true;
-                }
             }
         }
     });
@@ -224,14 +226,25 @@ $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var subjects = [],
-            examAreaId,
-            examAreaName;
-        $("#myModal .examArea .radio-inline input").each(function(index) {
+            examAreas = [],
+            someError;
+        $("#myModal .examArea .checkbox-inline input").each(function(index) {
             if (this.checked) {
-                examAreaId = $(this).attr("id");
-                examAreaName = $(this).val();
+                var areaCount = $(this).parents("li").find(".areaCount").val();
+                if (areaCount == "" || (!Number(areaCount))) {
+                    someError = true;
+                    $(this).parents("li").find(".areaCount").focus();
+                    return;
+                }
+                examAreas.push({ examAreaId: $(this).attr("id"), examAreaName: $(this).val(), areaCount: areaCount });
             }
         });
+
+        if (someError) {
+            showAlert("考场名额填写不正确");
+            return;
+        }
+
         $("#myModal .subject .checkbox-inline input").each(function(index) {
             if (this.checked) {
                 subjects.push({ subjectId: $(this).attr("id"), subjectName: $(this).val() });
@@ -248,8 +261,7 @@ $("#btnSave").on("click", function(e) {
                 examCount: $('#examCount').val(),
                 courseContent: $('#courseContent').val(),
                 subjects: subjects.length > 0 ? JSON.stringify(subjects) : [],
-                examAreaId: examAreaId,
-                examAreaName: examAreaName
+                examAreas: examAreas.length > 0 ? JSON.stringify(examAreas) : []
             };
         if (!isNew) {
             postURI = "/admin/examClass/edit";
@@ -304,7 +316,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#courseContent').val(htmlDecode(entity.courseContent));
     resetDropDown(entity.examCategoryId);
     resetCheckBox(entity.subjects);
-    resetExamArea(entity.examAreaId);
+    resetExamArea(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 

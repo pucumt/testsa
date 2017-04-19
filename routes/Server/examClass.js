@@ -1,4 +1,6 @@
 var ExamClass = require('../../models/examClass.js'),
+    ExamClassExamArea = require('../../models/examClassExamArea.js'),
+    ExamArea = require('../../models/examArea.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -36,16 +38,39 @@ module.exports = function(app) {
             enrollCount: 0,
             isWeixin: 0,
             courseContent: req.body.courseContent,
-            subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : []),
-            examAreaId: req.body.examAreaId,
-            examAreaName: req.body.examAreaName
+            subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : [])
+                // examAreaId: req.body.examAreaId,
+                // examAreaName: req.body.examAreaName
         });
 
         examClass.save(function(err, examClass) {
             if (err) {
                 examClass = {};
             }
-            res.jsonp(examClass);
+            if (req.body.examAreas) {
+                var examAreas = JSON.parse(req.body.examAreas);
+                var pArray = [];
+                examAreas.forEach(function(examArea) {
+                    var newExamArea = new ExamClassExamArea({
+                        examId: examClass._id,
+                        examCount: examArea.areaCount,
+                        enrollCount: 0,
+                        examAreaId: examArea.examAreaId,
+                        examAreaName: examArea.examAreaName
+                    });
+                    pArray.push(newExamArea.save());
+                });
+
+                Promise.all(pArray).then(function() {
+                    ExamClassExamArea.getFilters({ examId: examClass._id })
+                        .then(function(examClassExamAreas) {
+                            examClass.examAreas = examClassExamAreas;
+                            res.jsonp(examClass);
+                        });
+                });
+            } else {
+                res.jsonp(examClass);
+            }
         });
     });
 
@@ -59,16 +84,77 @@ module.exports = function(app) {
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
             courseContent: req.body.courseContent,
-            subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : []),
-            examAreaId: req.body.examAreaId,
-            examAreaName: req.body.examAreaName
+            subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : [])
+                // examAreaId: req.body.examAreaId,
+                // examAreaName: req.body.examAreaName
         });
 
         examClass.update(req.body.id, function(err, examClass) {
             if (err) {
                 examClass = {};
             }
-            res.jsonp(examClass);
+            if (req.body.examAreas) {
+                var examAreas = JSON.parse(req.body.examAreas);
+
+                ExamArea.getAllWithoutPage().then(function(allExamAreas) {
+                    var pArray = [],
+                        selectArea;
+                    allExamAreas.forEach(function(examArea) {
+                        var p = ExamClassExamArea.getFilter({ examId: examClass._id, examAreaId: examArea.examAreaId })
+                            .then(function(examClassExamArea) {
+                                selectArea = null;
+                                if (examClassExamArea) { //已经存在
+                                    if (examAreas.some(function(area) {
+                                            if (area.examAreaId == examArea._id) {
+                                                selectArea = area;
+                                                return true;
+                                            }
+                                        })) {
+                                        //需要修改
+                                        var newExamClassExamArea = new ExamClassExamArea({
+                                            examCount: selectArea.areaCount //
+                                        });
+                                        return newExamClassExamArea.update(examClassExamArea._id);
+                                    } else {
+                                        //需要删除
+                                        return ExamClassExamArea.delete(examClassExamArea._id);
+                                    }
+                                } else { //原来没有
+                                    if (examAreas.some(function() {
+                                            if (area.examAreaId == examArea._id) {
+                                                selectArea = area;
+                                                return true;
+                                            }
+                                        })) {
+                                        //需要新增
+                                        var newExamClassExamArea = new ExamClassExamArea({
+                                            examId: examClass._id,
+                                            examCount: selectArea.areaCount, //
+                                            enrollCount: 0,
+                                            examAreaId: examArea.examAreaId,
+                                            examAreaName: examArea.examAreaName
+                                        });
+                                        return newExamClassExamArea.save();
+                                    } else {
+                                        //不需要动
+                                    }
+                                }
+                            });
+                        pArray.push(p);
+                    });
+
+                    Promise.all(pArray).then(function() {
+                        ExamClassExamArea.getFilters({ examId: examClass._id })
+                            .then(function(examClassExamAreas) {
+                                examClass.examAreas = examClassExamAreas;
+                                res.jsonp(examClass);
+                            });
+                    });
+                });
+            } else {
+                ExamClassExamArea.deleteFilter({ examId: examClass._id });
+                res.jsonp(examClass);
+            }
         });
     });
 

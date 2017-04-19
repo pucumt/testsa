@@ -22,42 +22,22 @@ function ExamClassExamArea(option) {
 module.exports = ExamClassExamArea;
 
 //存储学区信息
-ExamClassExamArea.prototype.save = function(callback) {
+ExamClassExamArea.prototype.save = function() {
     var newexamClassExamArea = new examClassExamAreaModel(this.option);
 
-    newexamClassExamArea.save(function(err, examClassExamArea) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, examClassExamArea);
-
-        //db.close();
-    });
+    return newexamClassExamArea.save();
 };
 
-ExamClassExamArea.prototype.update = function(id, callback) {
-    examClassExamAreaModel.update({
+ExamClassExamArea.prototype.update = function(id) {
+    return examClassExamAreaModel.update({
         _id: id
-    }, this.option).exec(function(err, examClassExamArea) {
-        if (err) {
-            return callback(err);
-        }
-        this.option._id = id;
-        callback(null, this.option);
-    }.bind(this));
+    }, this.option).exec();
 };
 
 //读取学区信息
-ExamClassExamArea.get = function(id, callback) {
+ExamClassExamArea.get = function(id) {
     //打开数据库
-    examClassExamAreaModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, examClassExamArea) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, examClassExamArea);
-
-        //db.close();
-    });
+    return examClassExamAreaModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息
@@ -78,18 +58,31 @@ ExamClassExamArea.getAll = function(id, page, filter, callback) {
     });
 };
 
+ExamClassExamArea.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return examClassExamAreaModel.findOne(filter);
+};
+
+ExamClassExamArea.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return examClassExamAreaModel.find(filter);
+};
+
 //删除一个学区
-ExamClassExamArea.delete = function(id, callback) {
-    examClassExamAreaModel.update({
+ExamClassExamArea.delete = function(id) {
+    return examClassExamAreaModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, examClassExamArea) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, examClassExamArea);
-    });
+    }).exec();
+};
+
+ExamClassExamArea.deleteFilter = function(filter) {
+    return examClassExamAreaModel.update(filter, {
+        isDeleted: true
+    }).exec();
 };
 
 
