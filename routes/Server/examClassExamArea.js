@@ -6,19 +6,31 @@ var ExamClassExamArea = require('../../models/examClassExamArea.js'),
 module.exports = function(app) {
     app.post('/admin/examClassExamArea/withAllexamArea', checkLogin);
     app.post('/admin/examClassExamArea/withAllexamArea', function(req, res) {
-        var examClassExamArea = new ExamClassExamArea({
-            name: req.body.name,
-            address: req.body.address
-        });
         ExamArea.getAllWithoutPage()
             .then(function(examAreas) {
-                ExamClassExamArea.getFilter();
-                res.jsonp(examAreas);
+                ExamClassExamArea.getFilters({
+                    examId: req.body.examId
+                }).then(function(examClassExamAreas) {
+                    res.jsonp({ examAreas: examAreas, examClassExamAreas: examClassExamAreas });
+                });
             })
             .catch((err) => {
                 console.log('errored');
             });
     });
+
+    app.post('/admin/examClassExamArea/examAreas', checkLogin);
+    app.post('/admin/examClassExamArea/examAreas', function(req, res) {
+        ExamClassExamArea.getFilters({
+                examId: req.body.examId
+            }).then(function(examClassExamAreas) {
+                res.jsonp(examClassExamAreas);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
     // app.post('/admin/examClassExamArea/add', checkLogin);
     // app.post('/admin/examClassExamArea/add', function(req, res) {
     //     var examClassExamArea = new ExamClassExamArea({

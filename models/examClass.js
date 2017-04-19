@@ -156,3 +156,16 @@ ExamClass.cancel = function(id) {
             }, { $inc: { enrollCount: -1 } }).exec();
         });
 };
+
+
+ExamClass.enroll2 = function(id) {
+    return examClassModel.update({
+        _id: id
+    }, { $inc: { enrollCount: 1 } }).exec();
+};
+
+ExamClass.cancel2 = function(id) {
+    return examClassModel.update({
+        _id: id
+    }, { $inc: { enrollCount: -1 } }).exec();
+};

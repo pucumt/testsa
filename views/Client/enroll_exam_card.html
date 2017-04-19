@@ -18,7 +18,11 @@
                     <div class="classDetail">
                         <div class="">日期:&nbsp;&nbsp;{{ train.examDate.toLocaleDateString() }} </div>
                         <div class="">时间:&nbsp;&nbsp;{{ train.examTime }}</div>
+                        {% if train.examAreaName %}
                         <div class="">地点:&nbsp;&nbsp;{{ train.examAreaName }}</div>
+                        {% else %}
+                        <div class="">地点:&nbsp;&nbsp;{{ student.order.examAreaName }}</div>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>

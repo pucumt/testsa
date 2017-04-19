@@ -184,10 +184,11 @@ function resetExamArea(examId) {
     $('#myModal').find(".examArea").empty();
     $.post("/admin/examClassExamArea/withAllexamArea", { examId: examId }, function(data) {
         if (data) {
-            if (data && data.length > 0) {
+            if (data && data.examAreas && data.examAreas.length > 0) {
                 var d = $(document.createDocumentFragment());
                 var examCount = 0;
-                data.forEach(function(examArea) {
+                areas = data.examClassExamAreas;
+                data.examAreas.forEach(function(examArea) {
                     if (areas && areas.some(function(entity) {
                             if (entity.examAreaId == examArea._id) {
                                 examCount = entity.examCount;

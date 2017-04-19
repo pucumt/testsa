@@ -162,7 +162,8 @@ module.exports = function(app) {
                                     student.accountMobile = currentUser.name;
                                     var p = AdminEnrollExam.getFilter({
                                         studentId: student._id,
-                                        examId: train._id
+                                        examId: train._id,
+                                        isSucceed: 1
                                     }).then(function(order) {
                                         if (order) {
                                             student.order = order;

@@ -99,13 +99,13 @@ module.exports = function(app) {
                 ExamArea.getAllWithoutPage().then(function(allExamAreas) {
                     var pArray = [],
                         selectArea;
-                    allExamAreas.forEach(function(examArea) {
-                        var p = ExamClassExamArea.getFilter({ examId: examClass._id, examAreaId: examArea.examAreaId })
+                    allExamAreas.forEach(function(singleExamArea) {
+                        var p = ExamClassExamArea.getFilter({ examId: examClass._id, examAreaId: singleExamArea._id })
                             .then(function(examClassExamArea) {
                                 selectArea = null;
                                 if (examClassExamArea) { //已经存在
                                     if (examAreas.some(function(area) {
-                                            if (area.examAreaId == examArea._id) {
+                                            if (area.examAreaId == singleExamArea._id) {
                                                 selectArea = area;
                                                 return true;
                                             }
@@ -120,8 +120,8 @@ module.exports = function(app) {
                                         return ExamClassExamArea.delete(examClassExamArea._id);
                                     }
                                 } else { //原来没有
-                                    if (examAreas.some(function() {
-                                            if (area.examAreaId == examArea._id) {
+                                    if (examAreas.some(function(area) {
+                                            if (area.examAreaId == singleExamArea._id) {
                                                 selectArea = area;
                                                 return true;
                                             }
@@ -131,8 +131,8 @@ module.exports = function(app) {
                                             examId: examClass._id,
                                             examCount: selectArea.areaCount, //
                                             enrollCount: 0,
-                                            examAreaId: examArea.examAreaId,
-                                            examAreaName: examArea.examAreaName
+                                            examAreaId: selectArea.examAreaId,
+                                            examAreaName: selectArea.examAreaName
                                         });
                                         return newExamClassExamArea.save();
                                     } else {

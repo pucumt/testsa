@@ -22,9 +22,8 @@ var adminEnrollExamSchema = new mongoose.Schema({
         score: Number,
         report: String
     }],
-    classRoomId: String,
-    classRoomName: String,
-    examNo: Number
+    examAreaId: String,
+    examAreaName: String
 }, {
     collection: 'adminEnrollExams'
 });

@@ -76,22 +76,6 @@ function addValidation(callback) {
                     }
                 }
             },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '手机号不能为空'
-                    },
-                    stringLength: {
-                        min: 11,
-                        max: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
-            },
             'examName': {
                 trigger: "blur change",
                 validators: {
@@ -112,6 +96,7 @@ function addValidation(callback) {
 $("#btnAddStudent").on("click", function(e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
+        $("#btnAddStudent").attr("disabled", "disabled");
         var postURI = "/admin/studentAccount/newStudent",
             postObj = {
                 name: $('#studentInfo #studentName').val(),
@@ -128,6 +113,7 @@ $("#btnAddStudent").on("click", function(e) {
             } else {
                 showAlert(data.error);
             }
+            $("#btnAddStudent").removeAttr("disabled");
         });
     }
 });
@@ -135,23 +121,51 @@ $("#btnAddStudent").on("click", function(e) {
 $("#btnEnroll").on("click", function(e) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/adminEnrollExam/enroll",
-            postObj = {
-                studentId: $('#enrollInfo #studentId').val(),
-                studentName: $('#enrollInfo #studentName').val(),
-                mobile: $('#enrollInfo #mobile').val(),
-                examId: $('#enrollInfo #examId').val(),
-                examName: $('#enrollInfo #examName').val(),
-                examCategoryId: $('#enrollInfo #examCategoryId').val(),
-                examCategoryName: $('#enrollInfo #examCategoryName').val()
-            };
-        $.post(postURI, postObj, function(data) {
-            if (data && data.sucess) {
-                showAlert("报名成功");
-            } else {
-                showAlert(data.error);
-            }
-        });
+        $("#btnEnroll").attr("disabled", "disabled");
+
+        var examArea = $('#enrollInfo #examAreas').val();
+        if (!examArea) {
+            //old enroll
+            var postURI = "/admin/adminEnrollExam/enroll",
+                postObj = {
+                    studentId: $('#enrollInfo #studentId').val(),
+                    studentName: $('#enrollInfo #studentName').val(),
+                    mobile: $('#enrollInfo #mobile').val(),
+                    examId: $('#enrollInfo #examId').val(),
+                    examName: $('#enrollInfo #examName').val(),
+                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                    examCategoryName: $('#enrollInfo #examCategoryName').val()
+                };
+            $.post(postURI, postObj, function(data) {
+                if (data && data.sucess) {
+                    showAlert("报名成功");
+                } else {
+                    showAlert(data.error);
+                }
+                $("#btnEnroll").removeAttr("disabled");
+            });
+        } else {
+            //new enroll with multi areas
+            var postURI = "/admin/adminEnrollExam/enroll2",
+                postObj = {
+                    studentId: $('#enrollInfo #studentId').val(),
+                    studentName: $('#enrollInfo #studentName').val(),
+                    mobile: $('#enrollInfo #mobile').val(),
+                    examId: $('#enrollInfo #examId').val(),
+                    examName: $('#enrollInfo #examName').val(),
+                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                    examCategoryName: $('#enrollInfo #examCategoryName').val(),
+                    examClassExamAreaId: examArea
+                };
+            $.post(postURI, postObj, function(data) {
+                if (data && data.sucess) {
+                    showAlert("报名成功");
+                } else {
+                    showAlert(data.error);
+                }
+                $("#btnEnroll").removeAttr("disabled");
+            });
+        }
     }
 });
 
@@ -208,6 +222,7 @@ function openExam(p) {
                 $('#enrollInfo #examId').val(entity._id); //
                 $('#enrollInfo #examCategoryName').val(entity.examCategoryName); //
                 $('#enrollInfo #examCategoryId').val(entity.examCategoryId); //
+                renderExamAreas(entity._id);
                 $('#selectModal').modal('hide');
             });
         }
@@ -276,6 +291,22 @@ function resetDropDown() {
                     $("#studentInfo #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
                 });
             }
+        }
+    });
+};
+
+function renderExamAreas(examId) {
+    $.post("/admin/examClassExamArea/examAreas", { examId: examId }, function(data) {
+        if (data) {
+            var d = $(document.createDocumentFragment());
+            if (data && data.length > 0) {
+                data.forEach(function(examArea) {
+                    d.append("<option value='" + examArea._id + "'>" + examArea.examAreaName + "</option>");
+                });
+            } else {
+                //d.append("<option value='" + exam.examAreaId + "'>" + exam.examAreaName + "</option>");
+            }
+            $("#enrollInfo #examAreas").append(d);
         }
     });
 };

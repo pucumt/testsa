@@ -54,13 +54,15 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
+    $(obj).attr("disabled", "disabled");
     var entity = $(obj).parent().data("obj");
     showComfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         $.post("/admin/adminEnrollExam/cancel", {
             id: entity._id,
-            examId: entity.examId
+            examId: entity.examId,
+            examAreaId: entity.examAreaId
         }, function(data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
@@ -69,6 +71,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
                 var operation = $('#' + entity._id + ' td:last-child .btn-group');
                 operation.find(".btnDelete").remove();
             }
+            $(obj).removeAttr("disabled");
         });
     });
 });

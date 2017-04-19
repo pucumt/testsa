@@ -3,6 +3,7 @@ var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     StudentAccount = require('../../models/studentAccount.js'),
     ClassRoom = require('../../models/classRoom.js'),
+    ExamClassExamArea = require('../../models/examClassExamArea.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -174,7 +175,6 @@ module.exports = function(app) {
                                 res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
                                 return;
                             }
-
                             ExamClass.enroll(req.body.examId)
                                 .then(function(result) {
                                     if (result && result.ok && result.nModified == 1) {
@@ -206,27 +206,112 @@ module.exports = function(app) {
             });
     });
 
-    app.post('/admin/adminEnrollExam/cancel', checkLogin);
-    app.post('/admin/adminEnrollExam/cancel', function(req, res) {
-        ExamClass.cancel(req.body.examId)
+    //examClassExamAreaId: examArea
+    app.post('/admin/adminEnrollExam/enroll2', checkLogin);
+    app.post('/admin/adminEnrollExam/enroll2', function(req, res) {
+        ExamClass.get(req.body.examId)
             .then(function(examClass) {
-                if (examClass && examClass.ok && examClass.nModified == 1) {
-                    AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
-                        if (err) {
-                            res.jsonp({ error: err });
-                            return;
-                        }
-                        res.jsonp({ sucess: true });
-                    });
-                } else {
-                    res.jsonp({ error: "取消失败" });
-                    return;
+                if (examClass) {
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
+                        .then(function(enrollExam) {
+                            if (enrollExam) {
+                                res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                                return;
+                            }
+                            ExamClassExamArea.enroll(req.body.examClassExamAreaId)
+                                .then(function(result) {
+                                    if (result && result.ok && result.nModified == 1) {
+                                        //报名成功
+                                        //更新总数，更新订单
+                                        ExamClass.enroll2(req.body.examId);
+
+                                        ExamClassExamArea.get(req.body.examClassExamAreaId)
+                                            .then(function(examClassExamArea) {
+                                                var adminEnrollExam = new AdminEnrollExam({
+                                                    studentId: req.body.studentId,
+                                                    studentName: req.body.studentName,
+                                                    mobile: req.body.mobile,
+                                                    examId: req.body.examId,
+                                                    examName: req.body.examName,
+                                                    examCategoryId: req.body.examCategoryId,
+                                                    examCategoryName: req.body.examCategoryName,
+                                                    isSucceed: 1,
+                                                    scores: examClass.subjects,
+                                                    examAreaId: examClassExamArea.examAreaId,
+                                                    examAreaName: examClassExamArea.examAreaName
+                                                });
+                                                adminEnrollExam.save()
+                                                    .then(function(enrollExam) {
+                                                        res.jsonp({ sucess: true });
+                                                        return;
+                                                    });
+                                            });
+                                    } else {
+                                        //报名失败
+                                        res.jsonp({ error: "报名失败" });
+                                        return;
+                                    }
+                                });
+                        });
                 }
             });
     });
 
+    app.post('/admin/adminEnrollExam/cancel', checkLogin);
+    app.post('/admin/adminEnrollExam/cancel', function(req, res) {
+        if (req.body.examAreaId) {
+            //mult exam areas
+            ExamClassExamArea.getFilter({ examId: req.body.examId, examAreaId: req.body.examAreaId })
+                .then(function(examClassExamArea) {
+                    if (examClassExamArea) { //mult exam areas
+                        ExamClassExamArea.cancel(examClassExamArea._id)
+                            .then(function(examClassExamAreaResult) {
+                                if (examClassExamAreaResult && examClassExamAreaResult.ok && examClassExamAreaResult.nModified == 1) {
+                                    ExamClass.cancel2(req.body.examId).then(function(examClass) {
+                                        if (examClass && examClass.ok && examClass.nModified == 1) {
+                                            AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
+                                                if (err) {
+                                                    res.jsonp({ error: err });
+                                                    return;
+                                                }
+                                                res.jsonp({ sucess: true });
+                                            });
+                                        } else {
+                                            res.jsonp({ error: "取消总数失败" });
+                                            return;
+                                        }
+                                    });
+                                } else {
+                                    res.jsonp({ error: "取消失败" });
+                                    return;
+                                }
+                            });
+                    }
+                });
+        } else {
+            //only one exam areas
+            ExamClass.cancel(req.body.examId)
+                .then(function(examClass) {
+                    if (examClass && examClass.ok && examClass.nModified == 1) {
+                        AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
+                            if (err) {
+                                res.jsonp({ error: err });
+                                return;
+                            }
+                            res.jsonp({ sucess: true });
+                        });
+                    } else {
+                        res.jsonp({ error: "取消失败" });
+                        return;
+                    }
+                });
+
+        }
+    });
+
     app.post('/admin/adminEnrollExam/searchExam', checkLogin);
     app.post('/admin/adminEnrollExam/searchExam', function(req, res) {
+        //need change later
         var returnResult = {};
         AdminEnrollExam.get(req.body.id)
             .then(function(examOrder) {

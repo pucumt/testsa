@@ -201,6 +201,7 @@ function setPaingNextPre(modal, searchFuc) {
 
 
 $(".examModal #gridBody").on("click", "tr", function(e) {
+    //need change later
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
     $('#myModal #myModalLabel').text("考试信息");

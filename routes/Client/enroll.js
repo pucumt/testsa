@@ -6,6 +6,7 @@ var ExamClass = require('../../models/examClass.js'),
     Grade = require('../../models/grade.js'),
     Subject = require('../../models/subject.js'),
     CouponAssign = require('../../models/couponAssign.js'),
+    ExamClassExamArea = require('../../models/examClassExamArea.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -128,6 +129,60 @@ module.exports = function(app) {
             });
     });
 
+    app.post('/enroll/exam/enroll2', checkLogin);
+    app.post('/enroll/exam/enroll2', function(req, res) {
+        ExamClass.get(req.body.examId)
+            .then(function(examClass) {
+                if (examClass) {
+                    //studentId
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, examClass.examCategoryId, examClass._id)
+                        .then(function(enrollExam) {
+                            if (enrollExam) {
+                                res.jsonp({ error: "你已经报过名了，此测试不允许多次报名" });
+                                return;
+                            }
+                            StudentInfo.get(req.body.studentId)
+                                .then(function(student) {
+                                    ExamClassExamArea.enroll(req.body.examClassExamAreaId)
+                                        .then(function(result) {
+                                            if (result && result.ok && result.nModified == 1) {
+                                                //报名成功
+                                                //更新总数，更新订单
+                                                ExamClass.enroll2(req.body.examId);
+
+                                                ExamClassExamArea.get(req.body.examClassExamAreaId)
+                                                    .then(function(examClassExamArea) {
+                                                        var adminEnrollExam = new AdminEnrollExam({
+                                                            studentId: student._id,
+                                                            studentName: student.name,
+                                                            mobile: student.mobile,
+                                                            examId: examClass._id,
+                                                            examName: examClass.name,
+                                                            examCategoryId: examClass.examCategoryId,
+                                                            examCategoryName: examClass.examCategoryName,
+                                                            isSucceed: 1,
+                                                            scores: examClass.subjects,
+                                                            examAreaId: examClassExamArea.examAreaId,
+                                                            examAreaName: examClassExamArea.examAreaName
+                                                        });
+                                                        adminEnrollExam.save()
+                                                            .then(function(enrollExam) {
+                                                                res.jsonp({ sucess: true });
+                                                                return;
+                                                            });
+                                                    });
+                                            } else {
+                                                //报名失败
+                                                res.jsonp({ error: "报名失败" });
+                                                return;
+                                            }
+                                        });
+                                });
+                        });
+                }
+            });
+    });
+
     app.post('/enroll/students', checkJSONLogin);
     app.post('/enroll/students', function(req, res) {
         var filter = { accountId: req.session.user._id };
@@ -135,6 +190,13 @@ module.exports = function(app) {
             .then(function(students) {
                 res.jsonp({ students: students });
                 return;
+            });
+    });
+
+    app.get('/enroll/exam/examClassExamAreas/:id', function(req, res) {
+        ExamClassExamArea.getFilters({ examId: req.params.id })
+            .then(function(examClassExamAreas) {
+                res.jsonp(examClassExamAreas);
             });
     });
 
