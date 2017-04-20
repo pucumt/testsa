@@ -31,7 +31,7 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("修改学员信息");
         $("#Enroll-student").hide();
-        $('#studentInfo #studentName').val(entity.name);
+        $('#studentInfo #studentName').val(decodeURI(entity.name));
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(decodeURI(entity.School));
@@ -48,7 +48,7 @@ $(document).ready(function() {
         var obj = e.currentTarget;
         var entity = $(obj).parent().data("obj");
         $("#bgBack").show();
-        showComfirm("真的要删除" + entity.name + "吗？", null, function() {
+        showComfirm("真的要删除" + decodeURI(entity.name) + "吗？", null, function() {
             $("#bgBack").hide();
         });
 
@@ -82,11 +82,11 @@ $(document).ready(function() {
             $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
             var postURI = "/studentInfo/add",
                 postObj = {
-                    name: $('#studentInfo #studentName').val(),
-                    mobile: $('#studentInfo #mobile').val(),
+                    name: $.trim($('#studentInfo #studentName').val()),
+                    mobile: $.trim($('#studentInfo #mobile').val()),
                     sex: $('#studentInfo #sex').val() == "1" ? true : false,
-                    School: $('#studentInfo #School').val(),
-                    className: $('#studentInfo #className').val(),
+                    School: $.trim($('#studentInfo #School').val()),
+                    className: $.trim($('#studentInfo #className').val()),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
                     originalUrl: "/personalCenter/students"
@@ -109,6 +109,7 @@ $(document).ready(function() {
                     entity = postObj;
                     entity._id = postObj.id;
                     $ul.find("#" + entity._id + " .name").text(entity.name);
+                    entity.name = encodeURI(entity.name);
                     entity.School = encodeURI(entity.School);
                     entity.className = encodeURI(entity.className);
                     $ul.find("#" + entity._id).data("obj", entity);
@@ -145,9 +146,10 @@ function renderStudents(students) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
+            student.name = encodeURI(student.name);
             student.School = encodeURI(student.School);
             student.className = encodeURI(student.className);
-            d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + student.name +
+            d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + decodeURI(student.name) +
                 '</span><button type="button" class="btn btn-primary btn-delete btn-xs pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
         });
         $ul.append(d);
@@ -217,9 +219,10 @@ function renderNewStudent(student) {
         $ok.remove();
     }
     if (student) {
+        student.name = encodeURI(student.name);
         student.School = encodeURI(student.School);
         student.className = encodeURI(student.className);
-        $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + student.name +
+        $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + decodeURI(student.name) +
             '</span><button type="button" class="btn btn-primary btn-xs btn-delete pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }
 };
