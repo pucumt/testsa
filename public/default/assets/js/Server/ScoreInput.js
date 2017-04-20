@@ -47,11 +47,18 @@ function search(p) {
             data.adminEnrollExams.forEach(function(examOrder) {
                 $mainSelectBody.append('<tr id=' + examOrder._id + ' data-obj=' +
                     JSON.stringify(examOrder) + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName + '</td><td>' +
-                    examOrder.examName + '</td><td>' + (examOrder.score || '') + '</td></tr>');
+                    examOrder.examName + '</td></tr>');
             });
         }
     });
 };
+
+$(".content.mainModal table tbody").on("click", "tr", function(e) {
+    //need change later
+    var obj = e.currentTarget;
+    var entity = $(obj).data("obj");
+    location.href = "/admin/studentScore/" + entity._id + "/score";
+});
 
 $(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
     search();

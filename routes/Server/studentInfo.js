@@ -14,15 +14,21 @@ module.exports = function(app) {
 
     app.get('/admin/studentDetail/:id', checkLogin);
     app.get('/admin/studentDetail/:id', function(req, res) {
-        // StudentInfo.get(req.params.id).then(function(studentInfo) {
-        //     if (studentInfo) {
         res.render('Server/studentDetail.html', {
             title: '>学生管理',
             user: req.session.admin,
             id: req.params.id
         });
-        //     }
-        // });
+    });
+
+    app.get('/admin/studentScore/:id/:fromPage', checkLogin);
+    app.get('/admin/studentScore/:id/:fromPage', function(req, res) {
+        res.render('Server/studentScore.html', {
+            title: '>学生成绩',
+            user: req.session.admin,
+            id: req.params.id,
+            fromPage: req.params.fromPage
+        });
     });
 
 

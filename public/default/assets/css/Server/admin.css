@@ -264,3 +264,11 @@ body {
     display: inline-block;
     width: 60px;
 }
+
+.mainModal .score.detail div {
+    margin: 10px;
+}
+
+.mainModal .score.detail div span {
+    margin-left: 10px;
+}

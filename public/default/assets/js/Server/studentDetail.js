@@ -204,19 +204,6 @@ $(".examModal #gridBody").on("click", "tr", function(e) {
     //need change later
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    $('#myModal #myModalLabel').text("考试信息");
-    $('#myModal #name').text(entity.examName);
-    var filter = { id: entity._id };
-    $.post("/admin/adminEnrollExam/searchExam", filter, function(data) {
-        if (data) {
-            var examDate = data.examDate && moment(data.examDate).format("YYYY-M-D");
-            $('#myModal #examDate').text(examDate);
-            $('#myModal #examTime').text(data.examTime);
-            $('#myModal #schoolArea').text(data.schoolArea);
-            $('#myModal #classRoomName').text(data.classRoomName);
-            $('#myModal #examNo').text(data.examNo);
-            $('#myModal #score').text(data.score);
-            $('#myModal').modal({ backdrop: 'static', keyboard: false });
-        }
-    });
+    location.href = "/admin/studentScore/" + entity._id + "/student";
+    ///admin/studentDetail/58f594230530d0093e13f36
 });

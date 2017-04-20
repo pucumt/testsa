@@ -309,32 +309,19 @@ module.exports = function(app) {
         }
     });
 
-    app.post('/admin/adminEnrollExam/searchExam', checkLogin);
-    app.post('/admin/adminEnrollExam/searchExam', function(req, res) {
-        //need change later
-        var returnResult = {};
+    app.post('/admin/adminEnrollExam/searchExamScore', checkLogin);
+    app.post('/admin/adminEnrollExam/searchExamScore', function(req, res) {
         AdminEnrollExam.get(req.body.id)
             .then(function(examOrder) {
                 if (examOrder) {
-                    returnResult.examName = examOrder.examName;
-                    returnResult.classRoomId = examOrder.classRoomId;
-                    returnResult.classRoomName = examOrder.classRoomName;
-                    returnResult.examNo = examOrder.examNo;
-                    returnResult.score = examOrder.score;
-                    return ExamClass.get(examOrder.examId);
+                    ExamClass.get(examOrder.examId)
+                        .then(function(examClass) {
+                            var result = examOrder.toJSON();
+                            result.examDate = examClass.examDate;
+                            result.examTime = examClass.examTime;
+                            return res.jsonp(result);
+                        });
                 }
-            })
-            .then(function(examClass) {
-                if (examClass) {
-                    returnResult.examDate = examClass.examDate;
-                    returnResult.examTime = examClass.examTime;
-                    return ClassRoom.get(returnResult.classRoomId);
-                }
-            }).then(function(classRoom) {
-                if (classRoom) {
-                    returnResult.schoolArea = classRoom.schoolArea;
-                }
-                return res.jsonp(returnResult);
             });
     });
 
