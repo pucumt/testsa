@@ -1,6 +1,7 @@
 var StudentAccount = require('../../models/studentAccount.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     auth = require("./auth"),
+    crypto = require('crypto'),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
@@ -41,8 +42,9 @@ module.exports = function(app) {
 
     app.post('/admin/studentAccount/reset', checkLogin);
     app.post('/admin/studentAccount/reset', function(req, res) {
+        var md5 = crypto.createHash('md5');
         var studentAccount = new StudentAccount({
-            password: "111111"
+            password: password = md5.update("111111").digest('hex')
         });
         studentAccount.update(req.body.id, function(err, studentAccount) {
             if (err) {
@@ -102,9 +104,10 @@ module.exports = function(app) {
         StudentAccount.getFilter({ name: req.body.mobile })
             .then(function(account) {
                 if (!account) {
+                    var md5 = crypto.createHash('md5');
                     var studentAccount = new StudentAccount({
                         name: req.body.mobile,
-                        password: "111111"
+                        password: md5.update("111111").digest('hex')
                     });
                     return studentAccount.save();
                 }

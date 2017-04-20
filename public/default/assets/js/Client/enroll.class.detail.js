@@ -63,6 +63,7 @@ $(document).ready(function() {
     $("#Enroll-student-edit #btnSave").on("click", function(e) {
         var validator = $('#studentInfo').data('formValidation').validate();
         if (validator.isValid()) {
+            $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
             var postURI = "/studentInfo/add",
                 postObj = {
                     name: $('#studentInfo #studentName').val(),
@@ -79,6 +80,11 @@ $(document).ready(function() {
                 postObj.id = editStudent._id;
             }
             $.post(postURI, postObj, function(data) {
+                $("#Enroll-student-edit #btnSave").removeAttr("disabled");
+                if (data && data.error) {
+                    showAlert(data.error);
+                    return;
+                }
                 var entity;
                 if (newStudent) {
                     entity = data.student;
@@ -86,6 +92,9 @@ $(document).ready(function() {
                 } else {
                     entity = postObj;
                     entity._id = postObj.id;
+                    entity.name = encodeURI(entity.name);
+                    entity.School = encodeURI(entity.School);
+                    entity.className = encodeURI(entity.className);
                     resetOKStudent(entity);
                     $ul.find("#" + entity._id).data("obj", entity);
                 }
@@ -103,11 +112,11 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("修改学员信息");
         $("#Enroll-student").hide();
-        $('#studentInfo #studentName').val(entity.name);
+        $('#studentInfo #studentName').val(decodeURI(entity.name));
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
-        $('#studentInfo #School').val(entity.School);
-        $('#studentInfo #address').val(entity.address);
+        $('#studentInfo #School').val(decodeURI(entity.School));
+        $('#studentInfo #className').val(decodeURI(entity.address));
         resetDropDown(null, function() {
             $('#studentInfo #grade').val(entity.gradeId);
         });
@@ -178,6 +187,9 @@ function renderStudents(students, id) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
+            student.name = encodeURI(student.name);
+            student.School = encodeURI(student.School);
+            student.className = encodeURI(student.className);
             var selected = "";
             if (student._id == id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
@@ -195,6 +207,9 @@ function renderNewStudent(student) {
         $ok.remove();
     }
     if (student) {
+        student.name = encodeURI(student.name);
+        student.School = encodeURI(student.School);
+        student.className = encodeURI(student.className);
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
             '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }

@@ -97,6 +97,10 @@ $(document).ready(function() {
             }
             $.post(postURI, postObj, function(data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
+                if (data && data.error) {
+                    showAlert(data.error);
+                    return;
+                }
                 var entity;
                 if (newStudent) {
                     entity = data.student;

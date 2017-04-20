@@ -11,20 +11,27 @@ var StudentInfo = require('../../models/studentInfo.js'),
 module.exports = function(app) {
     app.post('/studentInfo/add', checkJSONLogin);
     app.post('/studentInfo/add', function(req, res) {
-        var studentInfo = new StudentInfo({
-            name: req.body.name,
-            mobile: req.body.mobile,
-            sex: req.body.sex,
-            School: req.body.School,
-            className: req.body.className,
-            gradeId: req.body.gradeId,
-            gradeName: req.body.gradeName,
-            accountId: req.session.user._id
-        });
-
-        studentInfo.save()
+        StudentInfo.getFilter({ accountId: req.session.user._id, name: req.body.name })
             .then(function(student) {
-                res.jsonp({ student: student });
+                if (student) {
+                    res.jsonp({ error: "此学生已经存在" });
+                } else {
+                    var studentInfo = new StudentInfo({
+                        name: req.body.name,
+                        mobile: req.body.mobile,
+                        sex: req.body.sex,
+                        School: req.body.School,
+                        className: req.body.className,
+                        gradeId: req.body.gradeId,
+                        gradeName: req.body.gradeName,
+                        accountId: req.session.user._id
+                    });
+
+                    studentInfo.save()
+                        .then(function(student) {
+                            res.jsonp({ student: student });
+                        });
+                }
             });
     });
 

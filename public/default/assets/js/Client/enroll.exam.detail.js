@@ -84,6 +84,10 @@ $(document).ready(function() {
             }
             $.post(postURI, postObj, function(data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
+                if (data && data.error) {
+                    showAlert(data.error);
+                    return;
+                }
                 var entity;
                 if (newStudent) {
                     entity = data.student;
@@ -92,6 +96,7 @@ $(document).ready(function() {
                     entity = postObj;
                     entity._id = postObj.id;
                     resetOKStudent(entity);
+                    entity.name = encodeURI(entity.name);
                     entity.School = encodeURI(entity.School);
                     entity.className = encodeURI(entity.className);
                     $ul.find("#" + entity._id).data("obj", entity);
@@ -110,7 +115,7 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("修改学员信息");
         $("#Enroll-student").hide();
-        $('#studentInfo #studentName').val(entity.name);
+        $('#studentInfo #studentName').val(decodeURI(entity.name));
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(decodeURI(entity.School));
@@ -259,6 +264,7 @@ function renderStudents(students, id) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
+            student.name = encodeURI(student.name);
             student.School = encodeURI(student.School);
             student.className = encodeURI(student.className);
             var selected = "";
@@ -278,6 +284,7 @@ function renderNewStudent(student) {
         $ok.remove();
     }
     if (student) {
+        student.name = encodeURI(student.name);
         student.School = encodeURI(student.School);
         student.className = encodeURI(student.className);
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
