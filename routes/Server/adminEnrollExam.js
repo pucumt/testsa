@@ -267,8 +267,8 @@ module.exports = function(app) {
                         ExamClassExamArea.cancel(examClassExamArea._id)
                             .then(function(examClassExamAreaResult) {
                                 if (examClassExamAreaResult && examClassExamAreaResult.ok && examClassExamAreaResult.nModified == 1) {
-                                    ExamClass.cancel2(req.body.examId).then(function(examClass) {
-                                        if (examClass && examClass.ok && examClass.nModified == 1) {
+                                    ExamClass.cancel2(req.body.examId).then(function(examClassResult) {
+                                        if (examClassResult && examClassResult.ok && examClassResult.nModified == 1) {
                                             AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
                                                 if (err) {
                                                     res.jsonp({ error: err });

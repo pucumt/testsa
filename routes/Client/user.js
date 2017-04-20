@@ -227,7 +227,8 @@ module.exports = function(app) {
                                 students.forEach(function(student) {
                                     var p = AdminEnrollExam.getFilter({
                                         studentId: student._id,
-                                        examId: train._id
+                                        examId: train._id,
+                                        isSucceed: 1
                                     }).then(function(order) {
                                         if (order) {
                                             student.order = order;

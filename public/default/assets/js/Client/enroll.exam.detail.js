@@ -61,6 +61,7 @@ $(document).ready(function() {
     $("#Enroll-student-edit #btnSave").on("click", function(e) {
         var validator = $('#studentInfo').data('formValidation').validate();
         if (validator.isValid()) {
+            $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
             var postURI = "/studentInfo/add",
                 postObj = {
                     name: $('#studentInfo #studentName').val(),
@@ -77,6 +78,7 @@ $(document).ready(function() {
                 postObj.id = editStudent._id;
             }
             $.post(postURI, postObj, function(data) {
+                $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 var entity;
                 if (newStudent) {
                     entity = data.student;

@@ -31,7 +31,7 @@ module.exports = function(app) {
                 StudentInfo.getFilter({ accountId: account._id, name: score[0] })
                     .then(function(student) {
                         if (student) {
-                            AdminEnrollExam.getFilter({ examId: examId, studentId: student._id })
+                            AdminEnrollExam.getFilter({ examId: examId, studentId: student._id, isSucceed: 1 })
                                 .then(function(order) {
                                     if (order) {
                                         order.scores.some(function(orderScore) {
@@ -109,7 +109,7 @@ module.exports = function(app) {
                 StudentInfo.getFilter({ accountId: account._id, name: name })
                     .then(function(student) {
                         if (student) {
-                            AdminEnrollExam.getFilter({ examId: examId, studentId: student._id })
+                            AdminEnrollExam.getFilter({ examId: examId, studentId: student._id, isSucceed: 1 })
                                 .then(function(order) {
                                     if (order) {
                                         order.scores.some(function(orderScore) {

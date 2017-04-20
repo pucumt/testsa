@@ -1,5 +1,6 @@
 var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+    ExamClassExamArea = require('../../models/examClassExamArea.js'),
     TrainClass = require('../../models/trainClass.js'),
     ExamClass = require('../../models/examClass.js'),
     StudentInfo = require('../../models/studentInfo.js'),
@@ -145,21 +146,53 @@ module.exports = function(app) {
     app.post('/cancel/exam', function(req, res) {
         AdminEnrollExam.get(req.body.id).then(function(order) {
             if (order) {
-                ExamClass.cancel(order.examId)
-                    .then(function(examClass) {
-                        if (examClass && examClass.ok && examClass.nModified == 1) {
-                            AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
-                                if (err) {
-                                    res.jsonp({ error: err });
-                                    return;
-                                }
-                                res.jsonp({ sucess: true });
-                            });
-                        } else {
-                            res.jsonp({ error: "取消失败" });
-                            return;
-                        }
-                    });
+                if (order.examAreaId) {
+                    //multi
+                    ExamClassExamArea.getFilter({ examId: order.examId, examAreaId: order.examAreaId })
+                        .then(function(examClassExamArea) {
+                            if (examClassExamArea) { //mult exam areas
+                                ExamClassExamArea.cancel(examClassExamArea._id)
+                                    .then(function(examClassExamAreaResult) {
+                                        if (examClassExamAreaResult && examClassExamAreaResult.ok && examClassExamAreaResult.nModified == 1) {
+                                            ExamClass.cancel2(order.examId).then(function(examClassResult) {
+                                                if (examClassResult && examClassResult.ok && examClassResult.nModified == 1) {
+                                                    AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExamResult) {
+                                                        if (err) {
+                                                            res.jsonp({ error: err });
+                                                            return;
+                                                        }
+                                                        res.jsonp({ sucess: true });
+                                                    });
+                                                } else {
+                                                    res.jsonp({ error: "取消总数失败" });
+                                                    return;
+                                                }
+                                            });
+                                        } else {
+                                            res.jsonp({ error: "取消失败" });
+                                            return;
+                                        }
+                                    });
+                            }
+                        });
+                } else {
+                    //old single exam area
+                    ExamClass.cancel(order.examId)
+                        .then(function(examClass) {
+                            if (examClass && examClass.ok && examClass.nModified == 1) {
+                                AdminEnrollExam.cancel(req.body.id, function(err, adminEnrollExam) {
+                                    if (err) {
+                                        res.jsonp({ error: err });
+                                        return;
+                                    }
+                                    res.jsonp({ sucess: true });
+                                });
+                            } else {
+                                res.jsonp({ error: "取消失败" });
+                                return;
+                            }
+                        });
+                }
             }
         });
     });

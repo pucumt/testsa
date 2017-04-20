@@ -6,11 +6,13 @@ $(document).ready(function() {
     $(".enroll #resetForm .btn").on("click", function(e) {
         var validator = $('#resetForm').data('formValidation').validate();
         if (validator.isValid()) {
+            $(".enroll #resetForm .btn").attr("disabled", "disabled");
             $.post("/personalCenter/resetPWD", {
                 oldPassword: hex_md5($('#resetForm #oldPassword').val()),
                 password: hex_md5($('#resetForm #password').val()),
                 originalUrl: "/personalCenter/resetPWD"
             }, function(data) {
+                $(".enroll #resetForm .btn").removeAttr("disabled");
                 if (data) {
                     if (data.notLogin) {
                         location.href = "/login";

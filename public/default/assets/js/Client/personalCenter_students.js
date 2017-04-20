@@ -48,9 +48,11 @@ $(document).ready(function() {
         });
 
         $("#btnConfirmSave").off("click").on("click", function(e) {
+            $(obj).attr("disabled", "disabled");
             $.post("/studentInfo/delete", {
                 id: entity._id
             }, function(data) {
+                $(obj).removeAttr("disabled");
                 if (data.sucess) {
                     $(obj).parents("li").remove();
                     showAlert("删除成功", null, function() {
@@ -72,6 +74,7 @@ $(document).ready(function() {
     $("#Enroll-student-edit #btnSave").on("click", function(e) {
         var validator = $('#studentInfo').data('formValidation').validate();
         if (validator.isValid()) {
+            $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
             var postURI = "/studentInfo/add",
                 postObj = {
                     name: $('#studentInfo #studentName').val(),
@@ -88,6 +91,7 @@ $(document).ready(function() {
                 postObj.id = editStudent._id;
             }
             $.post(postURI, postObj, function(data) {
+                $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 var entity;
                 if (newStudent) {
                     entity = data.student;

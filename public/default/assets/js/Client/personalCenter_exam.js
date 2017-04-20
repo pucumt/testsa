@@ -71,6 +71,7 @@ function CancelOrder(e) {
     });
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
+        curObj.attr("disabled", "disabled");
         $.post("/cancel/exam", {
             id: orderId,
             originalUrl: "/personalCenter/exam"
@@ -81,6 +82,7 @@ function CancelOrder(e) {
                     $("#bgBack").hide();
                 });
             }
+            curObj.removeAttr("disabled");
         });
     });
 }
