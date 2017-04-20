@@ -58,15 +58,22 @@ module.exports = function(app) {
                 };
                 var p = AdminEnrollExam.getFilters(filter)
                     .then(function(trains) {
+                        var pChildArray = [];
                         trains.forEach(function(train) {
-                            orders.push({
-                                studentName: student.name,
-                                _id: train._id,
-                                className: train.examName,
-                                orderDate: train.orderDate,
-                                score: train.score
-                            });
+                            var pChild = ExamClass.get({ _id: train.examId })
+                                .then(function(examClass) {
+                                    orders.push({
+                                        studentName: student.name,
+                                        _id: train._id,
+                                        className: train.examName,
+                                        orderDate: train.orderDate,
+                                        score: train.score,
+                                        examDate: examClass.examDate
+                                    });
+                                });
+                            pChildArray.push(pChild);
                         });
+                        return Promise.all(pChildArray);
                     });
                 parray.push(p);
             });

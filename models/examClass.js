@@ -19,7 +19,7 @@ var examClassSchema = new mongoose.Schema({
         subjectName: String
     }],
     seatNumber: Number,
-    examAreaId: String,
+    examAreaId: String, //means old enroll
     examAreaName: String
 }, {
     collection: 'examClasss'

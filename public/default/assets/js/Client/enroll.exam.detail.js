@@ -44,6 +44,11 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("新建学员信息");
         $("#Enroll-student").hide();
+        $('#studentInfo #studentName').val("");
+        $('#studentInfo #mobile').val("");
+        $('#studentInfo #sex').val(0);
+        $('#studentInfo #School').val("");
+        $('#studentInfo #className').val("");
         resetDropDown();
         newStudent = true;
     });
@@ -87,6 +92,8 @@ $(document).ready(function() {
                     entity = postObj;
                     entity._id = postObj.id;
                     resetOKStudent(entity);
+                    entity.School = encodeURI(entity.School);
+                    entity.className = encodeURI(entity.className);
                     $ul.find("#" + entity._id).data("obj", entity);
                 }
                 setSelectedStudent(entity);
@@ -106,8 +113,8 @@ $(document).ready(function() {
         $('#studentInfo #studentName').val(entity.name);
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
-        $('#studentInfo #School').val(entity.School);
-        $('#studentInfo #className').val(entity.className);
+        $('#studentInfo #School').val(decodeURI(entity.School));
+        $('#studentInfo #className').val(decodeURI(entity.className));
         resetDropDown(null, function() {
             $('#studentInfo #grade').val(entity.gradeId);
         });
@@ -252,6 +259,8 @@ function renderStudents(students, id) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
+            student.School = encodeURI(student.School);
+            student.className = encodeURI(student.className);
             var selected = "";
             if (student._id == id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
@@ -269,6 +278,8 @@ function renderNewStudent(student) {
         $ok.remove();
     }
     if (student) {
+        student.School = encodeURI(student.School);
+        student.className = encodeURI(student.className);
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
             '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }

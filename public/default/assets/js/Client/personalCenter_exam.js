@@ -45,11 +45,15 @@ function renderOrders(orders) {
         // d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
         orders.forEach(function(order) {
             var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
-                status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '';
+                status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '',
+                cancelButton = '';
+            if ((new Date()) < (new Date(order.examDate.substr(0, 10)))) {
+                cancelButton = '<button type="button" id="btnCancel" style="margin-left:40px;" class="btn btn-primary btn-xs pull-right">取消</button>';
+            }
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
                 moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
-                order.className + '</div><div class="price"><button type="button" id="btnCancel" style="margin-left:40px;" class="btn btn-primary btn-xs pull-right">取消</button><button type="button" id="btnDetail" class="btn btn-primary btn-xs pull-right">详情</button>' + status + '</div></div></li>');
+                order.className + '</div><div class="price">' + cancelButton + '<button type="button" id="btnDetail" class="btn btn-primary btn-xs pull-right">详情</button>' + status + '</div></div></li>');
         });
         $ul.append(d);
     }

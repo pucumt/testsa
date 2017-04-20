@@ -41,6 +41,11 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("新建学员信息");
         $("#Enroll-student").hide();
+        $('#studentInfo #studentName').val("");
+        $('#studentInfo #mobile').val("");
+        $('#studentInfo #sex').val(0);
+        $('#studentInfo #School').val("");
+        $('#studentInfo #className').val("");
         resetDropDown();
         newStudent = true;
     });
