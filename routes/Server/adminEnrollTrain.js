@@ -4,6 +4,7 @@ var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     CouponAssign = require('../../models/couponAssign.js'),
     payHelper = require('../../util/payHelper.js'),
     auth = require("./auth"),
+    fs = require('fs'),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
@@ -348,7 +349,10 @@ module.exports = function(app) {
                 ret;
             try {
                 debugger;
-                var ret = JSON.parse(data);
+                var newLog = fs.createWriteStream('newLog.log', {
+                    flags: 'a'
+                });
+                newLog.write(data + '\n');
             } catch (err) {}
             req.body = ret;
         })
@@ -365,4 +369,13 @@ module.exports = function(app) {
         // res.end("failure2");
         // return;
     });
+
+    function mysubstr(body, sstart, sstop) {
+        var i = body.indexOf(sstart),
+            subBody = body.substr(i),
+            j = subBody.indexOf(sstop),
+            resultBody = subBody.substr(23, j - 23);
+
+        return resultBody;
+    };
 }
