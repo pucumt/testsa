@@ -78,7 +78,7 @@ var Pay = {
     },
     jsPay: function(payParas, res) {
         var paras = [],
-            strPay = "body=" + payParas.body + "&mch_create_ip=127.0.0.1&mch_id=7551000001&nonce_str=bfbeducation&notify_url=http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp&out_trade_no=" +
+            strPay = "body=" + payParas.body + "&mch_create_ip=127.0.0.1&mch_id=7551000001&nonce_str=bfbeducation&notify_url=http://www.dushidao.com/admin/pay/notify&out_trade_no=" +
             payParas.out_trade_no + "&service=pay.weixin.jspay&total_fee=" + payParas.total_fee + "&key=9d101c97133837e13dde2d32a5054abb"; //e6371d360d79eb9fa4c25c7f91d2bc6b
 
         paras.push({ key: 'body', value: payParas.body });
