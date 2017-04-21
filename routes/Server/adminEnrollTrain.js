@@ -347,8 +347,8 @@ module.exports = function(app) {
             var data = Buffer.concat(arr).toString(),
                 ret;
             try {
-                var ret = JSON.parse(data);
                 debugger;
+                var ret = JSON.parse(data);
             } catch (err) {}
             req.body = ret;
         })
