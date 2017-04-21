@@ -445,3 +445,13 @@ $("#enrollInfo #onsale").on("change", function(e) {
 function checkCoupons(func) {
     $(":input[name='coupon']").each(func);
 };
+
+// $.ajax({
+//             type: "POST",
+//             data: "sdfsdfsdfsdf",
+//             url: "/admin/pay/notify",
+//             contentType: false,
+//             processData: false,
+//         }).then(function(data) {
+//             location.href = "/admin/score";
+//         });

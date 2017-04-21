@@ -37,22 +37,29 @@ module.exports = function(app) {
 
     app.post('/studentInfo/edit', checkJSONLogin);
     app.post('/studentInfo/edit', function(req, res) {
-        var studentInfo = new StudentInfo({
-            name: req.body.name,
-            mobile: req.body.mobile,
-            sex: req.body.sex,
-            School: req.body.School,
-            className: req.body.className,
-            gradeId: req.body.gradeId,
-            gradeName: req.body.gradeName
-        });
+        StudentInfo.getFilter({ accountId: req.session.user._id, name: req.body.name, _id: { $ne: req.body.id } })
+            .then(function(student) {
+                if (student) {
+                    res.jsonp({ error: "此学生已经存在" });
+                } else {
+                    var studentInfo = new StudentInfo({
+                        name: req.body.name,
+                        mobile: req.body.mobile,
+                        sex: req.body.sex,
+                        School: req.body.School,
+                        className: req.body.className,
+                        gradeId: req.body.gradeId,
+                        gradeName: req.body.gradeName
+                    });
 
-        studentInfo.update(req.body.id, function(err, result) {
-            if (err) {
-                studentInfo = {};
-            }
-            res.jsonp({ succeed: true });
-        });
+                    studentInfo.update(req.body.id, function(err, result) {
+                        if (err) {
+                            studentInfo = {};
+                        }
+                        res.jsonp({ succeed: true });
+                    });
+                }
+            });
     });
 
     app.post('/studentInfo/delete', checkJSONLogin);

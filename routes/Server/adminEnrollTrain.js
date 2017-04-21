@@ -5,6 +5,8 @@ var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     payHelper = require('../../util/payHelper.js'),
     auth = require("./auth"),
     fs = require('fs'),
+    parseString = require('xml2js').parseString,
+    settings = require('../../settings'),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
@@ -352,30 +354,43 @@ module.exports = function(app) {
                 var newLog = fs.createWriteStream('newLog.log', {
                     flags: 'a'
                 });
-                newLog.write(data + '\n');
+                parseString(data, function(err, resultObject) {
+                    var result = resultObject.xml;
+                    var keys = Object.getOwnPropertyNames(result).sort(),
+                        strResult = "";
+                    keys.forEach(function(key) {
+                        var v = result[key];
+                        if ("sign" != key && "key" != key) {
+                            strResult = strResult + key + "=" + v + "&";
+                        }
+                    });
+                    strResult = strResult + "key=" + settings.key;
+                    var md5 = crypto.createHash('md5'),
+                        sign = md5.update(strResult).digest('hex').toUpperCase();
+                    if (sign == (result.sign + "")) {
+                        if (parseInt(result.status + "") == 0 && parseInt(result.result_code + "") == 0) {
+                            var orderId = result.out_trade_no + "";
+                            AdminEnrollTrain.get(orderId)
+                                .then(function(order) {
+                                    var orderFee = ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100;
+                                    if (orderFee.toString() == (result.total_fee + "")) {
+                                        AdminEnrollTrain.pay(orderId, 9)
+                                            .then(function(result) {
+                                                if (result && result.nModified == 1) {
+                                                    res.end("success");
+                                                    return;
+                                                }
+                                            });
+                                    }
+                                });
+                        } else {
+                            res.end("failure1");
+                        }
+                    } else {
+                        res.end("failure2");
+                    }
+                });
             } catch (err) {}
-            req.body = ret;
         })
-        res.end("failure1");
-        // AdminEnrollTrain.pay(req.body.id, 9)
-        //     .then(function(result) {
-        //         if (result && result.nModified == 1) {
-        //             res.end("success");
-        //             return;
-        //         }
-        //         res.end("failure1");
-        //         return;
-        //     });
-        // res.end("failure2");
-        // return;
     });
-
-    function mysubstr(body, sstart, sstop) {
-        var i = body.indexOf(sstart),
-            subBody = body.substr(i),
-            j = subBody.indexOf(sstop),
-            resultBody = subBody.substr(23, j - 23);
-
-        return resultBody;
-    };
 }
