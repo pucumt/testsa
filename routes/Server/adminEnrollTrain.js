@@ -352,7 +352,7 @@ module.exports = function(app) {
             } catch (err) {}
             req.body = ret;
         })
-
+        res.end("failure1");
         // AdminEnrollTrain.pay(req.body.id, 9)
         //     .then(function(result) {
         //         if (result && result.nModified == 1) {
