@@ -338,15 +338,30 @@ module.exports = function(app) {
 
     app.post('/admin/pay/notify', function(req, res) {
         debugger;
-        AdminEnrollTrain.pay(req.body.id, 9)
-            .then(function(result) {
-                if (result && result.nModified == 1) {
-                    res.end("success");
-                    return;
-                }
-                res.end("failure1");
-                return;
-            });
+        var arr = [];
+        req.on("data", function(data) {
+            arr.push(data);
+            debugger;
+        });
+        req.on("end", function() {
+            var data = Buffer.concat(arr).toString(),
+                ret;
+            try {
+                var ret = JSON.parse(data);
+                debugger;
+            } catch (err) {}
+            req.body = ret;
+        })
+
+        // AdminEnrollTrain.pay(req.body.id, 9)
+        //     .then(function(result) {
+        //         if (result && result.nModified == 1) {
+        //             res.end("success");
+        //             return;
+        //         }
+        //         res.end("failure1");
+        //         return;
+        //     });
         // res.end("failure2");
         // return;
     });
