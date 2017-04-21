@@ -143,9 +143,9 @@ module.exports = function(app) {
                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100
                     };
                     payHelper.jsPay(payParas, res);
-                    return;
+                    //return;
                 }
-                res.jsonp({ error: "生成付款码失败" });
+                //res.jsonp({ error: "生成付款码失败" });
             });
     });
 

@@ -321,7 +321,6 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollTrain/payCode', checkLogin);
     app.post('/admin/adminEnrollTrain/payCode', function(req, res) {
-
         AdminEnrollTrain.get(req.body.id)
             .then(function(order) {
                 if (order) {
@@ -338,7 +337,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/pay/notify', function(req, res) {
-
+        debugger;
         AdminEnrollTrain.pay(req.body.id, 9)
             .then(function(result) {
                 if (result && result.nModified == 1) {
@@ -348,7 +347,7 @@ module.exports = function(app) {
                 res.end("failure1");
                 return;
             });
-        res.end("failure2");
-        return;
+        // res.end("failure2");
+        // return;
     });
 }

@@ -85,7 +85,7 @@ var Pay = {
         paras.push({ key: 'mch_create_ip', value: '127.0.0.1' });
         paras.push({ key: 'mch_id', value: '7551000001' }); //101560037142
         paras.push({ key: 'nonce_str', value: 'bfbeducation' });
-        paras.push({ key: 'notify_url', value: 'http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp' });
+        paras.push({ key: 'notify_url', value: 'http://www.dushidao.com/admin/pay/notify' }); //'http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp' });
         paras.push({ key: 'out_trade_no', value: payParas.out_trade_no });
         paras.push({ key: 'service', value: 'pay.weixin.jspay' });
         paras.push({ key: 'sub_openid', value: '' });
@@ -110,6 +110,7 @@ var Pay = {
             resPay.on('data', (d) => {
                 var body = d.toString(),
                     imgCode = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
+                res.jsonp({ token: imgCode });
             });
         });
 
