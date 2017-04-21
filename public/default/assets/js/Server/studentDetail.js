@@ -38,6 +38,7 @@ function renderStudent() {
             $("#studentInfo #sex").val(data.sex ? 1 : 0);
             resetDropDown(data.gradeId);
             renderAccount(data.accountId);
+            $("#accountId").val(data.accountId);
             $("#studentInfo #discount").val(data.discount);
             $("#studentInfo #School").val(data.School);
             $("#studentInfo #className").val(data.className);
@@ -96,6 +97,7 @@ $("#studentInfo #btnSave").on("click", function(e) {
                 address: $('#studentInfo #address').val(),
                 discount: $('#studentInfo #discount').val(),
                 id: $('#id').val(),
+                accountId: $("#accountId").val(),
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text(),
             };
