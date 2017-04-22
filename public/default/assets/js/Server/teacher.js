@@ -58,41 +58,43 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '名字不能为空'
-                    },
-                    stringLength: {
-                        max: 30,
-                        message: '名字不能超过30个字符'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '名字不能为空'
+                        },
+                        stringLength: {
+                            max: 30,
+                            message: '名字不能超过30个字符'
+                        }
+                    }
+                },
+                'mobile': {
+                    trigger: "blur change",
+                    validators: {
+                        stringLength: {
+                            max: 30,
+                            message: '电话不能超过30个字符'
+                        },
+                    }
+                },
+                'address': {
+                    trigger: "blur change",
+                    validators: {
+                        stringLength: {
+                            max: 100,
+                            message: '地址不能超过100个字符'
+                        },
                     }
                 }
-            },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 30,
-                        message: '电话不能超过30个字符'
-                    },
-                }
-            },
-            'address': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 100,
-                        message: '地址不能超过100个字符'
-                    },
-                }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#btnAdd").on("click", function(e) {

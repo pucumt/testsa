@@ -14,24 +14,26 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试类别不能为空'
-                    },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '测试类别在4-30个字符之间'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试类别不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 30,
+                            message: '测试类别在4-30个字符之间'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#btnAdd").on("click", function(e) {

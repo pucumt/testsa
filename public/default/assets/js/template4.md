@@ -58,6 +58,7 @@ function destroy(){
 };
 
 function addValidation(callback){
+    setTimeout(function() {
     $('#myModal').formValidation({
         // List of fields and their validation rules
         fields: {
@@ -85,6 +86,7 @@ function addValidation(callback){
             }
         }
     });
+    }, 0);
 };
 
 $("#btnAdd").on("click", function(e) {

@@ -59,32 +59,34 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '教室名不能为空'
-                    },
-                    stringLength: {
-                        min: 3,
-                        max: 30,
-                        message: '教室名在3-30个字符之间'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '教室名不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '教室名在3-30个字符之间'
+                        }
                     }
-                }
-            },
-            'sCount': {
-                trigger: "blur change",
-                validators: {
-                    integer: {
-                        message: '填写的不是数字',
+                },
+                'sCount': {
+                    trigger: "blur change",
+                    validators: {
+                        integer: {
+                            message: '填写的不是数字',
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 function resetSchool(id) {

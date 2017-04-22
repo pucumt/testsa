@@ -70,47 +70,49 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '优惠券不能为空'
-                    },
-                    stringLength: {
-                        max: 30,
-                        message: '优惠券最多30个字符'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '优惠券不能为空'
+                        },
+                        stringLength: {
+                            max: 30,
+                            message: '优惠券最多30个字符'
+                        }
                     }
-                }
-            },
-            'couponStartDate': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '开始日期不能为空'
-                    },
-                    date: {
-                        format: 'YYYY-MM-DD',
-                        message: '不是有效的日期格式'
+                },
+                'couponStartDate': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '开始日期不能为空'
+                        },
+                        date: {
+                            format: 'YYYY-MM-DD',
+                            message: '不是有效的日期格式'
+                        }
                     }
-                }
-            },
-            'couponEndDate': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '过期日期不能为空'
-                    },
-                    date: {
-                        format: 'YYYY-MM-DD',
-                        message: '不是有效的日期格式'
+                },
+                'couponEndDate': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '过期日期不能为空'
+                        },
+                        date: {
+                            format: 'YYYY-MM-DD',
+                            message: '不是有效的日期格式'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#btnAdd").on("click", function(e) {

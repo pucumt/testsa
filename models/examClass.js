@@ -169,3 +169,12 @@ ExamClass.cancel2 = function(id) {
         _id: id
     }, { $inc: { enrollCount: -1 } }).exec();
 };
+
+ExamClass.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return examClassModel.find(filter).exec();
+};

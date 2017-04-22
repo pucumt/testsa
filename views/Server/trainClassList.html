@@ -219,20 +219,37 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="examCategoryName" class="control-label">测试类别:</label>
-                                <select name="examCategoryName" id="examCategoryName" class="form-control"></select>
+                    <div class="examList">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="examCategoryName" class="control-label">测试类别:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="minScore" class="control-label">最低分:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-bottom: -15px;">
+                                    <button id="btnNewExam" class="btn btn-primary">新增测试</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="minScore" class="control-label">最低分:</label>
-                                <input type="text" maxlength="10" class="form-control" name="minScore" id="minScore" value="0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select name="examName" class="form-control"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" maxlength="10" class="form-control" name="minScore" value="0">
+                                </div>
                             </div>
                         </div>
-
+                        <div class="extraExams"></div>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

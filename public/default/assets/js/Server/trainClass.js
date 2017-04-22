@@ -1,4 +1,5 @@
-var isNew = true;
+var isNew = true,
+    fullExams;
 
 $(document).ready(function() {
     $("#left_btnTrainClass").addClass("active");
@@ -86,116 +87,128 @@ $("#mainModal .paging .nextpage").on("click", function(e) {
 function destroy() {
     var validator = $('#myModal').data('formValidation');
     if (validator) {
-        validator.destroy();
+        validator.resetForm().destroy();
     }
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '课程名称不能为空'
+    setTimeout(function() {
+        var validator = $('#myModal').data('formValidation');
+        if (!validator) {
+            $('#myModal').formValidation({
+                framework: 'bootstrap',
+                // Feedback icons
+                icon: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                // List of fields and their validation rules
+                fields: {
+                    'name': {
+                        trigger: "blur change",
+                        validators: {
+                            notEmpty: {
+                                message: '课程名称不能为空'
+                            },
+                            stringLength: {
+                                min: 4,
+                                max: 30,
+                                message: '课程名称在4-30个字符之间'
+                            }
+                        }
                     },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '课程名称在4-30个字符之间'
+                    'courseContent': {
+                        trigger: "blur change",
+                        validators: {
+                            stringLength: {
+                                max: 1000,
+                                message: '课程描述不能超过1000个字符'
+                            }
+                        }
+                    },
+                    'trainPrice': {
+                        trigger: "blur change",
+                        validators: {
+                            notEmpty: {
+                                message: '培训费不能为空'
+                            },
+                            stringLength: {
+                                max: 10,
+                                message: '培训费不能超过10个字符'
+                            },
+                            numeric: {
+                                message: '填写的不是数字',
+                            }
+                        }
+                    },
+                    'materialPrice': {
+                        trigger: "blur change",
+                        validators: {
+                            notEmpty: {
+                                message: '材料费不能为空'
+                            },
+                            stringLength: {
+                                max: 10,
+                                message: '材料费不能超过10个字符'
+                            },
+                            numeric: {
+                                message: '填写的不是数字',
+                            }
+                        }
+                    },
+                    'totalStudentCount': {
+                        trigger: "blur change",
+                        validators: {
+                            notEmpty: {
+                                message: '招生人数不能为空'
+                            },
+                            stringLength: {
+                                max: 10,
+                                message: '招生人数不能超过10个字符'
+                            },
+                            integer: {
+                                message: '填写的不是数字',
+                            }
+                        }
+                    },
+                    'totalClassCount': {
+                        trigger: "blur change",
+                        validators: {
+                            notEmpty: {
+                                message: '课时总数不能为空'
+                            },
+                            stringLength: {
+                                max: 10,
+                                message: '课时总数不能超过10个字符'
+                            },
+                            integer: {
+                                message: '填写的不是数字',
+                            }
+                        }
+                    },
+                    'courseStartDate': {
+                        trigger: "blur change",
+                        validators: {
+                            date: {
+                                format: 'YYYY-MM-DD',
+                                message: '不是有效的日期格式'
+                            }
+                        }
+                    },
+                    'courseEndDate': {
+                        trigger: "blur change",
+                        validators: {
+                            date: {
+                                format: 'YYYY-MM-DD',
+                                message: '不是有效的日期格式'
+                            }
+                        }
                     }
                 }
-            },
-            'courseContent': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 1000,
-                        message: '课程描述不能超过1000个字符'
-                    }
-                }
-            },
-            'trainPrice': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '培训费不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '培训费不能超过10个字符'
-                    },
-                    numeric: {
-                        message: '填写的不是数字',
-                    }
-                }
-            },
-            'materialPrice': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '材料费不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '材料费不能超过10个字符'
-                    },
-                    numeric: {
-                        message: '填写的不是数字',
-                    }
-                }
-            },
-            'totalStudentCount': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '招生人数不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '招生人数不能超过10个字符'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
-            },
-            'totalClassCount': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '课时总数不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '课时总数不能超过10个字符'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
-            },
-            'courseStartDate': {
-                trigger: "blur change",
-                validators: {
-                    date: {
-                        format: 'YYYY-MM-DD',
-                        message: '不是有效的日期格式'
-                    }
-                }
-            },
-            'courseEndDate': {
-                trigger: "blur change",
-                validators: {
-                    date: {
-                        format: 'YYYY-MM-DD',
-                        message: '不是有效的日期格式'
-                    }
-                }
-            }
+            });
         }
-    });
+    }, 0);
 };
 
 function resetDropDown(objs) {
@@ -204,10 +217,11 @@ function resetDropDown(objs) {
     $('#myModal').find("#subject option").remove();
     $('#myModal').find("#category option").remove();
     $('#myModal').find("#examCategoryName option").remove();
+    $("#myModal .examList .extraExams").empty();
 
-    $("#myModal #examCategoryName").append("<option value=''></option>");
+    //$("#myModal #examCategoryName").append("<option value=''></option>");
 
-    $.get("/admin/trainClass/yeargradesubjectcategoryexamCategory", function(data) {
+    $.get("/admin/trainClass/yeargradesubjectcategoryexam", function(data) {
         if (data) {
             if (data.years && data.years.length > 0) {
                 data.years.forEach(function(year) {
@@ -245,18 +259,46 @@ function resetDropDown(objs) {
                     $("#myModal #category").append("<option " + select + " value='" + category._id + "'>" + category.name + "</option>");
                 });
             }
-
-            if (data.examCategorys && data.examCategorys.length > 0) {
-                data.examCategorys.forEach(function(category) {
-                    var select = "";
-                    if (objs && category._id == objs.examCategoryid) {
-                        select = "selected";
+            if (data.exams && data.exams.length > 0) {
+                var exams = objs ? objs.exams : [],
+                    length = exams.length;
+                fullExams = data.exams;
+                if (length > 0) {
+                    var d = $(document.createDocumentFragment());
+                    for (var i = 0; i < length; i++) {
+                        if (i == 0) {
+                            $("#myModal .examList [name='examName']").append(renderExams(exams[i].examId));
+                            $("#myModal .examList [name='minScore']").val(exams[i].minScore);
+                        } else {
+                            var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><select name="examName" class="form-control"></select></div></div><div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div></div>');
+                            source.find("[name='examName']").append(renderExams(exams[i].examId));
+                            source.find("[name='minScore']").val(exams[i].minScore);
+                            d.append(source);
+                        }
                     }
-                    $("#myModal #examCategoryName").append("<option " + select + " value='" + category._id + "'>" + category.name + "</option>");
-                });
+                    $("#myModal .examList .extraExams").append(d);
+                } else {
+                    //new class
+                    $("#myModal .examList [name='examName']").append(renderExams());
+                }
             }
         }
     });
+};
+
+function renderExams(id) {
+    var d = $(document.createDocumentFragment());
+    if (fullExams && fullExams.length > 0) {
+        d.append("<option value=''></option>");
+        fullExams.forEach(function(exam) {
+            var select = "";
+            if (id && exam._id == id) {
+                select = "selected";
+            }
+            d.append("<option " + select + " value='" + exam._id + "'>" + exam.name + "</option>");
+        });
+    }
+    return d;
 };
 
 $("#myModal #btnSave").on("click", function(e) {
@@ -287,9 +329,7 @@ $("#myModal #btnSave").on("click", function(e) {
                 subjectName: $('#subject').find("option:selected").text(),
                 categoryId: $('#category').val(),
                 categoryName: $('#category').find("option:selected").text(),
-                examCategoryId: $('#examCategoryName').val(),
-                examCategoryName: $('#examCategoryName').find("option:selected").text(),
-                minScore: $('#minScore').val()
+                exams: getAllExams()
             };
         if (!isNew) {
             postURI = "/admin/trainClass/edit";
@@ -317,6 +357,20 @@ $("#myModal #btnSave").on("click", function(e) {
         });
     }
 });
+
+function getAllExams() {
+    var returnObjecgs = [];
+    $("#myModal .examList [name='examName']").each(function(index) {
+        if ($(this).val() != "") {
+            returnObjecgs.push({
+                examId: $(this).val(),
+                examName: $(this).find("option:selected").text(),
+                minScore: $(this).parents(".row").find("[name='minScore']").val()
+            });
+        }
+    });
+    return JSON.stringify(returnObjecgs);
+}
 //------------end
 
 //------------main form events
@@ -341,7 +395,7 @@ $("#btnAdd").on("click", function(e) {
     $('#schoolid').val(""); //
     $('#teacher').val(""); //
     $('#teacherid').val(""); //
-    $('#minScore').val(0);
+    // $('#minScore').val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
@@ -372,8 +426,8 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     $('#schoolid').val(entity.schoolId); //
     $('#teacher').val(entity.teacherName); //
     $('#teacherid').val(entity.teacherId); //
-    $('#minScore').val(entity.minScore);
-    resetDropDown({ yearid: entity.yearId, gradeid: entity.gradeId, subjectid: entity.subjectId, categoryid: entity.categoryId, examCategoryid: entity.examCategoryId });
+    // $('#minScore').val(entity.minScore);
+    resetDropDown({ yearid: entity.yearId, gradeid: entity.gradeId, subjectid: entity.subjectId, categoryid: entity.categoryId, exams: entity.exams });
     $('#id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
@@ -552,5 +606,11 @@ $("#selectModal #InfoSearch").on("click", " #btnSearch", function(e) {
     } else if (openEntity == "teacher") {
         searchTeacher();
     }
+});
+
+$("#myModal #btnNewExam").on("click", function(e) {
+    var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><select name="examName" class="form-control"></select></div></div><div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div></div>');
+    source.find("[name='examName']").append(renderExams());
+    $("#myModal .examList .extraExams").append(source);
 });
 //------------end

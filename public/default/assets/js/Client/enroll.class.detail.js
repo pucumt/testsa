@@ -150,19 +150,21 @@ function destroy() {
 };
 
 function addValidation() {
-    $('#studentInfo').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'studentName': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '姓名不能为空'
+    setTimeout(function() {
+        $('#studentInfo').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'studentName': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '姓名不能为空'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 function setSelectedStudent(stdent) {

@@ -4,6 +4,7 @@ var TrainClass = require('../../models/trainClass.js'),
     Subject = require('../../models/subject.js'),
     Category = require('../../models/category.js'),
     ExamCategory = require('../../models/examCategory.js'),
+    ExamClass = require('../../models/examClass.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -57,9 +58,7 @@ module.exports = function(app) {
             schoolArea: req.body.schoolArea,
             isWeixin: 0,
             enrollCount: 0,
-            examCategoryId: req.body.examCategoryId,
-            examCategoryName: req.body.examCategoryName,
-            minScore: req.body.minScore
+            exams: JSON.parse(req.body.exams)
         });
 
         trainClass.save(function(err, trainClass) {
@@ -96,9 +95,7 @@ module.exports = function(app) {
             classRoomName: req.body.classRoomName,
             schoolId: req.body.schoolId,
             schoolArea: req.body.schoolArea,
-            examCategoryId: req.body.examCategoryId,
-            examCategoryName: req.body.examCategoryName,
-            minScore: req.body.minScore
+            exams: JSON.parse(req.body.exams)
         });
 
         trainClass.update(req.body.id, function(err, trainClass) {
@@ -120,8 +117,8 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/admin/trainClass/yeargradesubjectcategoryexamCategory', checkLogin);
-    app.get('/admin/trainClass/yeargradesubjectcategoryexamCategory', function(req, res) {
+    app.get('/admin/trainClass/yeargradesubjectcategoryexam', checkLogin);
+    app.get('/admin/trainClass/yeargradesubjectcategoryexam', function(req, res) {
         var objReturn = {};
         var p0 = Year.getAllWithoutPage()
             .then(function(years) {
@@ -151,9 +148,9 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        var p4 = ExamCategory.getAllWithoutPage()
-            .then(function(categorys) {
-                objReturn.examCategorys = categorys;
+        var p4 = ExamClass.getAllWithoutPage()
+            .then(function(exams) {
+                objReturn.exams = exams;
             })
             .catch((err) => {
                 console.log('errored');

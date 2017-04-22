@@ -64,26 +64,28 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'price': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '退款金额不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '退款金额不能超过10个字符'
-                    },
-                    numeric: {
-                        message: '填写的不是数字',
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'price': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '退款金额不能为空'
+                        },
+                        stringLength: {
+                            max: 10,
+                            message: '退款金额不能超过10个字符'
+                        },
+                        numeric: {
+                            message: '填写的不是数字',
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#gridBody").on("click", "td .btnRebate", function(e) {

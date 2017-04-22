@@ -14,33 +14,35 @@ function destroy() {
 }
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '校区不能为空'
-                    },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '校区在4-30个字符之间'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '校区不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 30,
+                            message: '校区在4-30个字符之间'
+                        }
+                    }
+                },
+                'address': {
+                    trigger: "blur change",
+                    validators: {
+                        stringLength: {
+                            max: 100,
+                            message: '地址不能超过100个字符'
+                        },
                     }
                 }
-            },
-            'address': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 100,
-                        message: '地址不能超过100个字符'
-                    },
-                }
             }
-        }
-    });
+        });
+    }, 0);
 }
 
 $("#btnAdd").on("click", function(e) {

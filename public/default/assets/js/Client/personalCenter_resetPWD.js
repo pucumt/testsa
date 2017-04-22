@@ -39,48 +39,50 @@ $(document).ready(function() {
 });
 
 function addValidation() {
-    $('#resetForm').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'oldPassword': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '旧密码不能为空'
-                    },
-                    stringLength: {
-                        min: 6,
-                        max: 15,
-                        message: '密码在6-15个字符之间'
+    setTimeout(function() {
+        $('#resetForm').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'oldPassword': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '旧密码不能为空'
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 15,
+                            message: '密码在6-15个字符之间'
+                        }
                     }
-                }
-            },
-            'password': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '新密码不能为空'
-                    },
-                    stringLength: {
-                        min: 6,
-                        max: 15,
-                        message: '密码在6-15个字符之间'
+                },
+                'password': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '新密码不能为空'
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 15,
+                            message: '密码在6-15个字符之间'
+                        }
                     }
-                }
-            },
-            // 'confirmPassword': {
-            //     trigger: "blur change",
-            //     validators: {
-            //         notEmpty: {
-            //             message: '新密码不能为空'
-            //         },
-            //         stringLength: {
-            //             min: 6,
-            //             max: 20,
-            //             message: '密码在6-20个字符之间'
-            //         }
-            //     }
-            // }
-        }
-    });
+                },
+                // 'confirmPassword': {
+                //     trigger: "blur change",
+                //     validators: {
+                //         notEmpty: {
+                //             message: '新密码不能为空'
+                //         },
+                //         stringLength: {
+                //             min: 6,
+                //             max: 20,
+                //             message: '密码在6-20个字符之间'
+                //         }
+                //     }
+                // }
+            }
+        });
+    }, 0);
 };

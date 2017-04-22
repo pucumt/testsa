@@ -14,24 +14,26 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '科目不能为空'
-                    },
-                    stringLength: {
-                        min: 2,
-                        max: 30,
-                        message: '科目在2-30个字符之间'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '科目不能为空'
+                        },
+                        stringLength: {
+                            min: 2,
+                            max: 30,
+                            message: '科目在2-30个字符之间'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#btnAdd").on("click", function(e) {

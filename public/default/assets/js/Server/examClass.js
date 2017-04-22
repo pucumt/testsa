@@ -84,63 +84,65 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试名称不能为空'
-                    },
-                    stringLength: {
-                        min: 3,
-                        max: 50,
-                        message: '测试名称在3-50个字符之间'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试名称不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 50,
+                            message: '测试名称在3-50个字符之间'
+                        }
                     }
-                }
-            },
-            'examDate': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试日期不能为空'
-                    },
-                    date: {
-                        format: 'YYYY-MM-DD',
-                        message: '不是有效的日期格式'
+                },
+                'examDate': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试日期不能为空'
+                        },
+                        date: {
+                            format: 'YYYY-MM-DD',
+                            message: '不是有效的日期格式'
+                        }
                     }
-                }
-            },
-            'examTime': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试时间不能为空'
-                    },
-                    stringLength: {
-                        max: 100,
-                        message: '测试时间不能超过30个字符'
-                    },
-                }
-            },
-            'examCount': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试名额不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '测试名额不能超过10个字符'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
+                },
+                'examTime': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试时间不能为空'
+                        },
+                        stringLength: {
+                            max: 100,
+                            message: '测试时间不能超过30个字符'
+                        },
+                    }
+                },
+                'examCount': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试名额不能为空'
+                        },
+                        stringLength: {
+                            max: 10,
+                            message: '测试名额不能超过10个字符'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 function resetDropDown(objId) {
