@@ -34,7 +34,8 @@ var trainClassSchema = new mongoose.Schema({
         examId: String,
         examName: String,
         minScore: Number
-    }]
+    }],
+    isFullOrder: Boolean
 }, {
     collection: 'trainClasss'
 });
@@ -51,6 +52,7 @@ module.exports = TrainClass;
 TrainClass.prototype.save = function(callback) {
     this.option.isWeixin = 0;
     this.option.enrollCount = 0;
+    this.option.isFullOrder = false;
     var newtrainClass = new trainClassModel(this.option);
 
     newtrainClass.save(function(err, trainClass) {

@@ -14,10 +14,15 @@
 </div>
 
 <!--modal-->
-<!--<form method="post" action="enroll">-->
 <div class="container enroll-filter">
     <div class="row text-center">
-        <label style="margin-top: 15px;">选择课程</label>
+        <label style="margin-top: 15px;">选择课程</label><span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="drpSchool" class="control-label">校区:</label>
+            <select name="drpSchool" id="drpSchool" class="form-control"></select>
+        </div>
     </div>
     <div class="row">
         <div class="form-group">
@@ -33,11 +38,16 @@
     </div>
     <div class="row">
         <div class="form-group">
+            <label for="drpCategory" class="control-label">难度:</label>
+            <select name="drpCategory" id="drpCategory" class="form-control"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
             <input class="btn btn-large btn-primary btn-search" type="submit" value="开始搜索" />
         </div>
     </div>
 </div>
-<!--</form>-->
 
 <script type="text/javascript" src="/default/assets/js/Client/enroll.class.filter.js"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>

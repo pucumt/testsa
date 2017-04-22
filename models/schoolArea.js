@@ -86,3 +86,13 @@ SchoolArea.delete = function(id, callback) {
         callback(null, schoolArea);
     });
 };
+
+//一次获取所有信息
+SchoolArea.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return schoolAreaModel.find(filter).exec();
+};

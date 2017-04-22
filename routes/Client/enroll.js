@@ -3,8 +3,10 @@ var ExamClass = require('../../models/examClass.js'),
     AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     StudentInfo = require('../../models/studentInfo.js'),
+    SchoolArea = require('../../models/schoolArea.js'),
     Grade = require('../../models/grade.js'),
     Subject = require('../../models/subject.js'),
+    Category = require('../../models/category.js'),
     CouponAssign = require('../../models/couponAssign.js'),
     ExamClassExamArea = require('../../models/examClassExamArea.js'),
     auth = require("./auth"),
@@ -46,11 +48,17 @@ module.exports = function(app) {
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         var filter = { isWeixin: 1 };
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
         if (req.body.gradeId) {
             filter.gradeId = req.body.gradeId;
         }
         if (req.body.subjectId) {
             filter.subjectId = req.body.subjectId;
+        }
+        if (req.body.categoryId) {
+            filter.categoryId = req.body.categoryId;
         }
         //查询并返回第 page 页的 14 篇文章
         TrainClass.getAll(null, page, filter, function(err, classs, total) {
@@ -200,8 +208,15 @@ module.exports = function(app) {
             });
     });
 
-    app.get('/enroll/gradesubject', function(req, res) {
+    app.get('/enroll/schoolgradesubjectcategory', function(req, res) {
         var objReturn = {};
+        var p0 = SchoolArea.getAllWithoutPage()
+            .then(function(schools) {
+                objReturn.schools = schools;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
         var p1 = Grade.getAllWithoutPage()
             .then(function(grades) {
                 objReturn.grades = grades;
@@ -216,7 +231,14 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p1, p2]).then(function() {
+        var p3 = Category.getAllWithoutPage()
+            .then(function(categorys) {
+                objReturn.categorys = categorys;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p0, p1, p2, p3]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {
