@@ -279,7 +279,8 @@ module.exports = function(app) {
                                 discount: req.body.discount,
                                 totalPrice: req.body.totalPrice,
                                 fromId: req.body.oldTrainId,
-                                comment: req.body.comment
+                                comment: req.body.comment,
+                                isPayed: true
                             });
                             return adminEnrollTrain.save();
                         } else {

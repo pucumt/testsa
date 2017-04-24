@@ -170,6 +170,7 @@ function openTrain(p) {
     $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
         if (data && data.trainClasss.length > 0) {
             data.trainClasss.forEach(function(trainClass) {
+                trainClass.courseContent = "";
                 var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
                     price = trainClass.trainPrice + "/" + trainClass.materialPrice,
                     countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
