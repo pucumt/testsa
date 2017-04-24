@@ -18,7 +18,7 @@ module.exports = function(app) {
                 } else {
                     var studentInfo = new StudentInfo({
                         name: req.body.name,
-                        mobile: req.body.mobile,
+                        mobile: req.session.user.name,
                         sex: req.body.sex,
                         School: req.body.School,
                         className: req.body.className,
@@ -44,7 +44,7 @@ module.exports = function(app) {
                 } else {
                     var studentInfo = new StudentInfo({
                         name: req.body.name,
-                        mobile: req.body.mobile,
+                        mobile: req.session.user.name,
                         sex: req.body.sex,
                         School: req.body.School,
                         className: req.body.className,

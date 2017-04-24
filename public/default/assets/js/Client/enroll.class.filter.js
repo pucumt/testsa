@@ -15,10 +15,11 @@ $(document).ready(function() {
             $('.container.enroll').hide();
         });
 
-    $(".enroll-filter .glyphicon-remove-circle").on("click", function(e) {
-        $(".enroll-filter").hide();
-        $('.container.enroll').show();
-    });
+    $(".enroll-filter .glyphicon-remove-circle")
+        .on("click", function(e) {
+            $(".enroll-filter").hide();
+            $('.container.enroll').show();
+        });
 });
 
 function renderfilter() {
@@ -47,6 +48,20 @@ function renderfilter() {
                         $(".enroll-filter #drpCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
                     });
                 }
+
+                if ($("#schoolId").val() != "") {
+                    $(".enroll-filter #drpSchool").val($("#schoolId").val());
+                    $(".enroll-filter #drpGrade").val($("#gradeId").val());
+                    $(".enroll-filter #drpSubject").val($("#subjectId").val());
+                    $(".enroll-filter #drpCategory").val($("#categoryId").val());
+
+                    loadData();
+                    $(".enroll-filter").hide();
+                    $('.container.enroll').show();
+                } else {
+                    $(".enroll-filter").show();
+                    $('.container.enroll').hide();
+                }
             }
         }
     });
@@ -66,6 +81,7 @@ function loadData(p) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
             data.classs.forEach(function(trainclass) {
+                trainclass.courseContent = htmlEncode(trainclass.courseContent);
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);

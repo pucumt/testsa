@@ -52,8 +52,8 @@ function searchClass(p) {
     $mainSelectBody.empty();
     $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
         if (data && data.trainClasss.length > 0) {
-
             data.trainClasss.forEach(function(trainClass) {
+                trainClass.courseContent = htmlEncode(trainClass.courseContent);
                 $mainSelectBody.append('<tr id=' + trainClass._id + '><td>' + trainClass.name + '</td><td>' +
                     getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.trainPrice + '</td><td>' + trainClass.materialPrice +
                     '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
@@ -218,6 +218,8 @@ function resetDropDown(objs) {
     $('#myModal').find("#category option").remove();
     $('#myModal').find("#examCategoryName option").remove();
     $("#myModal .examList .extraExams").empty();
+    $('#myModal').find(".examList [name='examName'] option").remove();
+    $("#myModal .examList [name='minScore']").val(0);
 
     //$("#myModal #examCategoryName").append("<option value=''></option>");
 
@@ -306,16 +308,16 @@ $("#myModal #btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/trainClass/add",
             postObj = {
-                name: $('#name').val(),
-                trainPrice: $('#trainPrice').val(),
-                materialPrice: $('#materialPrice').val(),
-                courseStartDate: $('#courseStartDate').val(),
-                courseEndDate: $('#courseEndDate').val(),
-                courseTime: $('#courseTime').val(),
-                totalStudentCount: $('#totalStudentCount').val(),
-                totalClassCount: $('#totalClassCount').val(),
-                courseContent: $('#courseContent').val(),
-                classRoomName: $('#classRoom').val(), //TBD
+                name: $.trim($('#name').val()),
+                trainPrice: $.trim($('#trainPrice').val()),
+                materialPrice: $.trim($('#materialPrice').val()),
+                courseStartDate: $.trim($('#courseStartDate').val()),
+                courseEndDate: $.trim($('#courseEndDate').val()),
+                courseTime: $.trim($('#courseTime').val()),
+                totalStudentCount: $.trim($('#totalStudentCount').val()),
+                totalClassCount: $.trim($('#totalClassCount').val()),
+                courseContent: $.trim($('#courseContent').val()),
+                classRoomName: $.trim($('#classRoom').val()), //TBD
                 classRoomId: $('#classRoomid').val(), //
                 schoolArea: $('#school').val(), //TBD
                 schoolId: $('#schoolid').val(), //
@@ -337,6 +339,7 @@ $("#myModal #btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
+            data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
                 $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + data.trainPrice + "</td><td>" + data.materialPrice +
                     "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.categoryName +
@@ -365,7 +368,7 @@ function getAllExams() {
             returnObjecgs.push({
                 examId: $(this).val(),
                 examName: $(this).find("option:selected").text(),
-                minScore: $(this).parents(".row").find("[name='minScore']").val()
+                minScore: $.trim($(this).parents(".row").find("[name='minScore']").val())
             });
         }
     });
@@ -419,7 +422,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     $('#courseTime').val(entity.courseTime);
     $('#totalStudentCount').val(entity.totalStudentCount);
     $('#totalClassCount').val(entity.totalClassCount);
-    $('#courseContent').val(entity.courseContent);
+    $('#courseContent').val(htmlDecode(entity.courseContent));
     $('#classRoom').val(entity.classRoomName); //
     $('#classRoomid').val(entity.classRoomId); //
     $('#school').val(entity.schoolArea); //

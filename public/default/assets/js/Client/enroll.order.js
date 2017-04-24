@@ -2,8 +2,13 @@ $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
         location.href = "/enroll/class/" + $("#classId").val();
     });
-
-    renderData();
+    if ($("#disability").val()) {
+        showAlert("本课程有成绩要求，根据您的考试成绩，建议报名其他班级", "", function(e) {
+            location.href = "/enroll/class/" + $("#classId").val();
+        });
+    } else {
+        renderData();
+    }
     $(".enroll .exam-detail #coupon").on("change blur", setPrice);
 });
 

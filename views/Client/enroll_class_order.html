@@ -1,4 +1,5 @@
 ﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<input type="hidden" id="disability" value="{{ disability }}" />
 <div class="container enroll">
     <div class="pageTitle">
         <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>课程订单
@@ -31,11 +32,13 @@
         </div>
     </div>
     <div class="enroll-submit exam">
-        <button id="btnPay" class="btn btn-danger" type="button">立刻支付</button>
+        {% if not disability %}
+        <button id="btnPay" class="btn btn-danger" type="button">立刻支付</button> {% endif %}
     </div>
 </div>
 <div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
 <div class="modal" id="confirmModal" style="display:none; height: 100%;">
+    <div class="modal-backdrop fade in" style="height: 100%;"></div>
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

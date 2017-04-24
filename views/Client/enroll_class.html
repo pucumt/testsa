@@ -1,5 +1,5 @@
 ﻿{% extends "Client/partial/main-header.html" %} {% block main %}
-<div class="container enroll" style="display: none;">
+<div class="container enroll">
     <div class="pageTitle" style="padding-right: 15px; padding-left:60px;">
         选择课程<span class="pull-right filter" style="font-size: 12px;">筛选<span class="glyphicon glyphicon-filter"></span></span>
     </div>
@@ -12,9 +12,12 @@
         <input type="hidden" id="page" value="0" />
     </div>
 </div>
-
+<input type="hidden" id="schoolId" value="{{ schoolId }}" />
+<input type="hidden" id="gradeId" value="{{ gradeId }}" />
+<input type="hidden" id="subjectId" value="{{ subjectId }}" />
+<input type="hidden" id="categoryId" value="{{ categoryId }}" />
 <!--modal-->
-<div class="container enroll-filter">
+<div class="container enroll-filter" style="display: none;">
     <div class="row text-center">
         <label style="margin-top: 15px;">选择课程</label><span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
     </div>

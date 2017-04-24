@@ -217,6 +217,11 @@ footer,
     background: transparent;
 }
 
+#confirmModal .modal-backdrop {
+    opacity: 0.5;
+    background-color: #000000;
+}
+
 #confirmModal .modal-dialog {
     position: fixed;
     top: 20px;

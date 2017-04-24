@@ -28,6 +28,17 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/enrollClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
+        res.render('Client/enroll_class.html', {
+            title: '课程报名',
+            user: req.session.user,
+            schoolId: req.params.schoolId,
+            gradeId: req.params.gradeId,
+            subjectId: req.params.subjectId,
+            categoryId: req.params.categoryId
+        });
+    });
+
     app.get('/enroll/exam', function(req, res) {
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -61,7 +72,7 @@ module.exports = function(app) {
             filter.categoryId = req.body.categoryId;
         }
         //查询并返回第 page 页的 14 篇文章
-        TrainClass.getAll(null, page, filter, function(err, classs, total) {
+        TrainClass.getAllToEnroll(null, page, filter, function(err, classs, total) {
             if (err) {
                 classs = [];
             }
@@ -261,12 +272,50 @@ module.exports = function(app) {
     app.get('/enroll/order', function(req, res) {
         //req.query.classId studentId
         TrainClass.get(req.query.classId).then(function(trainClass) {
-            res.render('Client/enroll_class_order.html', {
-                title: '课程报名',
-                trainClass: trainClass,
-                classId: req.query.classId,
-                studentId: req.query.studentId
-            });
+            if (trainClass.exams && trainClass.exams.length > 0) {
+                var pArray = [];
+                trainClass.exams.forEach(function(exam) {
+                    var p = AdminEnrollExam.getFilter({ examId: exam.examId, studentId: req.query.studentId, isSucceed: 1 })
+                        .then(function(examOrder) {
+                            if (examOrder) {
+                                var subjectScore = examOrder.scores.filter(function(score) {
+                                    return score.subjectId == trainClass.subjectId;
+                                })[0];
+                                if (subjectScore.score >= exam.minScore) {
+                                    return true;
+                                }
+                            }
+                        });
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function(results) {
+                    if (results.some(function(result) {
+                            return result;
+                        })) {
+                        res.render('Client/enroll_class_order.html', {
+                            title: '课程报名',
+                            trainClass: trainClass,
+                            classId: req.query.classId,
+                            studentId: req.query.studentId
+                        });
+                    } else {
+                        res.render('Client/enroll_class_order.html', {
+                            title: '课程报名',
+                            trainClass: trainClass,
+                            classId: req.query.classId,
+                            studentId: req.query.studentId,
+                            disability: true
+                        });
+                    }
+                });
+            } else {
+                res.render('Client/enroll_class_order.html', {
+                    title: '课程报名',
+                    trainClass: trainClass,
+                    classId: req.query.classId,
+                    studentId: req.query.studentId
+                });
+            }
         });
     });
 

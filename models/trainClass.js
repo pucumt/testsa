@@ -12,11 +12,11 @@ var trainClassSchema = new mongoose.Schema({
     subjectName: String,
     categoryId: String,
     categoryName: String,
-    totalStudentCount: Number, //招生人数
-    enrollCount: Number, //报名人数
-    totalClassCount: Number, //共多少课时
-    trainPrice: Number,
-    materialPrice: Number,
+    totalStudentCount: { type: Number, default: 0 }, //招生人数
+    enrollCount: { type: Number, default: 0 }, //报名人数
+    totalClassCount: { type: Number, default: 0 }, //共多少课时
+    trainPrice: { type: Number, default: 0 },
+    materialPrice: { type: Number, default: 0 },
     teacherId: String,
     teacherName: String,
     courseStartDate: Date,
@@ -27,15 +27,15 @@ var trainClassSchema = new mongoose.Schema({
     classRoomName: String,
     schoolId: String,
     schoolArea: String,
-    isWeixin: Number, //0 new 1 publish 0 stop
-    isStop: Boolean,
-    isDeleted: Boolean,
+    isWeixin: { type: Number, default: 0 }, //0 new 1 publish 0 stop
+    isStop: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
     exams: [{
         examId: String,
         examName: String,
         minScore: Number
     }],
-    isFullOrder: Boolean
+    isFull: { type: Boolean, default: false }
 }, {
     collection: 'trainClasss'
 });
@@ -160,4 +160,23 @@ TrainClass.cancel = function(id) {
                 _id: id
             }, { $inc: { enrollCount: -1 } }).exec();
         });
+};
+
+//一次获取20个学区信息
+TrainClass.getAllToEnroll = function(id, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = trainClassModel.count(filter);
+    query.exec(function(err, count) {
+        query.find()
+            .sort({ isFull: 1, _id: 1 })
+            .skip((page - 1) * 14)
+            .limit(14)
+            .exec(function(err, trainClasss) {
+                callback(null, trainClasss, count);
+            });
+    });
 };

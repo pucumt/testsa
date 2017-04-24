@@ -5,6 +5,10 @@
     </div>
     <div class="row exam-detail">
         {% if trainClass %}
+        <input type="hidden" id="schoolId" value="{{ trainClass.schoolId }}" />
+        <input type="hidden" id="gradeId" value="{{ trainClass.gradeId }}" />
+        <input type="hidden" id="subjectId" value="{{ trainClass.subjectId }}" />
+        <input type="hidden" id="categoryId" value="{{ trainClass.categoryId }}" />
         <div class="exam link">
             <div class="exam-info">
                 <div>
@@ -19,7 +23,7 @@
             </div>
             <div class="exam-content">
                 <div class="title">课程介绍：</div>
-                <div class="content"> {{ trainClass.courseContent }} </div>
+                <div class="content"> {{ trainClass.courseContent | safe }} </div>
             </div>
             <input type="hidden" id="id" value="{{ trainClass._id }}" />
         </div>{% endif %}
@@ -73,12 +77,16 @@
             </select>
             </div>
             <div class="form-group">
+                <label for="School" class="control-label">学校(当前就读学校):</label>
+                <input type="text" maxlength="30" class="form-control" name="School" id="School">
+            </div>
+            <div class="form-group">
                 <label for="grade" class="control-label">年级:</label>
                 <select name="grade" id="grade" class="form-control"></select>
             </div>
             <div class="form-group">
-                <label for="School" class="control-label">学校班级:</label>
-                <input type="text" maxlength="30" class="form-control" name="School" id="School">
+                <label for="className" class="control-label">班级(填写阿拉伯数字):</label>
+                <input type="text" maxlength="30" class="form-control" name="className" id="className">
             </div>
         </form>
     </div>

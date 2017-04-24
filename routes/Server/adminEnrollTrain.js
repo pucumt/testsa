@@ -1,4 +1,5 @@
 var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+    AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     TrainClass = require('../../models/trainClass.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
     CouponAssign = require('../../models/couponAssign.js'),
@@ -124,8 +125,7 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/admin/adminEnrollTrain/enroll', checkLogin);
-    app.post('/admin/adminEnrollTrain/enroll', function(req, res) {
+    function enroll(req, res) {
         AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.trainId)
             .then(function(enrollTrain) {
                 if (enrollTrain) {
@@ -157,11 +157,7 @@ module.exports = function(app) {
                                     if (req.body.couponId) {
                                         CouponAssign.use(req.body.couponId, enrollExam._id);
                                     }
-                                    res.render('Server/payList.html', {
-                                        title: '>订单支付',
-                                        user: req.session.admin,
-                                        trainOrder: enrollExam
-                                    });
+                                    res.jsonp({ sucess: true, orderId: enrollExam._id });
                                     return;
                                 });
                         } else {
@@ -171,8 +167,47 @@ module.exports = function(app) {
                         }
                     });
             });
+    };
 
-    });
+    function checkScore(req, res, next) {
+        TrainClass.get(req.body.trainId).then(function(trainClass) {
+            if (trainClass.exams && trainClass.exams.length > 0) {
+                var pArray = [];
+                trainClass.exams.forEach(function(exam) {
+                    var p = AdminEnrollExam.getFilter({ examId: exam.examId, studentId: req.body.studentId, isSucceed: 1 })
+                        .then(function(examOrder) {
+                            if (examOrder) {
+                                var subjectScore = examOrder.scores.filter(function(score) {
+                                    return score.subjectId == trainClass.subjectId;
+                                })[0];
+                                if (subjectScore.score >= exam.minScore) {
+                                    return true;
+                                }
+                            }
+                        });
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function(results) {
+                    if (results.some(function(result) {
+                            return result;
+                        })) {
+                        next();
+                    } else {
+                        res.jsonp({ error: "本课程有成绩要求，根据您的考试成绩，建议报名其他班级" });
+                        return;
+                    }
+                });
+            } else {
+                next();
+            }
+        });
+    };
+    app.post('/admin/adminEnrollTrain/enroll', checkLogin);
+    app.post('/admin/adminEnrollTrain/enroll', enroll);
+
+    app.post('/admin/adminEnrollTrain/enrollwithcheck', checkLogin);
+    app.post('/admin/adminEnrollTrain/enrollwithcheck', checkScore);
+    app.post('/admin/adminEnrollTrain/enrollwithcheck', enroll);
 
     app.post('/admin/adminEnrollTrain/cancel', checkLogin);
     app.post('/admin/adminEnrollTrain/cancel', function(req, res) {

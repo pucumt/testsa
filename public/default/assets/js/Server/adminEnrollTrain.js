@@ -184,17 +184,16 @@ $("#btnAddStudent").on("click", function(e) {
     }
 });
 
-$("#btnEnroll").on("click", function(e) {
+function enroll(enrollURI) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
-
         var couponId;
         checkCoupons(function(index) {
             if (this.checked) {
                 couponId = $(this).data("obj")._id;
             }
         });
-        var postURI = "/admin/adminEnrollTrain/enroll",
+        var postURI = enrollURI,
             postObj = {
                 studentId: $('#enrollInfo #studentId').val(),
                 studentName: $('#enrollInfo #studentName').val(),
@@ -212,11 +211,23 @@ $("#btnEnroll").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             if (data && data.sucess) {
                 showAlert("报名成功");
+                $('#confirmModal .modal-footer .btn-default')
+                    .off("click")
+                    .on("click", function() {
+                        location.href = "/admin/payList/" + data.orderId;
+                    });
             } else {
                 showAlert(data.error);
             }
         });
     }
+};
+
+$("#btnEnroll").on("click", function(e) {
+    enroll("/admin/adminEnrollTrain/enroll");
+});
+$("#btnEnrollCheck").on("click", function(e) {
+    enroll("/admin/adminEnrollTrain/enrollwithcheck");
 });
 
 var $selectHeader = $('#selectModal .modal-body table thead');
@@ -233,6 +244,8 @@ function openStudent(p) {
     $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
+                student.School = "";
+                student.className = "";
                 var sex = student.sex ? "女" : "男";
                 $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');

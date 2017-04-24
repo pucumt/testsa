@@ -2,7 +2,10 @@ var newStudent = true,
     editStudent;
 $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/enrollClass";
+        location.href = "/enrollClass/schoolId/" + $(".exam-detail #schoolId").val() +
+            "/gradeId/" + $(".exam-detail #gradeId").val() +
+            "/subjectId/" + $(".exam-detail #subjectId").val() +
+            "/categoryId/" + $(".exam-detail #categoryId").val();
     });
 
     $("#btnEnroll").on("click", function(e) {
@@ -66,11 +69,11 @@ $(document).ready(function() {
             $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
             var postURI = "/studentInfo/add",
                 postObj = {
-                    name: $('#studentInfo #studentName').val(),
-                    mobile: $('#studentInfo #mobile').val(),
+                    name: $.trim($('#studentInfo #studentName').val()),
+                    mobile: $.trim($('#studentInfo #mobile').val()),
                     sex: $('#studentInfo #sex').val() == "1" ? true : false,
                     School: $('#studentInfo #School').val(),
-                    address: $('#studentInfo #address').val(),
+                    className: $.trim($('#studentInfo #className').val()),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
                     originalUrl: "/enroll/class/" + $("#id").val()
@@ -116,7 +119,7 @@ $(document).ready(function() {
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(decodeURI(entity.School));
-        $('#studentInfo #className').val(decodeURI(entity.address));
+        $('#studentInfo #className').val(decodeURI(entity.className));
         resetDropDown(null, function() {
             $('#studentInfo #grade').val(entity.gradeId);
         });
