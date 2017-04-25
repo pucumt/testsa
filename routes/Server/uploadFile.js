@@ -190,7 +190,7 @@ module.exports = function(app) {
 
     app.post('/admin/export/reportTemplate', function(req, res) {
         var disPath = path.join(serverPath, "../../public/downloads/", req.body.examId);
-        var src = path.join(serverPath, "../../public/downloads/reportTemplate.docx");
+        var src = path.join(serverPath, "../../public/downloads/reportTemplate_" + req.body.subject + ".doc");
         var copyFile = function() {
             var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
                 .then(function(orders) {
@@ -199,7 +199,7 @@ module.exports = function(app) {
                         orders.forEach(function(order) {
                             var Px = StudentInfo.get(order.studentId).then(function(student) {
                                 return StudentAccount.get(student.accountId).then(function(account) {
-                                    var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam + '.docx';
+                                    var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam + '.doc';
                                     fs.createReadStream(src).pipe(fs.createWriteStream(path.join(disPath, fileName)));
                                 });
                             });
