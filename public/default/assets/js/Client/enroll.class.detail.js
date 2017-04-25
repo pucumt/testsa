@@ -200,7 +200,7 @@ function renderStudents(students, id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
             }
             d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '>' + selected + '<span class="name">' + decodeURI(student.name) +
-                '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+                '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
         });
         $ul.append(d);
     }
@@ -216,7 +216,7 @@ function renderNewStudent(student) {
         student.School = encodeURI(student.School);
         student.className = encodeURI(student.className);
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + decodeURI(student.name) +
-            '</span><button type="button" class="btn btn-danger btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+            '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }
 };
 
