@@ -134,9 +134,16 @@ module.exports = function(app) {
                 }
 
                 TrainClass.enroll(req.body.trainId)
-                    .then(function(trainClass) {
-                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                    .then(function(trainClassResult) {
+                        if (trainClassResult && trainClassResult.ok && trainClassResult.nModified == 1) {
                             //报名成功
+                            TrainClass.get(req.body.trainId).then(function(trainClass) {
+                                if (trainClass.enrollCount == trainClass.totalStudentCount) {
+                                    TrainClass.full(req.body.classId);
+                                    //updated to full
+                                }
+                            });
+
                             var adminEnrollTrain = new AdminEnrollTrain({
                                 studentId: req.body.studentId,
                                 studentName: req.body.studentName,
@@ -265,9 +272,15 @@ module.exports = function(app) {
                 }
 
                 TrainClass.enroll(req.body.trainId)
-                    .then(function(trainClass) {
-                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                    .then(function(trainClassResult) {
+                        if (trainClassResult && trainClassResult.ok && trainClassResult.nModified == 1) {
                             //报名成功
+                            TrainClass.get(req.body.trainId).then(function(trainClass) {
+                                if (trainClass.enrollCount == trainClass.totalStudentCount) {
+                                    TrainClass.full(req.body.classId);
+                                    //updated to full
+                                }
+                            });
                             var adminEnrollTrain = new AdminEnrollTrain({
                                 studentId: req.body.studentId,
                                 studentName: req.body.studentName,
@@ -289,16 +302,16 @@ module.exports = function(app) {
                             return Promise.reject();
                         }
                     })
-                    .then(function(trainClass) {
-                        if (trainClass) {
+                    .then(function(order) {
+                        if (order) {
                             return TrainClass.cancel(req.body.oldTrainId);
                         } else {
                             res.jsonp({ error: "报名订单保存失败" });
                             return Promise.reject();
                         }
                     })
-                    .then(function(trainClass) {
-                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                    .then(function(result) {
+                        if (result && result.ok && result.nModified == 1) {
                             return AdminEnrollTrain.changeClass(req.body.oldOrderId);
                         } else {
                             res.jsonp({ error: "修改老班级数失败" });

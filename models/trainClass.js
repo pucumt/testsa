@@ -153,12 +153,21 @@ TrainClass.enroll = function(id) {
         });
 };
 
+TrainClass.full = function(id) {
+    return trainClassModel.update({
+        _id: id
+    }, { isFull: true }).exec();
+};
+
 TrainClass.cancel = function(id) {
     return trainClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
         .then(function(exam) {
             return trainClassModel.update({
                 _id: id
-            }, { $inc: { enrollCount: -1 } }).exec();
+            }, {
+                $inc: { enrollCount: -1 },
+                isFull: false
+            }).exec();
         });
 };
 

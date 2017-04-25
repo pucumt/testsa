@@ -333,6 +333,11 @@ module.exports = function(app) {
                         if (resultClass && resultClass.ok && resultClass.nModified == 1) {
                             //报名成功
                             TrainClass.get(req.body.classId).then(function(trainClass) {
+                                if (trainClass.enrollCount == trainClass.totalStudentCount) {
+                                    TrainClass.full(req.body.classId);
+                                    //updated to full
+                                }
+
                                 StudentInfo.get(req.body.studentId).then(function(student) {
                                     var coupon = req.body.coupon,
                                         price, p;
