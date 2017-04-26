@@ -6,7 +6,7 @@ var path = require('path'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    //MongoStore = require('connect-mongo')(session),
+    MongoStore = require('connect-mongo')(session),
     //flash = require('connect-flash'),
     // multer = require('multer'),
 
@@ -55,12 +55,11 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 30
     }, //30 days
     resave: false,
-    saveUninitialized: true //,
-        //store: new MongoStore({
-        //  db: settings.db,
-        //  host: settings.host,
-        //  port: settings.port
-        //})
+    saveUninitialized: true,
+    store: new MongoStore({
+        url: 'mongodb://' + settings.host + ':' + settings.port + '/' + settings.db,
+        auto_reconnect: true
+    })
 }));
 //app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
