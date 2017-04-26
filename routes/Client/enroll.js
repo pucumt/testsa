@@ -119,7 +119,7 @@ module.exports = function(app) {
                                                     });
                                             } else {
                                                 //报名失败
-                                                res.jsonp({ error: "报名失败" });
+                                                res.jsonp({ error: "报名失败,很可能报满" });
                                                 return;
                                             }
                                         });
@@ -173,7 +173,7 @@ module.exports = function(app) {
                                                     });
                                             } else {
                                                 //报名失败
-                                                res.jsonp({ error: "报名失败" });
+                                                res.jsonp({ error: "报名失败,很可能此考点已报满" });
                                                 return;
                                             }
                                         });
