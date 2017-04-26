@@ -9,9 +9,6 @@ var xlsx = require("node-xlsx"),
     ExamClass = require('../../models/examClass.js'),
     auth = require("./auth"),
     archiver = require('archiver'),
-    archive = archiver('zip', {
-        store: true // Sets the compression method to STORE. 
-    }),
     checkLogin = auth.checkLogin,
     serverPath = __dirname,
     storage = multer.diskStorage({
@@ -142,6 +139,8 @@ module.exports = function(app) {
             res.jsonp({ error: error });
         });
     };
+
+
     //upload.single('report'), 
     app.post('/admin/report', upload.single('report'), function(req, res, next) {
         var fileNames = req.file.filename.split("_");
@@ -188,8 +187,27 @@ module.exports = function(app) {
         });
     });
 
+    function deleteFilesInFolder(path) {
+        var files = [];
+        if (fs.existsSync(path)) {
+            files = fs.readdirSync(path);
+            files.forEach(function(file, index) {
+                var curPath = path + "/" + file;
+                if (fs.statSync(curPath).isDirectory()) { // recurse  
+                    deleteall(curPath);
+                } else { // delete file  
+                    fs.unlinkSync(curPath);
+                }
+            });
+        }
+    };
     app.post('/admin/export/reportTemplate', function(req, res) {
+        var outputPath = path.join(serverPath, "../../public/downloads/", req.body.examId + ".zip");
+        if (fs.existsSync(outputPath)) {
+            fs.unlinkSync(outputPath);
+        }
         var disPath = path.join(serverPath, "../../public/downloads/", req.body.examId);
+        deleteFilesInFolder(disPath);
         var src = path.join(serverPath, "../../public/downloads/reportTemplate_" + req.body.subject + ".doc");
         var copyFile = function() {
             var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
@@ -209,11 +227,16 @@ module.exports = function(app) {
                     }
                 });
             p.then(function() {
-                var output = fs.createWriteStream(path.join(serverPath, "../../public/downloads/", req.body.examId + ".zip"));
+                var output = fs.createWriteStream(outputPath);
+                archive = archiver('zip', {
+                    store: true // Sets the compression method to STORE. 
+                });
                 archive.pipe(output);
                 archive.directory(disPath, "");
                 archive.finalize();
                 res.jsonp({ sucess: true });
+            }).catch(function(error) {
+                res.jsonp({ error: error });
             });
         };
         fs.exists(disPath, function(exists) {
