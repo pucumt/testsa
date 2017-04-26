@@ -96,6 +96,7 @@ $(document).ready(function() {
                     entity = postObj;
                     entity._id = postObj.id;
                     resetOKStudent(entity);
+                    $ul.find("#" + entity._id + " .name").text(entity.name);
                     entity.name = encodeURI(entity.name);
                     entity.School = encodeURI(entity.School);
                     entity.className = encodeURI(entity.className);

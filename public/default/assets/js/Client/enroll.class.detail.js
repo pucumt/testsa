@@ -91,6 +91,7 @@ $(document).ready(function() {
                     renderNewStudent(entity);
                 } else {
                     entity = postObj;
+                    $ul.find("#" + entity._id + " .name").text(entity.name);
                     entity._id = postObj.id;
                     entity.name = encodeURI(entity.name);
                     entity.School = encodeURI(entity.School);
