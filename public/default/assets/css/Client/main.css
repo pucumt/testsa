@@ -185,7 +185,7 @@ footer,
 #Enroll-student-edit {
     padding: 0 25px;
     /*overflow: hidden;*/
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     background: white;
     bottom: 0px;
