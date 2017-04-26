@@ -6,27 +6,28 @@ $(document).ready(function() {
     });
 
     $("#btnEnroll").on("click", function(e) {
-        $.post("/enroll/students", { originalUrl: "/enroll/class/" + $("#id").val() },
-            function(data) {
-                if (data) {
-                    if (data.notLogin) {
-                        location.href = "/login";
-                        return;
-                    }
-
-                    if (data.students) {
-                        $("#bgBack").show();
-                        $("#Enroll-select").show();
-                        $ul.empty();
-                        if (data.students.length > 0) {
-                            var student = data.students[0];
-                            renderStudents(data.students, student._id);
-                            setSelectedStudent(student);
-                        }
-                        return;
-                    }
+        $.post("/enroll/students", { originalUrl: "/enroll/class/" + $("#id").val() }, function(data) {
+            if (data) {
+                if (data.notLogin) {
+                    location.href = "/login";
+                    return;
                 }
-            });
+
+                if (data.students) {
+                    $("#bgBack").show();
+                    $("#Enroll-select").show();
+                    $ul.empty();
+                    if (data.students.length > 0) {
+                        var student = data.students[0];
+                        renderStudents(data.students, student._id);
+                        setSelectedStudent(student);
+                    } else {
+                        $("#Enroll-select .student .name").text("请先添加学员");
+                    }
+                    return;
+                }
+            }
+        });
     });
 
     //<span class="name"></span><span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
@@ -66,11 +67,11 @@ $(document).ready(function() {
             $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
             var postURI = "/studentInfo/add",
                 postObj = {
-                    name: $('#studentInfo #studentName').val(),
-                    mobile: $('#studentInfo #mobile').val(),
+                    name: $.trim($('#studentInfo #studentName').val()),
+                    mobile: $.trim($('#studentInfo #mobile').val()),
                     sex: $('#studentInfo #sex').val() == "1" ? true : false,
-                    School: $('#studentInfo #School').val(),
-                    address: $('#studentInfo #address').val(),
+                    School: $.trim($('#studentInfo #School').val()),
+                    className: $.trim($('#studentInfo #className').val()),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
                     originalUrl: "/enroll/class/" + $("#id").val()
@@ -117,7 +118,7 @@ $(document).ready(function() {
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(decodeURI(entity.School));
-        $('#studentInfo #className').val(decodeURI(entity.address));
+        $('#studentInfo #className').val(decodeURI(entity.className));
         resetDropDown(null, function() {
             $('#studentInfo #grade').val(entity.gradeId);
         });
@@ -134,7 +135,12 @@ $(document).ready(function() {
     });
 
     $("#Enroll-select #btnNext").on("click", function(e) {
-        location.href = "/enroll/order?classId=" + $("#id").val() + "&studentId=" + $("#Enroll-select #studentId").val();
+        if ($("#Enroll-select .student .name").text() == "" || $("#Enroll-select #studentId").val() == "") {
+            $("#Enroll-student").show();
+            $("#Enroll-select").hide();
+        } else {
+            location.href = "/enroll/order?classId=" + $("#id").val() + "&studentId=" + $("#Enroll-select #studentId").val();
+        }
     });
 
     $("#Enroll-select .title .glyphicon-remove-circle").on("click", function(e) {
@@ -159,6 +165,22 @@ function addValidation() {
                 validators: {
                     notEmpty: {
                         message: '姓名不能为空'
+                    }
+                }
+            },
+            'School': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '学校不能为空'
+                    }
+                }
+            },
+            'className': {
+                trigger: "blur change",
+                validators: {
+                    notEmpty: {
+                        message: '班级不能为空'
                     }
                 }
             }
