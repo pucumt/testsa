@@ -7,22 +7,9 @@ var ExamClass = require('../../models/examClass.js'),
 module.exports = function(app) {
     app.get('/admin/examClassList', checkLogin);
     app.get('/admin/examClassList', function(req, res) {
-        //判断是否是第一页，并把请求的页数转换成 number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        ExamClass.getAll(null, page, {}, function(err, examClasss, total) {
-            if (err) {
-                examClasss = [];
-            }
-            res.render('Server/examClassList.html', {
-                title: '>测试设置',
-                user: req.session.admin,
-                examClasss: examClasss,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + examClasss.length) == total
-            });
+        res.render('Server/examClassList.html', {
+            title: '>测试设置',
+            user: req.session.admin
         });
     });
 

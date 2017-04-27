@@ -108,6 +108,22 @@ $("#studentInfo #btnSave").on("click", function(e) {
         });
     }
 });
+
+$("#studentInfo #btnDelete").on("click", function(e) {
+    showComfirm("真的要删除" + $('#studentInfo #studentName').val() + "吗？");
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/studentInfo/delete", {
+            id: $('#id').val()
+        }, function(data) {
+            if (data.sucess) {
+                showAlert("删除成功", null, true);
+                $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    location.href = "/admin/studentsList";
+                });
+            }
+        });
+    });
+});
 /***----------studentInfo end------------ */
 
 //------------search funfunction-----------
@@ -154,10 +170,11 @@ function searchExam(p) {
     $.post("/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
             data.adminEnrollExams.forEach(function(examOrder) {
+                var button = (examOrder.isSucceed == 1 ? '<a id="btnDelete" class="btn btn-default">取消</a>' : '');
                 $examSelectBody.append('<tr id=' + examOrder._id + ' data-obj=' +
                     JSON.stringify(examOrder) + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName +
                     '</td><td>' + examOrder.examName + '</td><td>' + getTrainOrderStatus(examOrder.isSucceed) +
-                    '</td><td>' + (examOrder.score || '') + '</td></tr>');
+                    '</td><td><div class="btn-group">' + button + '</div></td></tr>');
             });
         }
         $(".examModal #total").val(data.total);
@@ -165,6 +182,30 @@ function searchExam(p) {
         setPaging(".examModal", data);
     });
 };
+
+$('.content .examModal table tbody').on("click", "td #btnDelete", function(e) {
+    var obj = e.currentTarget;
+    $(obj).attr("disabled", "disabled");
+    var entity = $(obj).parents("tr").data("obj");
+    showComfirm("确定要取消订单" + entity._id + "吗？");
+
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/adminEnrollExam/cancel", {
+            id: entity._id,
+            examId: entity.examId,
+            examAreaId: entity.examAreaId
+        }, function(data) {
+            if (data.sucess) {
+                showAlert("删除成功", null, true);
+                $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    location.href = "/admin/studentDetail/" + $('#id').val();
+                });
+            }
+            $(obj).removeAttr("disabled");
+        });
+    });
+    e.stopPropagation();
+});
 
 function searchCoupon(p) {
     var filter = {

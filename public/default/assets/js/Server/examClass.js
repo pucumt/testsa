@@ -45,10 +45,9 @@ function searchExams(p) {
     $mainSelectBody.empty();
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
-
             data.examClasss.forEach(function(examClass) {
                 examClass.courseContent = htmlEncode(examClass.courseContent);
-                $mainSelectBody.append('<tr id=' + examClass._id + '><td>' + examClass.name + '</td><td>' +
+                $mainSelectBody.append('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
                     examClass.enrollCount + '</td><td><div data-obj=' +
@@ -383,4 +382,34 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
             }
         });
     });
+});
+
+$(".toolbar #btnPublishAll").on("click", function(e) {
+    var examIds = [];
+    $(".mainModal #gridBody [name='examId']")
+        .each(function(index) {
+            if (this.checked) {
+                examIds.push($(this).val());
+            }
+        });
+
+    if (examIds.length > 0) {
+        showComfirm("确定要发布吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/examClass/publish", {
+                ids: examIds
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("发布成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        location.href = "/admin/studentDetail/" + $('#id').val();
+                    });
+                }
+            });
+        });
+    }
+});
+
+$(".toolbar #btnStopAll").on("click", function(e) {
+
 });

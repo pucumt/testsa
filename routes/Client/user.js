@@ -134,7 +134,7 @@ module.exports = function(app) {
     app.get('/personalCenter/exit', checkLogin);
     app.get('/personalCenter/exit', function(req, res) {
         delete req.session.user;
-        //req.session.originalUrl = ""
+        req.session.originalUrl = "/personalCenter";
         res.redirect('/login');
     });
 

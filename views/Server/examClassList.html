@@ -10,7 +10,7 @@
             <div class="row form-horizontal">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="examName" class="control-label">课程:</label>
+                        <label for="examName" class="control-label">名称:</label>
                         <input type="text" maxlength="30" class="form-control" name="examName" id="examName">
                     </div>
                 </div>
@@ -24,6 +24,8 @@
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+        <button id="btnPublishAll" class="btn btn-default btn-sm">发布</button>
+        <button id="btnStopAll" class="btn btn-default btn-sm">停用</button>
     </div>
 </div>
 <div class="content mainModal">
@@ -41,39 +43,6 @@
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if examClasss %} {% for examClass in examClasss %}
-            <tr id={{examClass._id}}>
-                <td>
-                    {{ examClass.name }}
-                </td>
-                <td>
-                    {% if examClass.isWeixin==1 %} 发布 {% elif examClass.isWeixin==9 %} 停用 {% else %} 新建 {% endif %}
-                </td>
-                <td>
-                    {{ examClass.examDate.toLocaleDateString() }}
-                </td>
-                <td>
-                    {{ examClass.examTime }}
-                </td>
-                <td>
-                    {{ examClass.examCategoryName }}
-                </td>
-                <td>
-                    {{ examClass.examCount }}
-                </td>
-                <td>
-                    {{ examClass.enrollCount }}
-                </td>
-                <td>
-                    <div data-obj={{ examClass|dump }} class="btn-group">
-                        <a class="btn btn-default btnEdit">编辑</a>
-                        <a class="btn btn-default btnDelete">删除</a> {% if examClass.isWeixin!=1 %}
-                        <a class="btn btn-default btnPublish">发布</a> {% endif %} {% if examClass.isWeixin==1 %}
-                        <a class="btn btn-default btnUnPublish">停用</a> {% endif %}
-                    </div>
-                </td>
-            </tr>
-            {% endfor %} {% endif %}
         </tbody>
     </table>
 </div>
