@@ -14,4 +14,7 @@ $(document).ready(function() {
     $(".enroll.personalCenter .exam").on("click", function(e) {
         location.href = "/personalCenter/exam";
     });
+    $("#btnExit").on("click", function(e) {
+        location.href = "/personalCenter/exit";
+    });
 });

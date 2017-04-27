@@ -131,6 +131,13 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/personalCenter/exit', checkLogin);
+    app.get('/personalCenter/exit', function(req, res) {
+        delete req.session.user;
+        //req.session.originalUrl = ""
+        res.redirect('/login');
+    });
+
     app.post('/personalCenter/coupon/all', checkJSONLogin);
     app.post('/personalCenter/coupon/all', function(req, res) {
         var currentUser = req.session.user;
