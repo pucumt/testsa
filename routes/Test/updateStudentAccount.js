@@ -19,4 +19,17 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
+    app.post('/recoverStudent', function(req, res) {
+        var studentInfo = new StudentInfo({
+            isDeleted: false
+        });
+
+        studentInfo.update(req.body.studentId, function(err, studentInfo) {
+            if (err) {
+                studentInfo = {};
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
 }
