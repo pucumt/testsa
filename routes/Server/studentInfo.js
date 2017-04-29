@@ -87,8 +87,8 @@ module.exports = function(app) {
         }
 
         pPromise.then(function(account) {
-            if (account) {
-                filter.accountId = account._id;
+            if (req.body.mobile) {
+                filter.accountId = account ? account._id : "";
             }
 
             StudentInfo.getAll(null, page, filter, function(err, studentInfos, total) {

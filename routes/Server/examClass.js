@@ -167,9 +167,31 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/admin/examClass/publishAll', checkLogin);
+    app.post('/admin/examClass/publishAll', function(req, res) {
+        ExamClass.publishAll(JSON.parse(req.body.ids), function(err, examClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
     app.post('/admin/examClass/unPublish', checkLogin);
     app.post('/admin/examClass/unPublish', function(req, res) {
         ExamClass.unPublish(req.body.id, function(err, examClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/examClass/unPublishAll', checkLogin);
+    app.post('/admin/examClass/unPublishAll', function(req, res) {
+        ExamClass.unPublishAll(JSON.parse(req.body.ids), function(err, examClass) {
             if (err) {
                 res.jsonp({ error: err });
                 return;

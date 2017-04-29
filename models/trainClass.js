@@ -35,7 +35,8 @@ var trainClassSchema = new mongoose.Schema({
         examName: String,
         minScore: Number
     }],
-    isFull: { type: Boolean, default: false }
+    isFull: { type: Boolean, default: false },
+    createdDate: { type: Date, default: false }
 }, {
     collection: 'trainClasss'
 });
@@ -129,6 +130,19 @@ TrainClass.publish = function(id, callback) {
     });
 };
 
+TrainClass.publishAll = function(ids, callback) {
+    trainClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isWeixin: 1
+    }, { multi: true }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+
 //停用
 TrainClass.unPublish = function(id, callback) {
     trainClassModel.update({
@@ -136,6 +150,18 @@ TrainClass.unPublish = function(id, callback) {
     }, {
         isWeixin: 9
     }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+TrainClass.unPublishAll = function(ids, callback) {
+    trainClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isWeixin: 9
+    }, { multi: true }).exec(function(err, trainClass) {
         if (err) {
             return callback(err);
         }

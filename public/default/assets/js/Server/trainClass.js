@@ -54,7 +54,7 @@ function searchClass(p) {
         if (data && data.trainClasss.length > 0) {
             data.trainClasss.forEach(function(trainClass) {
                 trainClass.courseContent = htmlEncode(trainClass.courseContent);
-                $mainSelectBody.append('<tr id=' + trainClass._id + '><td>' + trainClass.name + '</td><td>' +
+                $mainSelectBody.append('<tr id=' + trainClass._id + '><td><span><input type="checkbox" name="trainId" value=' + trainClass._id + ' /></span>' + trainClass.name + '</td><td>' +
                     getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.trainPrice + '</td><td>' + trainClass.materialPrice +
                     '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
                     trainClass.categoryName + '</td><td><div data-obj=' +
@@ -617,3 +617,55 @@ $("#myModal #btnNewExam").on("click", function(e) {
     $("#myModal .examList .extraExams").append(source);
 });
 //------------end
+
+
+function getAllCheckedExams() {
+    var trainIds = [];
+    $(".mainModal #gridBody [name='trainId']")
+        .each(function(index) {
+            if (this.checked) {
+                trainIds.push($(this).val());
+            }
+        });
+    return trainIds;
+};
+
+$(".toolbar #btnPublishAll").on("click", function(e) {
+    var trainIds = getAllCheckedExams();
+    if (trainIds.length > 0) {
+        showComfirm("确定要发布吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/trainClass/publishAll", {
+                ids: JSON.stringify(trainIds)
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("发布成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        searchClass(page);
+                    });
+                }
+            });
+        });
+    }
+});
+
+$(".toolbar #btnStopAll").on("click", function(e) {
+    var trainIds = getAllCheckedExams();
+    if (trainIds.length > 0) {
+        showComfirm("确定要停用吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/trainClass/unPublishAll", {
+                ids: JSON.stringify(trainIds)
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("停用成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        searchClass(page);
+                    });
+                }
+            });
+        });
+    }
+});

@@ -384,7 +384,7 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
     });
 });
 
-$(".toolbar #btnPublishAll").on("click", function(e) {
+function getAllCheckedExams() {
     var examIds = [];
     $(".mainModal #gridBody [name='examId']")
         .each(function(index) {
@@ -392,17 +392,22 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
                 examIds.push($(this).val());
             }
         });
+    return examIds;
+};
 
+$(".toolbar #btnPublishAll").on("click", function(e) {
+    var examIds = getAllCheckedExams();
     if (examIds.length > 0) {
         showComfirm("确定要发布吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
-            $.post("/admin/examClass/publish", {
-                ids: examIds
+            $.post("/admin/examClass/publishAll", {
+                ids: JSON.stringify(examIds)
             }, function(data) {
                 if (data.sucess) {
                     showAlert("发布成功！");
                     $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
-                        location.href = "/admin/studentDetail/" + $('#id').val();
+                        var page = parseInt($("#mainModal #page").val());
+                        searchExams(page);
                     });
                 }
             });
@@ -411,5 +416,21 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
 });
 
 $(".toolbar #btnStopAll").on("click", function(e) {
-
+    var examIds = getAllCheckedExams();
+    if (examIds.length > 0) {
+        showComfirm("确定要停用吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/examClass/unPublishAll", {
+                ids: JSON.stringify(examIds)
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("停用成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        searchExams(page);
+                    });
+                }
+            });
+        });
+    }
 });

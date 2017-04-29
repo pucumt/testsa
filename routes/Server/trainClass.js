@@ -163,6 +163,38 @@ module.exports = function(app) {
             });
     });
 
+    app.get('/admin/trainClass/gradesubjectcategory', checkLogin);
+    app.get('/admin/trainClass/gradesubjectcategory', function(req, res) {
+        var objReturn = {};
+        var p1 = Grade.getAllWithoutPage()
+            .then(function(grades) {
+                objReturn.grades = grades;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p2 = Subject.getAllWithoutPage()
+            .then(function(subjects) {
+                objReturn.subjects = subjects;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p3 = Category.getAllWithoutPage()
+            .then(function(categorys) {
+                objReturn.categorys = categorys;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p1, p2, p3]).then(function() {
+                res.jsonp(objReturn);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
     app.get('/admin/trainClass/gradesubject', checkLogin);
     app.get('/admin/trainClass/gradesubject', function(req, res) {
         var objReturn = {};
@@ -199,9 +231,31 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/admin/trainClass/publishAll', checkLogin);
+    app.post('/admin/trainClass/publishAll', function(req, res) {
+        TrainClass.publishAll(JSON.parse(req.body.ids), function(err, trainClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
     app.post('/admin/trainClass/unPublish', checkLogin);
     app.post('/admin/trainClass/unPublish', function(req, res) {
         TrainClass.unPublish(req.body.id, function(err, trainClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/trainClass/unPublishAll', checkLogin);
+    app.post('/admin/trainClass/unPublishAll', function(req, res) {
+        TrainClass.unPublishAll(JSON.parse(req.body.ids), function(err, trainClass) {
             if (err) {
                 res.jsonp({ error: err });
                 return;
@@ -221,6 +275,15 @@ module.exports = function(app) {
             filter.name = {
                 $regex: reg
             };
+        }
+        if (req.body.grade) {
+            filter.gradeId = req.body.grade;
+        }
+        if (req.body.subject) {
+            filter.subjectId = req.body.subject;
+        }
+        if (req.body.category) {
+            filter.categoryId = req.body.category;
         }
 
         TrainClass.getAll(null, page, filter, function(err, trainClasss, total) {

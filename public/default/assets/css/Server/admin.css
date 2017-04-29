@@ -220,14 +220,23 @@ body {
     width: 46px;
 }
 
-#InfoSearch .form-group input,
-#InfoSearch .form-group select {
+#InfoSearch .form-group select,
+#InfoSearch .form-group input {
     width: calc(100% - 70px);
     display: inline-block;
 }
 
 #InfoSearch .form-group {
     margin-bottom: 0;
+}
+
+#selectModal #InfoSearch .examSearchInfo .col-md-20 {
+    padding-right: 0;
+}
+
+#selectModal #InfoSearch .examSearchInfo .form-group {
+    display: inline-block;
+    width: 205px;
 }
 
 .content.mainModal #schoolUl,
