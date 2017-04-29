@@ -205,6 +205,8 @@ function enroll(enrollURI) {
                 discount: $('#enrollInfo #discount').val(),
                 totalPrice: $('#enrollInfo #totalPrice').val(),
                 realMaterialPrice: $('#enrollInfo #realMaterialPrice').val(),
+                attributeId: $('#enrollInfo #attributeId').val(),
+                attributeName: $('#enrollInfo #attributeName').val(),
                 comment: $('#enrollInfo #comment').val(),
                 couponId: couponId
             };
@@ -262,6 +264,7 @@ function openStudent(p) {
                 $('#selectModal').modal('hide');
                 setPrice();
                 renderCoupon();
+                renderAttributeCoupon();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -301,10 +304,13 @@ function openTrain(p) {
                 $('#enrollInfo #trainPrice').val(entity.trainPrice); //
                 $('#enrollInfo #materialPrice').val(entity.materialPrice); //
                 $('#enrollInfo #realMaterialPrice').val(entity.materialPrice); //
+                $('#enrollInfo #attributeId').val(entity.attributeId); //
+                $('#enrollInfo #attributeName').val(entity.attributeName); //
                 $('#selectModal').modal('hide');
                 $('#enrollInfo #trainId').data("obj", entity);
                 setPrice();
                 renderCoupon();
+                renderAttributeCoupon();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -411,6 +417,25 @@ function renderCoupon() {
         setPaingNextPre("#enrollInfo", searchCoupon);
     }
 };
+
+function renderAttributeCoupon() {
+    var studentName = $("#enrollInfo #studentName").val(),
+        className = $("#enrollInfo #trainName").val(),
+        attributeid = $('#enrollInfo #attributeId').val();
+    if (studentName != "" && className != "" && attributeid != "") {
+        var filter = {
+            studentId: $("#enrollInfo #studentId").val(),
+            attributeId: attributeid
+        }
+        $.post("/admin/adminEnrollTrain/checkAttributs", filter, function(coupon) {
+            if (coupon) {
+                var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
+                $couponSelectBody.append('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" data-obj=' + JSON.stringify(coupon) + ' id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + (coupon.couponName || coupon.name) + '</td><td>' + dateStr +
+                    '</td><td>' + coupon.reducePrice + '</td></tr>');
+            }
+        });
+    }
+}
 
 function searchCoupon(p) {
     var obj = $("#enrollInfo #trainId").data("obj");

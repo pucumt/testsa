@@ -1,4 +1,4 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -10,7 +10,7 @@
             <div class="row form-horizontal">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="Name" class="control-label">优惠券:</label>
+                        <label for="Name" class="control-label">属性:</label>
                         <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
                     </div>
                 </div>
@@ -30,14 +30,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>优惠券</th>
-                <th style="width:120px;">类型</th>
-                <th style="width:160px;">开始日期</th>
-                <th style="width:160px;">过期日期</th>
-                <th style="width:160px;">年级</th>
-                <th style="width:160px;">科目</th>
-                <th style="width:100px;">金额</th>
-                <th style="width:215px;">操作</th>
+                <th style="width:30%;">属性</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -60,35 +54,8 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">优惠券:</label>
+                        <label for="name" class="control-label">属性:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="category" class="control-label">类型:</label>
-                        <select name="category" id="category" class="form-control">
-                            <option value="固定">固定</option>
-                            <option value="随机">随机</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="couponStartDate" class="control-label">开始日期:</label>
-                        <input type="text" maxlength="30" class="form-control" name="couponStartDate" id="couponStartDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="couponEndDate" class="control-label">过期日期:</label>
-                        <input type="text" maxlength="30" class="form-control" name="couponEndDate" id="couponEndDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="grade" class="control-label">年级:</label>
-                        <select name="grade" id="grade" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject" class="control-label">科目:</label>
-                        <select name="subject" id="subject" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="reducePrice" class="control-label">金额:</label>
-                        <input type="text" maxlength="10" class="form-control" name="reducePrice" id="reducePrice" value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -119,6 +86,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/coupon.js"></script>
-<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/classAttribute.js"></script>
 {% endblock %}

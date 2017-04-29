@@ -18,6 +18,8 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     isPayed: { type: Boolean, default: false },
     payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin
     isDeleted: { type: Boolean, default: false },
+    attributeId: String, //now used to check coupon, maybe change later
+    attributeName: String,
     orderDate: Date,
     cancelDate: Date,
     comment: String,
@@ -164,4 +166,13 @@ AdminEnrollTrain.getFilters = function(filter) {
     }
     return adminEnrollTrainModel.find(filter)
         .exec();
+};
+
+AdminEnrollTrain.getCount = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return adminEnrollTrainModel.find(filter).count();
 };

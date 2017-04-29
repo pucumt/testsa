@@ -96,8 +96,22 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
     $('#myModalLabel').text("退费");
     $('#myModal #totalPrice').val(entity.totalPrice);
     $('#myModal #rebatePrice').val(entity.rebatePrice);
+    $('#myModal #price').val("");
+    $('#myModal #comment').val("");
     $('#myModal #Id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    if (entity.attributeId) {
+        $.post("/admin/adminEnrollTrain/isAttributCouponUsed", {
+            studentId: entity.studentId,
+            attributeId: entity.attributeId
+        }, function(data) {
+            if (data) {
+                $('#myModal #comment').val("订单使用优惠券：" + data);
+            }
+            $('#myModal').modal({ backdrop: 'static', keyboard: false });
+        });
+    } else {
+        $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    }
 });
 
 $("#btnSave").on("click", function(e) {

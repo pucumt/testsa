@@ -216,14 +216,14 @@ function resetDropDown(objs) {
     $('#myModal').find("#grade option").remove();
     $('#myModal').find("#subject option").remove();
     $('#myModal').find("#category option").remove();
+    $('#myModal').find("#classAttribute option").remove();
     $('#myModal').find("#examCategoryName option").remove();
     $("#myModal .examList .extraExams").empty();
     $('#myModal').find(".examList [name='examName'] option").remove();
     $("#myModal .examList [name='minScore']").val(0);
+    $("#myModal #classAttribute").append("<option value=''></option>");
 
-    //$("#myModal #examCategoryName").append("<option value=''></option>");
-
-    $.get("/admin/trainClass/yeargradesubjectcategoryexam", function(data) {
+    $.get("/admin/trainClass/yeargradesubjectcategoryexamattribute", function(data) {
         if (data) {
             if (data.years && data.years.length > 0) {
                 data.years.forEach(function(year) {
@@ -259,6 +259,15 @@ function resetDropDown(objs) {
                         select = "selected";
                     }
                     $("#myModal #category").append("<option " + select + " value='" + category._id + "'>" + category.name + "</option>");
+                });
+            }
+            if (data.attributes && data.attributes.length > 0) {
+                data.attributes.forEach(function(attribute) {
+                    var select = "";
+                    if (objs && attribute._id == objs.attributeid) {
+                        select = "selected";
+                    }
+                    $("#myModal #classAttribute").append("<option " + select + " value='" + attribute._id + "'>" + attribute.name + "</option>");
                 });
             }
             if (data.exams && data.exams.length > 0) {
@@ -331,6 +340,8 @@ $("#myModal #btnSave").on("click", function(e) {
                 subjectName: $('#subject').find("option:selected").text(),
                 categoryId: $('#category').val(),
                 categoryName: $('#category').find("option:selected").text(),
+                attributeId: $('#classAttribute').val(),
+                attributeName: $('#classAttribute').find("option:selected").text(),
                 exams: getAllExams()
             };
         if (!isNew) {
@@ -341,13 +352,14 @@ $("#myModal #btnSave").on("click", function(e) {
             $('#myModal').modal('hide');
             data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + data.trainPrice + "</td><td>" + data.materialPrice +
+                $('#gridBody').append($("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id +
+                    " /></span>" + data.name + "</td><td>新建</td><td>" + data.trainPrice + "</td><td>" + data.materialPrice +
                     "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.categoryName +
                     "</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
             } else {
                 var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
+                name.html("<span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name);
                 var $pub = name.next().text(getClassStatus(data.isWeixin)),
                     $trainPrice = $pub.next().text(data.trainPrice),
                     $materialPrice = $trainPrice.next().text(data.materialPrice),
@@ -430,7 +442,14 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     $('#teacher').val(entity.teacherName); //
     $('#teacherid').val(entity.teacherId); //
     // $('#minScore').val(entity.minScore);
-    resetDropDown({ yearid: entity.yearId, gradeid: entity.gradeId, subjectid: entity.subjectId, categoryid: entity.categoryId, exams: entity.exams });
+    resetDropDown({
+        yearid: entity.yearId,
+        gradeid: entity.gradeId,
+        subjectid: entity.subjectId,
+        categoryid: entity.categoryId,
+        attributeid: entity.attributeId,
+        exams: entity.exams
+    });
     $('#id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });

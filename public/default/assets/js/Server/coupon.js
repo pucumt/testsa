@@ -20,8 +20,18 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnAssign">分配</a><a class="btn btn-default btnDelete">删除</a>';
+var getButtons = function(category) {
+    var assignButton = "";
+    switch (category) {
+        case "随机":
+            assignButton = '<a class="btn btn-default btnPublish">发布</a>';
+            break;
+        default:
+            assignButton = '<a class="btn btn-default btnAssign">分配</a>';
+            break;
+    }
+    if (category) {}
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a>' + assignButton + '<a class="btn btn-default btnCheck">查看</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
 
@@ -182,12 +192,15 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     var entity = $(obj).parent().data("obj");
     $('#myModalLabel').text("修改优惠券");
     $('#myModal #name').val(entity.name);
-    $('#myModal #category').val(entity.category);
     $('#myModal #couponStartDate').val(moment(entity.couponStartDate).format("YYYY-M-D"));
     $('#myModal #couponEndDate').val(moment(entity.couponEndDate).format("YYYY-M-D"));
     $('#id').val(entity._id);
     $('#myModal #reducePrice').val(entity.reducePrice);
-    resetDropDown({ gradeid: entity.gradeId, subjectid: entity.subjectId });
+    resetDropDown({
+        gradeid: entity.gradeId,
+        subjectid: entity.subjectId,
+        attributeid: entity.category
+    });
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
@@ -220,9 +233,11 @@ $("#gridBody").on("click", "td .btnAssign", function(e) {
 function resetDropDown(objs) {
     $('#myModal').find("#grade option").remove();
     $('#myModal').find("#subject option").remove();
+    $('#myModal').find("#category option").remove();
     $("#myModal #examCategoryName").append("<option value=''></option>");
+    $("#myModal #category").append('<option value="固定">固定</option><option value="随机">随机</option>');
 
-    $.get("/admin/trainClass/gradesubject", function(data) {
+    $.get("/admin/trainClass/gradesubjectattribute", function(data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function(grade) {
@@ -241,6 +256,15 @@ function resetDropDown(objs) {
                     }
                     $("#myModal #subject").append("<option " + select + " value='" + subject._id + "'>" + subject.name + "</option>");
                 });
+            }
+
+            if (data.attributes && data.attributes.length > 0) {
+                data.attributes.forEach(function(attribute) {
+                    $("#myModal #category").append("<option  value='" + attribute._id + "'>" + attribute.name + "</option>");
+                });
+                if (objs && objs.attributeid) {
+                    $("#myModal #category").val(objs.attributeid);
+                }
             }
         }
     });

@@ -19,6 +19,8 @@ var trainClassSchema = new mongoose.Schema({
     materialPrice: { type: Number, default: 0 },
     teacherId: String,
     teacherName: String,
+    attributeId: String, //now used to check coupon, maybe change later
+    attributeName: String,
     courseStartDate: Date,
     courseEndDate: Date,
     courseTime: String,
@@ -36,7 +38,7 @@ var trainClassSchema = new mongoose.Schema({
         minScore: Number
     }],
     isFull: { type: Boolean, default: false },
-    createdDate: { type: Date, default: false }
+    createdDate: { type: Date, default: Date.now }
 }, {
     collection: 'trainClasss'
 });

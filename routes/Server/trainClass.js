@@ -5,6 +5,7 @@ var TrainClass = require('../../models/trainClass.js'),
     Category = require('../../models/category.js'),
     ExamCategory = require('../../models/examCategory.js'),
     ExamClass = require('../../models/examClass.js'),
+    ClassAttribute = require('../../models/classAttribute.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -48,6 +49,8 @@ module.exports = function(app) {
             materialPrice: req.body.materialPrice,
             teacherId: req.body.teacherId,
             teacherName: req.body.teacherName,
+            attributeId: req.body.attributeId,
+            attributeName: req.body.attributeName,
             courseStartDate: req.body.courseStartDate,
             courseEndDate: req.body.courseEndDate,
             courseTime: req.body.courseTime,
@@ -87,6 +90,8 @@ module.exports = function(app) {
             materialPrice: req.body.materialPrice,
             teacherId: req.body.teacherId,
             teacherName: req.body.teacherName,
+            attributeId: req.body.attributeId,
+            attributeName: req.body.attributeName,
             courseStartDate: req.body.courseStartDate,
             courseEndDate: req.body.courseEndDate,
             courseTime: req.body.courseTime,
@@ -117,8 +122,8 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/admin/trainClass/yeargradesubjectcategoryexam', checkLogin);
-    app.get('/admin/trainClass/yeargradesubjectcategoryexam', function(req, res) {
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', checkLogin);
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', function(req, res) {
         var objReturn = {};
         var p0 = Year.getAllWithoutPage()
             .then(function(years) {
@@ -155,7 +160,14 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p0, p1, p2, p3, p4]).then(function() {
+        var p5 = ClassAttribute.getAllWithoutPage()
+            .then(function(attributes) {
+                objReturn.attributes = attributes;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p0, p1, p2, p3, p4, p5]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {
@@ -195,8 +207,8 @@ module.exports = function(app) {
             });
     });
 
-    app.get('/admin/trainClass/gradesubject', checkLogin);
-    app.get('/admin/trainClass/gradesubject', function(req, res) {
+    app.get('/admin/trainClass/gradesubjectattribute', checkLogin);
+    app.get('/admin/trainClass/gradesubjectattribute', function(req, res) {
         var objReturn = {};
         var p1 = Grade.getAllWithoutPage()
             .then(function(grades) {
@@ -212,7 +224,14 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p1, p2]).then(function() {
+        var p5 = ClassAttribute.getAllWithoutPage()
+            .then(function(attributes) {
+                objReturn.attributes = attributes;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p1, p2, p5]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {

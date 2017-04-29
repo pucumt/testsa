@@ -3,6 +3,7 @@ var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     TrainClass = require('../../models/trainClass.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
     CouponAssign = require('../../models/couponAssign.js'),
+    Coupon = require('../../models/coupon.js'),
     payHelper = require('../../util/payHelper.js'),
     auth = require("./auth"),
     fs = require('fs'),
@@ -150,6 +151,8 @@ module.exports = function(app) {
                                 mobile: req.body.mobile,
                                 trainId: req.body.trainId,
                                 trainName: req.body.trainName,
+                                attributeId: req.body.attributeId,
+                                attributeName: req.body.attributeName,
                                 trainPrice: req.body.trainPrice,
                                 materialPrice: req.body.materialPrice,
                                 discount: req.body.discount,
@@ -162,10 +165,44 @@ module.exports = function(app) {
                                 .then(function(enrollExam) {
                                     //修改优惠券状态
                                     if (req.body.couponId) {
-                                        CouponAssign.use(req.body.couponId, enrollExam._id);
+                                        CouponAssign.get(req.body.couponId)
+                                            .then(function(couponAssign) {
+                                                if (couponAssign) {
+                                                    CouponAssign.use(req.body.couponId, enrollExam._id);
+                                                    res.jsonp({ sucess: true, orderId: enrollExam._id });
+                                                    return;
+                                                } else {
+                                                    //报名3科减
+                                                    Coupon.get(req.body.couponId)
+                                                        .then(function(coupon) {
+                                                            var couponAssign = new CouponAssign({
+                                                                couponId: coupon._id,
+                                                                couponName: coupon.name,
+                                                                gradeId: coupon.gradeId,
+                                                                gradeName: coupon.gradeName,
+                                                                subjectId: coupon.subjectId,
+                                                                subjectName: coupon.subjectName,
+                                                                reducePrice: coupon.reducePrice,
+                                                                couponStartDate: coupon.couponStartDate,
+                                                                couponEndDate: coupon.couponEndDate,
+                                                                studentId: req.body.studentId,
+                                                                isUsed: true,
+                                                                orderId: enrollExam._id
+                                                            });
+                                                            couponAssign.save(function(err, couponAssign) {
+                                                                if (err) {
+                                                                    couponAssign = {};
+                                                                }
+                                                                res.jsonp({ sucess: true, orderId: enrollExam._id });
+                                                                return;
+                                                            });
+                                                        });
+                                                }
+                                            });
+                                    } else {
+                                        res.jsonp({ sucess: true, orderId: enrollExam._id });
+                                        return;
                                     }
-                                    res.jsonp({ sucess: true, orderId: enrollExam._id });
-                                    return;
                                 });
                         } else {
                             //报名失败
@@ -287,11 +324,13 @@ module.exports = function(app) {
                                 mobile: req.body.mobile,
                                 trainId: req.body.trainId,
                                 trainName: req.body.trainName,
+                                attributeId: req.body.attributeId,
+                                attributeName: req.body.attributeName,
                                 trainPrice: req.body.trainPrice,
                                 materialPrice: req.body.materialPrice,
                                 discount: req.body.discount,
                                 totalPrice: req.body.totalPrice,
-                                fromId: req.body.oldTrainId,
+                                fromId: req.body.oldOrderId,
                                 comment: req.body.comment,
                                 isPayed: true
                             });
@@ -304,6 +343,7 @@ module.exports = function(app) {
                     })
                     .then(function(order) {
                         if (order) {
+                            CouponAssign.updateOrder({ orderId: req.body.oldOrderId }, { orderId: order._id });
                             return TrainClass.cancel(req.body.oldTrainId);
                         } else {
                             res.jsonp({ error: "报名订单保存失败" });
@@ -441,5 +481,58 @@ module.exports = function(app) {
                 });
             } catch (err) {}
         })
+    });
+
+    app.post('/admin/adminEnrollTrain/checkAttributs', checkLogin);
+    app.post('/admin/adminEnrollTrain/checkAttributs', function(req, res) {
+        var filter = {
+            studentId: req.body.studentId,
+            attributeId: req.body.attributeId,
+            isPayed: true,
+            isSucceed: 1
+        }
+        AdminEnrollTrain.getCount(filter)
+            .then(function(result) {
+                if (result && result >= 2) {
+                    Coupon.getFilter({ category: req.body.attributeId })
+                        .then(function(coupon) {
+                            res.jsonp(coupon);
+                        });
+                } else {
+                    res.jsonp(false);
+                }
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/isAttributCouponUsed', checkLogin);
+    app.post('/admin/adminEnrollTrain/isAttributCouponUsed', function(req, res) {
+        var filter = {
+            studentId: req.body.studentId,
+            attributeId: req.body.attributeId,
+            isPayed: true,
+            isSucceed: 1
+        }
+        AdminEnrollTrain.getFilters(filter)
+            .then(function(results) {
+                if (results && results.length > 0) {
+                    var orderIds = results.map(function(order) {
+                        return order._id;
+                    });
+                    var filter = { isUsed: true, orderId: { $in: orderIds } };
+                    CouponAssign.getFilters(filter)
+                        .then(function(coupons) {
+                            if (coupons && coupons.length > 0) {
+                                var names = coupons.map(function(coupon) {
+                                    return coupon.couponName;
+                                });
+                                res.jsonp(names.join(";"));
+                            } else {
+                                res.jsonp(false);
+                            }
+                        });
+                } else {
+                    res.jsonp(false);
+                }
+            });
     });
 }

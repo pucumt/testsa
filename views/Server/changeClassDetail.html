@@ -10,6 +10,8 @@
         <div class="panel-body">
             <form id="enrollInfo">
                 <div class="row">
+                    <input type="hidden" class="form-control" name="attributeId" id="attributeId" value={{order.attributeId}}>
+                    <input type="hidden" class="form-control" name="attributeName" id="attributeName" value={{order.attributeName}}>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="studentName" class="control-label">姓名:</label>
@@ -113,7 +115,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <form id="InfoSearch">
-                            <div class="row form-horizontal">
+                            <div class="row form-horizontal examSearchInfo">
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="studentName" class="control-label">姓名:</label>

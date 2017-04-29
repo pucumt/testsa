@@ -31,6 +31,9 @@ $("#btnConfirmSave").on("click", function(e) {
     }, function(data) {
         if (data.sucess) {
             showAlert("支付成功");
+            $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                location.href = "/admin/trainOrderList";
+            });
         } else {
             showAlert(data.error);
         }

@@ -21,8 +21,9 @@ function searchOrder(p) {
             var getButtons = function(isPayed, isSucceed) {
                 var buttons = "";
                 if (!isPayed && isSucceed == 1) {
-                    buttons = '<a class="btn btn-default btnPay">支付</a><a class="btn btn-default btnDelete">取消</a>';
+                    buttons = '<a class="btn btn-default btnPay">支付</a>';
                 }
+                buttons += '<a class="btn btn-default btnDelete">取消</a>';
                 return buttons;
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {

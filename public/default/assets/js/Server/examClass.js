@@ -274,7 +274,8 @@ $("#btnSave").on("click", function(e) {
             var examDate = data.examDate && moment(data.examDate, "YYYY-M-D").format("YYYY-M-D");
             data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
+                $('#gridBody').append($("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name +
+                    "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
                     "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td>0</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
             } else {
@@ -288,7 +289,7 @@ $("#btnSave").on("click", function(e) {
                         pubstr = "停用";
                         break;
                 }
-                name.text(data.name);
+                name.html("<span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name);
                 var $pub = name.next().text(pubstr),
                     $examDate = $pub.next().text(examDate),
                     $examTime = $examDate.next().text(data.examTime),

@@ -5,7 +5,7 @@ var db = mongoose.connection;
 var #name#Schema = new mongoose.Schema({
     name: String,
     address: String,
-    isDeleted: Boolean
+    isDeleted: { type: Boolean, default: false }
 }, {
     collection: '#name#s'
 });

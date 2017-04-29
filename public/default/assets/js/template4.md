@@ -106,8 +106,8 @@ $("#btnSave").on("click", function(e) {
     {
         var postURI = "/admin/#name#/add",
             postObj = {
-            name: $('#name').val(),
-            address: $('#address').val()
+            name: $.trim($('#name').val()),
+            address: $.trim($('#address').val())
         };
         if (!isNew) {
             postURI = "/admin/#name#/edit";

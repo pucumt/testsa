@@ -88,3 +88,9 @@ Coupon.delete = function(id, callback) {
         callback(null, coupon);
     });
 };
+
+Coupon.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return couponModel.findOne(filter);
+};

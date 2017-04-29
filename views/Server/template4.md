@@ -36,22 +36,6 @@
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if #name#s %} {% for #name# in #name#s %}
-            <tr id={{#name#._id}}>
-                <td>
-                    {{ #name#.name }}
-                </td>
-                 <td>
-                    {{ #name#.address }}
-                </td>
-                <td>
-                    <div data-obj={{ #name#|dump }} class="btn-group">
-                        <a class="btn btn-default btnEdit">编辑</a>
-                        <a class="btn btn-default btnDelete">删除</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %} {% endif %}
         </tbody>
     </table>
 </div>
