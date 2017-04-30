@@ -8,6 +8,7 @@ var ExamClass = require('../../models/examClass.js'),
     Subject = require('../../models/subject.js'),
     Category = require('../../models/category.js'),
     CouponAssign = require('../../models/couponAssign.js'),
+    Coupon = require('../../models/coupon.js'),
     ExamClassExamArea = require('../../models/examClassExamArea.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
@@ -347,8 +348,19 @@ module.exports = function(app) {
                                             p = Promise.resolve(price);
                                         } else {
                                             p = CouponAssign.get(coupon).then(function(assign) {
-                                                price = trainClass.trainPrice - assign.reducePrice;
-                                                return price > 0 ? price : 0;
+                                                if (assign) {
+                                                    price = trainClass.trainPrice - assign.reducePrice;
+                                                    return price > 0 ? price : 0;
+                                                } else {
+                                                    return Coupon.get(coupon).then(function(couponObject) {
+                                                        if (couponObject) {
+                                                            price = trainClass.trainPrice - couponObject.reducePrice;
+                                                            return price > 0 ? price : 0;
+                                                        } else {
+                                                            return trainClass.trainPrice;
+                                                        }
+                                                    })
+                                                }
                                             });
                                         }
                                     } else {
@@ -366,16 +378,54 @@ module.exports = function(app) {
                                             discount: student.discount,
                                             totalPrice: totalPrice.toFixed(2),
                                             realMaterialPrice: trainClass.materialPrice,
+                                            attributeId: trainClass.attributeId,
+                                            attributeName: trainClass.attributeName,
                                             isSucceed: 1
                                         });
                                         adminEnrollTrain.save()
                                             .then(function(enrollExam) {
                                                 //修改优惠券状态
                                                 if (coupon && coupon != "0") {
-                                                    CouponAssign.use(coupon, enrollExam._id);
+                                                    CouponAssign.get(coupon)
+                                                        .then(function(couponAssign) {
+                                                            if (couponAssign) {
+                                                                CouponAssign.use(coupon, enrollExam._id);
+                                                                res.jsonp({ orderId: enrollExam._id });
+                                                                return;
+                                                            } else {
+                                                                //报名3科减
+                                                                Coupon.get(coupon)
+                                                                    .then(function(coupon) {
+                                                                        var couponAssign = new CouponAssign({
+                                                                            couponId: coupon._id,
+                                                                            couponName: coupon.name,
+                                                                            gradeId: coupon.gradeId,
+                                                                            gradeName: coupon.gradeName,
+                                                                            subjectId: coupon.subjectId,
+                                                                            subjectName: coupon.subjectName,
+                                                                            reducePrice: coupon.reducePrice,
+                                                                            couponStartDate: coupon.couponStartDate,
+                                                                            couponEndDate: coupon.couponEndDate,
+                                                                            studentId: req.body.studentId,
+                                                                            studentName: student.name,
+                                                                            isUsed: true,
+                                                                            orderId: enrollExam._id
+                                                                        });
+                                                                        couponAssign.save(function(err, couponAssign) {
+                                                                            if (err) {
+                                                                                couponAssign = {};
+                                                                            }
+                                                                            res.jsonp({ orderId: enrollExam._id });
+                                                                            return;
+                                                                        });
+                                                                    });
+                                                            }
+                                                        });
+
+                                                } else {
+                                                    res.jsonp({ orderId: enrollExam._id });
+                                                    return;
                                                 }
-                                                res.jsonp({ orderId: enrollExam._id });
-                                                return;
                                             });
                                     });
                                 });

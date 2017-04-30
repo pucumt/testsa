@@ -186,6 +186,7 @@ module.exports = function(app) {
                                                                 couponStartDate: coupon.couponStartDate,
                                                                 couponEndDate: coupon.couponEndDate,
                                                                 studentId: req.body.studentId,
+                                                                studentName: req.body.studentName,
                                                                 isUsed: true,
                                                                 orderId: enrollExam._id
                                                             });

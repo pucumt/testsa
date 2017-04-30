@@ -1,10 +1,9 @@
 var isNew = true;
 
 $(document).ready(function() {
-    $("#left_btnExamroom").addClass("active");
+    $("#left_btnAttribute").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
-
     search();
 });
 
@@ -21,12 +20,12 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/examAreaList/search?" + pStr, filter, function(data) {
-        if (data && data.examAreas.length > 0) {
+    $.post("/admin/classAttributeList/search?" + pStr, filter, function(data) {
+        if (data && data.classAttributes.length > 0) {
 
-            data.examAreas.forEach(function(examArea) {
-                $mainSelectBody.append('<tr id=' + examArea._id + '><td>' + examArea.name + '</td><td>' + examArea.address + '</td><td><div data-obj=' +
-                    JSON.stringify(examArea) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+            data.classAttributes.forEach(function(classAttribute) {
+                $mainSelectBody.append('<tr id=' + classAttribute._id + '><td>' + classAttribute.name + '</td><td><div data-obj=' +
+                    JSON.stringify(classAttribute) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
             });
         }
         $("#mainModal #total").val(data.total);
@@ -66,22 +65,13 @@ function addValidation(callback) {
                     trigger: "blur change",
                     validators: {
                         notEmpty: {
-                            message: '考区不能为空'
+                            message: '属性不能为空'
                         },
                         stringLength: {
-                            min: 4,
+                            min: 2,
                             max: 30,
-                            message: '考区在4-30个字符之间'
+                            message: '属性在2-30个字符之间'
                         }
-                    }
-                },
-                'address': {
-                    trigger: "blur change",
-                    validators: {
-                        stringLength: {
-                            max: 100,
-                            message: '地址不能超过100个字符'
-                        },
                     }
                 }
             }
@@ -94,7 +84,7 @@ $("#btnAdd").on("click", function(e) {
     destroy();
     addValidation();
     $('#name').removeAttr("disabled");
-    $('#myModalLabel').text("新增考区");
+    $('#myModalLabel').text("新增属性");
     $('#name').val("");
     $('#address').val("");
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
@@ -103,24 +93,22 @@ $("#btnAdd").on("click", function(e) {
 $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/examArea/add",
+        var postURI = "/admin/classAttribute/add",
             postObj = {
-                name: $('#name').val(),
-                address: $('#address').val()
+                name: $.trim($('#name').val())
             };
         if (!isNew) {
-            postURI = "/admin/examArea/edit";
+            postURI = "/admin/classAttribute/edit";
             postObj.id = $('#id').val();
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div data-obj='" + JSON.stringify(data) +
+                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>"));
             } else {
                 var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);
-                name.next().text(data.address);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
                 $lastDiv.data("obj", data);
             }
@@ -134,25 +122,23 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    // $('#name').attr("disabled", "disabled");
-    $('#myModalLabel').text("修改考区");
+    $('#myModalLabel').text("修改属性");
     $('#name').val(entity.name);
-    $('#address').val(entity.address);
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    showComfirm("确定要删除吗？");
+    showComfirm("确定要删除吗?");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examArea/delete", {
+        $.post("/admin/classAttribute/delete", {
             id: entity._id
         }, function(data) {
-            $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
+                showAlert("删除成功!");
             }
         });
     });

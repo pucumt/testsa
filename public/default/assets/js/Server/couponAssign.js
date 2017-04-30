@@ -74,6 +74,7 @@ $("#btnSave").on("click", function(e) {
         var $this = $(this);
         students.push({
             studentId: $this.val(),
+            studentName: $this.parent().next().text(),
             checked: this.checked
         });
     });

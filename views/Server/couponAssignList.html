@@ -1,0 +1,69 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+        <input type="hidden" id="couponId" value="{{ couponId }}" />
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Name" class="control-label">姓名:</label>
+                        <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>优惠券</th>
+                <th style="width:120px;">姓名</th>
+                <th style="width:160px;">开始日期</th>
+                <th style="width:160px;">过期日期</th>
+                <th style="width:160px;">科目</th>
+                <th style="width:160px;">状态</th>
+                <th style="width:100px;">金额</th>
+                <th style="width:100px;">操作</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+<div id="mainModal">
+    <input type="hidden" id="total" value="0" />
+    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/Server/couponassignlist.js"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

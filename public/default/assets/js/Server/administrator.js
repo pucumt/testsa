@@ -121,8 +121,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要删除吗？");
     var obj = e.currentTarget;
     $("#btnConfirmSave").off("click").on("click", function(e) {
         $.post("/admin/user/delete", {

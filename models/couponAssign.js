@@ -6,6 +6,7 @@ var couponAssignSchema = new mongoose.Schema({
     couponId: String,
     couponName: String,
     studentId: String,
+    studentName: String,
     gradeId: String,
     gradeName: String,
     subjectId: String,

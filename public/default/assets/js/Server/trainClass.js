@@ -456,9 +456,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal .modal-body').text("确定要删除吗?");
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -474,9 +472,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
-    $('#confirmModal .modal-body').text("确定要发布吗?");
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -496,9 +492,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
-    $('#confirmModal .modal-body').text("确定要停用吗?");
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {

@@ -1,8 +1,10 @@
 var StudentInfo = require('../../models/studentInfo.js'),
     CouponAssign = require('../../models/couponAssign.js'),
+    Coupon = require('../../models/coupon.js'),
     TrainClass = require('../../models/trainClass.js'),
     ExamClass = require('../../models/examClass.js'),
     AdminEnrollExam = require('../../models/adminEnrollExam.js'),
+    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     ClassRoom = require('../../models/classRoom.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
@@ -83,13 +85,53 @@ module.exports = function(app) {
                     gradeId: trainClass.gradeId,
                     subjectId: trainClass.subjectId,
                     isUsed: { $ne: true },
+                    couponStartDate: { $lte: now },
                     couponEndDate: { $gte: now }
                 };
                 CouponAssign.getAllWithoutPage(filter).then(function(assigns) {
-                    res.jsonp({
-                        student: student,
-                        assigns: assigns
-                    });
+                    if (trainClass.attributeId) {
+                        var filter = {
+                            studentId: student._id,
+                            attributeId: trainClass.attributeId,
+                            isPayed: true,
+                            isSucceed: 1
+                        }
+                        AdminEnrollTrain.getCount(filter)
+                            .then(function(result) {
+                                if (result && result >= 2) {
+                                    Coupon.getFilter({ category: trainClass.attributeId })
+                                        .then(function(coupon) {
+                                            assigns.push({
+                                                _id: coupon._id,
+                                                couponId: coupon._id,
+                                                couponName: coupon.name,
+                                                gradeId: coupon.gradeId,
+                                                gradeName: coupon.gradeName,
+                                                subjectId: coupon.subjectId,
+                                                subjectName: coupon.subjectName,
+                                                reducePrice: coupon.reducePrice,
+                                                couponStartDate: coupon.couponStartDate,
+                                                couponEndDate: coupon.couponEndDate,
+                                                studentId: student._id
+                                            });
+                                            res.jsonp({
+                                                student: student,
+                                                assigns: assigns
+                                            });
+                                        });
+                                } else {
+                                    res.jsonp({
+                                        student: student,
+                                        assigns: assigns
+                                    });
+                                }
+                            });
+                    } else {
+                        res.jsonp({
+                            student: student,
+                            assigns: assigns
+                        });
+                    }
                 });
             });
         });
