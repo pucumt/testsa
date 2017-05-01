@@ -91,7 +91,7 @@ var Pay = {
             'notify_url': settings.notify_Url,
             'out_trade_no': payParas.out_trade_no,
             'service': 'pay.weixin.jspay',
-            'sub_openid': payParas.openId,
+            // 'sub_openid': payParas.openId,
             'total_fee': payParas.total_fee
         };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
@@ -107,30 +107,25 @@ var Pay = {
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
         var data = toxml(sendObject);
-        var options = {
-            hostname: 'pay.swiftpass.cn',
-            port: 443,
-            path: '/pay/gateway',
-            method: 'POST'
-        };
 
-        var reqPay = https.request(options, (resPay) => {
-            resPay.on('data', (d) => {
-                var body = d.toString(),
-                    token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
-                if (token != "") {
-                    res.redirect("https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1");
+        request.post({
+                url: 'https://pay.swiftpass.cn:443/pay/gateway',
+                body: data
+            },
+            function(error, response, body) {
+                if (response.statusCode == 200) {
+                    // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
+                    var token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
+                    if (token != "") {
+                        res.redirect("https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1");
+                    } else {
+                        res.redirect("/personalCenter/order");
+                    }
                 } else {
                     res.redirect("/personalCenter/order");
                 }
-            });
-        });
-
-        reqPay.on('error', (e) => {
-            console.error(e);
-        });
-        reqPay.write(data);
-        reqPay.end();
+            }
+        );
     },
     getOpenId: function(res, id) {
         // 这是编码后的地址

@@ -461,7 +461,7 @@ module.exports = function(app) {
                                 .then(function(order) {
                                     var orderFee = ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100;
                                     if (orderFee.toString() == (result.total_fee + "")) {
-                                        AdminEnrollTrain.pay(orderId, 9)
+                                        AdminEnrollTrain.pay(orderId, 6) //wechat online
                                             .then(function(result) {
                                                 if (result && result.nModified == 1) {
                                                     res.end("success");
