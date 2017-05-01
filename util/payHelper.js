@@ -42,7 +42,7 @@ var Pay = {
             'nonce_str': 'bfbeducation',
             'notify_url': settings.notify_Url,
             'out_trade_no': payParas.out_trade_no,
-            'service': 'pay.weixin.jspay',
+            'service': 'pay.weixin.native',
             'total_fee': payParas.total_fee
         };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
@@ -118,7 +118,11 @@ var Pay = {
             resPay.on('data', (d) => {
                 var body = d.toString(),
                     token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
-                res.redirect("https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1");
+                if (token != "") {
+                    res.redirect("https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1");
+                } else {
+                    res.redirect("/personalCenter/order");
+                }
             });
         });
 
@@ -145,7 +149,7 @@ var Pay = {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
                     var data = JSON.parse(body);
                     var access_token = data.access_token;
-                    callback(req.params.id, data.openid);
+                    callback(res, req.params.id, data.openid);
                 } else {
                     res.jsonp({ error: "没有授权openID!" });
                 }

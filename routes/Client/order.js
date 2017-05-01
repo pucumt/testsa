@@ -141,10 +141,12 @@ module.exports = function(app) {
 
     app.post('/personalCenter/order/pay', checkJSONLogin);
     app.post('/personalCenter/order/pay', function(req, res) {
-        payHelper.getOpenId(res, req.body.id);
+        //payHelper.getOpenId(res, req.body.id);
+        //res.redirect("/personalCenter/order");
+        openWechatPay(res, req.body.id, "");
     });
 
-    function openWechatPay(id, openId) {
+    function openWechatPay(res, id, openId) {
         AdminEnrollTrain.get(id)
             .then(function(order) {
                 if (order) {
