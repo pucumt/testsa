@@ -1,6 +1,7 @@
 var CouponAssign = require('../../models/couponAssign.js'),
     Coupon = require('../../models/coupon.js'),
     StudentInfo = require('../../models/studentInfo.js'),
+    Random = require('../../util/random.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -68,24 +69,6 @@ module.exports = function(app) {
             });
     });
 
-    var rand = (function() {
-        var seed = (new Date()).getTime();
-
-        function r() {
-            seed = (seed * 9301 + 49297) % 233280;
-            return seed / (233280.0);
-        }
-        return function(number) {
-            return Math.ceil(r() * number)
-        }
-    })();
-
-    function getRandom(coupon) {
-        var minis = coupon.reduceMax - coupon.reducePrice;
-        var num = rand(minis) + coupon.reducePrice;
-        return num;
-    };
-
     app.post('/personalCenter/randomCoupon/get', checkJSONLogin);
     app.post('/personalCenter/randomCoupon/get', function(req, res) {
         var currentUser = req.session.user;
@@ -104,21 +87,29 @@ module.exports = function(app) {
                     if (coupon) {
                         var parray = [];
                         students.forEach(function(student) {
-                            var reducePrice = getRandom(coupon);
-                            var couponAssign = new CouponAssign({
+                            var p = CouponAssign.getFilter({
                                 couponId: coupon._id,
-                                couponName: coupon.name + reducePrice,
-                                gradeId: coupon.gradeId,
-                                gradeName: coupon.gradeName,
-                                subjectId: coupon.subjectId,
-                                subjectName: coupon.subjectName,
-                                reducePrice: reducePrice,
-                                couponStartDate: coupon.couponStartDate,
-                                couponEndDate: coupon.couponEndDate,
-                                studentId: student._id,
-                                studentName: student.name
+                                studentId: student._id
+                            }).then(function(assign) {
+                                if (!assign) {
+                                    var reducePrice = Random(coupon.reducePrice, coupon.reduceMax);
+                                    var couponAssign = new CouponAssign({
+                                        couponId: coupon._id,
+                                        couponName: coupon.name + reducePrice,
+                                        gradeId: coupon.gradeId,
+                                        gradeName: coupon.gradeName,
+                                        subjectId: coupon.subjectId,
+                                        subjectName: coupon.subjectName,
+                                        reducePrice: reducePrice,
+                                        couponStartDate: coupon.couponStartDate,
+                                        couponEndDate: coupon.couponEndDate,
+                                        studentId: student._id,
+                                        studentName: student.name
+                                    });
+                                    return couponAssign.save();
+                                }
                             });
-                            var p = couponAssign.save();
+
                             parray.push(p);
                         });
                         Promise.all(parray).then(function() {
