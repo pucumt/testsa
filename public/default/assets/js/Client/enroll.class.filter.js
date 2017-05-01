@@ -87,7 +87,7 @@ function loadData(p) {
             $selectBody.append(d);
         } else {
             if (!p) {
-                $('.container.enroll .row').text("即将上线");
+                $selectBody.text("即将上线");
             }
         }
         if (data.isLastPage) {

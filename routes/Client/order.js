@@ -141,19 +141,26 @@ module.exports = function(app) {
 
     app.post('/personalCenter/order/pay', checkJSONLogin);
     app.post('/personalCenter/order/pay', function(req, res) {
-        AdminEnrollTrain.get(req.body.id)
+        payHelper.getOpenId(res, req.body.id);
+    });
+
+    function openWechatPay(id, openId) {
+        AdminEnrollTrain.get(id)
             .then(function(order) {
                 if (order) {
                     var payParas = {
                         out_trade_no: order._id,
                         body: order.trainName,
-                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100
+                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
+                        openId: openId
                     };
                     payHelper.jsPay(payParas, res);
-                    //return;
                 }
-                //res.jsonp({ error: "生成付款码失败" });
             });
+    };
+
+    app.get('/get_wx_access_token/:id', function(req, res) {
+        payHelper.wechatPay(req, res, openWechatPay);
     });
 
     app.post('/cancel/exam', checkJSONLogin);
