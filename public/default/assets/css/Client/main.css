@@ -42,6 +42,11 @@ footer,
     width: 100%;
 }
 
+.enroll-filter .glyphicon-remove-circle {
+    margin-top: 15px;
+    font-size: 20px;
+}
+
 .enroll-filter .row {
     margin-bottom: 20px;
 }
@@ -212,6 +217,11 @@ footer,
     background: transparent;
 }
 
+#confirmModal .modal-backdrop {
+    opacity: 0.5;
+    background-color: #000000;
+}
+
 #confirmModal .modal-dialog {
     position: fixed;
     top: 20px;
@@ -279,7 +289,8 @@ footer,
 .enroll.personalCenter .students,
 .enroll.personalCenter .coupon,
 .enroll.personalCenter .order,
-.enroll.personalCenter .exam {
+.enroll.personalCenter .exam,
+.enroll.personalCenter .randomCoupon {
     margin: 10px -15px;
     padding: 8px 15px;
     border-top: 1px solid #ccc;
@@ -289,7 +300,17 @@ footer,
     width: auto;
 }
 
-.enroll.personalCenter .exam {
+.enroll.personalCenter .exit #btnExit {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    border-radius: 0;
+}
+
+.enroll.personalCenter .exam,
+.enroll.personalCenter .randomCoupon {
     margin-bottom: 0;
 }
 
@@ -314,7 +335,25 @@ footer,
 
 .enroll.personalCenter .couponlist .student-list span.studentName {
     display: inline-block;
-    width: 180px;
+    width: 80px;
+}
+
+.enroll.personalCenter .randomCouponList .student-list li {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
+    margin-top: 10px;
+}
+
+.enroll.personalCenter .randomCouponList .student-list li .take {
+    width: 80px;
+    background-color: #fa9899;
+    color: white;
+    margin-top: -10px;
+    margin-bottom: -10px;
+    line-height: 40px;
+    border: 0;
 }
 
 

@@ -1,4 +1,5 @@
 var StudentInfo = require('../../models/studentInfo.js'),
+    StudentAccount = require('../../models/studentAccount.js'),
     AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -85,21 +86,29 @@ module.exports = function(app) {
                 $regex: reg
             };
         }
+        var pPromise;
         if (req.body.mobile) {
-            var reg = new RegExp(req.body.mobile, 'i')
-            filter.mobile = { $regex: reg };
+            pPromise = StudentAccount.getFilter({ name: req.body.mobile });
+        } else {
+            pPromise = Promise.resolve();
         }
 
-        StudentInfo.getAll(null, page, filter, function(err, studentInfos, total) {
-            if (err) {
-                studentInfos = [];
+        pPromise.then(function(account) {
+            if (req.body.mobile) {
+                filter.accountId = account ? account._id : "";
             }
-            res.jsonp({
-                studentInfos: studentInfos,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + studentInfos.length) == total
+
+            StudentInfo.getAll(null, page, filter, function(err, studentInfos, total) {
+                if (err) {
+                    studentInfos = [];
+                }
+                res.jsonp({
+                    studentInfos: studentInfos,
+                    total: total,
+                    page: page,
+                    isFirstPage: (page - 1) == 0,
+                    isLastPage: ((page - 1) * 14 + studentInfos.length) == total
+                });
             });
         });
     });

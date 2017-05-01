@@ -12,13 +12,15 @@ var trainClassSchema = new mongoose.Schema({
     subjectName: String,
     categoryId: String,
     categoryName: String,
-    totalStudentCount: Number, //招生人数
-    enrollCount: Number, //报名人数
-    totalClassCount: Number, //共多少课时
-    trainPrice: Number,
-    materialPrice: Number,
+    totalStudentCount: { type: Number, default: 0 }, //招生人数
+    enrollCount: { type: Number, default: 0 }, //报名人数
+    totalClassCount: { type: Number, default: 0 }, //共多少课时
+    trainPrice: { type: Number, default: 0 },
+    materialPrice: { type: Number, default: 0 },
     teacherId: String,
     teacherName: String,
+    attributeId: String, //now used to check coupon, maybe change later
+    attributeName: String,
     courseStartDate: Date,
     courseEndDate: Date,
     courseTime: String,
@@ -27,12 +29,16 @@ var trainClassSchema = new mongoose.Schema({
     classRoomName: String,
     schoolId: String,
     schoolArea: String,
-    isWeixin: Number, //0 new 1 publish 0 stop
-    isStop: Boolean,
-    isDeleted: Boolean,
-    examCategoryId: String,
-    examCategoryName: String,
-    minScore: Number
+    isWeixin: { type: Number, default: 0 }, //0 new 1 publish 0 stop
+    isStop: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
+    exams: [{
+        examId: String,
+        examName: String,
+        minScore: Number
+    }],
+    isFull: { type: Boolean, default: false },
+    createdDate: { type: Date, default: Date.now }
 }, {
     collection: 'trainClasss'
 });
@@ -49,6 +55,7 @@ module.exports = TrainClass;
 TrainClass.prototype.save = function(callback) {
     this.option.isWeixin = 0;
     this.option.enrollCount = 0;
+    this.option.isFullOrder = false;
     var newtrainClass = new trainClassModel(this.option);
 
     newtrainClass.save(function(err, trainClass) {
@@ -125,6 +132,19 @@ TrainClass.publish = function(id, callback) {
     });
 };
 
+TrainClass.publishAll = function(ids, callback) {
+    trainClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isWeixin: 1
+    }, { multi: true }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+
 //停用
 TrainClass.unPublish = function(id, callback) {
     trainClassModel.update({
@@ -132,6 +152,18 @@ TrainClass.unPublish = function(id, callback) {
     }, {
         isWeixin: 9
     }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+TrainClass.unPublishAll = function(ids, callback) {
+    trainClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isWeixin: 9
+    }, { multi: true }).exec(function(err, trainClass) {
         if (err) {
             return callback(err);
         }
@@ -149,11 +181,39 @@ TrainClass.enroll = function(id) {
         });
 };
 
+TrainClass.full = function(id) {
+    return trainClassModel.update({
+        _id: id
+    }, { isFull: true }).exec();
+};
+
 TrainClass.cancel = function(id) {
     return trainClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
         .then(function(exam) {
             return trainClassModel.update({
                 _id: id
-            }, { $inc: { enrollCount: -1 } }).exec();
+            }, {
+                $inc: { enrollCount: -1 },
+                isFull: false
+            }).exec();
         });
+};
+
+//一次获取20个学区信息
+TrainClass.getAllToEnroll = function(id, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = trainClassModel.count(filter);
+    query.exec(function(err, count) {
+        query.find()
+            .sort({ isFull: 1, _id: 1 })
+            .skip((page - 1) * 14)
+            .limit(14)
+            .exec(function(err, trainClasss) {
+                callback(null, trainClasss, count);
+            });
+    });
 };

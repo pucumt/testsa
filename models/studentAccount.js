@@ -81,3 +81,9 @@ StudentAccount.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return studentAccountModel.findOne(filter);
 };
+
+StudentAccount.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return studentAccountModel.find(filter);
+};

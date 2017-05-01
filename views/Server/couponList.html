@@ -32,12 +32,13 @@
             <tr>
                 <th>优惠券</th>
                 <th style="width:120px;">类型</th>
-                <th style="width:160px;">开始日期</th>
-                <th style="width:160px;">过期日期</th>
+                <th style="width:120px;">开始日期</th>
+                <th style="width:120px;">过期日期</th>
                 <th style="width:160px;">年级</th>
-                <th style="width:160px;">科目</th>
-                <th style="width:160px;">金额</th>
-                <th style="width:200px;">操作</th>
+                <th style="width:100px;">科目</th>
+                <th style="width:80px;">金额</th>
+                <th style="width:80px;">最大金额</th>
+                <th style="width:215px;">操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -89,6 +90,10 @@
                     <div class="form-group">
                         <label for="reducePrice" class="control-label">金额:</label>
                         <input type="text" maxlength="10" class="form-control" name="reducePrice" id="reducePrice" value="0">
+                    </div>
+                    <div class="form-group reduceMax">
+                        <label for="reduceMax" class="control-label">最大金额:</label>
+                        <input type="text" maxlength="10" class="form-control" name="reduceMax" id="reduceMax" value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

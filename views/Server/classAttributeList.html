@@ -4,38 +4,45 @@
         {{ title }}
     </h1>
 </div>
-<div class="toolbar">
-    <div class="toolbar-list">
-        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>{% include "Server/partial/paging.html" %}
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Name" class="control-label">属性:</label>
+                        <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-<div class="content">
+<div class="toolbar">
+    <div class="toolbar-list">
+        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+    </div>
+</div>
+<div class="content mainModal">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:50%;">课程难度</th>
+                <th style="width:30%;">属性</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if categorys %} {% for category in categorys %}
-            <tr id={{category._id}}>
-                <td>
-                    {{ category.name }}
-                </td>
-                <td>
-                    <div data-obj={{ category|dump }} class="btn-group">
-                        <a class="btn btn-default btnEdit">编辑</a>
-                        <a class="btn btn-default btnDelete">删除</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %} {% endif %}
         </tbody>
     </table>
 </div>
-<input type="hidden" id="total" value="{{ total }}" />
-<input type="hidden" id="page" value="{{ page }}" /> {% include "Server/partial/paging.html" %} {% endblock %} {% block modal %}
+<div id="mainModal">
+    <input type="hidden" id="total" value="0" />
+    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
+</div>
+{% endblock %} {% block modal %}
 <!-- Modal -->
 <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
@@ -47,7 +54,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">课程难度:</label>
+                        <label for="name" class="control-label">属性:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
@@ -79,5 +86,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/category.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/classAttribute.js"></script>
 {% endblock %}

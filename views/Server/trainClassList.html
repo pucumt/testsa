@@ -24,6 +24,8 @@
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+        <button id="btnPublishAll" class="btn btn-default btn-sm">发布</button>
+        <button id="btnStopAll" class="btn btn-default btn-sm">停用</button>
     </div>
 </div>
 <div class="content mainModal">
@@ -41,39 +43,6 @@
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if trainClasss %} {% for trainClass in trainClasss %}
-            <tr id={{trainClass._id}}>
-                <td>
-                    {{ trainClass.name }}
-                </td>
-                <td>
-                    {% if trainClass.isWeixin==1 %} 发布 {% elif trainClass.isWeixin==9 %} 停用 {% else %} 新建 {% endif %}
-                </td>
-                <td>
-                    {{ trainClass.trainPrice }}
-                </td>
-                <td>
-                    {{ trainClass.materialPrice }}
-                </td>
-                <td>
-                    {{ trainClass.gradeName }}
-                </td>
-                <td>
-                    {{ trainClass.subjectName }}
-                </td>
-                <td>
-                    {{ trainClass.categoryName }}
-                </td>
-                <td>
-                    <div data-obj={{ trainClass|dump }} class="btn-group">
-                        <a class="btn btn-default btnEdit">编辑</a>
-                        <a class="btn btn-default btnDelete">删除</a> {% if trainClass.isWeixin!=1 %}
-                        <a class="btn btn-default btnPublish">发布</a> {% endif %} {% if trainClass.isWeixin==1 %}
-                        <a class="btn btn-default btnUnPublish">停用</a> {% endif %}
-                    </div>
-                </td>
-            </tr>
-            {% endfor %} {% endif %}
         </tbody>
     </table>
 </div>
@@ -120,7 +89,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="category" class="control-label">类别:</label>
+                                <label for="category" class="control-label">难度:</label>
                                 <select name="category" id="category" class="form-control"></select>
                             </div>
                         </div>
@@ -205,6 +174,14 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalClassCount" class="control-label">优惠属性:</label>
+                                <select name="classAttribute" id="classAttribute" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-24">
                             <div class="form-group">
                                 <label for="courseContent" class="control-label">课程描述:</label>
@@ -219,20 +196,37 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="examCategoryName" class="control-label">测试类别:</label>
-                                <select name="examCategoryName" id="examCategoryName" class="form-control"></select>
+                    <div class="examList">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="examCategoryName" class="control-label">测试类别:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="minScore" class="control-label">最低分:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-bottom: -15px;">
+                                    <button id="btnNewExam" class="btn btn-primary">新增测试</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="minScore" class="control-label">最低分:</label>
-                                <input type="text" maxlength="10" class="form-control" name="minScore" id="minScore" value="0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select name="examName" class="form-control"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" maxlength="10" class="form-control" name="minScore" value="0">
+                                </div>
                             </div>
                         </div>
-
+                        <div class="extraExams"></div>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

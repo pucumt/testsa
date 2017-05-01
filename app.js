@@ -56,11 +56,10 @@ app.use(session({
     }, //30 days
     resave: false,
     saveUninitialized: true //,
-        //store: new MongoStore({
-        //  db: settings.db,
-        //  host: settings.host,
-        //  port: settings.port
-        //})
+        // store: new MongoStore({
+        //     url: 'mongodb://' + settings.host + ':' + settings.port + '/' + settings.db,
+        //     auto_reconnect: true
+        // })
 }));
 //app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));

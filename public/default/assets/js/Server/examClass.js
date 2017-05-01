@@ -45,10 +45,9 @@ function searchExams(p) {
     $mainSelectBody.empty();
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
-
             data.examClasss.forEach(function(examClass) {
                 examClass.courseContent = htmlEncode(examClass.courseContent);
-                $mainSelectBody.append('<tr id=' + examClass._id + '><td>' + examClass.name + '</td><td>' +
+                $mainSelectBody.append('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
                     examClass.enrollCount + '</td><td><div data-obj=' +
@@ -84,63 +83,65 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试名称不能为空'
-                    },
-                    stringLength: {
-                        min: 3,
-                        max: 50,
-                        message: '测试名称在3-50个字符之间'
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试名称不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 50,
+                            message: '测试名称在3-50个字符之间'
+                        }
                     }
-                }
-            },
-            'examDate': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试日期不能为空'
-                    },
-                    date: {
-                        format: 'YYYY-MM-DD',
-                        message: '不是有效的日期格式'
+                },
+                'examDate': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试日期不能为空'
+                        },
+                        date: {
+                            format: 'YYYY-MM-DD',
+                            message: '不是有效的日期格式'
+                        }
                     }
-                }
-            },
-            'examTime': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试时间不能为空'
-                    },
-                    stringLength: {
-                        max: 100,
-                        message: '测试时间不能超过30个字符'
-                    },
-                }
-            },
-            'examCount': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '测试名额不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '测试名额不能超过10个字符'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
+                },
+                'examTime': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试时间不能为空'
+                        },
+                        stringLength: {
+                            max: 100,
+                            message: '测试时间不能超过30个字符'
+                        },
+                    }
+                },
+                'examCount': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '测试名额不能为空'
+                        },
+                        stringLength: {
+                            max: 10,
+                            message: '测试名额不能超过10个字符'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 function resetDropDown(objId) {
@@ -273,7 +274,8 @@ $("#btnSave").on("click", function(e) {
             var examDate = data.examDate && moment(data.examDate, "YYYY-M-D").format("YYYY-M-D");
             data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
+                $('#gridBody').append($("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name +
+                    "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
                     "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td>0</td><td><div data-obj='" + JSON.stringify(data) +
                     "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
             } else {
@@ -287,7 +289,7 @@ $("#btnSave").on("click", function(e) {
                         pubstr = "停用";
                         break;
                 }
-                name.text(data.name);
+                name.html("<span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name);
                 var $pub = name.next().text(pubstr),
                     $examDate = $pub.next().text(examDate),
                     $examTime = $examDate.next().text(data.examTime),
@@ -322,9 +324,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal .modal-body').text("确定要删除吗?");
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -340,9 +340,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnPublish", function(e) {
-    $('#confirmModal .modal-body').text("确定要发布吗?");
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -362,9 +360,7 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnUnPublish", function(e) {
-    $('#confirmModal .modal-body').text("确定要停用吗?");
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -381,4 +377,55 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
             }
         });
     });
+});
+
+function getAllCheckedExams() {
+    var examIds = [];
+    $(".mainModal #gridBody [name='examId']")
+        .each(function(index) {
+            if (this.checked) {
+                examIds.push($(this).val());
+            }
+        });
+    return examIds;
+};
+
+$(".toolbar #btnPublishAll").on("click", function(e) {
+    var examIds = getAllCheckedExams();
+    if (examIds.length > 0) {
+        showComfirm("确定要发布吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/examClass/publishAll", {
+                ids: JSON.stringify(examIds)
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("发布成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        searchExams(page);
+                    });
+                }
+            });
+        });
+    }
+});
+
+$(".toolbar #btnStopAll").on("click", function(e) {
+    var examIds = getAllCheckedExams();
+    if (examIds.length > 0) {
+        showComfirm("确定要停用吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/examClass/unPublishAll", {
+                ids: JSON.stringify(examIds)
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("停用成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        searchExams(page);
+                    });
+                }
+            });
+        });
+    }
 });

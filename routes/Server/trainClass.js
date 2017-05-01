@@ -4,6 +4,8 @@ var TrainClass = require('../../models/trainClass.js'),
     Subject = require('../../models/subject.js'),
     Category = require('../../models/category.js'),
     ExamCategory = require('../../models/examCategory.js'),
+    ExamClass = require('../../models/examClass.js'),
+    ClassAttribute = require('../../models/classAttribute.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -47,6 +49,8 @@ module.exports = function(app) {
             materialPrice: req.body.materialPrice,
             teacherId: req.body.teacherId,
             teacherName: req.body.teacherName,
+            attributeId: req.body.attributeId,
+            attributeName: req.body.attributeName,
             courseStartDate: req.body.courseStartDate,
             courseEndDate: req.body.courseEndDate,
             courseTime: req.body.courseTime,
@@ -57,9 +61,7 @@ module.exports = function(app) {
             schoolArea: req.body.schoolArea,
             isWeixin: 0,
             enrollCount: 0,
-            examCategoryId: req.body.examCategoryId,
-            examCategoryName: req.body.examCategoryName,
-            minScore: req.body.minScore
+            exams: JSON.parse(req.body.exams)
         });
 
         trainClass.save(function(err, trainClass) {
@@ -88,6 +90,8 @@ module.exports = function(app) {
             materialPrice: req.body.materialPrice,
             teacherId: req.body.teacherId,
             teacherName: req.body.teacherName,
+            attributeId: req.body.attributeId,
+            attributeName: req.body.attributeName,
             courseStartDate: req.body.courseStartDate,
             courseEndDate: req.body.courseEndDate,
             courseTime: req.body.courseTime,
@@ -96,9 +100,7 @@ module.exports = function(app) {
             classRoomName: req.body.classRoomName,
             schoolId: req.body.schoolId,
             schoolArea: req.body.schoolArea,
-            examCategoryId: req.body.examCategoryId,
-            examCategoryName: req.body.examCategoryName,
-            minScore: req.body.minScore
+            exams: JSON.parse(req.body.exams)
         });
 
         trainClass.update(req.body.id, function(err, trainClass) {
@@ -120,8 +122,8 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/admin/trainClass/yeargradesubjectcategoryexamCategory', checkLogin);
-    app.get('/admin/trainClass/yeargradesubjectcategoryexamCategory', function(req, res) {
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', checkLogin);
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', function(req, res) {
         var objReturn = {};
         var p0 = Year.getAllWithoutPage()
             .then(function(years) {
@@ -151,14 +153,21 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        var p4 = ExamCategory.getAllWithoutPage()
-            .then(function(categorys) {
-                objReturn.examCategorys = categorys;
+        var p4 = ExamClass.getAllWithoutPage()
+            .then(function(exams) {
+                objReturn.exams = exams;
             })
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p0, p1, p2, p3, p4]).then(function() {
+        var p5 = ClassAttribute.getAllWithoutPage()
+            .then(function(attributes) {
+                objReturn.attributes = attributes;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p0, p1, p2, p3, p4, p5]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {
@@ -166,8 +175,8 @@ module.exports = function(app) {
             });
     });
 
-    app.get('/admin/trainClass/gradesubject', checkLogin);
-    app.get('/admin/trainClass/gradesubject', function(req, res) {
+    app.get('/admin/trainClass/gradesubjectcategory', checkLogin);
+    app.get('/admin/trainClass/gradesubjectcategory', function(req, res) {
         var objReturn = {};
         var p1 = Grade.getAllWithoutPage()
             .then(function(grades) {
@@ -183,7 +192,46 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p1, p2]).then(function() {
+        var p3 = Category.getAllWithoutPage()
+            .then(function(categorys) {
+                objReturn.categorys = categorys;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p1, p2, p3]).then(function() {
+                res.jsonp(objReturn);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
+    app.get('/admin/trainClass/gradesubjectattribute', checkLogin);
+    app.get('/admin/trainClass/gradesubjectattribute', function(req, res) {
+        var objReturn = {};
+        var p1 = Grade.getAllWithoutPage()
+            .then(function(grades) {
+                objReturn.grades = grades;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p2 = Subject.getAllWithoutPage()
+            .then(function(subjects) {
+                objReturn.subjects = subjects;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p5 = ClassAttribute.getAllWithoutPage()
+            .then(function(attributes) {
+                objReturn.attributes = attributes;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p1, p2, p5]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {
@@ -194,6 +242,17 @@ module.exports = function(app) {
     app.post('/admin/trainClass/publish', checkLogin);
     app.post('/admin/trainClass/publish', function(req, res) {
         TrainClass.publish(req.body.id, function(err, trainClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/trainClass/publishAll', checkLogin);
+    app.post('/admin/trainClass/publishAll', function(req, res) {
+        TrainClass.publishAll(JSON.parse(req.body.ids), function(err, trainClass) {
             if (err) {
                 res.jsonp({ error: err });
                 return;
@@ -213,6 +272,17 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/admin/trainClass/unPublishAll', checkLogin);
+    app.post('/admin/trainClass/unPublishAll', function(req, res) {
+        TrainClass.unPublishAll(JSON.parse(req.body.ids), function(err, trainClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
     app.post('/admin/trainClass/search', checkLogin);
     app.post('/admin/trainClass/search', function(req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
@@ -224,6 +294,15 @@ module.exports = function(app) {
             filter.name = {
                 $regex: reg
             };
+        }
+        if (req.body.grade) {
+            filter.gradeId = req.body.grade;
+        }
+        if (req.body.subject) {
+            filter.subjectId = req.body.subject;
+        }
+        if (req.body.category) {
+            filter.categoryId = req.body.category;
         }
 
         TrainClass.getAll(null, page, filter, function(err, trainClasss, total) {

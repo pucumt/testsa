@@ -8,20 +8,22 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     mobile: String,
     trainId: String,
     trainName: String,
-    trainPrice: Number,
-    materialPrice: Number,
-    discount: Number,
-    totalPrice: Number, //实际培训费
-    realMaterialPrice: Number, //实际教材费
-    rebatePrice: Number, //退费
-    isSucceed: Number, //1 succeed, 9 canceled
-    isPayed: Boolean,
-    payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 online zhifubao 9 online weixin
-    isDeleted: Boolean,
+    trainPrice: { type: Number, default: 0 },
+    materialPrice: { type: Number, default: 0 },
+    discount: { type: Number, default: 100 },
+    totalPrice: { type: Number, default: 0 }, //实际培训费
+    realMaterialPrice: { type: Number, default: 0 }, //实际教材费
+    rebatePrice: { type: Number, default: 0 }, //退费
+    isSucceed: { type: Number, default: 1 }, //1 succeed, 9 canceled
+    isPayed: { type: Boolean, default: false },
+    payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin
+    isDeleted: { type: Boolean, default: false },
+    attributeId: String, //now used to check coupon, maybe change later
+    attributeName: String,
     orderDate: Date,
     cancelDate: Date,
     comment: String,
-    fromId: String
+    fromId: String //调班从哪里调过来
 }, {
     collection: 'adminEnrollTrains'
 });
@@ -164,4 +166,13 @@ AdminEnrollTrain.getFilters = function(filter) {
     }
     return adminEnrollTrainModel.find(filter)
         .exec();
+};
+
+AdminEnrollTrain.getCount = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return adminEnrollTrainModel.find(filter).count();
 };

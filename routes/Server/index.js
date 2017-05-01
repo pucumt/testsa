@@ -13,6 +13,7 @@
     trainClass = require('./trainClass.js'),
     category = require('./category.js'),
     subject = require('./subject.js'),
+    classAttribute = require('./classAttribute.js'),
     examClass = require('./examClass.js'),
     examCategory = require('./examCategory.js'),
     examClassExamArea = require('./examClassExamArea.js'),
@@ -52,6 +53,7 @@ module.exports = function(app) {
     year(app);
     category(app);
     subject(app);
+    classAttribute(app);
 
     //class
     trainClass(app);

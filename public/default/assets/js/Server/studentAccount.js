@@ -57,26 +57,28 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '账号不能为空'
-                    },
-                    stringLength: {
-                        min: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '账号不能为空'
+                        },
+                        stringLength: {
+                            min: 11,
+                            message: '手机号必须是11位'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#btnSave").on("click", function(e) {

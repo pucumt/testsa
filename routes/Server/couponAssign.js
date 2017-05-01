@@ -17,6 +17,15 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/couponAssignList/:id', checkLogin);
+    app.get('/admin/couponAssignList/:id', function(req, res) {
+        res.render('Server/couponAssignList.html', {
+            title: '>优惠券已分配',
+            user: req.session.admin,
+            couponId: req.params.id
+        });
+    });
+
     function newCouponAssign(coupon, student) {
         var couponAssign = new CouponAssign({
             couponId: coupon.couponId,
@@ -28,7 +37,8 @@ module.exports = function(app) {
             reducePrice: coupon.reducePrice,
             couponStartDate: coupon.couponStartDate,
             couponEndDate: coupon.couponEndDate,
-            studentId: student.studentId
+            studentId: student.studentId,
+            studentName: student.studentName
         });
         return couponAssign;
     };
@@ -63,11 +73,7 @@ module.exports = function(app) {
                         if (student.checked) {
                             //add
                             var couponAssign = newCouponAssign(coupon, student);
-                            couponAssign.save(function(err, couponAssign) {
-                                if (err) {
-                                    couponAssign = {};
-                                }
-                            });
+                            couponAssign.save();
                         }
                     }
                 });
@@ -109,6 +115,9 @@ module.exports = function(app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
+        if (req.body.couponId) {
+            filter.couponId = req.body.couponId;
+        }
         if (req.body.studentId) {
             filter.studentId = req.body.studentId;
         }
@@ -155,10 +164,10 @@ module.exports = function(app) {
             filter.studentId = req.body.studentId;
         }
         if (req.body.gradeId) {
-            filter.gradeId = req.body.gradeId;
+            filter.gradeId = { $in: [req.body.gradeId, ""] };
         }
         if (req.body.subjectId) {
-            filter.subjectId = req.body.subjectId;
+            filter.subjectId = { $in: [req.body.subjectId, ""] };
         }
         filter.isUsed = false;
         var now = new Date((new Date()).toLocaleDateString());
@@ -178,4 +187,5 @@ module.exports = function(app) {
             });
         });
     });
+
 }

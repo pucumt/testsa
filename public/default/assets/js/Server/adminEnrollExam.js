@@ -183,6 +183,8 @@ function openStudent(p) {
     $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
+                student.School = "";
+                student.className = "";
                 var sex = student.sex ? "女" : "男";
                 $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');

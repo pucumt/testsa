@@ -24,7 +24,9 @@ $(document).ready(function() {
         }, function(data) {
             if (data.error) {
                 showAlert("生成付款码失败");
-            } else {}
+            } else {
+                showAlert(data.token);
+            }
         });
     });
 });

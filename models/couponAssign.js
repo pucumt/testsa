@@ -6,6 +6,7 @@ var couponAssignSchema = new mongoose.Schema({
     couponId: String,
     couponName: String,
     studentId: String,
+    studentName: String,
     gradeId: String,
     gradeName: String,
     subjectId: String,
@@ -13,9 +14,9 @@ var couponAssignSchema = new mongoose.Schema({
     reducePrice: Number,
     couponStartDate: Date,
     couponEndDate: Date,
-    isDeleted: Boolean,
-    isUsed: Boolean,
-    isExpired: Boolean,
+    isDeleted: { type: Boolean, default: false },
+    isUsed: { type: Boolean, default: false },
+    isExpired: { type: Boolean, default: false }, //useless now
     orderId: String //just used in train class now
 }, {
     collection: 'couponAssigns'
@@ -30,19 +31,9 @@ function CouponAssign(option) {
 module.exports = CouponAssign;
 
 //存储学区信息
-CouponAssign.prototype.save = function(callback) {
-    this.option.isUsed = false;
-    this.option.isDeleted = false;
+CouponAssign.prototype.save = function() {
     var newcouponAssign = new couponAssignModel(this.option);
-
-    newcouponAssign.save(function(err, couponAssign) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, couponAssign);
-
-        //db.close();
-    });
+    return newcouponAssign.save();
 };
 
 CouponAssign.prototype.update = function(id, callback) {
@@ -55,6 +46,10 @@ CouponAssign.prototype.update = function(id, callback) {
         this.option._id = id;
         callback(null, this.option);
     }.bind(this));
+};
+
+CouponAssign.updateOrder = function(filter, option) {
+    return couponAssignModel.update(filter, option).exec();
 };
 
 //读取学区信息
@@ -99,6 +94,12 @@ CouponAssign.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     //打开数据库
     return couponAssignModel.findOne(filter);
+};
+
+CouponAssign.getFilters = function(filter) {
+    filter.isDeleted = { $ne: true };
+    //打开数据库
+    return couponAssignModel.find(filter);
 };
 
 CouponAssign.getAllWithoutPage = function(filter) {

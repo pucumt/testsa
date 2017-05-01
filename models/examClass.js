@@ -122,6 +122,18 @@ ExamClass.publish = function(id, callback) {
     });
 };
 
+ExamClass.publishAll = function(ids, callback) {
+    examClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isWeixin: 1
+    }, { multi: true }).exec(function(err, examClasss) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, examClasss);
+    });
+};
 //停用
 ExamClass.unPublish = function(id, callback) {
     examClassModel.update({
@@ -129,6 +141,19 @@ ExamClass.unPublish = function(id, callback) {
     }, {
         isWeixin: 9
     }).exec(function(err, examClasss) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, examClasss);
+    });
+};
+
+ExamClass.unPublishAll = function(ids, callback) {
+    examClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isWeixin: 9
+    }, { multi: true }).exec(function(err, examClasss) {
         if (err) {
             return callback(err);
         }
@@ -168,4 +193,13 @@ ExamClass.cancel2 = function(id) {
     return examClassModel.update({
         _id: id
     }, { $inc: { enrollCount: -1 } }).exec();
+};
+
+ExamClass.getAllWithoutPage = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return examClassModel.find(filter).exec();
 };

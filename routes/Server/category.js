@@ -13,7 +13,7 @@ module.exports = function(app) {
                 categorys = [];
             }
             res.render('Server/categoryList.html', {
-                title: '>课程类别',
+                title: '>课程难度',
                 user: req.session.admin,
                 categorys: categorys,
                 total: total,

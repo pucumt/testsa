@@ -17,7 +17,8 @@ var getButtons = function() {
 
 function search(p) {
     var filter = {
-            name: $(".mainModal #InfoSearch #Name").val()
+            name: $.trim($(".mainModal #InfoSearch #Name").val()),
+            mobile: $.trim($(".mainModal #InfoSearch #mobile").val())
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
@@ -67,7 +68,6 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
         $.post("/admin/studentInfo/delete", {
             id: entity._id
         }, function(data) {
-            $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
                 showAlert("删除成功", null, true);

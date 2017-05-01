@@ -15,6 +15,7 @@ function destroy(){
 };
 
 function addValidation(callback){
+    setTimeout(function() {
     $('#myModal').formValidation({
         // List of fields and their validation rules
         fields: {
@@ -42,6 +43,7 @@ function addValidation(callback){
             }
         }
     });
+    }, 0);
 };
 
 $("#btnAdd").on("click", function(e) {
@@ -100,8 +102,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {

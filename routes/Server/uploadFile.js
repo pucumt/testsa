@@ -159,9 +159,13 @@ module.exports = function(app) {
                     var PArray = [];
                     orders.forEach(function(order) {
                         var Px = StudentInfo.get(order.studentId).then(function(student) {
-                            return StudentAccount.get(student.accountId).then(function(account) {
-                                data.push([student.name, account.name]);
-                            });
+                            if (student && student.accountId) {
+                                return StudentAccount.get(student.accountId).then(function(account) {
+                                    data.push([student.name, account.name]);
+                                });
+                            } else {
+                                data.push([order.studentId, order._id]);
+                            }
                         });
                         PArray.push(Px);
                     });

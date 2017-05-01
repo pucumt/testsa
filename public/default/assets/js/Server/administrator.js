@@ -14,50 +14,52 @@ function destroy() {
 }
 
 function addValidation(callback) {
-    var userValidator = {
-        notEmpty: {
-            message: '用户名不能为空'
-        },
-        stringLength: {
-            min: 5,
-            max: 15,
-            message: '用户名在5-15个字符之间'
-        },
-        regexp: {
-            regexp: /^[a-zA-Z0-9_]+$/,
-            message: '用户名只能是字母数字和下划线'
+    setTimeout(function() {
+        var userValidator = {
+            notEmpty: {
+                message: '用户名不能为空'
+            },
+            stringLength: {
+                min: 5,
+                max: 15,
+                message: '用户名在5-15个字符之间'
+            },
+            regexp: {
+                regexp: /^[a-zA-Z0-9_]+$/,
+                message: '用户名只能是字母数字和下划线'
+            }
+        };
+        if (callback) {
+            callback(userValidator);
         }
-    };
-    if (callback) {
-        callback(userValidator);
-    }
-    $('#myModal').formValidation({
-            // List of fields and their validation rules
-            fields: {
-                'user-name': {
-                    trigger: "blur change",
-                    validators: userValidator
-                },
-                'user-pwd': {
-                    trigger: "blur change",
-                    validators: {
-                        notEmpty: {
-                            message: '密码不能为空'
-                        },
-                        stringLength: {
-                            min: 6,
-                            max: 15,
-                            message: '密码在6-15个字符之间'
-                        },
+        $('#myModal').formValidation({
+                // List of fields and their validation rules
+                fields: {
+                    'user-name': {
+                        trigger: "blur change",
+                        validators: userValidator
+                    },
+                    'user-pwd': {
+                        trigger: "blur change",
+                        validators: {
+                            notEmpty: {
+                                message: '密码不能为空'
+                            },
+                            stringLength: {
+                                min: 6,
+                                max: 15,
+                                message: '密码在6-15个字符之间'
+                            },
+                        }
                     }
                 }
-            }
-        })
-        .on('success.form.fv', function(e) {
-            // Prevent form submission
-            e.preventDefault();
-            addUser();
-        });
+            })
+            .on('success.form.fv', function(e) {
+                // Prevent form submission
+                e.preventDefault();
+                addUser();
+            });
+    }, 0);
 }
 
 function addUser() {
@@ -119,8 +121,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
-
+    showComfirm("确定要删除吗？");
     var obj = e.currentTarget;
     $("#btnConfirmSave").off("click").on("click", function(e) {
         $.post("/admin/user/delete", {

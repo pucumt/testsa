@@ -16,20 +16,9 @@ $("#btnPay").on("click", function(e) {
         case "0":
         case "1":
         case "2":
-            showComfirm("确定已收订单" + entity._id + "的款项吗？");
-            break;
+        case "8":
         case "9":
-            $.post("/admin/adminEnrollTrain/payCode", {
-                id: entity._id
-            }, function(data) {
-                if (data.error) {
-                    showAlert("生成付款码失败");
-                } else {
-                    $('#myModalLabel').text("微信扫码支付");
-                    $('#myModal .modal-body img').attr('src', data.imgCode);
-                    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-                }
-            });
+            showComfirm("确定已收订单" + entity._id + "的款项吗？");
             break;
     }
 });
@@ -42,6 +31,9 @@ $("#btnConfirmSave").on("click", function(e) {
     }, function(data) {
         if (data.sucess) {
             showAlert("支付成功");
+            $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                location.href = "/admin/trainOrderList";
+            });
         } else {
             showAlert(data.error);
         }

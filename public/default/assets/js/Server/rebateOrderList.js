@@ -64,26 +64,28 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'price': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '退款金额不能为空'
-                    },
-                    stringLength: {
-                        max: 10,
-                        message: '退款金额不能超过10个字符'
-                    },
-                    numeric: {
-                        message: '填写的不是数字',
+    setTimeout(function() {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'price': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '退款金额不能为空'
+                        },
+                        stringLength: {
+                            max: 10,
+                            message: '退款金额不能超过10个字符'
+                        },
+                        numeric: {
+                            message: '填写的不是数字',
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }, 0);
 };
 
 $("#gridBody").on("click", "td .btnRebate", function(e) {
@@ -94,8 +96,22 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
     $('#myModalLabel').text("退费");
     $('#myModal #totalPrice').val(entity.totalPrice);
     $('#myModal #rebatePrice').val(entity.rebatePrice);
+    $('#myModal #price').val("");
+    $('#myModal #comment').val("");
     $('#myModal #Id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    if (entity.attributeId) {
+        $.post("/admin/adminEnrollTrain/isAttributCouponUsed", {
+            studentId: entity.studentId,
+            attributeId: entity.attributeId
+        }, function(data) {
+            if (data) {
+                $('#myModal #comment').val("订单使用优惠券：" + data);
+            }
+            $('#myModal').modal({ backdrop: 'static', keyboard: false });
+        });
+    } else {
+        $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    }
 });
 
 $("#btnSave").on("click", function(e) {

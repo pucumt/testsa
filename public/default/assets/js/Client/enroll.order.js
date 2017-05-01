@@ -2,8 +2,13 @@ $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
         location.href = "/enroll/class/" + $("#classId").val();
     });
-
-    renderData();
+    if ($("#disability").val()) {
+        showAlert("本课程有成绩要求，根据您的考试成绩，建议报名其他班级", "", function(e) {
+            location.href = "/enroll/class/" + $("#classId").val();
+        });
+    } else {
+        renderData();
+    }
     $(".enroll .exam-detail #coupon").on("change blur", setPrice);
 });
 
@@ -60,6 +65,7 @@ function setPrice() {
 };
 
 $("#btnPay").on("click", function(e) {
+    $("#btnPay").attr("disabled", "disabled");
     var filter = {
         classId: $("#classId").val(),
         studentId: $("#studentId").val(),
@@ -73,7 +79,7 @@ $("#btnPay").on("click", function(e) {
                 location.href = "/login";
                 return;
             }
-
+            $("#btnPay").removeAttr("disabled");
             if (data.error) {
                 $("#bgBack").show();
                 showAlert(data.error, null, function() {
@@ -89,7 +95,9 @@ $("#btnPay").on("click", function(e) {
                 }, function(data) {
                     if (data.error) {
                         showAlert("生成付款码失败");
-                    } else {}
+                    } else {
+                        showAlert(data.token);
+                    }
                 });
             }
         }

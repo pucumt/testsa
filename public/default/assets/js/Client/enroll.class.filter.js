@@ -14,14 +14,25 @@ $(document).ready(function() {
             $('.enroll-filter').show();
             $('.container.enroll').hide();
         });
+
+    $(".enroll-filter .glyphicon-remove-circle")
+        .on("click", function(e) {
+            $(".enroll-filter").hide();
+            $('.container.enroll').show();
+        });
 });
 
 function renderfilter() {
     $('.enroll-filter').find("#drpGrade option").remove();
     $('.enroll-filter').find("#drpSubject option").remove();
-    $.get("/enroll/gradesubject", function(data) {
+    $.get("/enroll/schoolgradesubjectcategory", function(data) {
         if (data) {
             if (data) {
+                if (data.schools.length > 0) {
+                    data.schools.forEach(function(school) {
+                        $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
+                    });
+                }
                 if (data.grades.length > 0) {
                     data.grades.forEach(function(grade) {
                         $(".enroll-filter #drpGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
@@ -31,6 +42,25 @@ function renderfilter() {
                     data.subjects.forEach(function(subject) {
                         $(".enroll-filter #drpSubject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
                     });
+                }
+                if (data.categorys.length > 0) {
+                    data.categorys.forEach(function(category) {
+                        $(".enroll-filter #drpCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
+                    });
+                }
+
+                if ($("#schoolId").val() != "") {
+                    $(".enroll-filter #drpSchool").val($("#schoolId").val());
+                    $(".enroll-filter #drpGrade").val($("#gradeId").val());
+                    $(".enroll-filter #drpSubject").val($("#subjectId").val());
+                    $(".enroll-filter #drpCategory").val($("#categoryId").val());
+
+                    loadData();
+                    $(".enroll-filter").hide();
+                    $('.container.enroll').show();
+                } else {
+                    $(".enroll-filter").show();
+                    $('.container.enroll').hide();
                 }
             }
         }
@@ -42,13 +72,16 @@ var $selectBody = $('.container.enroll .exam-list');
 function loadData(p) {
     var pStr = p ? "p=" + p : "",
         filter = {
+            schoolId: $('.enroll-filter #drpSchool').val(),
             gradeId: $('.enroll-filter #drpGrade').val(),
-            subjectId: $('.enroll-filter #drpSubject').val()
+            subjectId: $('.enroll-filter #drpSubject').val(),
+            categoryId: $('.enroll-filter #drpCategory').val()
         };
     $.post("/enroll/class?" + pStr, filter, function(data) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
             data.classs.forEach(function(trainclass) {
+                trainclass.courseContent = htmlEncode(trainclass.courseContent);
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);
@@ -78,7 +111,7 @@ function generateLi(trainclass) {
     $infoContainer.append($('<div>开课日期：' + moment(trainclass.courseStartDate).format("YYYY-M-D") + '&nbsp;到&nbsp;' + moment(trainclass.courseEndDate).format("YYYY-M-D") + '</div>'));
     $infoContainer.append($('<div>上课时间：' + trainclass.courseTime + '</div>'));
     var isFull = trainclass.enrollCount == trainclass.totalStudentCount ? "<span class='full'>(已满)</span>" : "";
-    $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + trainclass.enrollCount + '&nbsp;&nbsp;共' + trainclass.totalStudentCount + isFull + '</p><button type="button" class="btn btn-danger btn-xs">报名</button></div>'));
+    $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + trainclass.enrollCount + '&nbsp;&nbsp;共' + trainclass.totalStudentCount + isFull + '</p><button type="button" class="btn btn-primary btn-xs">报名</button></div>'));
     //$infoContainer.append($('<div>' + trainclass.address + '</div>'));
     return $li;
 };

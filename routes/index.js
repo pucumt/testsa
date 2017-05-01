@@ -11,7 +11,7 @@ module.exports = function(app) {
     client(app);
     server(app);
     //test(app);
-    //generator(app);
+    generator(app);
     // dbPressure(app);
     // openIdGeter(app);
     updateStudentAccount(app);

@@ -15,8 +15,7 @@ module.exports = function(app) {
     app.post('/personalCenter/order/all', function(req, res) {
         var currentUser = req.session.user;
         StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
-            var orders = [],
-                parray = [];
+            var parray = [];
             students.forEach(function(student) {
                 var filter = {
                     studentId: student._id,
@@ -24,6 +23,7 @@ module.exports = function(app) {
                 };
                 var p = AdminEnrollTrain.getFilters(filter)
                     .then(function(trains) {
+                        var orders = [];
                         trains.forEach(function(train) {
                             orders.push({
                                 studentName: student.name,
@@ -35,10 +35,17 @@ module.exports = function(app) {
                                 orderDate: train.orderDate
                             });
                         });
+                        return orders;
                     });
                 parray.push(p);
             });
-            Promise.all(parray).then(function() {
+            Promise.all(parray).then(function(results) {
+                var orders = [];
+                results.forEach(function(trains) {
+                    if (trains) {
+                        orders = orders.concat(trains);
+                    }
+                });
                 res.jsonp(orders);
                 return;
             });
@@ -143,9 +150,9 @@ module.exports = function(app) {
                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100
                     };
                     payHelper.jsPay(payParas, res);
-                    return;
+                    //return;
                 }
-                res.jsonp({ error: "生成付款码失败" });
+                //res.jsonp({ error: "生成付款码失败" });
             });
     });
 

@@ -22,7 +22,8 @@ module.exports = function(app) {
             gradeName: req.body.gradeName,
             subjectId: req.body.subjectId,
             subjectName: req.body.subjectName,
-            reducePrice: req.body.reducePrice
+            reducePrice: req.body.reducePrice,
+            reduceMax: req.body.reduceMax
         });
 
         coupon.save(function(err, coupon) {
@@ -44,7 +45,8 @@ module.exports = function(app) {
             gradeName: req.body.gradeName,
             subjectId: req.body.subjectId,
             subjectName: req.body.subjectName,
-            reducePrice: req.body.reducePrice
+            reducePrice: req.body.reducePrice,
+            reduceMax: req.body.reduceMax
         });
 
         coupon.update(req.body.id, function(err, coupon) {
@@ -91,6 +93,28 @@ module.exports = function(app) {
                 isFirstPage: (page - 1) == 0,
                 isLastPage: ((page - 1) * 14 + coupons.length) == total
             });
+        });
+    });
+
+    app.post('/admin/coupon/publish', checkLogin);
+    app.post('/admin/coupon/publish', function(req, res) {
+        Coupon.publish(req.body.id, function(err, coupon) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/coupon/unpublish', checkLogin);
+    app.post('/admin/coupon/unpublish', function(req, res) {
+        Coupon.unpublish(req.body.id, function(err, coupon) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
         });
     });
 

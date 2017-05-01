@@ -121,6 +121,8 @@
                             <label for="materialPrice" class="control-label">教材费:</label>
                             <input type="text" maxlength="10" class="form-control" readonly name="materialPrice" id="materialPrice">
                         </div>
+                        <input type="hidden" class="form-control" name="attributeId" id="attributeId">
+                        <input type="hidden" class="form-control" name="attributeName" id="attributeName">
                     </div>
                 </div>
                 <div class="row">
@@ -160,7 +162,8 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <button type="button" id="btnEnroll" class="btn btn-primary panelButton">报名</button>
+                        <button type="button" id="btnEnrollCheck" class="btn btn-primary panelButton">报名</button>
+                        <button type="button" id="btnEnroll" style="display: block;" class="btn btn-primary panelButton">报名(不需要依赖分数)</button>
                     </div>
                 </div>
                 <table class="table table-striped">

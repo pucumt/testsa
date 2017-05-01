@@ -12,6 +12,8 @@ var couponSchema = new mongoose.Schema({
     subjectId: String,
     subjectName: String,
     reducePrice: Number,
+    reduceMax: { type: Number, default: 0 },
+    isPublished: { type: Boolean, default: false },
     isDeleted: Boolean
 }, {
     collection: 'coupons'
@@ -81,6 +83,44 @@ Coupon.delete = function(id, callback) {
         _id: id
     }, {
         isDeleted: true
+    }).exec(function(err, coupon) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, coupon);
+    });
+};
+
+Coupon.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return couponModel.findOne(filter);
+};
+
+Coupon.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return couponModel.find(filter);
+};
+
+Coupon.publish = function(id, callback) {
+    couponModel.update({
+        _id: id
+    }, {
+        isPublished: true
+    }).exec(function(err, coupon) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, coupon);
+    });
+};
+
+Coupon.unpublish = function(id, callback) {
+    couponModel.update({
+        _id: id
+    }, {
+        isPublished: false
     }).exec(function(err, coupon) {
         if (err) {
             return callback(err);

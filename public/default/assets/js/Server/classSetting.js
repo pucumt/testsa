@@ -11,6 +11,10 @@ $(document).ready(function() {
         location.href = "/admin/subjectList";
     });
 
+    $("#left_btnAttribute").on("click", function(e) {
+        location.href = "/admin/classAttributeList";
+    });
+
     $("#left_btnExamClass").on("click", function(e) {
         location.href = "/admin/examClassList";
     });
