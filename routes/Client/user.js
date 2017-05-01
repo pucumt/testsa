@@ -82,8 +82,8 @@ module.exports = function(app) {
                 var now = new Date((new Date()).toLocaleDateString());
                 var filter = {
                     studentId: req.body.studentId,
-                    gradeId: trainClass.gradeId,
-                    subjectId: trainClass.subjectId,
+                    gradeId: { $in: [trainClass.gradeId, ""] },
+                    subjectId: { $in: [trainClass.subjectId, ""] },
                     isUsed: { $ne: true },
                     couponStartDate: { $lte: now },
                     couponEndDate: { $gte: now }
@@ -180,35 +180,12 @@ module.exports = function(app) {
         res.redirect('/login');
     });
 
-    app.post('/personalCenter/coupon/all', checkJSONLogin);
-    app.post('/personalCenter/coupon/all', function(req, res) {
+    app.get('/personalCenter/randomCoupon', checkLogin);
+    app.get('/personalCenter/randomCoupon', function(req, res) {
         var currentUser = req.session.user;
-        StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
-            var now = new Date((new Date()).toLocaleDateString());
-            if (students.length <= 0) {
-                res.jsonp([]);
-                return;
-            }
-            var coupons = [],
-                parray = [];
-            students.forEach(function(student) {
-                var filter = {
-                    studentId: student._id,
-                    isUsed: { $ne: true },
-                    couponEndDate: { $gte: now }
-                };
-                var p = CouponAssign.getAllWithoutPage(filter)
-                    .then(function(assigns) {
-                        assigns.forEach(function(assign) {
-                            coupons.push({ studentName: student.name, couponName: assign.couponName });
-                        });
-                    });
-                parray.push(p);
-            });
-            Promise.all(parray).then(function() {
-                res.jsonp(coupons);
-                return;
-            });
+        res.render('Client/personalCenter_randomCoupon.html', {
+            title: '可抽取优惠券',
+            user: req.session.user
         });
     });
 

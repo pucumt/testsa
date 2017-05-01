@@ -32,7 +32,7 @@ var $ul = $("#Enroll-student .couponlist .student-list");
 function renderCoupons(coupons) {
     if (coupons.length > 0) {
         var d = $(document.createDocumentFragment());
-        d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
+        //d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
         coupons.forEach(function(coupon) {
             d.append('<li><span class="studentName">' + coupon.studentName +
                 '</span><span class="">' + coupon.couponName + '</span></li>');

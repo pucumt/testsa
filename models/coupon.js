@@ -97,6 +97,12 @@ Coupon.getFilter = function(filter) {
     return couponModel.findOne(filter);
 };
 
+Coupon.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return couponModel.find(filter);
+};
+
 Coupon.publish = function(id, callback) {
     couponModel.update({
         _id: id

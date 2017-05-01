@@ -289,7 +289,8 @@ footer,
 .enroll.personalCenter .students,
 .enroll.personalCenter .coupon,
 .enroll.personalCenter .order,
-.enroll.personalCenter .exam {
+.enroll.personalCenter .exam,
+.enroll.personalCenter .randomCoupon {
     margin: 10px -15px;
     padding: 8px 15px;
     border-top: 1px solid #ccc;
@@ -308,7 +309,8 @@ footer,
     border-radius: 0;
 }
 
-.enroll.personalCenter .exam {
+.enroll.personalCenter .exam,
+.enroll.personalCenter .randomCoupon {
     margin-bottom: 0;
 }
 
@@ -333,7 +335,25 @@ footer,
 
 .enroll.personalCenter .couponlist .student-list span.studentName {
     display: inline-block;
-    width: 180px;
+    width: 80px;
+}
+
+.enroll.personalCenter .randomCouponList .student-list li {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
+    margin-top: 10px;
+}
+
+.enroll.personalCenter .randomCouponList .student-list li .take {
+    width: 80px;
+    background-color: #fa9899;
+    color: white;
+    margin-top: -10px;
+    margin-bottom: -10px;
+    line-height: 40px;
+    border: 0;
 }
 
 

@@ -411,10 +411,7 @@ module.exports = function(app) {
                                                                             isUsed: true,
                                                                             orderId: enrollExam._id
                                                                         });
-                                                                        couponAssign.save(function(err, couponAssign) {
-                                                                            if (err) {
-                                                                                couponAssign = {};
-                                                                            }
+                                                                        couponAssign.save().then(function(couponAssign) {
                                                                             res.jsonp({ orderId: enrollExam._id });
                                                                             return;
                                                                         });

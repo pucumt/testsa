@@ -73,11 +73,7 @@ module.exports = function(app) {
                         if (student.checked) {
                             //add
                             var couponAssign = newCouponAssign(coupon, student);
-                            couponAssign.save(function(err, couponAssign) {
-                                if (err) {
-                                    couponAssign = {};
-                                }
-                            });
+                            couponAssign.save();
                         }
                     }
                 });
@@ -168,10 +164,10 @@ module.exports = function(app) {
             filter.studentId = req.body.studentId;
         }
         if (req.body.gradeId) {
-            filter.gradeId = req.body.gradeId;
+            filter.gradeId = { $in: [req.body.gradeId, ""] };
         }
         if (req.body.subjectId) {
-            filter.subjectId = req.body.subjectId;
+            filter.subjectId = { $in: [req.body.subjectId, ""] };
         }
         filter.isUsed = false;
         var now = new Date((new Date()).toLocaleDateString());

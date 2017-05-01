@@ -4,6 +4,7 @@ var home = require('./home.js'),
     user = require('./user.js'),
     order = require('./order.js'),
     person = require('./person.js'),
+    coupon = require('./coupon.js'),
     reg = require('./reg.js');
 
 module.exports = function(app) {
@@ -14,4 +15,5 @@ module.exports = function(app) {
     user(app);
     person(app);
     order(app);
+    coupon(app);
 };

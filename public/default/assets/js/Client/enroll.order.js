@@ -65,6 +65,7 @@ function setPrice() {
 };
 
 $("#btnPay").on("click", function(e) {
+    $("#btnPay").attr("disabled", "disabled");
     var filter = {
         classId: $("#classId").val(),
         studentId: $("#studentId").val(),
@@ -78,7 +79,7 @@ $("#btnPay").on("click", function(e) {
                 location.href = "/login";
                 return;
             }
-
+            $("#btnPay").removeAttr("disabled");
             if (data.error) {
                 $("#bgBack").show();
                 showAlert(data.error, null, function() {

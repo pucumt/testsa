@@ -44,32 +44,6 @@ $(document).ready(function() {
         e.stopPropagation();
     });
 
-    $("#Enroll-student .student .student-list").on("click", "li .btn-delete", function(e) {
-        var obj = e.currentTarget;
-        var entity = $(obj).parent().data("obj");
-        $("#bgBack").show();
-        showComfirm("真的要删除" + decodeURI(entity.name) + "吗？", null, function() {
-            $("#bgBack").hide();
-        });
-
-        $("#btnConfirmSave").off("click").on("click", function(e) {
-            $(obj).attr("disabled", "disabled");
-            $.post("/studentInfo/delete", {
-                id: entity._id
-            }, function(data) {
-                $(obj).removeAttr("disabled");
-                if (data.sucess) {
-                    $(obj).parents("li").remove();
-                    showAlert("删除成功", null, function() {
-                        $("#bgBack").hide();
-                    });
-                }
-            });
-        });
-
-        e.stopPropagation();
-    });
-
 
     $("#Enroll-student-edit .glyphicon").on("click", function(e) {
         $("#Enroll-student-edit").hide();
@@ -150,7 +124,7 @@ function renderStudents(students) {
             student.School = encodeURI(student.School);
             student.className = encodeURI(student.className);
             d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + decodeURI(student.name) +
-                '</span><button type="button" class="btn btn-primary btn-delete btn-xs pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+                '</span><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
         });
         $ul.append(d);
     }

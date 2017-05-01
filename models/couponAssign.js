@@ -16,7 +16,7 @@ var couponAssignSchema = new mongoose.Schema({
     couponEndDate: Date,
     isDeleted: { type: Boolean, default: false },
     isUsed: { type: Boolean, default: false },
-    isExpired: { type: Boolean, default: false },
+    isExpired: { type: Boolean, default: false }, //useless now
     orderId: String //just used in train class now
 }, {
     collection: 'couponAssigns'
@@ -31,17 +31,9 @@ function CouponAssign(option) {
 module.exports = CouponAssign;
 
 //存储学区信息
-CouponAssign.prototype.save = function(callback) {
+CouponAssign.prototype.save = function() {
     var newcouponAssign = new couponAssignModel(this.option);
-
-    newcouponAssign.save(function(err, couponAssign) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, couponAssign);
-
-        //db.close();
-    });
+    return newcouponAssign.save();
 };
 
 CouponAssign.prototype.update = function(id, callback) {
