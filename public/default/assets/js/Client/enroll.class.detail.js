@@ -72,7 +72,7 @@ $(document).ready(function() {
                     name: $.trim($('#studentInfo #studentName').val()),
                     mobile: $.trim($('#studentInfo #mobile').val()),
                     sex: $('#studentInfo #sex').val() == "1" ? true : false,
-                    School: $('#studentInfo #School').val(),
+                    School: $.trim($('#studentInfo #School').val()),
                     className: $.trim($('#studentInfo #className').val()),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
