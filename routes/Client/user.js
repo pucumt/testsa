@@ -46,7 +46,7 @@ module.exports = function(app) {
                 } else {
                     var studentInfo = new StudentInfo({
                         name: req.body.name,
-                        mobile: req.session.user.name,
+                        mobile: req.body.mobile,
                         sex: req.body.sex,
                         School: req.body.School,
                         className: req.body.className,
