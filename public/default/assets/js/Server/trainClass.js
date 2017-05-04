@@ -17,8 +17,10 @@ $(document).ready(function() {
         changeMonth: true,
         dateFormat: "yy-mm-dd"
     });
-
     searchClass();
+    $("#btnUploadAll").on("click", function(e) {
+        location.href = "";
+    });
 });
 
 //------------search funfunction

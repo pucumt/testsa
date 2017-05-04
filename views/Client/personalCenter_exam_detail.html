@@ -6,7 +6,7 @@
     <div class="orderList">
         <ul class="student-list clearfix list-unstyled">
             {% if order %}
-            <li class="clearfix">
+            <li class="clearfix" style="padding-bottom: 10px;">
                 <div>
                     <div class="detail">
                         <div class="studentName">学员:{{ order.studentName }}</div>
@@ -32,6 +32,7 @@
                         </div>
                         {% endfor %} {% endif %}
                     </div>
+                    <button type="button" class="btn btn-primary btn-xs btnEnroll pull-right">课程报名</button>
                 </div>
             </li>
             {% endif %}

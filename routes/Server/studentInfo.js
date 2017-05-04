@@ -135,6 +135,7 @@ module.exports = function(app) {
         var filter = {};
         if (req.body.trainId) {
             filter.trainId = req.body.trainId;
+            filter.isSucceed = 1;
             if (req.body.name) {
                 var reg = new RegExp(req.body.name, 'i')
                 filter.studentName = {

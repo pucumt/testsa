@@ -276,7 +276,8 @@ module.exports = function(app) {
         //req.query.classId studentId
         TrainClass.get(req.query.classId).then(function(trainClass) {
             if (trainClass.exams && trainClass.exams.length > 0) {
-                var pArray = [];
+                var pArray = [],
+                    minScore;
                 trainClass.exams.forEach(function(exam) {
                     var p = AdminEnrollExam.getFilter({ examId: exam.examId, studentId: req.query.studentId, isSucceed: 1 })
                         .then(function(examOrder) {
@@ -284,6 +285,7 @@ module.exports = function(app) {
                                 var subjectScore = examOrder.scores.filter(function(score) {
                                     return score.subjectId == trainClass.subjectId;
                                 })[0];
+                                minScore = subjectScore.score;
                                 if (subjectScore.score >= exam.minScore) {
                                     return true;
                                 }
@@ -307,7 +309,7 @@ module.exports = function(app) {
                             trainClass: trainClass,
                             classId: req.query.classId,
                             studentId: req.query.studentId,
-                            disability: true
+                            disability: minScore
                         });
                     }
                 });

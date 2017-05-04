@@ -3,7 +3,7 @@ $(document).ready(function() {
         location.href = "/enroll/class/" + $("#classId").val();
     });
     if ($("#disability").val()) {
-        showAlert("本课程有成绩要求，根据您的考试成绩，建议报名其他班级", "", function(e) {
+        showAlert("本课程成绩要求" + $("#disability").val() + "分，根据您的考试成绩，建议报名其他课程或咨询前台！", "", function(e) {
             location.href = "/enroll/class/" + $("#classId").val();
         });
     } else {

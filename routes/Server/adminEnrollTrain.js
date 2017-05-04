@@ -214,7 +214,8 @@ module.exports = function(app) {
     function checkScore(req, res, next) {
         TrainClass.get(req.body.trainId).then(function(trainClass) {
             if (trainClass.exams && trainClass.exams.length > 0) {
-                var pArray = [];
+                var pArray = [],
+                    minScore;
                 trainClass.exams.forEach(function(exam) {
                     var p = AdminEnrollExam.getFilter({ examId: exam.examId, studentId: req.body.studentId, isSucceed: 1 })
                         .then(function(examOrder) {
@@ -222,6 +223,7 @@ module.exports = function(app) {
                                 var subjectScore = examOrder.scores.filter(function(score) {
                                     return score.subjectId == trainClass.subjectId;
                                 })[0];
+                                minScore = subjectScore.score;
                                 if (subjectScore.score >= exam.minScore) {
                                     return true;
                                 }
@@ -235,7 +237,7 @@ module.exports = function(app) {
                         })) {
                         next();
                     } else {
-                        res.jsonp({ error: "本课程有成绩要求，根据您的考试成绩，建议报名其他班级" });
+                        res.jsonp({ error: "本课程成绩要求" + minScore + "分，根据您的考试成绩，建议报名其他课程或咨询前台！" });
                         return;
                     }
                 });
