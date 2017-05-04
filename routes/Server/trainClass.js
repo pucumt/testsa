@@ -12,22 +12,17 @@ var TrainClass = require('../../models/trainClass.js'),
 module.exports = function(app) {
     app.get('/admin/trainClassList', checkLogin);
     app.get('/admin/trainClassList', function(req, res) {
-        //判断是否是第一页，并把请求的页数转换成 number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        TrainClass.getAll(null, page, {}, function(err, trainClasss, total) {
-            if (err) {
-                trainClasss = [];
-            }
-            res.render('Server/trainClassList.html', {
-                title: '>课程设置',
-                user: req.session.admin,
-                trainClasss: trainClasss,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + trainClasss.length) == total
-            });
+        res.render('Server/trainClassList.html', {
+            title: '>课程设置',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/batchTrainClass', checkLogin);
+    app.get('/admin/batchTrainClass', function(req, res) {
+        res.render('Server/batchTrainClass.html', {
+            title: '>课程批量上传',
+            user: req.session.admin
         });
     });
 

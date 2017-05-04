@@ -89,6 +89,17 @@ module.exports = function(app) {
         res.jsonp({});
     });
 
+
+    app.post('/admin/batchTrainClass', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length;
+        for (var i = 1; i < length; i++) {
+            updateScore(list[0].data[i]);
+        }
+        res.jsonp({});
+    });
+
     app.get('/admin/score/getAllWithoutPage', checkLogin);
     app.get('/admin/score/getAllWithoutPage', function(req, res) {
         ScoreFails.getAllWithoutPaging()
@@ -162,6 +173,39 @@ module.exports = function(app) {
                             if (student && student.accountId) {
                                 return StudentAccount.get(student.accountId).then(function(account) {
                                     data.push([student.name, account.name]);
+                                });
+                            } else {
+                                data.push([order.studentId, order._id]);
+                            }
+                        });
+                        PArray.push(Px);
+                    });
+                    return Promise.all(PArray);
+                }
+            });
+
+        p.then(function() {
+            var buffer = xlsx.build([{ name: "成绩", data: data }]),
+                fileName = req.body.exam + '_' + req.body.subject + '.xlsx';
+            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            res.jsonp({ sucess: true });
+            // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
+        });
+    });
+
+    app.post('/admin/export/scoreSchoolTemplate', function(req, res) {
+        var data = [
+            ['姓名', '联系方式', '学校', '班级', '成绩']
+        ];
+        var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
+            .then(function(orders) {
+                if (orders.length > 0) {
+                    var PArray = [];
+                    orders.forEach(function(order) {
+                        var Px = StudentInfo.get(order.studentId).then(function(student) {
+                            if (student && student.accountId) {
+                                return StudentAccount.get(student.accountId).then(function(account) {
+                                    data.push([student.name, account.name, student.School, student.className]);
                                 });
                             } else {
                                 data.push([order.studentId, order._id]);

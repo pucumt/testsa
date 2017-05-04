@@ -113,6 +113,22 @@ $("#editfile #btnExportScore").on("click", function(e) {
     }
 });
 
+$("#editfile #btnExportSchool").on("click", function(e) {
+    var validator = $('#editfile').data('formValidation').validate();
+    if (validator.isValid()) {
+        $.post("/admin/export/scoreSchoolTemplate", {
+            examId: $("#editfile #examId").val(),
+            exam: $("#editfile #examName").val(),
+            subject: $("#editfile #subject").find("option:selected").text()
+        }).then(function(data) {
+            if (data && data.sucess) {
+                var fileName = $("#editfile #examName").val() + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
+                location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
+            }
+        });
+    }
+});
+
 $("#editfile #btnExportReport").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {

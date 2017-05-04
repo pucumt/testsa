@@ -18,8 +18,8 @@ $(document).ready(function() {
         dateFormat: "yy-mm-dd"
     });
     searchClass();
-    $("#btnUploadAll").on("click", function(e) {
-        location.href = "";
+    $("#btnBatchAdd").on("click", function(e) {
+        location.href = "/admin/batchTrainClass";
     });
 });
 
