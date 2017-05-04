@@ -5,6 +5,7 @@ var db = mongoose.connection;
 var couponSchema = new mongoose.Schema({
     name: String,
     category: String,
+    categoryName: String,
     couponStartDate: Date,
     couponEndDate: Date,
     gradeId: String,

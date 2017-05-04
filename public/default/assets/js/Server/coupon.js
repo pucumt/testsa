@@ -51,7 +51,7 @@ function search(p) {
         if (data && data.coupons.length > 0) {
             data.coupons.forEach(function(coupon) {
                 $mainSelectBody.append('<tr id=' + coupon._id + '><td>' + coupon.name + '</td><td>' +
-                    coupon.category + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
+                    coupon.categoryName + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
                     moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' + coupon.gradeName + '</td><td>' +
                     coupon.subjectName + '</td><td>' + coupon.reducePrice + '</td><td>' + coupon.reduceMax + '</td><td><div data-obj=' +
                     JSON.stringify(coupon) + ' class="btn-group">' + getButtons(coupon) + '</div></td></tr>');
@@ -156,6 +156,7 @@ $("#btnSave").on("click", function(e) {
             postObj = {
                 name: $('#name').val(),
                 category: $('#myModal #category').val(),
+                categoryName: $('#myModal #category').find("option:selected").text(),
                 couponStartDate: $('#myModal #couponStartDate').val(),
                 couponEndDate: $('#myModal #couponEndDate').val(),
                 gradeId: $('#grade').val(),
@@ -172,7 +173,7 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.category + "</td><td>" +
+                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.categoryName + "</td><td>" +
                     moment(data.couponStartDate).format("YYYY-M-D") + "</td><td>" + moment(data.couponEndDate).format("YYYY-M-D") +
                     "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.reducePrice +
                     "</td><td>" + data.reduceMax + "</td><td><div data-obj='" + JSON.stringify(data) +
@@ -180,7 +181,7 @@ $("#btnSave").on("click", function(e) {
             } else {
                 var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);
-                var category = name.next().text(data.category);
+                var category = name.next().text(data.categoryName);
                 var start = category.next().text(data.couponStartDate);
                 var end = start.next().text(data.couponEndDate);
                 var grade = end.next().text(data.gradeName);

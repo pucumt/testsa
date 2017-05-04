@@ -4,14 +4,29 @@ $(document).ready(function() {
     $("#left_btnCoupon").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+    renderGrade();
 });
+
+function renderGrade() {
+    $('#InfoSearch').find("#grade option").remove();
+    $.get("/admin/grade/getAll", function(data) {
+        if (data) {
+            if (data && data.length > 0) {
+                data.forEach(function(grade) {
+                    $("#InfoSearch #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
+                });
+                $("#InfoSearch #grade").val($("#InfoSearch #gradeId").val());
+            }
+        }
+    });
+};
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
 
 function search(p) {
     var filter = {
-            gradeId: $(".mainModal #InfoSearch #gradeId").val(),
+            gradeId: $(".mainModal #InfoSearch #grade").val(),
             trainId: $(".mainModal #InfoSearch #trainId").val(),
         },
         pStr = p ? "p=" + p : "";
@@ -117,6 +132,7 @@ function openTrain(p) {
             setSelectEvent($selectBody, function(entity) {
                 $('#InfoSearch #trainName').val(entity.name); //
                 $('#InfoSearch #trainId').val(entity._id); //
+                $("#InfoSearch #grade").val(entity.gradeId);
                 $('#selectModal').modal('hide');
             });
         }

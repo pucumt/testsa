@@ -16,6 +16,7 @@ module.exports = function(app) {
         var coupon = new Coupon({
             name: req.body.name,
             category: req.body.category,
+            categoryName: req.body.categoryName,
             couponStartDate: req.body.couponStartDate,
             couponEndDate: req.body.couponEndDate,
             gradeId: req.body.gradeId,
@@ -39,6 +40,7 @@ module.exports = function(app) {
         var coupon = new Coupon({
             name: req.body.name,
             category: req.body.category,
+            categoryName: req.body.categoryName,
             couponStartDate: req.body.couponStartDate,
             couponEndDate: req.body.couponEndDate,
             gradeId: req.body.gradeId,
