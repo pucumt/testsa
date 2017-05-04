@@ -17,6 +17,6 @@ module.exports = function(app) {
     updateStudentAccount(app);
 
     app.use(function(req, res) {
-        res.render("404");
+        res.render("404.html");
     });
 };

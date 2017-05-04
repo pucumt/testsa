@@ -96,9 +96,11 @@ module.exports = function(app) {
 
     app.get('/enroll/class/:id', function(req, res) {
         TrainClass.get(req.params.id).then(function(trainClass) {
+            var totalPrice = (trainClass.trainPrice + trainClass.materialPrice).toFixed(2);
             res.render('Client/enroll_class_detail.html', {
                 title: '课程报名',
-                trainClass: trainClass
+                trainClass: trainClass,
+                totalPrice: totalPrice
             });
         });
     });

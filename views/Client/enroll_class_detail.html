@@ -14,7 +14,12 @@
                 <div>
                     <h2>{{ trainClass.name }}</h2>
                 </div>
-                <div>课程日期：{{ trainClass.courseStartDate.toLocaleDateString() }} - {{ trainClass.courseEndDate.toLocaleDateString() }}</div>
+                <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString() }} 共 {{ trainClass.totalClassCount }}课时</div>
+                <div>上课时间：{{ trainClass.courseTime }} </div>
+                <div>上课地点：{{ trainClass.schoolArea }} {{ trainClass.classRoomName }} 室</div>
+                <div>培训费：{{ trainClass.trainPrice }}元 </div>
+                <div>教材费：{{ trainClass.materialPrice }}元 </div>
+                <div>合计：{{ totalPrice }}元</div>
                 <div class="enroll-info">
                     <p class="exam-count">已报{{ trainClass.enrollCount }}&nbsp;&nbsp;共{{trainClass.totalStudentCount}} {% if trainClass.enrollCount == trainClass.totalStudentCount %}
                         <span class="full">(已满)</span>{% endif %}
