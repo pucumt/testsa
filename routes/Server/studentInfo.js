@@ -35,31 +35,36 @@ module.exports = function(app) {
 
     app.post('/admin/studentInfo/edit', checkLogin);
     app.post('/admin/studentInfo/edit', function(req, res) {
-        StudentInfo.getFilter({ accountId: req.body.accountId, name: req.body.name, _id: { $ne: req.body.id } })
-            .then(function(student) {
-                if (student) {
-                    res.jsonp({ error: "此学生已经存在" });
-                } else {
-                    var studentInfo = new StudentInfo({
-                        name: req.body.name,
-                        address: req.body.address,
-                        mobile: req.body.mobile,
-                        studentNo: req.body.studentNo,
-                        sex: req.body.sex,
-                        School: req.body.School,
-                        className: req.body.className,
-                        discount: req.body.discount,
-                        gradeId: req.body.gradeId,
-                        gradeName: req.body.gradeName
-                    });
+        StudentAccount.getFilter({ name: req.body.mobile })
+            .then(function(account) {
+                var accountId = account._id == req.body.accountId ? req.body.accountId : account._id;
+                StudentInfo.getFilter({ accountId: accountId, name: req.body.name, _id: { $ne: req.body.id } })
+                    .then(function(student) {
+                        if (student) {
+                            res.jsonp({ error: "此学生已经存在" });
+                        } else {
+                            var studentInfo = new StudentInfo({
+                                name: req.body.name,
+                                address: req.body.address,
+                                mobile: req.body.mobile,
+                                studentNo: req.body.studentNo,
+                                sex: req.body.sex,
+                                School: req.body.School,
+                                className: req.body.className,
+                                discount: req.body.discount,
+                                gradeId: req.body.gradeId,
+                                gradeName: req.body.gradeName,
+                                accountId: accountId
+                            });
 
-                    studentInfo.update(req.body.id, function(err, studentInfo) {
-                        if (err) {
-                            studentInfo = {};
+                            studentInfo.update(req.body.id, function(err, studentInfo) {
+                                if (err) {
+                                    studentInfo = {};
+                                }
+                                res.jsonp(studentInfo);
+                            });
                         }
-                        res.jsonp(studentInfo);
                     });
-                }
             });
     });
 

@@ -70,6 +70,9 @@ function addValidation() {
             'mobile': {
                 trigger: "blur change",
                 validators: {
+                    notEmpty: {
+                        message: '手机号不能为空'
+                    },
                     stringLength: {
                         min: 11,
                         message: '手机号必须是11位'

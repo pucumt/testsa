@@ -152,3 +152,15 @@ $("#gridBody").on("click", "td .btnReset", function(e) {
         });
     });
 });
+
+$("#btnUpdateMobile").on("click", function(e) {
+    $.post("/admin/studentAccount/updateMobile",
+        function(data) {
+            var msg;
+            if (data.sucess) {
+                showAlert("更新手机号成功");
+            } else {
+                showAlert(data.error);
+            }
+        });
+});

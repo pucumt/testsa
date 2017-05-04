@@ -156,4 +156,22 @@ module.exports = function(app) {
             }
         });
     });
+
+    app.post('/admin/studentAccount/updateMobile', checkLogin);
+    app.post('/admin/studentAccount/updateMobile', function(req, res) {
+        StudentInfo.getFilters({})
+            .then(function(students) {
+                students.forEach(function(student) {
+                    StudentAccount.get(student.accountId)
+                        .then(function(account) {
+                            var updateStudent = new StudentInfo({
+                                mobile: account.name
+                            });
+                            updateStudent.update(student._id, function() {});
+                        });
+                });
+                res.jsonp({ sucess: true });
+                return;
+            });
+    });
 }

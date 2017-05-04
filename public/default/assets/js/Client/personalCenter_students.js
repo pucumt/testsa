@@ -199,6 +199,6 @@ function renderNewStudent(student) {
         student.School = encodeURI(student.School);
         student.className = encodeURI(student.className);
         $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="name">' + decodeURI(student.name) +
-            '</span><button type="button" class="btn btn-primary btn-xs btn-delete pull-right"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除</button><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+            '</span><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
     }
 };
