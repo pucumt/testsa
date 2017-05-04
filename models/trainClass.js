@@ -38,7 +38,10 @@ var trainClassSchema = new mongoose.Schema({
         minScore: Number
     }],
     isFull: { type: Boolean, default: false },
-    createdDate: { type: Date, default: Date.now }
+    createdDate: { type: Date, default: Date.now },
+    fromClassId: String, //原班Id
+    fromClassName: String,
+    protectedDate: Date //原班原报保护期
 }, {
     collection: 'trainClasss'
 });

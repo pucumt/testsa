@@ -7,6 +7,7 @@ var xlsx = require("node-xlsx"),
     ScoreFails = require('../../models/scoreFails.js'),
     AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     ExamClass = require('../../models/examClass.js'),
+    TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
     archiver = require('archiver'),
     checkLogin = auth.checkLogin,
@@ -89,13 +90,59 @@ module.exports = function(app) {
         res.jsonp({});
     });
 
+    function createNewClass(data) {
+        //to create new class
+        var trainClass = new TrainClass({
+            name: String,
+            yearId: String,
+            yearName: String,
+            gradeId: String,
+            gradeName: String,
+            subjectId: String,
+            subjectName: String,
+            categoryId: String,
+            categoryName: String,
+            totalStudentCount: { type: Number, default: 0 }, //招生人数
+            enrollCount: { type: Number, default: 0 }, //报名人数
+            totalClassCount: { type: Number, default: 0 }, //共多少课时
+            trainPrice: { type: Number, default: 0 },
+            materialPrice: { type: Number, default: 0 },
+            teacherId: String,
+            teacherName: String,
+            attributeId: String, //now used to check coupon, maybe change later
+            attributeName: String,
+            courseStartDate: Date,
+            courseEndDate: Date,
+            courseTime: String,
+            courseContent: String,
+            classRoomId: String,
+            classRoomName: String,
+            schoolId: String,
+            schoolArea: String,
+            isWeixin: { type: Number, default: 0 }, //0 new 1 publish 0 stop
+            isStop: { type: Boolean, default: false },
+            isDeleted: { type: Boolean, default: false },
+            exams: [{
+                examId: String,
+                examName: String,
+                minScore: Number
+            }],
+            isFull: false,
+            createdDate: new Date(),
+            fromClassId: String, //原班Id
+            fromClassName: String,
+            protectedDate: Date //原班原报保护期
+        });
+        // TrainClass
+        trainClass.save(function() {});
+    };
 
     app.post('/admin/batchTrainClass', upload.single('avatar'), function(req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         for (var i = 1; i < length; i++) {
-            updateScore(list[0].data[i]);
+            createNewClass(list[0].data[i]);
         }
         res.jsonp({});
     });
