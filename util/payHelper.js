@@ -131,15 +131,17 @@ var Pay = {
         // 这是编码后的地址
         var return_uri = 'http%3A%2F%2Fwww.dushidao.com%2Fget_wx_access_token%2F' + id; // + router;
         var scope = 'snsapi_base';
-
+        debugger;
         res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + settings.AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=123#wechat_redirect');
     },
     wechatPay: function(req, res, callback) {
+        debugger;
         var code = req.query.code;
         request.get({
                 url: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + settings.AppID + '&secret=' + settings.AppSecret + '&code=' + code + '&grant_type=authorization_code',
             },
             function(error, response, body) {
+                debugger;
                 if (response.statusCode == 200) {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
                     var data = JSON.parse(body);

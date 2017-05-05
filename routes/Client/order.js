@@ -141,11 +141,13 @@ module.exports = function(app) {
 
     app.post('/personalCenter/order/pay', checkJSONLogin);
     app.post('/personalCenter/order/pay', function(req, res) {
+        debugger;
         payHelper.getOpenId(res, req.body.id);
         // openWechatPay(res, req.body.id, "");
     });
 
     function openWechatPay(res, id, openId) {
+        debugger;
         AdminEnrollTrain.get(id)
             .then(function(order) {
                 if (order) {
@@ -161,6 +163,7 @@ module.exports = function(app) {
     };
 
     app.get('/get_wx_access_token/:id', function(req, res) {
+        debugger;
         payHelper.wechatPay(req, res, openWechatPay);
     });
 
