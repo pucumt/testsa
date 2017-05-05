@@ -92,7 +92,7 @@ var Pay = {
             'notify_url': settings.notify_Url,
             'out_trade_no': payParas.out_trade_no,
             'service': 'pay.weixin.jspay',
-            // 'sub_openid': payParas.openId,
+            'sub_openid': payParas.openId,
             'total_fee': payParas.total_fee
         };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
