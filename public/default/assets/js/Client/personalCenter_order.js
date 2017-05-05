@@ -22,7 +22,7 @@ $(document).ready(function() {
             if (data.error) {
                 showAlert("生成付款码失败");
             } else {
-                showAlert(data.token);
+                location.href = data.url;
             }
         });
     });

@@ -132,7 +132,9 @@ var Pay = {
         var return_uri = 'http%3A%2F%2Fwww.dushidao.com%2Fget_wx_access_token%2F' + id; // + router;
         var scope = 'snsapi_base';
         debugger;
-        res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + settings.AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=123#wechat_redirect');
+        res.jsonp({ url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + settings.AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=123#wechat_redirect' });
+        return;
+        // res.redirect();
     },
     wechatPay: function(req, res, callback) {
         debugger;
