@@ -83,6 +83,7 @@ var Pay = {
         reqPay.end();
     },
     jsPay: function(payParas, res) {
+        debugger;
         var sendObject = {
             'body': payParas.body,
             'mch_create_ip': settings.create_ip,
@@ -107,12 +108,13 @@ var Pay = {
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
         var data = toxml(sendObject);
-
+        debugger;
         request.post({
                 url: 'https://pay.swiftpass.cn:443/pay/gateway',
                 body: data
             },
             function(error, response, body) {
+                debugger;
                 if (response.statusCode == 200) {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
                     var token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
@@ -129,6 +131,7 @@ var Pay = {
     },
     getOpenId: function(res, id) {
         // 这是编码后的地址
+        "http%3A%2F%2Fwww.dushidao.com%2Fget_wx_access_token%2F"
         var return_uri = 'http%3A%2F%2Fwww.dushidao.com%2Fget_wx_access_token%2F' + id; // + router;
         var scope = 'snsapi_base';
         debugger;
