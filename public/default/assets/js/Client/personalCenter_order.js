@@ -18,10 +18,7 @@ $(document).ready(function() {
     $(".enroll.personalCenter .orderList ul ").on("click", "#btnPay", function(e) {
         var curObj = $(e.currentTarget),
             orderId = curObj.parents("li").attr("orderId");
-        $.post("/personalCenter/order/pay", {
-            id: orderId,
-            originalUrl: "/personalCenter/order"
-        }, function(data) {
+        $.get("/personalCenter/order/pay/" + orderId, function(data) {
             if (data.error) {
                 showAlert("生成付款码失败");
             } else {

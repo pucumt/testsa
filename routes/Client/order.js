@@ -139,10 +139,10 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/personalCenter/order/pay', checkJSONLogin);
-    app.post('/personalCenter/order/pay', function(req, res) {
+    app.get('/personalCenter/order/pay/:id', checkLogin);
+    app.get('/personalCenter/order/pay/:id', function(req, res) {
         debugger;
-        payHelper.getOpenId(res, req.body.id);
+        payHelper.getOpenId(res, req.params.id);
         // openWechatPay(res, req.body.id, "");
     });
 
