@@ -90,3 +90,9 @@ ClassAttribute.getAllWithoutPage = function(filter) {
 
     return classAttributeModel.find(filter).exec();
 };
+
+ClassAttribute.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return classAttributeModel.findOne(filter);
+};

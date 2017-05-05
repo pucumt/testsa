@@ -96,3 +96,9 @@ SchoolArea.getAllWithoutPage = function(filter) {
     }
     return schoolAreaModel.find(filter).exec();
 };
+
+SchoolArea.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return schoolAreaModel.findOne(filter);
+};

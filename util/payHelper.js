@@ -92,6 +92,7 @@ var Pay = {
             'notify_url': settings.notify_Url,
             'out_trade_no': payParas.out_trade_no,
             'service': 'pay.weixin.jspay',
+            'sub_appid': settings.AppID,
             'sub_openid': payParas.openId,
             'total_fee': payParas.total_fee
         };
@@ -117,6 +118,7 @@ var Pay = {
                 debugger;
                 if (response.statusCode == 200) {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
+                    console.log(body);
                     var token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
                     debugger;
                     if (token != "") {

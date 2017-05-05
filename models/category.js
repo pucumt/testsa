@@ -97,3 +97,9 @@ Category.getAllWithoutPage = function(filter) {
     }
     return categoryModel.find(filter).exec();
 };
+
+Category.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return categoryModel.findOne(filter);
+};

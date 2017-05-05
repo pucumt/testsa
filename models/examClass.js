@@ -203,3 +203,9 @@ ExamClass.getAllWithoutPage = function(filter) {
     }
     return examClassModel.find(filter).exec();
 };
+
+ExamClass.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return examClassModel.findOne(filter);
+};

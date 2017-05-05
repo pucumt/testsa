@@ -97,3 +97,9 @@ Year.getAllWithoutPage = function(filter) {
     }
     return yearModel.find(filter).exec();
 };
+
+Year.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return yearModel.findOne(filter);
+};

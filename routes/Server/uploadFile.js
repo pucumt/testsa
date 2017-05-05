@@ -10,6 +10,14 @@ var xlsx = require("node-xlsx"),
     TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
     archiver = require('archiver'),
+    Year = require('../../models/year.js'),
+    Grade = require('../../models/grade.js'),
+    Subject = require('../../models/subject.js'),
+    Category = require('../../models/category.js'),
+    ClassRoom = require('../../models/classRoom.js'),
+    SchoolArea = require('../../models/schoolArea.js'),
+    ClassAttribute = require('../../models/classAttribute.js'),
+
     checkLogin = auth.checkLogin,
     serverPath = __dirname,
     storage = multer.diskStorage({
@@ -91,50 +99,114 @@ module.exports = function(app) {
     });
 
     function createNewClass(data) {
-        //to create new class
-        var trainClass = new TrainClass({
-            name: String,
-            yearId: String,
-            yearName: String,
-            gradeId: String,
-            gradeName: String,
-            subjectId: String,
-            subjectName: String,
-            categoryId: String,
-            categoryName: String,
-            totalStudentCount: { type: Number, default: 0 }, //招生人数
-            enrollCount: { type: Number, default: 0 }, //报名人数
-            totalClassCount: { type: Number, default: 0 }, //共多少课时
-            trainPrice: { type: Number, default: 0 },
-            materialPrice: { type: Number, default: 0 },
-            teacherId: String,
-            teacherName: String,
-            attributeId: String, //now used to check coupon, maybe change later
-            attributeName: String,
-            courseStartDate: Date,
-            courseEndDate: Date,
-            courseTime: String,
-            courseContent: String,
-            classRoomId: String,
-            classRoomName: String,
-            schoolId: String,
-            schoolArea: String,
-            isWeixin: { type: Number, default: 0 }, //0 new 1 publish 0 stop
-            isStop: { type: Boolean, default: false },
-            isDeleted: { type: Boolean, default: false },
-            exams: [{
-                examId: String,
-                examName: String,
-                minScore: Number
-            }],
+        var option = {
+            name: data[0],
+            totalStudentCount: data[9],
+            enrollCount: 0,
+            totalClassCount: data[8],
+            trainPrice: data[10],
+            materialPrice: data[11],
+            courseStartDate: data[5],
+            courseEndDate: data[6],
+            courseTime: data[7],
+            isWeixin: 0,
+            isDeleted: false,
             isFull: false,
-            createdDate: new Date(),
-            fromClassId: String, //原班Id
-            fromClassName: String,
-            protectedDate: Date //原班原报保护期
-        });
-        // TrainClass
-        trainClass.save(function() {});
+
+        };
+        Year.getFilter({ name: data[1].trim() })
+            .then(function(year) {
+                option.yearId = year._id;
+                option.yearName = year.name;
+                Grade.getFilter({ name: data[2].trim() })
+                    .then(function(grade) {
+                        option.gradeId = grade._id;
+                        option.gradeName = grade.name;
+                        Subject.getFilter({ name: data[3].trim() })
+                            .then(function(subject) {
+                                option.subjectId = subject._id;
+                                option.subjectName = subject.name;
+                                Category.getFilter({ name: data[4].trim() })
+                                    .then(function(category) {
+                                        option.categoryId = category._id;
+                                        option.categoryName = category.name;
+                                        var pAttribute;
+                                        if (data[12] && data[12].trim() != "") {
+                                            pAttribute = ClassAttribute.getFilter({ name: data[12].trim() });
+                                        } else {
+                                            pAttribute = Promise.resolve();
+                                        }
+                                        pAttribute.then(function(classattribute) {
+                                            if (classattribute) {
+                                                option.attributeId = classattribute._id;
+                                                option.attributeName = classattribute.name;
+                                            }
+                                            var pRoom;
+                                            if (data[13] && data[13].trim() != "") {
+                                                pRoom = ClassRoom.getFilter({ name: data[13].trim() });
+                                            } else {
+                                                pRoom = Promise.resolve();
+                                            }
+                                            pRoom.then(function(classRoom) {
+                                                if (classRoom) {
+                                                    option.classRoomId = classRoom._id;
+                                                    option.classRoomName = classRoom.name;
+                                                }
+                                                SchoolArea.getFilter({ name: data[14].trim() })
+                                                    .then(function(school) {
+                                                        option.schoolId = school._id;
+                                                        option.schoolArea = school.name;
+
+                                                        var pExams, examArray = [];
+                                                        if (data[15] && data[15].trim() != "") {
+                                                            var pExamArray = [];
+                                                            var exams = data[15].split(",");
+                                                            exams.forEach(function(exam) {
+                                                                var examScore = exam.split(":");
+                                                                var pExamClass = ExamClass.getFilter({ name: examScore[0].trim() })
+                                                                    .then(function(examClass) {
+                                                                        examArray.push({
+                                                                            examId: examClass._id,
+                                                                            examName: examClass.name,
+                                                                            minScore: examScore[1].trim()
+                                                                        });
+                                                                    });
+                                                                pExamArray.push(pExamClass);
+                                                            });
+                                                            pExams = Promise.all(pExamArray);
+                                                        } else {
+                                                            pExams = Promise.all([]);
+                                                        }
+                                                        pExams.then(function() {
+                                                            if (examArray.length > 0) {
+                                                                option.exams = examArray;
+                                                            }
+                                                            var pTrainClass;
+                                                            if (data[16] && data[16].trim() != "") {
+                                                                pTrainClass = TrainClass.getFilter({ name: data[16].trim() });
+                                                            } else {
+                                                                pTrainClass = Promise.resolve();
+                                                            }
+                                                            pTrainClass.then(function(trainClass) {
+                                                                if (trainClass) {
+                                                                    option.fromClassId = trainClass._id;
+                                                                    option.fromClassName = trainClass.name;
+                                                                }
+                                                                if (data[17] && data[17].trim() != "") {
+                                                                    option.protectedDate = data[17].trim();
+                                                                }
+                                                                var trainClass = new TrainClass(option);
+                                                                trainClass.save(function() {});
+                                                            });
+                                                        });
+
+                                                    });
+                                            });
+                                        });
+                                    });
+                            });
+                    });
+            });
     };
 
     app.post('/admin/batchTrainClass', upload.single('avatar'), function(req, res, next) {

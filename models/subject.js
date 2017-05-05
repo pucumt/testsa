@@ -97,3 +97,9 @@ Subject.getAllWithoutPage = function(filter) {
     }
     return subjectModel.find(filter).exec();
 };
+
+Subject.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return subjectModel.findOne(filter);
+};

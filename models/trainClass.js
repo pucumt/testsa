@@ -220,3 +220,9 @@ TrainClass.getAllToEnroll = function(id, page, filter, callback) {
             });
     });
 };
+
+TrainClass.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return trainClassModel.findOne(filter);
+};

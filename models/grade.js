@@ -96,3 +96,9 @@ Grade.getAllWithoutPage = function(filter) {
     }
     return gradeModel.find(filter).exec();
 };
+
+Grade.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return gradeModel.findOne(filter);
+};
