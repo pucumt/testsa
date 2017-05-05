@@ -118,6 +118,7 @@ var Pay = {
                 if (response.statusCode == 200) {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
                     var token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
+                    debugger;
                     if (token != "") {
                         res.redirect("https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1");
                     } else {
