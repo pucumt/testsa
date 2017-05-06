@@ -22,11 +22,13 @@ function search(p) {
     $.post("/admin/couponAssignList/search?" + pStr, filter, function(data) {
         if (data && data.couponAssigns.length > 0) {
             data.couponAssigns.forEach(function(coupon) {
-                $mainSelectBody.append('<tr id=' + coupon._id + '><td>' + coupon.couponName + '</td><td>' +
+                var $tr = $('<tr id=' + coupon._id + '><td>' + coupon.couponName + '</td><td>' +
                     coupon.studentName + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
                     moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' +
-                    coupon.subjectName + '</td><td>' + (coupon.isUsed ? "已使用" : "未使用") + '</td><td>' + coupon.reducePrice + '</td><td><div data-obj=' +
-                    JSON.stringify(coupon) + ' class="btn-group">' + getButtons(coupon.category) + '</div></td></tr>');
+                    coupon.subjectName + '</td><td>' + (coupon.isUsed ? "已使用" : "未使用") + '</td><td>' + coupon.reducePrice +
+                    '</td><td><div class="btn-group">' + getButtons(coupon.category) + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", coupon);
+                $mainSelectBody.append($tr);
             });
         }
         $("#mainModal #total").val(data.total);

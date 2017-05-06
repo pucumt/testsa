@@ -236,8 +236,10 @@ function openStudent(p) {
                 student.School = "";
                 student.className = "";
                 var sex = student.sex ? "女" : "男";
-                $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
+                var $tr = $('<tr><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');
+                $tr.data("obj", student);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
@@ -277,10 +279,12 @@ function openTrain(p) {
                 var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
                     price = trainClass.trainPrice + "/" + trainClass.materialPrice,
                     countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
-                $selectBody.append('<tr data-obj=' + JSON.stringify(trainClass) + '><td>' + trainClass.name +
+                var $tr = $('<tr><td>' + trainClass.name +
                     '</td><td>' + grade +
                     '</td><td>' + trainClass.schoolArea +
                     '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
+                $tr.data("obj", trainClass);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #trainName').val(entity.name); //
@@ -414,8 +418,10 @@ function renderAttributeCoupon() {
         $.post("/admin/adminEnrollTrain/checkAttributs", filter, function(coupon) {
             if (coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
-                $couponSelectBody.append('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" data-obj=' + JSON.stringify(coupon) + ' id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + (coupon.couponName || coupon.name) + '</td><td>' + dateStr +
+                var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + (coupon.couponName || coupon.name) + '</td><td>' + dateStr +
                     '</td><td>' + coupon.reducePrice + '</td></tr>');
+                $tr.find("#coupon").data("data", coupon);
+                $couponSelectBody.append($tr);
             }
         });
     }
@@ -434,8 +440,10 @@ function searchCoupon(p) {
         if (data && data.couponAssigns.length > 0) {
             data.couponAssigns.forEach(function(coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
-                $couponSelectBody.append('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" data-obj=' + JSON.stringify(coupon) + ' id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + coupon.couponName + '</td><td>' + dateStr +
+                var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + coupon.couponName + '</td><td>' + dateStr +
                     '</td><td>' + coupon.reducePrice + '</td></tr>');
+                $tr.find("#coupon").data("obj", coupon);
+                $couponSelectBody.append($tr);
             });
         }
         $(".couponModal #total").val(data.total);

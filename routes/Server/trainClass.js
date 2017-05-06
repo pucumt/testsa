@@ -26,6 +26,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/batchTrainClasspublish', checkLogin);
+    app.get('/admin/batchTrainClasspublish', function(req, res) {
+        res.render('Server/batchTrainClassPublish.html', {
+            title: '>课程批量发布',
+            user: req.session.admin
+        });
+    });
+
     app.post('/admin/trainClass/add', checkLogin);
     app.post('/admin/trainClass/add', function(req, res) {
         var trainClass = new TrainClass({
@@ -59,11 +67,8 @@ module.exports = function(app) {
             exams: JSON.parse(req.body.exams)
         });
 
-        trainClass.save(function(err, trainClass) {
-            if (err) {
-                trainClass = {};
-            }
-            res.jsonp(trainClass);
+        trainClass.save().then(function(tclass) {
+            res.jsonp(tclass);
         });
     });
 
@@ -98,12 +103,10 @@ module.exports = function(app) {
             exams: JSON.parse(req.body.exams)
         });
 
-        trainClass.update(req.body.id, function(err, trainClass) {
-            if (err) {
-                trainClass = {};
-            }
-            res.jsonp(trainClass);
-        });
+        trainClass.update(req.body.id)
+            .then(function() {
+                res.jsonp(trainClass);
+            });
     });
 
     app.post('/admin/trainClass/delete', checkLogin);
@@ -278,6 +281,14 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/admin/trainClass/deleteAll', checkLogin);
+    app.post('/admin/trainClass/deleteAll', function(req, res) {
+        TrainClass.deleteAll(JSON.parse(req.body.ids))
+            .then(function() {
+                res.jsonp({ sucess: true });
+            });
+    });
+
     app.post('/admin/trainClass/search', checkLogin);
     app.post('/admin/trainClass/search', function(req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
@@ -312,5 +323,21 @@ module.exports = function(app) {
                 isLastPage: ((page - 1) * 14 + trainClasss.length) == total
             });
         });
+    });
+
+    app.post('/admin/batchTrainClasspublish', checkLogin);
+    app.post('/admin/batchTrainClasspublish', function(req, res) {
+        TrainClass.publishWithYear(req.body.id)
+            .then(function() {
+                res.jsonp({ sucess: true });
+            });
+    });
+
+    app.post('/admin/batchTrainClassUnpublish', checkLogin);
+    app.post('/admin/batchTrainClassUnpublish', function(req, res) {
+        TrainClass.unpublishWithYear(req.body.id)
+            .then(function() {
+                res.jsonp({ sucess: true });
+            });
     });
 }

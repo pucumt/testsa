@@ -140,7 +140,7 @@ module.exports = function(app) {
                             //报名成功
                             TrainClass.get(req.body.trainId).then(function(trainClass) {
                                 if (trainClass.enrollCount == trainClass.totalStudentCount) {
-                                    TrainClass.full(req.body.classId);
+                                    TrainClass.full(req.body.trainId);
                                     //updated to full
                                 }
                             });
@@ -279,6 +279,7 @@ module.exports = function(app) {
                 if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
                     var rebateEnrollTrain = new RebateEnrollTrain({
                         trainOrderId: req.body.Id,
+                        originalPrice: req.body.originalPrice,
                         rebatePrice: req.body.price,
                         comment: req.body.comment
                     });
@@ -314,7 +315,7 @@ module.exports = function(app) {
                             //报名成功
                             TrainClass.get(req.body.trainId).then(function(trainClass) {
                                 if (trainClass.enrollCount == trainClass.totalStudentCount) {
-                                    TrainClass.full(req.body.classId);
+                                    TrainClass.full(req.body.trainId);
                                     //updated to full
                                 }
                             });

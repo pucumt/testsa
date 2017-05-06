@@ -23,22 +23,6 @@ function addValidation(callback) {
                     }
                 }
             },
-            'mobile': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '手机号不能为空'
-                    },
-                    stringLength: {
-                        min: 11,
-                        max: 11,
-                        message: '手机号必须是11位'
-                    },
-                    integer: {
-                        message: '填写的不是数字',
-                    }
-                }
-            },
             'trainName': {
                 trigger: "blur change",
                 validators: {
@@ -161,8 +145,10 @@ function openStudent(p) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
                 var sex = student.sex ? "女" : "男";
-                $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
+                var $tr = $('<tr><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');
+                $tr.data("obj", student);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
@@ -198,10 +184,12 @@ function openTrain(p) {
                 var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
                     price = trainClass.trainPrice + "/" + trainClass.materialPrice,
                     countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
-                $selectBody.append('<tr data-obj=' + JSON.stringify(trainClass) + '><td>' + trainClass.name +
+                var $tr = $('<tr><td>' + trainClass.name +
                     '</td><td>' + grade +
                     '</td><td>' + trainClass.schoolArea +
                     '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
+                $tr.data("obj", trainClass);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #trainName').val(entity.name); //

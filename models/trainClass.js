@@ -29,7 +29,7 @@ var trainClassSchema = new mongoose.Schema({
     classRoomName: String,
     schoolId: String,
     schoolArea: String,
-    isWeixin: { type: Number, default: 0 }, //0 new 1 publish 0 stop
+    isWeixin: { type: Number, default: 0 }, //0 new 1 publish 9 stop
     isStop: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     exams: [{
@@ -55,32 +55,19 @@ function TrainClass(option) {
 module.exports = TrainClass;
 
 //存储学区信息
-TrainClass.prototype.save = function(callback) {
+TrainClass.prototype.save = function() {
     this.option.isWeixin = 0;
     this.option.enrollCount = 0;
     this.option.isFullOrder = false;
     var newtrainClass = new trainClassModel(this.option);
 
-    newtrainClass.save(function(err, trainClass) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, trainClass);
-
-        //db.close();
-    });
+    return newtrainClass.save();
 };
 
-TrainClass.prototype.update = function(id, callback) {
-    trainClassModel.update({
+TrainClass.prototype.update = function(id) {
+    return trainClassModel.update({
         _id: id
-    }, this.option).exec(function(err, trainClass) {
-        if (err) {
-            return callback(err);
-        }
-        this.option._id = id;
-        callback(null, this.option);
-    }.bind(this));
+    }, this.option).exec();
 };
 
 //读取学区信息
@@ -161,6 +148,7 @@ TrainClass.unPublish = function(id, callback) {
         callback(null, trainClass);
     });
 };
+
 TrainClass.unPublishAll = function(ids, callback) {
     trainClassModel.update({
         _id: { $in: ids }
@@ -225,4 +213,30 @@ TrainClass.getFilter = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
     return trainClassModel.findOne(filter);
+};
+
+TrainClass.deleteAll = function(ids) {
+    return trainClassModel.update({
+        _id: { $in: ids }
+    }, {
+        isDeleted: true
+    }, { multi: true }).exec();
+};
+
+TrainClass.publishWithYear = function(id) {
+    return trainClassModel.update({
+        yearId: id,
+        isDeleted: { $ne: true }
+    }, {
+        isWeixin: 1
+    }, { multi: true }).exec();
+};
+
+TrainClass.unpublishWithYear = function(id) {
+    return trainClassModel.update({
+        yearId: id,
+        isDeleted: { $ne: true }
+    }, {
+        isWeixin: 9
+    }, { multi: true }).exec();
 };

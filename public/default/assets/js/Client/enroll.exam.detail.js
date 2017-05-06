@@ -97,9 +97,6 @@ $(document).ready(function() {
                     entity._id = postObj.id;
                     resetOKStudent(entity);
                     $ul.find("#" + entity._id + " .name").text(entity.name);
-                    entity.name = encodeURI(entity.name);
-                    entity.School = encodeURI(entity.School);
-                    entity.className = encodeURI(entity.className);
                     $ul.find("#" + entity._id).data("obj", entity);
                 }
                 setSelectedStudent(entity);
@@ -116,11 +113,11 @@ $(document).ready(function() {
         $("#Enroll-student-edit").show();
         $("#Enroll-student-edit div.title .title").text("修改学员信息");
         $("#Enroll-student").hide();
-        $('#studentInfo #studentName').val(decodeURI(entity.name));
+        $('#studentInfo #studentName').val(entity.name);
         $('#studentInfo #mobile').val(entity.mobile);
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
-        $('#studentInfo #School').val(decodeURI(entity.School));
-        $('#studentInfo #className').val(decodeURI(entity.className));
+        $('#studentInfo #School').val(entity.School);
+        $('#studentInfo #className').val(entity.className);
         resetDropDown(null, function() {
             $('#studentInfo #grade').val(entity.gradeId);
         });
@@ -249,7 +246,7 @@ function setSelectedStudent(stdent) {
     $("#Enroll-student-edit").hide();
     $("#Enroll-student").hide();
     $("#Enroll-select").show();
-    $("#Enroll-select .student .name").text(decodeURI(stdent.name));
+    $("#Enroll-select .student .name").text(stdent.name);
     $("#Enroll-select #studentId").val(stdent._id);
 };
 
@@ -267,15 +264,14 @@ function renderStudents(students, id) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
         students.forEach(function(student) {
-            student.name = encodeURI(student.name);
-            student.School = encodeURI(student.School);
-            student.className = encodeURI(student.className);
             var selected = "";
             if (student._id == id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
             }
-            d.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '>' + selected + '<span class="name">' + decodeURI(student.name) +
+            var li = $('<li id=' + student._id + ' >' + selected + '<span class="name">' + student.name +
                 '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+            li.data("obj", student);
+            d.append(li);
         });
         $ul.append(d);
     }
@@ -287,11 +283,10 @@ function renderNewStudent(student) {
         $ok.remove();
     }
     if (student) {
-        student.name = encodeURI(student.name);
-        student.School = encodeURI(student.School);
-        student.className = encodeURI(student.className);
-        $ul.append('<li id=' + student._id + ' data-obj=' + JSON.stringify(student) + '><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + decodeURI(student.name) +
+        var li = $('<li id=' + student._id + ' ><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="name">' + student.name +
             '</span><button type="button" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
+        li.data("obj", student);
+        $ul.append(li);
     }
 };
 

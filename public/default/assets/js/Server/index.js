@@ -59,12 +59,12 @@ window.setSelectEvent = function($selectBody, callback) {
 };
 
 //Html编码获取Html转义实体  
-function htmlEncode(value) {
-    return encodeURI(value);
-    // return $('<div/>').text(value).html();
-};
+// function htmlEncode(value) {
+//     return encodeURI(value);
+//     // return $('<div/>').text(value).html();
+// };
 //Html解码获取Html实体  
-function htmlDecode(value) {
-    return decodeURI(value);
-    // return $('<div/>').html(value).text();
-};
+// function htmlDecode(value) {
+//     return decodeURI(value);
+//     // return $('<div/>').html(value).text();
+// };

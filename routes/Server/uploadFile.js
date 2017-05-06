@@ -102,121 +102,174 @@ module.exports = function(app) {
         var option = {
             name: data[0],
             totalStudentCount: data[9],
-            enrollCount: 0,
             totalClassCount: data[8],
             trainPrice: data[10],
             materialPrice: data[11],
-            courseStartDate: data[5],
-            courseEndDate: data[6],
-            courseTime: data[7],
-            isWeixin: 0,
-            isDeleted: false,
-            isFull: false,
-
+            courseStartDate: (new Date(1900, 0, parseInt(data[5]) - 1)),
+            courseEndDate: (new Date(1900, 0, parseInt(data[6]) - 1)),
+            courseTime: data[7]
         };
-        Year.getFilter({ name: data[1].trim() })
-            .then(function(year) {
-                option.yearId = year._id;
-                option.yearName = year.name;
-                Grade.getFilter({ name: data[2].trim() })
-                    .then(function(grade) {
-                        option.gradeId = grade._id;
-                        option.gradeName = grade.name;
-                        Subject.getFilter({ name: data[3].trim() })
-                            .then(function(subject) {
-                                option.subjectId = subject._id;
-                                option.subjectName = subject.name;
-                                Category.getFilter({ name: data[4].trim() })
-                                    .then(function(category) {
-                                        option.categoryId = category._id;
-                                        option.categoryName = category.name;
-                                        var pAttribute;
-                                        if (data[12] && data[12].trim() != "") {
-                                            pAttribute = ClassAttribute.getFilter({ name: data[12].trim() });
-                                        } else {
-                                            pAttribute = Promise.resolve();
-                                        }
-                                        pAttribute.then(function(classattribute) {
-                                            if (classattribute) {
-                                                option.attributeId = classattribute._id;
-                                                option.attributeName = classattribute.name;
-                                            }
-                                            var pRoom;
-                                            if (data[13] && data[13].trim() != "") {
-                                                pRoom = ClassRoom.getFilter({ name: data[13].trim() });
-                                            } else {
-                                                pRoom = Promise.resolve();
-                                            }
-                                            pRoom.then(function(classRoom) {
-                                                if (classRoom) {
-                                                    option.classRoomId = classRoom._id;
-                                                    option.classRoomName = classRoom.name;
-                                                }
-                                                SchoolArea.getFilter({ name: data[14].trim() })
-                                                    .then(function(school) {
-                                                        option.schoolId = school._id;
-                                                        option.schoolArea = school.name;
+        TrainClass.getFilter({ name: data[0] }).then(function(existTrainClass) {
+            if (existTrainClass) {
+                // TrainClass
+                //学费 教材费 教室 校区 依赖的考试
+                var pRoom;
+                if (data[13] && data[13].trim() != "") {
+                    pRoom = ClassRoom.getFilter({ name: data[13].trim() });
+                } else {
+                    pRoom = Promise.resolve();
+                }
+                return pRoom.then(function(classRoom) {
+                    if (classRoom) {
+                        option.classRoomId = classRoom._id;
+                        option.classRoomName = classRoom.name;
+                    }
+                    return SchoolArea.getFilter({ name: data[14].trim() })
+                        .then(function(school) {
+                            option.schoolId = school._id;
+                            option.schoolArea = school.name;
 
-                                                        var pExams, examArray = [];
-                                                        if (data[15] && data[15].trim() != "") {
-                                                            var pExamArray = [];
-                                                            var exams = data[15].split(",");
-                                                            exams.forEach(function(exam) {
-                                                                var examScore = exam.split(":");
-                                                                var pExamClass = ExamClass.getFilter({ name: examScore[0].trim() })
-                                                                    .then(function(examClass) {
-                                                                        examArray.push({
-                                                                            examId: examClass._id,
-                                                                            examName: examClass.name,
-                                                                            minScore: examScore[1].trim()
-                                                                        });
-                                                                    });
-                                                                pExamArray.push(pExamClass);
-                                                            });
-                                                            pExams = Promise.all(pExamArray);
-                                                        } else {
-                                                            pExams = Promise.all([]);
-                                                        }
-                                                        pExams.then(function() {
-                                                            if (examArray.length > 0) {
-                                                                option.exams = examArray;
-                                                            }
-                                                            var pTrainClass;
-                                                            if (data[16] && data[16].trim() != "") {
-                                                                pTrainClass = TrainClass.getFilter({ name: data[16].trim() });
-                                                            } else {
-                                                                pTrainClass = Promise.resolve();
-                                                            }
-                                                            pTrainClass.then(function(trainClass) {
-                                                                if (trainClass) {
-                                                                    option.fromClassId = trainClass._id;
-                                                                    option.fromClassName = trainClass.name;
-                                                                }
-                                                                if (data[17] && data[17].trim() != "") {
-                                                                    option.protectedDate = data[17].trim();
-                                                                }
-                                                                var trainClass = new TrainClass(option);
-                                                                trainClass.save(function() {});
-                                                            });
-                                                        });
-
-                                                    });
+                            var pExams, examArray = [];
+                            if (data[15] && data[15].trim() != "") {
+                                var pExamArray = [];
+                                var exams = data[15].split(",");
+                                exams.forEach(function(exam) {
+                                    var examScore = exam.split(":");
+                                    var pExamClass = ExamClass.getFilter({ name: examScore[0].trim() })
+                                        .then(function(examClass) {
+                                            examArray.push({
+                                                examId: examClass._id,
+                                                examName: examClass.name,
+                                                minScore: examScore[1].trim()
                                             });
                                         });
+                                    pExamArray.push(pExamClass);
+                                });
+                                pExams = Promise.all(pExamArray);
+                            } else {
+                                pExams = Promise.all([]);
+                            }
+                            return pExams.then(function() {
+                                if (examArray.length > 0) {
+                                    option.exams = examArray;
+                                }
+                                var newTrainClass = new TrainClass(option);
+                                return newTrainClass.update(existTrainClass._id);
+                            });
+                        });
+                });
+            } else {
+                option.enrollCount = 0;
+                option.isWeixin = 0;
+                option.isDeleted = false;
+                option.isFull = false;
+                return Year.getFilter({ name: data[1].trim() })
+                    .then(function(year) {
+                        option.yearId = year._id;
+                        option.yearName = year.name;
+                        return Grade.getFilter({ name: data[2].trim() })
+                            .then(function(grade) {
+                                option.gradeId = grade._id;
+                                option.gradeName = grade.name;
+                                return Subject.getFilter({ name: data[3].trim() })
+                                    .then(function(subject) {
+                                        option.subjectId = subject._id;
+                                        option.subjectName = subject.name;
+                                        return Category.getFilter({ name: data[4].trim() })
+                                            .then(function(category) {
+                                                option.categoryId = category._id;
+                                                option.categoryName = category.name;
+                                                var pAttribute;
+                                                if (data[12] && data[12].trim() != "") {
+                                                    pAttribute = ClassAttribute.getFilter({ name: data[12].trim() });
+                                                } else {
+                                                    pAttribute = Promise.resolve();
+                                                }
+                                                return pAttribute.then(function(classattribute) {
+                                                    if (classattribute) {
+                                                        option.attributeId = classattribute._id;
+                                                        option.attributeName = classattribute.name;
+                                                    }
+                                                    var pRoom;
+                                                    if (data[13] && data[13].trim() != "") {
+                                                        pRoom = ClassRoom.getFilter({ name: data[13].trim() });
+                                                    } else {
+                                                        pRoom = Promise.resolve();
+                                                    }
+                                                    return pRoom.then(function(classRoom) {
+                                                        if (classRoom) {
+                                                            option.classRoomId = classRoom._id;
+                                                            option.classRoomName = classRoom.name;
+                                                        }
+                                                        return SchoolArea.getFilter({ name: data[14].trim() })
+                                                            .then(function(school) {
+                                                                option.schoolId = school._id;
+                                                                option.schoolArea = school.name;
+
+                                                                var pExams, examArray = [];
+                                                                if (data[15] && data[15].trim() != "") {
+                                                                    var pExamArray = [];
+                                                                    var exams = data[15].split(",");
+                                                                    exams.forEach(function(exam) {
+                                                                        var examScore = exam.split(":");
+                                                                        var pExamClass = ExamClass.getFilter({ name: examScore[0].trim() })
+                                                                            .then(function(examClass) {
+                                                                                examArray.push({
+                                                                                    examId: examClass._id,
+                                                                                    examName: examClass.name,
+                                                                                    minScore: examScore[1].trim()
+                                                                                });
+                                                                            });
+                                                                        pExamArray.push(pExamClass);
+                                                                    });
+                                                                    pExams = Promise.all(pExamArray);
+                                                                } else {
+                                                                    pExams = Promise.all([]);
+                                                                }
+                                                                return pExams.then(function() {
+                                                                    if (examArray.length > 0) {
+                                                                        option.exams = examArray;
+                                                                    }
+                                                                    var pTrainClass;
+                                                                    if (data[16] && data[16].trim() != "") {
+                                                                        pTrainClass = TrainClass.getFilter({ name: data[16].trim() });
+                                                                    } else {
+                                                                        pTrainClass = Promise.resolve();
+                                                                    }
+                                                                    return pTrainClass.then(function(trainClass) {
+                                                                        if (trainClass) {
+                                                                            option.fromClassId = trainClass._id;
+                                                                            option.fromClassName = trainClass.name;
+                                                                        }
+                                                                        if (data[17] && data[17].trim() != "") {
+                                                                            option.protectedDate = (new Date(1900, 0, parseInt(data[17].trim()) - 1));
+                                                                        }
+                                                                        var trainClass = new TrainClass(option);
+                                                                        return trainClass.save();
+                                                                    });
+                                                                });
+                                                            });
+                                                    });
+                                                });
+                                            });
                                     });
                             });
                     });
-            });
+            }
+        });
     };
 
     app.post('/admin/batchTrainClass', upload.single('avatar'), function(req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
+        var pArray = [];
         for (var i = 1; i < length; i++) {
-            createNewClass(list[0].data[i]);
+            pArray.push(createNewClass(list[0].data[i]));
         }
-        res.jsonp({});
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
     });
 
     app.get('/admin/score/getAllWithoutPage', checkLogin);

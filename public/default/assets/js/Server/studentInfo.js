@@ -25,11 +25,9 @@ function search(p) {
     $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(studentInfo) {
-                studentInfo.name = encodeURI(studentInfo.name);
-                studentInfo.School = encodeURI(studentInfo.School);
-                studentInfo.className = encodeURI(studentInfo.className);
-                $mainSelectBody.append('<tr id=' + studentInfo._id + '><td>' + decodeURI(studentInfo.name) + '</td><td>' + studentInfo.mobile + '</td><td><div data-obj=' +
-                    JSON.stringify(studentInfo) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+                var $tr = $('<tr id=' + studentInfo._id + '><td>' + studentInfo.name + '</td><td>' + studentInfo.mobile + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", studentInfo);
+                $mainSelectBody.append($tr);
             });
         }
         $("#mainModal #total").val(data.total);

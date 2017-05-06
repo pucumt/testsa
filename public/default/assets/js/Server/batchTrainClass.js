@@ -4,19 +4,7 @@ $(document).ready(function() {
     $("#left_btnTrainClass").addClass("active");
 });
 //------------search funfunction
-
-$("#editfile #btnResult").on("click", function(e) {
-    location.href = "/admin/score";
-});
-$("#editfile #btnClear").on("click", function(e) {
-    $.get("/admin/score/clearAll", function(data) {
-        if (data && data.sucess) {
-            showAlert("删除失败记录成功");
-        }
-    });
-});
-
-$("#editfile #btnScore").on("click", function(e) {
+$("#editfile #btnSubmit").on("click", function(e) {
     var file = document.getElementById('upfile').files;
     if (file.length > 0) {
         var formData = new FormData();
@@ -28,7 +16,11 @@ $("#editfile #btnScore").on("click", function(e) {
             contentType: false,
             processData: false,
         }).then(function(data) {
-            location.href = "/admin/score";
+            if (data && data.sucess) {
+                showAlert("批量生成成功！");
+            } else {
+                showAlert("批量生成失败！");
+            }
         });
     }
 });

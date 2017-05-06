@@ -22,10 +22,10 @@ function search(p) {
     $mainSelectBody.empty();
     $.post("/admin/classAttributeList/search?" + pStr, filter, function(data) {
         if (data && data.classAttributes.length > 0) {
-
             data.classAttributes.forEach(function(classAttribute) {
-                $mainSelectBody.append('<tr id=' + classAttribute._id + '><td>' + classAttribute.name + '</td><td><div data-obj=' +
-                    JSON.stringify(classAttribute) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+                var $tr = $('<tr id=' + classAttribute._id + '><td>' + classAttribute.name + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", classAttribute);
+                $mainSelectBody.append($tr);
             });
         }
         $("#mainModal #total").val(data.total);
@@ -104,8 +104,9 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td>" + data.name + "</td><td><div data-obj='" + JSON.stringify(data) +
-                    "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>"));
+                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
+                $tr.find(".btn-group").data("obj", data);
+                $('#gridBody').append($tr);
             } else {
                 var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);

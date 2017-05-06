@@ -176,10 +176,11 @@ function searchExam(p) {
         if (data && data.adminEnrollExams.length > 0) {
             data.adminEnrollExams.forEach(function(examOrder) {
                 var button = (examOrder.isSucceed == 1 ? '<a id="btnDelete" class="btn btn-default">取消</a>' : '');
-                $examSelectBody.append('<tr id=' + examOrder._id + ' data-obj=' +
-                    JSON.stringify(examOrder) + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName +
+                var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName +
                     '</td><td>' + examOrder.examName + '</td><td>' + getTrainOrderStatus(examOrder.isSucceed) +
                     '</td><td><div class="btn-group">' + button + '</div></td></tr>');
+                $tr.data("obj", examOrder);
+                $examSelectBody.append($tr);
             });
         }
         $(".examModal #total").val(data.total);

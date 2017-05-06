@@ -24,8 +24,9 @@ function search(p) {
     $.post("/admin/studentAccountList/search?" + pStr, filter, function(data) {
         if (data && data.studentAccounts.length > 0) {
             data.studentAccounts.forEach(function(studentAccount) {
-                $mainSelectBody.append('<tr id=' + studentAccount._id + '><td>' + studentAccount.name + '</td><td><div data-obj=' +
-                    JSON.stringify(studentAccount) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+                var $tr = $('<tr id=' + studentAccount._id + '><td>' + studentAccount.name + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", studentAccount);
+                $mainSelectBody.append($tr);
             });
         }
         $("#mainModal #total").val(data.total);

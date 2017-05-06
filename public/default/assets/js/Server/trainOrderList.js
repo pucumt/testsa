@@ -27,11 +27,13 @@ function searchOrder(p) {
                 return buttons;
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {
-                $selectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
+                var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + (trainOrder.isPayed ? "是" : "否") + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div data-obj=' +
-                    JSON.stringify(trainOrder) + ' class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
+                    trainOrder.totalPrice + '</td><td>' + (trainOrder.isPayed ? "是" : "否") + '</td><td>' + (trainOrder.rebatePrice || '') +
+                    '</td><td><div class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", trainOrder);
+                $selectBody.append($tr);
             });
         }
         $("#selectModal #total").val(data.total);

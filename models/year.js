@@ -103,3 +103,9 @@ Year.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return yearModel.findOne(filter);
 };
+
+Year.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return yearModel.find(filter);
+};

@@ -45,9 +45,10 @@ function search(p) {
     $.post("/admin/adminEnrollExam/searchCard?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
             data.adminEnrollExams.forEach(function(examOrder) {
-                $mainSelectBody.append('<tr id=' + examOrder._id + ' data-obj=' +
-                    JSON.stringify(examOrder) + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName + '</td><td>' +
+                var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName + '</td><td>' +
                     examOrder.examName + '</td></tr>');
+                $tr.data("obj", examOrder);
+                $mainSelectBody.append($tr);
             });
         }
     });
@@ -191,10 +192,11 @@ function openExam(p) {
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
-                examClass.courseContent = "";
-                $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
+                var $tr = $('<tr><td>' + examClass.name +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
                     examClass.examCount + '</td></tr>');
+                $tr.data("obj", examClass);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#editfile #examName').val(entity.name); //

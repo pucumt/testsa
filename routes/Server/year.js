@@ -68,4 +68,12 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
+    app.post('/admin/year/all', checkLogin);
+    app.post('/admin/year/all', function(req, res) {
+        Year.getFilters({})
+            .then(function(years) {
+                res.jsonp(years);
+            });
+    });
 }

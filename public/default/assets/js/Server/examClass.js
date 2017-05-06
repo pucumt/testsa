@@ -46,12 +46,12 @@ function searchExams(p) {
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
-                examClass.courseContent = htmlEncode(examClass.courseContent);
-                $mainSelectBody.append('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
+                var $tr = $('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
-                    examClass.enrollCount + '</td><td><div data-obj=' +
-                    JSON.stringify(examClass) + ' class="btn-group">' + getButtons(examClass.isWeixin) + '</div></td></tr>');
+                    examClass.enrollCount + '</td><td><div class="btn-group">' + getButtons(examClass.isWeixin) + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", examClass);
+                $mainSelectBody.append($tr);
             });
         }
         $("#mainModal #total").val(data.total);
@@ -272,12 +272,13 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             var examDate = data.examDate && moment(data.examDate, "YYYY-M-D").format("YYYY-M-D");
-            data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name +
+                var $tr = $("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name +
                     "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
-                    "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount + "</td><td>0</td><td><div data-obj='" + JSON.stringify(data) +
-                    "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
+                    "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount +
+                    "</td><td>0</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>");
+                $tr.find(".btn-group").data("obj", data);
+                $('#gridBody').append($tr);
             } else {
                 var name = $('#' + data._id + ' td:first-child');
                 var pubstr = "新建";
@@ -316,7 +317,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#examTime').val(entity.examTime);
     $('#examCount').val(entity.examCount);
     $('#id').val(entity._id);
-    $('#courseContent').val(htmlDecode(entity.courseContent));
+    $('#courseContent').val(entity.courseContent);
     resetDropDown(entity.examCategoryId);
     resetCheckBox(entity.subjects);
     resetExamArea(entity._id);

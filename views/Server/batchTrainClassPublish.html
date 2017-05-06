@@ -6,19 +6,18 @@
 </div>
 <div class="panel panel-default mainModal">
     <div class="panel-body">
-        <form id='editfile' method='post' action='/admin/batchTrainClass' enctype='multipart/form-data'>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="avatar" class="control-label">课程录入</label>
-                        <div style="padding-top: 0;">
-                            <input name="avatar" id='upfile' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" type='file' />
-                            <button type="button" id="btnSubmit" class="btn btn-primary">新增课程</button>
-                        </div>
-                    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="avatar" class="control-label">选择年度</label>
+                    <select name="year" id="year" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="btnSubmit" class="btn btn-primary">批量发布</button>
+                    <button type="button" id="btnStop" class="btn btn-primary">批量停用</button>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %} {% block modal %}
@@ -41,5 +40,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/batchTrainClass.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/batchTrainClassPublish.js"></script>
 {% endblock %}

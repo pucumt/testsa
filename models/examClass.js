@@ -13,7 +13,7 @@ var examClassSchema = new mongoose.Schema({
     examCount: Number,
     enrollCount: Number,
     isDeleted: Boolean,
-    isWeixin: Number, //0 new 1 publish 0 stop
+    isWeixin: Number, //0 new 1 publish 9 stop
     subjects: [{
         subjectId: String,
         subjectName: String

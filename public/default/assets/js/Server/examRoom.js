@@ -23,10 +23,10 @@ function search(p) {
     $mainSelectBody.empty();
     $.post("/admin/examRoomList/search?" + pStr, filter, function(data) {
         if (data && data.examRooms.length > 0) {
-
             data.examRooms.forEach(function(examRoom) {
-                $mainSelectBody.append('<tr id=' + examRoom._id + '><td>' + examRoom.examName + '</td><td><div data-obj=' +
-                    JSON.stringify(examRoom) + ' class="btn-group">' + getButtons() + '</div></td></tr>');
+                var $tr = $('<tr id=' + examRoom._id + '><td>' + examRoom.examName + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", examRoom);
+                $mainSelectBody.append($tr);
             });
         }
         $("#mainModal #total").val(data.total);
@@ -64,9 +64,11 @@ function openExam(p) {
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
-                $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
+                var $tr = $('<tr><td>' + examClass.name +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
                     examClass.examCount + '</td></tr>');
+                $tr.data("obj", examClass);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 location.href = "/admin/examRoom/trainId/" + entity._id;

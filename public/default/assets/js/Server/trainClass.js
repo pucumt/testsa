@@ -21,6 +21,10 @@ $(document).ready(function() {
     $("#btnBatchAdd").on("click", function(e) {
         location.href = "/admin/batchTrainClass";
     });
+    $("#btnBatchPublish").on("click", function(e) {
+        location.href = "/admin/batchTrainClasspublish";
+    });
+
 });
 
 //------------search funfunction
@@ -54,14 +58,16 @@ function searchClass(p) {
     $mainSelectBody.empty();
     $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
         if (data && data.trainClasss.length > 0) {
+            var d = $(document.createDocumentFragment());
             data.trainClasss.forEach(function(trainClass) {
-                trainClass.courseContent = htmlEncode(trainClass.courseContent);
-                $mainSelectBody.append('<tr id=' + trainClass._id + '><td><span><input type="checkbox" name="trainId" value=' + trainClass._id + ' /></span>' + trainClass.name + '</td><td>' +
+                var trObject = $('<tr id=' + trainClass._id + '><td><span><input type="checkbox" name="trainId" value=' + trainClass._id + ' /></span>' + trainClass.name + '</td><td>' +
                     getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.trainPrice + '</td><td>' + trainClass.materialPrice +
                     '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
-                    trainClass.categoryName + '</td><td><div data-obj=' +
-                    JSON.stringify(trainClass) + ' class="btn-group">' + getButtons(trainClass.isWeixin) + '</div></td></tr>');
+                    trainClass.categoryName + '</td><td>' + trainClass.enrollCount + '/' + trainClass.totalStudentCount + '</td><td><div class="btn-group">' + getButtons(trainClass.isWeixin) + '</div></td></tr>');
+                trObject.find(".btn-group").data("obj", trainClass);
+                d.append(trObject);
             });
+            $mainSelectBody.append(d);
         }
         $("#mainModal #total").val(data.total);
         $("#mainModal #page").val(data.page);
@@ -352,23 +358,28 @@ $("#myModal #btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
-            data.courseContent = htmlEncode(data.courseContent);
             if (isNew) {
-                $('#gridBody').append($("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id +
+                var $tr = $("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id +
                     " /></span>" + data.name + "</td><td>新建</td><td>" + data.trainPrice + "</td><td>" + data.materialPrice +
                     "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.categoryName +
-                    "</td><td><div data-obj='" + JSON.stringify(data) +
-                    "' class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>"));
+                    "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>");
+                $tr.find(".btn-group").data("obj", data);
+                $('#gridBody').append($tr);
             } else {
+                data = postObj;
+                data._id = postObj.id;
                 var name = $('#' + data._id + ' td:first-child');
                 name.html("<span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name);
-                var $pub = name.next().text(getClassStatus(data.isWeixin)),
+                var $pub = name.next(),
                     $trainPrice = $pub.next().text(data.trainPrice),
                     $materialPrice = $trainPrice.next().text(data.materialPrice),
                     $gradeName = $materialPrice.next().text(data.gradeName),
                     $subjectName = $gradeName.next().text(data.subjectName),
                     $categoryName = $subjectName.next().text(data.categoryName);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
+                if (data.exams != "") {
+                    data.exams = JSON.parse(data.exams);
+                }
                 $lastDiv.data("obj", data);
             }
         });
@@ -436,7 +447,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     $('#courseTime').val(entity.courseTime);
     $('#totalStudentCount').val(entity.totalStudentCount);
     $('#totalClassCount').val(entity.totalClassCount);
-    $('#courseContent').val(htmlDecode(entity.courseContent));
+    $('#courseContent').val(entity.courseContent);
     $('#classRoom').val(entity.classRoomName); //
     $('#classRoomid').val(entity.classRoomId); //
     $('#school').val(entity.schoolArea); //
@@ -532,7 +543,9 @@ function searchRoom(p) {
     $.post("/admin/classRoomList/search?" + pStr, filter, function(data) {
         if (data && data.classRooms.length > 0) {
             data.classRooms.forEach(function(classRoom) {
-                $selectBody.append('<tr data-obj=' + JSON.stringify(classRoom) + '><td>' + classRoom.name + '</td><td>' + classRoom.schoolArea + '</td></tr>');
+                var $tr = $('<tr><td>' + classRoom.name + '</td><td>' + classRoom.schoolArea + '</td></tr>');
+                $tr.data("obj", classRoom);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#myModal #classRoom').val(entity.name); //
@@ -573,7 +586,9 @@ function searchTeacher(p) {
     $.post("/admin/teacher/search?" + pStr, filter, function(data) {
         if (data && data.teachers.length > 0) {
             data.teachers.forEach(function(teacher) {
-                $selectBody.append('<tr data-obj=' + JSON.stringify(teacher) + '><td>' + teacher.name + '</td></tr>');
+                var $tr = $('<tr><td>' + teacher.name + '</td></tr>');
+                $tr.data("obj", teacher);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#teacher').val(entity.name); //
@@ -675,6 +690,26 @@ $(".toolbar #btnStopAll").on("click", function(e) {
             }, function(data) {
                 if (data.sucess) {
                     showAlert("停用成功！");
+                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        searchClass(page);
+                    });
+                }
+            });
+        });
+    }
+});
+
+$(".toolbar #btnDeleteAll").on("click", function(e) {
+    var trainIds = getAllCheckedExams();
+    if (trainIds.length > 0) {
+        showComfirm("确定要删除吗?");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            $.post("/admin/trainClass/deleteAll", {
+                ids: JSON.stringify(trainIds)
+            }, function(data) {
+                if (data.sucess) {
+                    showAlert("删除成功！");
                     $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchClass(page);

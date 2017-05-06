@@ -29,11 +29,13 @@ function searchOrder(p) {
                 return '';
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {
-                $selectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
+                var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div data-obj=' +
-                    JSON.stringify(trainOrder) + ' class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
+                    trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' +
+                    getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", trainOrder);
+                $selectBody.append($tr);
             });
         }
         $("#selectModal #total").val(data.total);
@@ -120,14 +122,17 @@ $("#btnSave").on("click", function(e) {
         var postURI = "/admin/adminEnrollTrain/rebate",
             postObj = {
                 Id: $('#myModal #Id').val(),
+                originalPrice: $('#myModal #totalPrice').val(),
                 price: $('#myModal #price').val(),
                 comment: $('#myModal #comment').val()
             };
         $.post(postURI, postObj, function(data) {
+            showAlert("退费成功！");
             $('#myModal').modal('hide');
             var name = $('#' + data._id + ' td:first-child');
             var col2 = name.next().text("已退款");
-            col2.next().next().next().next().next().next().text(data.rebatePrice);
+            var price = col2.next().next().next().next().next().text(data.totalPrice);
+            price.next().text(data.rebatePrice);
             var $lastDiv = $('#' + data._id + ' td:last-child div');
             $lastDiv.data("obj", data);
         });

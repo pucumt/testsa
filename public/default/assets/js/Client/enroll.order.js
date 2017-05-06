@@ -36,9 +36,13 @@ function renderData() {
             }
             if (couponList.length > 0) {
                 $(".enroll .exam-detail .coupon").show();
+                var d = $(document.createDocumentFragment());
                 couponList.forEach(function(entity) {
-                    $(".enroll .exam-detail .coupon #coupon").append("<option data-obj=" + JSON.stringify(entity.entity) + " value='" + entity.id + "'>" + entity.name + "</option>");
+                    var option = $("<option value='" + entity.id + "'>" + entity.name + "</option>");
+                    option.data("obj", entity.entity)
+                    d.append(option);
                 });
+                $(".enroll .exam-detail .coupon #coupon").append(d);
                 setPrice();
             } else {
                 setPrice();

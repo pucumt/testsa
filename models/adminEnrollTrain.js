@@ -136,7 +136,7 @@ AdminEnrollTrain.rebate = function(id, price) {
     return adminEnrollTrainModel.update({
         _id: id
     }, {
-        $inc: { rebatePrice: price }
+        $inc: { rebatePrice: price, totalPrice: -price }
     }).exec();
 };
 

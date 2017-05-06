@@ -125,9 +125,10 @@ function openTrain(p) {
                 var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
                     price = trainClass.trainPrice + "/" + trainClass.materialPrice,
                     countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
-                $selectBody.append('<tr data-obj=' + JSON.stringify(trainClass) + '><td>' + trainClass.name +
-                    '</td><td>' + grade +
+                var $tr = $('<tr><td>' + trainClass.name + '</td><td>' + grade +
                     '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
+                $tr.data("obj", trainClass);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#InfoSearch #trainName').val(entity.name); //

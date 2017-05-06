@@ -186,8 +186,10 @@ function openStudent(p) {
                 student.School = "";
                 student.className = "";
                 var sex = student.sex ? "女" : "男";
-                $selectBody.append('<tr data-obj=' + JSON.stringify(student) + '><td>' + student.name +
+                var $tr = $('<tr><td>' + student.name +
                     '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');
+                $tr.data("obj", student);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
@@ -215,9 +217,11 @@ function openExam(p) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
                 examClass.courseContent = "";
-                $selectBody.append('<tr data-obj=' + JSON.stringify(examClass) + '><td>' + examClass.name +
+                var $tr = $('<tr ><td>' + examClass.name +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
                     examClass.examCount + '</td></tr>');
+                $tr.data("obj", examClass);
+                $selectBody.append($tr);
             });
             setSelectEvent($selectBody, function(entity) {
                 $('#enrollInfo #examName').val(entity.name); //

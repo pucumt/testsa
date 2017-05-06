@@ -81,7 +81,6 @@ function loadData(p) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
             data.classs.forEach(function(trainclass) {
-                trainclass.courseContent = htmlEncode(trainclass.courseContent);
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);
@@ -99,11 +98,10 @@ function loadData(p) {
 };
 
 function generateLi(trainclass) {
-    var $li = $('<li class="exam-card card " data-obj=' + JSON.stringify(trainclass) + '></li>'),
+    var $li = $('<li class="exam-card card" ></li>'),
         $goodContainer = $('<div id=' + trainclass._id + ' class="exam link"></div>'),
         $infoContainer = $('<div class="exam-info"></div>');
-    //$countContainer = $('<div class="info-count"></div>');
-
+    $li.data("obj", trainclass);
     $li.append($goodContainer);
     $goodContainer.append($infoContainer);
     //$goodContainer.append($countContainer);

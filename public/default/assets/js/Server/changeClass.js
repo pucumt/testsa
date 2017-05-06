@@ -28,13 +28,16 @@ function searchOrder(p) {
                 }
                 return '';
             };
+            var d = $(document.createDocumentFragment());
             data.adminEnrollTrains.forEach(function(trainOrder) {
-                $selectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
+                var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div data-obj=' +
-                    JSON.stringify(trainOrder) + ' class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
+                    trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", trainOrder);
+                d.append($tr);
             });
+            $selectBody.append(d);
         }
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);

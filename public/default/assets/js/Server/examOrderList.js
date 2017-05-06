@@ -25,11 +25,12 @@ function searchOrder(p) {
                 return '';
             };
             data.adminEnrollExams.forEach(function(examOrder) {
-                $selectBody.append('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
+                var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
                     getTrainOrderStatus(examOrder.isSucceed) + '</td><td>' +
                     examOrder.studentName + '</td><td>' + examOrder.examName + '</td><td>' +
-                    examOrder.examCategoryName + '</td><td><div data-obj=' +
-                    JSON.stringify(examOrder) + ' class="btn-group">' + getButtons(examOrder.isSucceed) + '</div></td></tr>');
+                    examOrder.examCategoryName + '</td><td><div class="btn-group">' + getButtons(examOrder.isSucceed) + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", examOrder);
+                $selectBody.append($tr);
             });
         }
         $("#selectModal #total").val(data.total);

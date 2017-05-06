@@ -4,6 +4,7 @@ var db = mongoose.connection;
 
 var rebateEnrollTrainSchema = new mongoose.Schema({
     trainOrderId: String,
+    originalPrice: Number, //原来价格
     rebatePrice: Number, //退费
     isDeleted: Boolean,
     createDate: Date

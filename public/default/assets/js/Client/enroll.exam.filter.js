@@ -28,12 +28,11 @@ function loadData(p) {
 };
 
 function generateLi(examClass) {
-    examClass.courseContent = htmlEncode(examClass.courseContent);
-    var $li = $('<li class="exam-card card " data-obj=' + JSON.stringify(examClass) + '></li>'),
+    // examClass.courseContent = htmlEncode(examClass.courseContent);
+    var $li = $('<li class="exam-card card " ></li>'),
         $goodContainer = $('<div id=' + examClass._id + ' class="exam link"></div>'),
         $infoContainer = $('<div class="exam-info clearfix"></div>');
-    //$countContainer = $('<div class="info-count"></div>');
-
+    $li.data("obj", examClass);
     $li.append($goodContainer);
     $goodContainer.append($infoContainer);
     //$goodContainer.append($countContainer);
