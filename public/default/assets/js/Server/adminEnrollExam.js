@@ -169,6 +169,57 @@ $("#btnEnroll").on("click", function(e) {
     }
 });
 
+$("#btnHideEnroll").on("click", function(e) {
+    var validator = $('#enrollInfo').data('formValidation').validate();
+    if (validator.isValid()) {
+        $("#btnEnroll").attr("disabled", "disabled");
+
+        var examArea = $('#enrollInfo #examAreas').val();
+        if (!examArea) {
+            //old enroll
+            var postURI = "/admin/adminEnrollExam/hideEnroll",
+                postObj = {
+                    studentId: $('#enrollInfo #studentId').val(),
+                    studentName: $('#enrollInfo #studentName').val(),
+                    mobile: $('#enrollInfo #mobile').val(),
+                    examId: $('#enrollInfo #examId').val(),
+                    examName: $('#enrollInfo #examName').val(),
+                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                    examCategoryName: $('#enrollInfo #examCategoryName').val()
+                };
+            $.post(postURI, postObj, function(data) {
+                if (data && data.sucess) {
+                    showAlert("报名成功");
+                } else {
+                    showAlert(data.error);
+                }
+                $("#btnEnroll").removeAttr("disabled");
+            });
+        } else {
+            //new enroll with multi areas
+            var postURI = "/admin/adminEnrollExam/hideEnroll2",
+                postObj = {
+                    studentId: $('#enrollInfo #studentId').val(),
+                    studentName: $('#enrollInfo #studentName').val(),
+                    mobile: $('#enrollInfo #mobile').val(),
+                    examId: $('#enrollInfo #examId').val(),
+                    examName: $('#enrollInfo #examName').val(),
+                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                    examCategoryName: $('#enrollInfo #examCategoryName').val(),
+                    examClassExamAreaId: examArea
+                };
+            $.post(postURI, postObj, function(data) {
+                if (data && data.sucess) {
+                    showAlert("报名成功");
+                } else {
+                    showAlert(data.error);
+                }
+                $("#btnEnroll").removeAttr("disabled");
+            });
+        }
+    }
+});
+
 var $selectHeader = $('#selectModal .modal-body table thead');
 var $selectBody = $('#selectModal .modal-body table tbody');
 var $selectSearch = $('#selectModal #InfoSearch');

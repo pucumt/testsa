@@ -175,7 +175,7 @@ function searchExam(p) {
     $.post("/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
             data.adminEnrollExams.forEach(function(examOrder) {
-                var button = (examOrder.isSucceed == 1 ? '<a id="btnDelete" class="btn btn-default">取消</a>' : '');
+                var button = (examOrder.isSucceed == 1 ? '<a id="btnDelete" class="btn btn-default">取消</a><a id="btnChange" class="btn btn-default">更新学生</a>' : '');
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName +
                     '</td><td>' + examOrder.examName + '</td><td>' + getTrainOrderStatus(examOrder.isSucceed) +
                     '</td><td><div class="btn-group">' + button + '</div></td></tr>');
@@ -203,6 +203,30 @@ $('.content .examModal table tbody').on("click", "td #btnDelete", function(e) {
         }, function(data) {
             if (data.sucess) {
                 showAlert("删除成功", null, true);
+                $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    location.href = "/admin/studentDetail/" + $('#id').val();
+                });
+            }
+            $(obj).removeAttr("disabled");
+        });
+    });
+    e.stopPropagation();
+});
+
+$('.content .examModal table tbody').on("click", "td #btnChange", function(e) {
+    var obj = e.currentTarget;
+    $(obj).attr("disabled", "disabled");
+    var entity = $(obj).parents("tr").data("obj");
+    showComfirm("确定要更新订单" + entity._id + "吗？");
+
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/adminEnrollExam/changeStudent", {
+            id: entity._id,
+            studentId: $('#id').val(),
+            studentName: $('#studentName').val()
+        }, function(data) {
+            if (data.sucess) {
+                showAlert("修改成功", null, true);
                 $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
                     location.href = "/admin/studentDetail/" + $('#id').val();
                 });

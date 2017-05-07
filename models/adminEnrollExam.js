@@ -23,7 +23,8 @@ var adminEnrollExamSchema = new mongoose.Schema({
         report: String
     }],
     examAreaId: String, //means multi exam Area function
-    examAreaName: String //means multi exam Area function
+    examAreaName: String, //means multi exam Area function
+    isHide: { type: Boolean, default: false }
 }, {
     collection: 'adminEnrollExams'
 });

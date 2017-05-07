@@ -206,6 +206,40 @@ module.exports = function(app) {
             });
     });
 
+    app.post('/admin/adminEnrollExam/hideEnroll', checkLogin);
+    app.post('/admin/adminEnrollExam/hideEnroll', function(req, res) {
+        ExamClass.get(req.body.examId)
+            .then(function(examClass) {
+                if (examClass) {
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
+                        .then(function(enrollExam) {
+                            if (enrollExam) {
+                                res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                                return;
+                            }
+                            //报名成功
+                            var adminEnrollExam = new AdminEnrollExam({
+                                studentId: req.body.studentId,
+                                studentName: req.body.studentName,
+                                mobile: req.body.mobile,
+                                examId: req.body.examId,
+                                examName: req.body.examName,
+                                examCategoryId: req.body.examCategoryId,
+                                examCategoryName: req.body.examCategoryName,
+                                isSucceed: 1,
+                                isHide: true,
+                                scores: examClass.subjects
+                            });
+                            adminEnrollExam.save()
+                                .then(function(enrollExam) {
+                                    res.jsonp({ sucess: true });
+                                    return;
+                                });
+                        });
+                }
+            });
+    });
+
     //examClassExamAreaId: examArea
     app.post('/admin/adminEnrollExam/enroll2', checkLogin);
     app.post('/admin/adminEnrollExam/enroll2', function(req, res) {
@@ -251,6 +285,45 @@ module.exports = function(app) {
                                         res.jsonp({ error: "报名失败" });
                                         return;
                                     }
+                                });
+                        });
+                }
+            });
+    });
+
+    app.post('/admin/adminEnrollExam/hideEnroll2', checkLogin);
+    app.post('/admin/adminEnrollExam/hideEnroll2', function(req, res) {
+        ExamClass.get(req.body.examId)
+            .then(function(examClass) {
+                if (examClass) {
+                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
+                        .then(function(enrollExam) {
+                            if (enrollExam) {
+                                res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                                return;
+                            }
+                            //报名成功
+                            ExamClassExamArea.get(req.body.examClassExamAreaId)
+                                .then(function(examClassExamArea) {
+                                    var adminEnrollExam = new AdminEnrollExam({
+                                        studentId: req.body.studentId,
+                                        studentName: req.body.studentName,
+                                        mobile: req.body.mobile,
+                                        examId: req.body.examId,
+                                        examName: req.body.examName,
+                                        examCategoryId: req.body.examCategoryId,
+                                        examCategoryName: req.body.examCategoryName,
+                                        isSucceed: 1,
+                                        isHide: true,
+                                        scores: examClass.subjects,
+                                        examAreaId: examClassExamArea.examAreaId,
+                                        examAreaName: examClassExamArea.examAreaName
+                                    });
+                                    adminEnrollExam.save()
+                                        .then(function(enrollExam) {
+                                            res.jsonp({ sucess: true });
+                                            return;
+                                        });
                                 });
                         });
                 }
@@ -307,6 +380,17 @@ module.exports = function(app) {
                 });
 
         }
+    });
+
+    app.post('/admin/adminEnrollExam/changeStudent', checkLogin);
+    app.post('/admin/adminEnrollExam/changeStudent', function(req, res) {
+        var exam = new AdminEnrollExam({
+            studentId: req.body.studentId,
+            studentName: req.body.studentName
+        });
+        exam.update(req.body.id, function() {
+            res.jsonp({ sucess: true });
+        });
     });
 
     app.post('/admin/adminEnrollExam/searchExamScore', checkLogin);
