@@ -55,10 +55,10 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 30
     }, //30 days
     resave: false,
-    saveUninitialized: true //,
-        // store: new MongoStore({
-        //     url: 'mongodb://bfb:bfb123@' + settings.host + ':' + settings.port + '/' + settings.db
-        // })
+    saveUninitialized: true,
+    store: new MongoStore({
+        url: 'mongodb://bfb:bfb123@' + settings.host + ':' + settings.port + '/' + settings.db
+    })
 }));
 //app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
