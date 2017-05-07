@@ -57,7 +57,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({
-        url: 'mongodb://' + settings.host + ':' + settings.port + '/' + settings.db
+        url: 'mongodb://bfb:bfb123@' + settings.host + ':' + settings.port + '/' + settings.db
     })
 }));
 //app.use(flash());
