@@ -24,7 +24,10 @@ $(document).ready(function() {
             if (data.error) {
                 showAlert("生成付款码失败");
             } else {
-                location.href = data.url;
+                //location.href = data.url;
+                $(".imgCode #imgCode").attr("src", data.imgCode);
+                $(".imgCode").show();
+                $(".personalCenter").hide();
             }
         });
     });

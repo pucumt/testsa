@@ -157,7 +157,8 @@ module.exports = function(app) {
                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
                         openId: openId
                     };
-                    payHelper.jsPay(payParas, res);
+                    //payHelper.jsPay(payParas, res);
+                    payHelper.pay(payParas, res);
                 }
             });
     };

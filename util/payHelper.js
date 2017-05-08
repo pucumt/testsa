@@ -82,6 +82,54 @@ var Pay = {
         reqPay.write(data);
         reqPay.end();
     },
+    aliPay: function(payParas, res) {
+        var sendObject = {
+            'body': payParas.body,
+            'mch_create_ip': settings.create_ip,
+            'mch_id': settings.mch_id,
+            'nonce_str': 'bfbeducation',
+            'notify_url': settings.notify_Url,
+            'out_trade_no': payParas.out_trade_no,
+            'service': 'pay.alipay.native',
+            'total_fee': payParas.total_fee
+        };
+        var keys = Object.getOwnPropertyNames(sendObject).sort(),
+            strPay = "";
+        keys.forEach(function(key) {
+            var v = sendObject[key];
+            if ("sign" != key && "key" != key) {
+                strPay = strPay + key + "=" + v + "&";
+            }
+        });
+        strPay = strPay + "key=" + settings.key;
+        var md5 = crypto.createHash('md5'),
+            sign = md5.update(strPay).digest('hex').toUpperCase();
+        sendObject.sign = sign;
+        var data = toxml(sendObject);
+        var options = {
+            hostname: 'pay.swiftpass.cn',
+            port: 443,
+            path: '/pay/gateway',
+            method: 'POST'
+        };
+
+        var reqPay = https.request(options, (resPay) => {
+            resPay.on('data', (d) => {
+                var body = d.toString(),
+                    imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
+
+                res.jsonp({
+                    imgCode: imgCode
+                });
+            });
+        });
+
+        reqPay.on('error', (e) => {
+            console.error(e);
+        });
+        reqPay.write(data);
+        reqPay.end();
+    },
     jsPay: function(payParas, res) {
         debugger;
         var sendObject = {
