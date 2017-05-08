@@ -18,7 +18,12 @@ $(document).ready(function() {
         location.href = "/personalCenter/randomCoupon";
     });
     $("#btnExit").on("click", function(e) {
-        location.href = "/personalCenter/exit";
+        //location.href = "/personalCenter/exit";
+        var keys = "";
+        for (var key in window.WeixinJSBridge) {
+            keys += key + ",";
+        }
+        showAlert(keys);
     });
 
     renderRandomCoupon();
