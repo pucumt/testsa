@@ -217,13 +217,13 @@ module.exports = function(app) {
                 var pArray = [],
                     minScore;
                 trainClass.exams.forEach(function(exam) {
+                    minScore = exam.minScore;
                     var p = AdminEnrollExam.getFilter({ examId: exam.examId, studentId: req.body.studentId, isSucceed: 1 })
                         .then(function(examOrder) {
                             if (examOrder) {
                                 var subjectScore = examOrder.scores.filter(function(score) {
                                     return score.subjectId == trainClass.subjectId;
                                 })[0];
-                                minScore = subjectScore.score;
                                 if (subjectScore.score >= exam.minScore) {
                                     return true;
                                 }

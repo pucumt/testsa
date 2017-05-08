@@ -34,6 +34,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/batchAddStudentToTrainClass', checkLogin);
+    app.get('/admin/batchAddStudentToTrainClass', function(req, res) {
+        res.render('Server/batchAddStudentToTrainClass.html', {
+            title: '>批量添加学生到课程',
+            user: req.session.admin
+        });
+    });
+
     app.post('/admin/trainClass/add', checkLogin);
     app.post('/admin/trainClass/add', function(req, res) {
         var trainClass = new TrainClass({

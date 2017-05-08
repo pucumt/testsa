@@ -5,7 +5,7 @@ var db = mongoose.connection;
 var adminEnrollTrainSchema = new mongoose.Schema({
     studentId: String,
     studentName: String,
-    mobile: String,
+    mobile: String, //useless
     trainId: String,
     trainName: String,
     trainPrice: { type: Number, default: 0 },
@@ -20,7 +20,7 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     isDeleted: { type: Boolean, default: false },
     attributeId: String, //now used to check coupon, maybe change later
     attributeName: String,
-    orderDate: Date,
+    orderDate: { type: Date, default: Date.now },
     cancelDate: Date,
     comment: String,
     fromId: String //调班从哪里调过来
@@ -156,6 +156,16 @@ AdminEnrollTrain.pay = function(id, payWay) {
         isPayed: true,
         payWay: payWay
     }).exec();
+};
+
+AdminEnrollTrain.getFilter = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return adminEnrollTrainModel.findOne(filter)
+        .exec();
 };
 
 AdminEnrollTrain.getFilters = function(filter) {

@@ -24,14 +24,16 @@ $(document).ready(function() {
     $("#btnBatchPublish").on("click", function(e) {
         location.href = "/admin/batchTrainClasspublish";
     });
-
+    $("#btnBatchAddStudent").on("click", function(e) {
+        location.href = "/admin/batchAddStudentToTrainClass";
+    });
 });
 
 //------------search funfunction
 
 var $mainSelectBody = $('.content.mainModal table tbody');
 var getButtons = function(isWeixin) {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">升班链接</a>';
     if (isWeixin == 1) {
         buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
     } else {
@@ -502,6 +504,12 @@ $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
             }
         });
     });
+});
+
+$(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    showAlert(location.host + "/enroll/originalclass/" + entity._id);
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {

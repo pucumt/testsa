@@ -281,3 +281,7 @@ body {
 .mainModal .score.detail div span {
     margin-left: 10px;
 }
+
+#confirmModal .modal-body {
+    word-wrap: break-word;
+}

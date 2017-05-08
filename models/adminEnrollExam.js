@@ -14,7 +14,7 @@ var adminEnrollExamSchema = new mongoose.Schema({
     isPayed: Boolean,
     payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
     isDeleted: Boolean,
-    orderDate: Date,
+    orderDate: { type: Date, default: Date.now },
     CancelDate: Date,
     scores: [{
         subjectId: String,

@@ -5,7 +5,9 @@ var xlsx = require("node-xlsx"),
     StudentAccount = require('../../models/studentAccount.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     ScoreFails = require('../../models/scoreFails.js'),
+    AddStudentToClassFails = require('../../models/addStudentToClassFails.js'),
     AdminEnrollExam = require('../../models/adminEnrollExam.js'),
+    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     ExamClass = require('../../models/examClass.js'),
     TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
@@ -92,6 +94,9 @@ module.exports = function(app) {
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break;
+            }
             updateScore(list[0].data[i], req.body.examId, req.body.subject);
         }
         // res.redirect('/admin/score');
@@ -241,8 +246,8 @@ module.exports = function(app) {
                                                                             option.fromClassId = trainClass._id;
                                                                             option.fromClassName = trainClass.name;
                                                                         }
-                                                                        if (data[17] && data[17].trim() != "") {
-                                                                            option.protectedDate = (new Date(1900, 0, parseInt(data[17].trim()) - 1));
+                                                                        if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，TBD
+                                                                            option.protectedDate = (new Date(1900, 0, parseInt(data[17]) - 1));
                                                                         }
                                                                         var trainClass = new TrainClass(option);
                                                                         return trainClass.save();
@@ -265,7 +270,95 @@ module.exports = function(app) {
         var length = list[0].data.length;
         var pArray = [];
         for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break;
+            }
             pArray.push(createNewClass(list[0].data[i]));
+        }
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.get('/admin/batchAddStudentToTrainClassResult', checkLogin);
+    app.get('/admin/batchAddStudentToTrainClassResult', function(req, res) {
+        res.render('Server/batchAddStudentToTrainClassResult.html', {
+            title: '>老生班级导入结果失败列表',
+            user: req.session.admin
+        });
+    });
+    app.get('/admin/batchAddStudentToTrainClass/clearAll', checkLogin);
+    app.get('/admin/batchAddStudentToTrainClass/clearAll', function(req, res) {
+        AddStudentToClassFails.clearAll().then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+    app.get('/admin/batchAddStudentToTrainClass/all', checkLogin);
+    app.get('/admin/batchAddStudentToTrainClass/all', function(req, res) {
+        AddStudentToClassFails.getFilters({})
+            .then(function(allFails) {
+                res.jsonp(allFails);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
+    function failedAddStudentToClass(name, mobile, className, reason) {
+        var newAddStudentToClassFails = new AddStudentToClassFails({
+            name: name, //score[0],
+            mobile: mobile, //score[1],
+            className: className,
+            reason: reason
+        });
+        newAddStudentToClassFails.save();
+    };
+
+    function addStudentToClass(data) {
+        var option = {
+            isPayed: true,
+            payWay: 0
+        };
+        TrainClass.getFilter({ name: data[0] }).then(function(existTrainClass) {
+            if (existTrainClass) {
+                option.trainId = existTrainClass._id;
+                option.trainName = existTrainClass.name;
+                return StudentInfo.getFilter({ name: data[1].trim(), mobile: data[2] })
+                    .then(function(student) {
+                        if (student) {
+                            option.studentId = student._id;
+                            option.studentName = student.name;
+                            AdminEnrollTrain.getFilter({
+                                    trainId: existTrainClass._id,
+                                    studentId: student._id,
+                                    isSucceed: 1
+                                })
+                                .then(function(order) {
+                                    if (!order) {
+                                        var newAdminEnrollTrain = new AdminEnrollTrain(option);
+                                        return newAdminEnrollTrain.save();
+                                    }
+                                });
+                        } else {
+                            failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到学生");
+                        }
+                    });
+            } else {
+                failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到班级");
+            }
+        });
+    };
+
+    app.post('/admin/batchAddStudentToTrainClass', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length;
+        var pArray = [];
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break;
+            }
+            pArray.push(addStudentToClass(list[0].data[i]));
         }
         Promise.all(pArray).then(function() {
             res.jsonp({ sucess: true });
