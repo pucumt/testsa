@@ -158,7 +158,7 @@ module.exports = function(app) {
                         openId: openId
                     };
                     //payHelper.jsPay(payParas, res);
-                    payHelper.pay(payParas, res);
+                    payHelper.aliPay(payParas, res);
                 }
             });
     };

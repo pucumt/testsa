@@ -18,13 +18,12 @@
                     <div class="classDetail">
                         <div class="">日期:&nbsp;&nbsp;{{ train.examDate.toLocaleDateString() }} </div>
                         <div class="">时间:&nbsp;&nbsp;{{ train.examTime }}</div>
-                        {% if classRoom %}
-                        <div class="">考号:&nbsp;&nbsp;{{ order.examNo }}</div>
-                        <div class="">教室:&nbsp;&nbsp;{{ classRoom.name }}</div>
-                        <div class="">校区:&nbsp;&nbsp;{{ classRoom.schoolArea }}</div>
+                        {% if order.examAreaName %}
+                        <div class="">地点:&nbsp;&nbsp;{{ order.examAreaName }}</div>
                         {% endif %}
                     </div>
                     {% endif %}
+
                     <div class="price">
                         {% if order.scores and order.scores.length>0 %} {% for score in order.scores %}
                         <div class="score">

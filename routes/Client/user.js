@@ -207,13 +207,6 @@ module.exports = function(app) {
                                     }).then(function(order) {
                                         if (order) {
                                             student.order = order;
-                                            if (order.classRoomId) {
-                                                return ClassRoom.get(order.classRoomId).then(function(classRoom) {
-                                                    if (classRoom) {
-                                                        order.room = classRoom;
-                                                    }
-                                                });
-                                            }
                                         }
                                     });
                                     pArray.push(p);
@@ -272,13 +265,6 @@ module.exports = function(app) {
                                     }).then(function(order) {
                                         if (order) {
                                             student.order = order;
-                                            if (order.classRoomId) {
-                                                return ClassRoom.get(order.classRoomId).then(function(classRoom) {
-                                                    if (classRoom) {
-                                                        order.room = classRoom;
-                                                    }
-                                                });
-                                            }
                                         }
                                     });
                                     pArray.push(p);
