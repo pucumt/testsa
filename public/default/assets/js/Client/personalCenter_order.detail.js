@@ -1,5 +1,6 @@
 var newStudent = true,
-    editStudent;
+    editStudent,
+    orderId;
 
 $(document).ready(function() {
     $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
@@ -8,15 +9,39 @@ $(document).ready(function() {
 
     $("#btnPay").on("click", function(e) {
         var orderId = $(e.currentTarget).attr("orderId");
-        $.post("/personalCenter/order/pay", {
-            id: orderId,
-            originalUrl: "/personalCenter/order/id/" + orderId
-        }, function(data) {
-            if (data.error) {
-                showAlert("生成付款码失败");
-            } else {
-                //paycode
-            }
-        });
+        $("#bgBack").show();
+        $("#pay-select").show();
     });
+});
+
+
+$("#pay-select .wechat").on("click", function(e) {
+    $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+        if (data.error) {
+            showAlert("生成付款码失败");
+        } else {
+            //location.href = data.url;
+            $(".imgCode #imgCode").attr("src", data.imgCode);
+            $(".imgCode").show();
+            $(".personalCenter").hide();
+        }
+    });
+});
+
+$("#pay-select .zhifubao").on("click", function(e) {
+    $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+        if (data.error) {
+            showAlert("生成付款码失败");
+        } else {
+            //location.href = data.url;
+            $(".imgCode #imgCode").attr("src", data.imgCode);
+            $(".imgCode").show();
+            $(".personalCenter").hide();
+        }
+    });
+});
+
+$("#bgBack").on("click", function(e) {
+    $("#bgBack").hide();
+    $("#pay-select").hide();
 });

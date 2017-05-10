@@ -139,12 +139,38 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/personalCenter/order/wechatpay/:id', checkLogin);
+    app.get('/personalCenter/order/wechatpay/:id', function(req, res) {
+        debugger;
+        openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+    });
+    app.get('/personalCenter/order/zhifubaopay/:id', checkLogin);
+    app.get('/personalCenter/order/zhifubaopay/:id', function(req, res) {
+        debugger;
+        openzhifubaoPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+    });
     app.get('/personalCenter/order/pay/:id', checkLogin);
     app.get('/personalCenter/order/pay/:id', function(req, res) {
         debugger;
-        //payHelper.getOpenId(res, req.params.id);
-        openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+        payHelper.getOpenId(res, req.params.id);
+        // openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
     });
+
+    function opennativeWechatPay(res, id, openId) {
+        debugger;
+        AdminEnrollTrain.get(id)
+            .then(function(order) {
+                if (order) {
+                    var payParas = {
+                        out_trade_no: order._id,
+                        body: order.trainName,
+                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
+                        openId: openId
+                    };
+                    payHelper.jsPay(payParas, res);
+                }
+            });
+    };
 
     function openWechatPay(res, id, openId) {
         debugger;
@@ -157,7 +183,22 @@ module.exports = function(app) {
                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
                         openId: openId
                     };
-                    //payHelper.jsPay(payParas, res);
+                    payHelper.pay(payParas, res);
+                }
+            });
+    };
+
+    function openzhifubaoPay(res, id, openId) {
+        debugger;
+        AdminEnrollTrain.get(id)
+            .then(function(order) {
+                if (order) {
+                    var payParas = {
+                        out_trade_no: order._id,
+                        body: order.trainName,
+                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
+                        openId: openId
+                    };
                     payHelper.aliPay(payParas, res);
                 }
             });
@@ -165,7 +206,7 @@ module.exports = function(app) {
 
     app.get('/get_wx_access_token/:id', function(req, res) {
         debugger;
-        payHelper.wechatPay(req, res, openWechatPay);
+        payHelper.wechatPay(req, res, opennativeWechatPay);
     });
 
     app.post('/cancel/exam', checkJSONLogin);

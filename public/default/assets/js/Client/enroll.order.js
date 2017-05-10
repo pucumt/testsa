@@ -81,6 +81,11 @@ function setPrice() {
 };
 
 $("#btnPay").on("click", function(e) {
+    $("#bgBack").show();
+    $("#pay-select").show();
+});
+
+function getOrderId(callback) {
     $("#btnPay").attr("disabled", "disabled");
     var filter = {
         classId: $("#classId").val(),
@@ -88,7 +93,6 @@ $("#btnPay").on("click", function(e) {
         coupon: $('.enroll .exam-detail .coupon #coupon').val()
     };
     filter.originalUrl = "/enroll/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
-
     $.post("/enroll/pay", filter, function(data) {
         if (data) {
             if (data.notLogin) {
@@ -98,24 +102,52 @@ $("#btnPay").on("click", function(e) {
             $("#btnPay").removeAttr("disabled");
             if (data.error) {
                 $("#bgBack").show();
+                $("#pay-select").hide();
                 showAlert(data.error, null, function() {
                     $("#bgBack").hide();
                 });
                 return;
             }
             if (data.orderId) {
-                //show paycode
-                $.post("/personalCenter/order/pay", {
-                    id: data.orderId,
-                    originalUrl: "/enroll/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
-                }, function(data) {
-                    if (data.error) {
-                        showAlert("生成付款码失败");
-                    } else {
-                        showAlert(data.token);
-                    }
-                });
+                callback(data.orderId);
             }
         }
     });
+};
+
+$("#pay-select .wechat").on("click", function(e) {
+    getOrderId(function(orderId) {
+        $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+            $("#pay-select").hide();
+            if (data.error) {
+                showAlert("生成付款码失败");
+            } else {
+                //location.href = data.url;
+                $(".imgCode #imgCode").attr("src", data.imgCode);
+                $(".imgCode").show();
+                $(".personalCenter").hide();
+            }
+        });
+    });
+});
+
+$("#pay-select .zhifubao").on("click", function(e) {
+    getOrderId(function(orderId) {
+        $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+            $("#pay-select").hide();
+            if (data.error) {
+                showAlert("生成付款码失败");
+            } else {
+                //location.href = data.url;
+                $(".imgCode #imgCode").attr("src", data.imgCode);
+                $(".imgCode").show();
+                $(".personalCenter").hide();
+            }
+        });
+    });
+});
+
+$("#bgBack").on("click", function(e) {
+    $("#bgBack").hide();
+    $("#pay-select").hide();
 });

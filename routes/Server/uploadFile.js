@@ -451,7 +451,7 @@ module.exports = function(app) {
 
         p.then(function() {
             var buffer = xlsx.build([{ name: "成绩", data: data }]),
-                fileName = req.body.exam + '_' + req.body.subject + '.xlsx';
+                fileName = req.body.exam.substr(0, 18) + '_' + req.body.subject + '.xlsx';
             fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
             // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));

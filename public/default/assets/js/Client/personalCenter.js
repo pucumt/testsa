@@ -25,7 +25,6 @@ $(document).ready(function() {
         // }
         // showAlert(keys);
     });
-
     renderRandomCoupon();
 });
 

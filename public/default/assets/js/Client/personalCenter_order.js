@@ -1,5 +1,6 @@
 var newStudent = true,
-    editStudent;
+    editStudent,
+    orderId;
 
 $(document).ready(function() {
     $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
@@ -16,20 +17,10 @@ $(document).ready(function() {
     });
 
     $(".enroll.personalCenter .orderList ul ").on("click", "#btnPay", function(e) {
-        var curObj = $(e.currentTarget),
-            orderId = curObj.parents("li").attr("orderId");
-        curObj.attr("disabled", "disabled");
-        $.get("/personalCenter/order/pay/" + orderId, function(data) {
-            curObj.removeAttr("disabled");
-            if (data.error) {
-                showAlert("生成付款码失败");
-            } else {
-                //location.href = data.url;
-                $(".imgCode #imgCode").attr("src", data.imgCode);
-                $(".imgCode").show();
-                $(".personalCenter").hide();
-            }
-        });
+        var curObj = $(e.currentTarget);
+        orderId = curObj.parents("li").attr("orderId");
+        $("#bgBack").show();
+        $("#pay-select").show();
     });
 });
 
@@ -74,3 +65,35 @@ function GotoDetail(e) {
         $li = curObj.parents("li");
     location.href = "/personalCenter/order/id/" + $li.attr("orderId");
 }
+
+
+$("#pay-select .wechat").on("click", function(e) {
+    $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+        if (data.error) {
+            showAlert("生成付款码失败");
+        } else {
+            //location.href = data.url;
+            $(".imgCode #imgCode").attr("src", data.imgCode);
+            $(".imgCode").show();
+            $(".personalCenter").hide();
+        }
+    });
+});
+
+$("#pay-select .zhifubao").on("click", function(e) {
+    $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+        if (data.error) {
+            showAlert("生成付款码失败");
+        } else {
+            //location.href = data.url;
+            $(".imgCode #imgCode").attr("src", data.imgCode);
+            $(".imgCode").show();
+            $(".personalCenter").hide();
+        }
+    });
+});
+
+$("#bgBack").on("click", function(e) {
+    $("#bgBack").hide();
+    $("#pay-select").hide();
+});
