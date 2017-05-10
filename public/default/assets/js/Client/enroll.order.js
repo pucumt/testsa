@@ -125,11 +125,16 @@ $("#pay-select .wechat").on("click", function(e) {
             if (data.error) {
                 showAlert("生成付款码失败");
             } else {
+                if (data.url) {
+                    location.href = data.url;
+                } else {
+                    showAlert("生成付款码失败");
+                }
                 //location.href = data.url;
-                $(".imgCode #imgCode").attr("src", data.imgCode);
-                $(".imgCode").show();
-                $("#bgBack").off("click");
-                $(".personalCenter").hide();
+                // $(".imgCode #imgCode").attr("src", data.imgCode);
+                // $(".imgCode").show();
+                // $("#bgBack").off("click");
+                // $(".personalCenter").hide();
             }
         });
     });

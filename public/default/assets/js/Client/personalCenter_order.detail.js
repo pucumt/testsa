@@ -20,11 +20,12 @@ $("#pay-select .wechat").on("click", function(e) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
-            if (data.imgCode == "") {
-                showAlert("付款失败，请选择支付宝支付尝试", null, function() {
-                    $("#btnPay").removeAttr("disabled");
-                    $("#bgBack").hide();
-                });
+            if (data.url) {
+                location.href = data.url;
+                // showAlert("付款失败，请选择支付宝支付尝试", null, function() {
+                //     $("#btnPay").removeAttr("disabled");
+                //     $("#bgBack").hide();
+                // });
             } else {
                 $(".imgCode #imgCode").attr("src", data.imgCode);
                 $(".imgCode").show();
