@@ -425,3 +425,12 @@ footer,
 #pay-select .payway.wechat {
     border-bottom: 1px solid #ccc;
 }
+
+.container.imgCode {
+    z-index: 1001;
+    opacity: 1;
+    background: white;
+    position: fixed;
+    top: 50px;
+    padding-bottom: 40px;
+}

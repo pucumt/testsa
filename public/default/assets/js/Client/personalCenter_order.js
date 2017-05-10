@@ -17,10 +17,11 @@ $(document).ready(function() {
     });
 
     $(".enroll.personalCenter .orderList ul ").on("click", "#btnPay", function(e) {
-        var curObj = $(e.currentTarget);
-        orderId = curObj.parents("li").attr("orderId");
-        $("#bgBack").show();
-        $("#pay-select").show();
+        GotoDetail(e);
+        // var curObj = $(e.currentTarget);
+        // orderId = curObj.parents("li").attr("orderId");
+        // $("#bgBack").show();
+        // $("#pay-select").show();
     });
 });
 
@@ -68,6 +69,7 @@ function GotoDetail(e) {
 
 
 $("#pay-select .wechat").on("click", function(e) {
+    $("#pay-select").hide();
     $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
@@ -75,12 +77,12 @@ $("#pay-select .wechat").on("click", function(e) {
             //location.href = data.url;
             $(".imgCode #imgCode").attr("src", data.imgCode);
             $(".imgCode").show();
-            $(".personalCenter").hide();
         }
     });
 });
 
 $("#pay-select .zhifubao").on("click", function(e) {
+    $("#pay-select").hide();
     $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
@@ -88,7 +90,6 @@ $("#pay-select .zhifubao").on("click", function(e) {
             //location.href = data.url;
             $(".imgCode #imgCode").attr("src", data.imgCode);
             $(".imgCode").show();
-            $(".personalCenter").hide();
         }
     });
 });
@@ -96,4 +97,5 @@ $("#pay-select .zhifubao").on("click", function(e) {
 $("#bgBack").on("click", function(e) {
     $("#bgBack").hide();
     $("#pay-select").hide();
+    $(".imgCode").hide();
 });

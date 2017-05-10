@@ -105,6 +105,9 @@ function getOrderId(callback) {
                 $("#pay-select").hide();
                 showAlert(data.error, null, function() {
                     $("#bgBack").hide();
+                    if ("你已经报过名了，将跳转到订单支付页!" == data.error) {
+                        location.href = "/personalCenter/order";
+                    }
                 });
                 return;
             }
@@ -125,6 +128,7 @@ $("#pay-select .wechat").on("click", function(e) {
                 //location.href = data.url;
                 $(".imgCode #imgCode").attr("src", data.imgCode);
                 $(".imgCode").show();
+                $("#bgBack").off("click");
                 $(".personalCenter").hide();
             }
         });
@@ -141,6 +145,7 @@ $("#pay-select .zhifubao").on("click", function(e) {
                 //location.href = data.url;
                 $(".imgCode #imgCode").attr("src", data.imgCode);
                 $(".imgCode").show();
+                $("#bgBack").off("click");
                 $(".personalCenter").hide();
             }
         });

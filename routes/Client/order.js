@@ -141,18 +141,23 @@ module.exports = function(app) {
 
     app.get('/personalCenter/order/wechatpay/:id', checkLogin);
     app.get('/personalCenter/order/wechatpay/:id', function(req, res) {
-        debugger;
-        openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+        if (req.params.id) {
+            openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+        }
     });
     app.get('/personalCenter/order/zhifubaopay/:id', checkLogin);
     app.get('/personalCenter/order/zhifubaopay/:id', function(req, res) {
         debugger;
-        openzhifubaoPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+        if (req.params.id) {
+            openzhifubaoPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+        }
     });
     app.get('/personalCenter/order/pay/:id', checkLogin);
     app.get('/personalCenter/order/pay/:id', function(req, res) {
         debugger;
-        payHelper.getOpenId(res, req.params.id);
+        if (req.params.id) {
+            payHelper.getOpenId(res, req.params.id);
+        }
         // openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
     });
 

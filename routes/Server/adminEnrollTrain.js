@@ -264,6 +264,8 @@ module.exports = function(app) {
                             return;
                         }
                         res.jsonp({ sucess: true });
+                        //send message to xingye
+                        payHelper.closeOrder(req.body.id);
                     });
                 } else {
                     res.jsonp({ error: "取消失败" });
@@ -430,6 +432,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/pay/notify', function(req, res) {
+        //xingye pay result
         debugger;
         var arr = [];
         req.on("data", function(data) {

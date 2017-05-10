@@ -208,6 +208,36 @@ var Pay = {
                 }
             }
         );
+    },
+    closeOrder: function(id) {
+        var sendObject = {
+            'mch_id': settings.mch_id,
+            'nonce_str': 'bfbeducation',
+            'out_trade_no': id,
+            'service': 'unified.trade.close'
+        };
+        var keys = Object.getOwnPropertyNames(sendObject).sort(),
+            strPay = "";
+        keys.forEach(function(key) {
+            var v = sendObject[key];
+            if ("sign" != key && "key" != key) {
+                strPay = strPay + key + "=" + v + "&";
+            }
+        });
+        strPay = strPay + "key=" + settings.key;
+        var md5 = crypto.createHash('md5'),
+            sign = md5.update(strPay).digest('hex').toUpperCase();
+        sendObject.sign = sign;
+        var data = toxml(sendObject);
+
+        request.post({
+                url: 'https://pay.swiftpass.cn:443/pay/gateway',
+                body: data
+            },
+            function(error, response, body) {
+                if (response.statusCode == 200) {} else {}
+            }
+        );
     }
 };
 

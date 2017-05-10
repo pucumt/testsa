@@ -414,10 +414,9 @@ module.exports = function(app) {
         AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
             .then(function(enrollTrain) {
                 if (enrollTrain) {
-                    res.jsonp({ error: "你已经报过名了，此课程不允许多次报名" });
+                    res.jsonp({ error: "你已经报过名了，将跳转到订单支付页!" });
                     return;
                 }
-
                 TrainClass.enroll(req.body.classId)
                     .then(function(resultClass) {
                         if (resultClass && resultClass.ok && resultClass.nModified == 1) {

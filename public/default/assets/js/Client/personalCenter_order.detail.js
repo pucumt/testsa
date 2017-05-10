@@ -8,35 +8,47 @@ $(document).ready(function() {
     });
 
     $("#btnPay").on("click", function(e) {
-        var orderId = $(e.currentTarget).attr("orderId");
+        $("#btnPay").attr("disabled", "disabled");
         $("#bgBack").show();
         $("#pay-select").show();
     });
 });
 
-
 $("#pay-select .wechat").on("click", function(e) {
-    $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+    $("#pay-select").hide();
+    $.get("/personalCenter/order/wechatpay/" + $("#orderId").val(), function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
-            //location.href = data.url;
-            $(".imgCode #imgCode").attr("src", data.imgCode);
-            $(".imgCode").show();
-            $(".personalCenter").hide();
+            if (data.imgCode == "") {
+                showAlert("付款失败，请选择支付宝支付尝试", null, function() {
+                    $("#btnPay").removeAttr("disabled");
+                    $("#bgBack").hide();
+                });
+            } else {
+                $(".imgCode #imgCode").attr("src", data.imgCode);
+                $(".imgCode").show();
+            }
         }
     });
 });
 
 $("#pay-select .zhifubao").on("click", function(e) {
-    $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+    $("#pay-select").hide();
+    $.get("/personalCenter/order/zhifubaopay/" + $("#orderId").val(), function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
             //location.href = data.url;
-            $(".imgCode #imgCode").attr("src", data.imgCode);
-            $(".imgCode").show();
-            $(".personalCenter").hide();
+            if (data.imgCode == "") {
+                showAlert("付款失败，请选择微信支付尝试", null, function() {
+                    $("#btnPay").removeAttr("disabled");
+                    $("#bgBack").hide();
+                });
+            } else {
+                $(".imgCode #imgCode").attr("src", data.imgCode);
+                $(".imgCode").show();
+            }
         }
     });
 });
@@ -44,4 +56,5 @@ $("#pay-select .zhifubao").on("click", function(e) {
 $("#bgBack").on("click", function(e) {
     $("#bgBack").hide();
     $("#pay-select").hide();
+    $(".imgCode").hide();
 });
