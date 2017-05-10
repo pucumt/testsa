@@ -107,7 +107,7 @@ $("#editfile #btnExportScore").on("click", function(e) {
             subject: $("#editfile #subject").find("option:selected").text()
         }).then(function(data) {
             if (data && data.sucess) {
-                var fileName = $("#editfile #examName").val() + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
+                var fileName = $("#editfile #examName").val().substr(0, 18) + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
             }
         });
