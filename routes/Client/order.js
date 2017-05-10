@@ -142,7 +142,8 @@ module.exports = function(app) {
     app.get('/personalCenter/order/wechatpay/:id', checkLogin);
     app.get('/personalCenter/order/wechatpay/:id', function(req, res) {
         if (req.params.id) {
-            openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+            payHelper.getOpenId(res, req.params.id);
+            //openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
         }
     });
     app.get('/personalCenter/order/zhifubaopay/:id', checkLogin);
