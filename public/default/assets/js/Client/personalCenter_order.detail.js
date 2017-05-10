@@ -12,6 +12,14 @@ $(document).ready(function() {
         $("#bgBack").show();
         $("#pay-select").show();
     });
+
+    if ($("#payway").val() == "7") {
+        $("#pay-select .wechat").hide();
+        $("#pay-select .zhifubao").show();
+    } else if ($("#payway").val() == "6") {
+        $("#pay-select .zhifubao").hide();
+        $("#pay-select .wechat").show();
+    }
 });
 
 $("#pay-select .wechat").on("click", function(e) {

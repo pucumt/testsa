@@ -85,12 +85,13 @@ $("#btnPay").on("click", function(e) {
     $("#pay-select").show();
 });
 
-function getOrderId(callback) {
+function getOrderId(payWay, callback) {
     $("#btnPay").attr("disabled", "disabled");
     var filter = {
         classId: $("#classId").val(),
         studentId: $("#studentId").val(),
-        coupon: $('.enroll .exam-detail .coupon #coupon').val()
+        coupon: $('.enroll .exam-detail .coupon #coupon').val(),
+        payWay: payWay
     };
     filter.originalUrl = "/enroll/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
     $.post("/enroll/pay", filter, function(data) {
@@ -119,7 +120,7 @@ function getOrderId(callback) {
 };
 
 $("#pay-select .wechat").on("click", function(e) {
-    getOrderId(function(orderId) {
+    getOrderId("6", function(orderId) {
         $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
             $("#pay-select").hide();
             if (data.error) {
@@ -141,7 +142,7 @@ $("#pay-select .wechat").on("click", function(e) {
 });
 
 $("#pay-select .zhifubao").on("click", function(e) {
-    getOrderId(function(orderId) {
+    getOrderId("7", function(orderId) {
         $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
             $("#pay-select").hide();
             if (data.error) {

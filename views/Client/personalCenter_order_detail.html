@@ -8,6 +8,7 @@
             {% if order %}
             <li class="clearfix">
                 <input type="hidden" id="orderId" value="{{ order._id }}" />
+                <input type="hidden" id="payway" value="{{ order.payway }}" />
                 <div>
                     <div class="detail">
                         <div class="studentName">学员:{{ order.studentName }}</div>

@@ -16,7 +16,7 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     rebatePrice: { type: Number, default: 0 }, //退费
     isSucceed: { type: Number, default: 1 }, //1 succeed, 9 canceled
     isPayed: { type: Boolean, default: false },
-    payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin 6 weixinOnline
+    payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin 6 weixinOnline 7 zhifubaoOnline
     isDeleted: { type: Boolean, default: false },
     attributeId: String, //now used to check coupon, maybe change later
     attributeName: String,

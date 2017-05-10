@@ -468,7 +468,8 @@ module.exports = function(app) {
                                             realMaterialPrice: trainClass.materialPrice,
                                             attributeId: trainClass.attributeId,
                                             attributeName: trainClass.attributeName,
-                                            isSucceed: 1
+                                            isSucceed: 1,
+                                            payWay: req.body.payWay
                                         });
                                         adminEnrollTrain.save()
                                             .then(function(enrollExam) {
