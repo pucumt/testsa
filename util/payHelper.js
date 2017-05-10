@@ -170,12 +170,16 @@ var Pay = {
                     var token = myJSSubstr(body, "<token_id><![CDATA[", "]]></token_id>");
                     debugger;
                     if (token != "") {
-                        res.redirect("https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1");
+                        res.render('Client/order_pay.html', {
+                            title: '支付',
+                            url: "https://pay.swiftpass.cn/pay/jspay?token_id=" + token + "&showwxtitle=1"
+                        });
+                        //res.redirect();
                     } else {
-                        res.redirect("/personalCenter/order");
+                        //res.redirect("/personalCenter/order");
                     }
                 } else {
-                    res.redirect("/personalCenter/order");
+                    //res.redirect("/personalCenter/order");
                 }
             }
         );
