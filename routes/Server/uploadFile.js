@@ -112,9 +112,10 @@ module.exports = function(app) {
             materialPrice: data[11],
             courseStartDate: (new Date(1900, 0, parseInt(data[5]) - 1)),
             courseEndDate: (new Date(1900, 0, parseInt(data[6]) - 1)),
-            courseTime: data[7]
+            courseTime: data[7],
+            courseContent: data[18].trim()
         };
-        TrainClass.getFilter({ name: data[0] }).then(function(existTrainClass) {
+        TrainClass.getFilter({ name: data[0], schoolArea: data[14].trim() }).then(function(existTrainClass) {
             if (existTrainClass) {
                 // TrainClass
                 //学费 教材费 教室 校区 依赖的考试
