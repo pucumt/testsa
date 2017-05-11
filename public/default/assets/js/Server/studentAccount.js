@@ -22,6 +22,7 @@ function search(p) {
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
     $.post("/admin/studentAccountList/search?" + pStr, filter, function(data) {
+        $mainSelectBody.empty();
         if (data && data.studentAccounts.length > 0) {
             data.studentAccounts.forEach(function(studentAccount) {
                 var $tr = $('<tr id=' + studentAccount._id + '><td>' + studentAccount.name + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');

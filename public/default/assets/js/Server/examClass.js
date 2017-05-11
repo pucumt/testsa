@@ -49,6 +49,7 @@ function searchExams(p) {
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
     $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+        $mainSelectBody.empty();
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
                 var $tr = $('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +

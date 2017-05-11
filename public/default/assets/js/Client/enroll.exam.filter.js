@@ -17,12 +17,16 @@ function loadData(p) {
         } else {
             if (!p) {
                 $('.container.enroll .row').text("即将上线");
+                return;
             }
         }
         if (data.isLastPage) {
             //已经全部加载
             $("#btnMore").text("已经到最后了");
             $("#btnMore").attr("disabled", "disabled");
+        }
+        if (p) {
+            $("#page").val(p);
         }
     });
 };

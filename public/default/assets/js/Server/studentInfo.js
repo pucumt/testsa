@@ -23,6 +23,7 @@ function search(p) {
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
     $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+        $mainSelectBody.empty();
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(studentInfo) {
                 var $tr = $('<tr id=' + studentInfo._id + '><td>' + studentInfo.name + '</td><td>' + studentInfo.mobile + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');

@@ -17,6 +17,7 @@ function searchOrder(p) {
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
     $.post("/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
+        $selectBody.empty();
         if (data && data.adminEnrollExams.length > 0) {
             var getButtons = function(isSucceed) {
                 if (isSucceed == 1) {

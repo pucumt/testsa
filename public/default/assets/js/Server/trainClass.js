@@ -59,6 +59,7 @@ function searchClass(p) {
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
     $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+        $mainSelectBody.empty();
         if (data && data.trainClasss.length > 0) {
             var d = $(document.createDocumentFragment());
             data.trainClasss.forEach(function(trainClass) {
