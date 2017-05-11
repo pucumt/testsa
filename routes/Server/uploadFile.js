@@ -45,6 +45,7 @@ module.exports = function(app) {
                                         order.scores.some(function(orderScore) {
                                             if (orderScore.subjectId == subject) {
                                                 orderScore.score = score[2];
+                                                orderScore.report = student.name + "_" + account.name + "_" + orderScore.subjectName + "_" + order.examName.substr(0, 19) + ".pdf";
                                                 return true;
                                             }
                                         });
@@ -416,15 +417,6 @@ module.exports = function(app) {
             res.jsonp({ error: error });
         });
     };
-
-
-    //upload.single('report'), 
-    app.post('/admin/report', upload.single('report'), function(req, res, next) {
-        var fileNames = req.file.filename.split("_");
-        updateReport(fileNames[0], fileNames[1], req.body.examId, req.body.subject, req.file.filename, res);
-
-        //res.redirect('/admin/score');
-    });
 
     app.post('/admin/export/scoreTemplate', function(req, res) {
         var data = [
