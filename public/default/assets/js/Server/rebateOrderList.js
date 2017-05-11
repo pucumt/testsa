@@ -32,7 +32,8 @@ function searchOrder(p) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' +
+                    trainOrder.totalPrice + '</td><td>' +
+                    trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' +
                     getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
                 $selectBody.append($tr);
