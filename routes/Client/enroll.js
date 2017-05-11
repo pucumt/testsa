@@ -414,7 +414,7 @@ module.exports = function(app) {
         AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
             .then(function(enrollTrain) {
                 if (enrollTrain) {
-                    res.jsonp({ error: "你已经报过名了，将跳转到订单支付页!" });
+                    res.jsonp({ error: "你已经报过名了，将跳转到订单页!" });
                     return;
                 }
                 TrainClass.enroll(req.body.classId)
