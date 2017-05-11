@@ -84,15 +84,21 @@ function loadData(p) {
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);
+            $("#btnMore").show();
         } else {
             if (!p) {
                 $selectBody.text("即将上线");
+                $("#btnMore").hide();
+                return;
             }
         }
         if (data.isLastPage) {
             //已经全部加载
             $("#btnMore").text("已经到最后了");
             $("#btnMore").attr("disabled", "disabled");
+        }
+        if (p) {
+            $("#page").val(p);
         }
     });
 };

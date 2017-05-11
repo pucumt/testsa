@@ -14,9 +14,11 @@ function loadData(p) {
                 d.append(generateLi(examClass));
             });
             $selectBody.append(d);
+            $("#btnMore").show();
         } else {
             if (!p) {
                 $('.container.enroll .row').text("即将上线");
+                $("#btnMore").hide();
                 return;
             }
         }
