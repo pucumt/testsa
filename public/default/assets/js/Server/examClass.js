@@ -18,8 +18,13 @@ $(document).ready(function() {
 //------------search funfunction
 
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function(isWeixin) {
+var getButtons = function(isWeixin, isScorePublished) {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    if (isScorePublished) {
+        buttons = buttons + '<a class="btn btn-default btnScorePublish">隐藏成绩</a>';
+    } else {
+        buttons = buttons + '<a class="btn btn-default btnScorePublish">显示成绩</a>';
+    }
     if (isWeixin == 1) {
         buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
     } else {
@@ -49,7 +54,7 @@ function searchExams(p) {
                 var $tr = $('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
-                    examClass.enrollCount + '</td><td><div class="btn-group">' + getButtons(examClass.isWeixin) + '</div></td></tr>');
+                    examClass.enrollCount + '</td><td><div class="btn-group">' + getButtons(examClass.isWeixin, examClass.isScorePublished) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", examClass);
                 $mainSelectBody.append($tr);
             });
@@ -335,6 +340,29 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
+            }
+        });
+    });
+});
+
+$("#gridBody").on("click", "td .btnScorePublish", function(e) {
+    showComfirm("确定要显示成绩吗？");
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/examClass/showScore", {
+            id: entity._id,
+            isScorePublished: entity.isScorePublished
+        }, function(data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                var operation = $('#' + entity._id + ' td:last-child .btn-group');
+                if (entity.isScorePublished) {
+                    operation.find(".btnScorePublish").text("显示成绩");
+                } else {
+                    operation.find(".btnScorePublish").text("隐藏成绩");
+                }
+
             }
         });
     });

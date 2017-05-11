@@ -20,7 +20,8 @@ var examClassSchema = new mongoose.Schema({
     }],
     seatNumber: Number,
     examAreaId: String, //means old enroll
-    examAreaName: String
+    examAreaName: String,
+    isScorePublished: { type: Boolean, default: false }
 }, {
     collection: 'examClasss'
 });
@@ -208,4 +209,17 @@ ExamClass.getFilter = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
     return examClassModel.findOne(filter);
+};
+
+ExamClass.showScore = function(id, isScorePublished, callback) {
+    examClassModel.update({
+        _id: id
+    }, {
+        isScorePublished: (isScorePublished == "true" ? false : true)
+    }).exec(function(err, examClasss) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, examClasss);
+    });
 };

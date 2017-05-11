@@ -27,7 +27,8 @@
                     <div class="price">
                         {% if order.scores and order.scores.length>0 %} {% for score in order.scores %}
                         <div class="score">
-                            <div>科目:{{ score.subjectName }} 成绩:{{ score.score }} {% if score.report %} 报告:<a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
+                            <div>科目:{{ score.subjectName }} 成绩:{% if train and train.isScorePublished %}{{ score.score }}{% endif %} {% if score.report and train and train.isScorePublished %} 报告:
+                                <a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
                         </div>
                         {% endfor %} {% endif %}
                     </div>

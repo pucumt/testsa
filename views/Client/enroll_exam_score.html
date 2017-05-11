@@ -23,7 +23,9 @@
                     </div>
                     {% endif %} {% if student.order.scores and student.order.scores.length>0 %} {% for score in student.order.scores %}
                     <div class="score">
-                        <div><strong>科目</strong>:{{ score.subjectName }} <strong>成绩</strong>:{{ score.score }} {% if score.report %} <strong>报告</strong>:<a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
+                        <div><strong>科目</strong>:{{ score.subjectName }} <strong>成绩</strong>: {% if train and train.isScorePublished %} {{ score.score }} {% endif %} {% if score.report and train and train.isScorePublished %}
+                            <strong>报告</strong>:<a href="/uploads/{{ score.report }}">下载</a>{% endif %}
+                        </div>
                     </div>
                     {% endfor %} {% endif %}
                     <button type="button" class="btn btn-primary btn-xs btnEnroll pull-right">课程报名</button>

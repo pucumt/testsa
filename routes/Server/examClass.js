@@ -200,6 +200,16 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/admin/examClass/showScore', checkLogin);
+    app.post('/admin/examClass/showScore', function(req, res) {
+        ExamClass.showScore(req.body.id, req.body.isScorePublished, function(err, examClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
     app.post('/admin/examClass/search', checkLogin);
     app.post('/admin/examClass/search', function(req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
