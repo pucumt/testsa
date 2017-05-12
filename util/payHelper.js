@@ -186,8 +186,8 @@ var Pay = {
     },
     getOpenId: function(res, id) {
         // 这是编码后的地址
-        "http%3A%2F%2Fwww.dushidao.com%2Fget_wx_access_token%2F"
-        var return_uri = 'http%3A%2F%2Fwww.dushidao.com%2Fget_wx_access_token%2F' + id; // + router;
+        //"http%3A%2F%2Fwww.bfbeducation.com%2Fget_wx_access_token%2F"
+        var return_uri = 'http%3A%2F%2Fwww.bfbeducation.com%2Fget_wx_access_token%2F' + id; // + router;
         var scope = 'snsapi_base';
         debugger;
         res.jsonp({ url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + settings.AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=123#wechat_redirect' });
