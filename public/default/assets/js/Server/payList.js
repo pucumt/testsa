@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 var payWay = "0";
 $("#btnPay").on("click", function(e) {
-    var entity = $("#order").data("obj");
+    var id = $("#order").data("obj");
     $(":input[name='payWay']").each(function(index) {
         if (this.checked) {
             payWay = $(this).val();
@@ -18,15 +18,15 @@ $("#btnPay").on("click", function(e) {
         case "2":
         case "8":
         case "9":
-            showComfirm("确定已收订单" + entity._id + "的款项吗？");
+            showComfirm("确定已收订单" + id + "的款项吗？");
             break;
     }
 });
 
 $("#btnConfirmSave").on("click", function(e) {
-    var entity = $("#order").data("obj");
+    var id = $("#order").data("obj");
     $.post("/admin/adminEnrollTrain/pay", {
-        id: entity._id,
+        id: id,
         payWay: payWay
     }, function(data) {
         if (data.sucess) {
