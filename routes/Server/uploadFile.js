@@ -444,7 +444,7 @@ module.exports = function(app) {
 
         p.then(function() {
             var buffer = xlsx.build([{ name: "成绩", data: data }]),
-                fileName = req.body.exam.substr(0, 18) + '_' + req.body.subject + '.xlsx';
+                fileName = req.body.exam.substr(0, 19) + '_' + req.body.subject + '.xlsx';
             fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
             // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
@@ -557,5 +557,73 @@ module.exports = function(app) {
                 });
             }
         });
+    });
+
+    app.post('/admin/export/classTemplate', function(req, res) {
+        var data = [
+            ['姓名', '联系方式', '科目']
+        ];
+        var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
+            .then(function(orders) {
+                if (orders.length > 0) {
+                    var PArray = [];
+                    orders.forEach(function(order) {
+                        var Px = StudentInfo.get(order.studentId).then(function(student) {
+                            if (student) {
+                                var p2Array = [],
+                                    singleInfo = [student.name, student.mobile];
+                                return AdminEnrollTrain.getFilters({
+                                    studentId: student._id,
+                                    isSucceed: 1
+                                }).then(function(classOrders) {
+                                    if (classOrders && classOrders.length > 0) {
+                                        classOrders.forEach(function(newOrder) {
+                                            var pClass = TrainClass.get(newOrder.trainId)
+                                                .then(function(newClass) {
+                                                    singleInfo.push(newClass.subjectName);
+                                                });
+                                            p2Array.push(pClass);
+                                        });
+                                        return Promise.all(p2Array);
+                                    } else {
+                                        return Promise.all([]);
+                                    }
+                                }).then(function() {
+                                    data.push(singleInfo);
+                                });
+                            } else {
+                                data.push([order.studentId, order._id]);
+                            }
+                        });
+                        PArray.push(Px);
+                    });
+                    return Promise.all(PArray);
+                }
+            });
+        p.then(function() {
+            var buffer = xlsx.build([{ name: "报名情况", data: data }]),
+                fileName = '报名情况2' + '.xlsx';
+            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            res.jsonp({ sucess: true });
+            // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
+        });
+    });
+
+    app.post('/admin/export/classTemplate2', function(req, res) {
+        var data = [
+            ['课程', '年级', '科目', '难度', '校区', '报名人数', '总人数']
+        ];
+        var p = TrainClass.getFilters({})
+            .then(function(classes) {
+                if (classes.length > 0) {
+                    classes.forEach(function(order) {
+                        data.push([order.name, order.gradeName, order.subjectName, order.categoryName, order.schoolArea, order.enrollCount, order.totalStudentCount]);
+                    });
+                    var buffer = xlsx.build([{ name: "课程", data: data }]),
+                        fileName = '课程报名情况' + '.xlsx';
+                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    res.jsonp({ sucess: true });
+                }
+            });
     });
 }

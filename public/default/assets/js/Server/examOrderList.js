@@ -26,10 +26,12 @@ function searchOrder(p) {
                 return '';
             };
             data.adminEnrollExams.forEach(function(examOrder) {
+                var cancelDate = examOrder.CancelDate ? moment(examOrder.CancelDate).format() : "";
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
                     getTrainOrderStatus(examOrder.isSucceed) + '</td><td>' +
                     examOrder.studentName + '</td><td>' + examOrder.examName + '</td><td>' +
-                    examOrder.examCategoryName + '</td><td><div class="btn-group">' + getButtons(examOrder.isSucceed) + '</div></td></tr>');
+                    examOrder.examCategoryName + '</td><td>' +
+                    cancelDate + '</td><td><div class="btn-group">' + getButtons(examOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", examOrder);
                 $selectBody.append($tr);
             });

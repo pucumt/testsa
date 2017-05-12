@@ -215,6 +215,12 @@ TrainClass.getFilter = function(filter) {
     return trainClassModel.findOne(filter);
 };
 
+TrainClass.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return trainClassModel.find(filter);
+};
+
 TrainClass.deleteAll = function(ids) {
     return trainClassModel.update({
         _id: { $in: ids }

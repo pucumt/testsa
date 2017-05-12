@@ -14,6 +14,9 @@ $(document).ready(function() {
     $("#header_btnBasic").on("click", function(e) {
         location.href = "/admin/schoolAreaList";
     });
+    $("#header_btnEnrollExam").on("click", function(e) {
+        location.href = "/admin/adminEnrollExamList";
+    });
 });
 
 window.getTrainOrderStatus = function(isSucceed) {

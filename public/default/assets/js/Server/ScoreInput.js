@@ -107,7 +107,7 @@ $("#editfile #btnExportScore").on("click", function(e) {
             subject: $("#editfile #subject").find("option:selected").text()
         }).then(function(data) {
             if (data && data.sucess) {
-                var fileName = $("#editfile #examName").val().substr(0, 18) + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
+                var fileName = $("#editfile #examName").val().substr(0, 19) + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
             }
         });
@@ -123,7 +123,7 @@ $("#editfile #btnExportSchool").on("click", function(e) {
             subject: $("#editfile #subject").find("option:selected").text()
         }).then(function(data) {
             if (data && data.sucess) {
-                var fileName = $("#editfile #examName").val() + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
+                var fileName = $("#editfile #examName").val().substr(0, 19) + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
             }
         });
@@ -144,6 +144,17 @@ $("#editfile #btnExportReport").on("click", function(e) {
             }
         });
     }
+});
+
+
+$("#editfile #btnExportClass").on("click", function(e) {
+    $.post("/admin/export/classTemplate", {
+        examId: $("#editfile #examId").val()
+    }).then(function(data) {
+        if (data && data.sucess) {
+            location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况2.xlsx");
+        }
+    });
 });
 
 $("#editfile #btnReport").on("click", function(e) {
