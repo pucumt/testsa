@@ -626,4 +626,77 @@ module.exports = function(app) {
                 }
             });
     });
+
+    app.post('/admin/export/classTemplate3', function(req, res) {
+        var data = [
+            ['姓名', '联系方式', '科目', '时间', '校区', '培训费', '教材费', '科目', '时间', '校区', '培训费', '教材费', '科目', '时间', '校区', '培训费', '教材费']
+        ];
+        var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
+            .then(function(orders) {
+                if (orders.length > 0) {
+                    var PArray = [];
+                    orders.forEach(function(order) {
+                        var Px = StudentInfo.get(order.studentId).then(function(student) {
+                            if (student) {
+                                var p2Array = [],
+                                    singleInfo = [student.name, student.mobile, '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+                                return AdminEnrollTrain.getFilters({
+                                    studentId: student._id,
+                                    isSucceed: 1
+                                }).then(function(classOrders) {
+                                    if (classOrders && classOrders.length > 0) {
+                                        classOrders.forEach(function(newOrder) {
+                                            var pClass = TrainClass.get(newOrder.trainId)
+                                                .then(function(newClass) {
+                                                    switch (newClass.subjectName) {
+                                                        case "语文":
+                                                            singleInfo[2] = "语文";
+                                                            singleInfo[3] = newClass.courseTime;
+                                                            singleInfo[4] = newClass.schoolArea;
+                                                            singleInfo[5] = newOrder.totalPrice;
+                                                            singleInfo[6] = newOrder.realMaterialPrice;
+                                                            break;
+                                                        case "数学":
+                                                            singleInfo[7] = "数学";
+                                                            singleInfo[8] = newClass.courseTime;
+                                                            singleInfo[9] = newClass.schoolArea;
+                                                            singleInfo[10] = newOrder.totalPrice;
+                                                            singleInfo[11] = newOrder.realMaterialPrice;
+                                                            break;
+                                                        case "英语":
+                                                            singleInfo[12] = "英语";
+                                                            singleInfo[13] = newClass.courseTime;
+                                                            singleInfo[14] = newClass.schoolArea;
+                                                            singleInfo[15] = newOrder.totalPrice;
+                                                            singleInfo[16] = newOrder.realMaterialPrice;
+                                                            break;
+                                                    }
+                                                    // singleInfo.push(newClass.subjectName);
+                                                });
+                                            p2Array.push(pClass);
+                                        });
+                                        return Promise.all(p2Array);
+                                    } else {
+                                        return Promise.all([]);
+                                    }
+                                }).then(function() {
+                                    data.push(singleInfo);
+                                });
+                            } else {
+                                data.push([order.studentId, order._id]);
+                            }
+                        });
+                        PArray.push(Px);
+                    });
+                    return Promise.all(PArray);
+                }
+            });
+        p.then(function() {
+            var buffer = xlsx.build([{ name: "报名情况", data: data }]),
+                fileName = '报名情况3' + '.xlsx';
+            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            res.jsonp({ sucess: true });
+            // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
+        });
+    });
 }

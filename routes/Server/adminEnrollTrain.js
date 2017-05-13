@@ -334,6 +334,7 @@ module.exports = function(app) {
                                 materialPrice: req.body.materialPrice,
                                 discount: req.body.discount,
                                 totalPrice: req.body.totalPrice,
+                                realMaterialPrice: req.body.materialPrice,
                                 fromId: req.body.oldOrderId,
                                 comment: req.body.comment,
                                 isPayed: true
