@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="enroll-submit exam">
-        {% if not disability %}
+        {% if not disability and not notOriginal %}
         <button id="btnPay" class="btn btn-danger" type="button">立刻支付</button> {% endif %}
     </div>
 </div>
@@ -79,6 +79,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}

@@ -88,5 +88,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/#name#.js"></script>
+<script type="text/javascript" src="/default/assets/js/#name#.js?v=1.0"></script>
 {% endblock %}

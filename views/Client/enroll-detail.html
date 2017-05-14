@@ -1,35 +1,34 @@
 {% extends "Client/partial/main-header.html" %} {% block main %}
 <div class="container">
-  <div class="row article-card">
-    {% if course %}
-    <div class="photo-block" style="background-color: rgb(255, 255, 255);">
-        <img src="https://img.yzcdn.cn/upload_files/2016/12/11/FtYY0top_3ooV5l3YQ_v8wcGsr_0.jpg?imageView2/2/w/730/h/0/q/75/format/webp"
-        />
-    </div>
-    <div class="info article-block">
-      <div class=" clearfix info-title">
-        <h4>{{ post.title }}</h4>
-      </div>
-      <div class=" clearfix info-price">
-        <p class="goods-price">
-          <em>￥{{ post.price }}</em>
-        </p>
-      </div>
-    </div>
-    <div class="info article-block">
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Email</label>
-        <div class="col-sm-10">
-          <p class="form-control-static">email@example.com</p>
+    <div class="row article-card">
+        {% if course %}
+        <div class="photo-block" style="background-color: rgb(255, 255, 255);">
+            <img src="https://img.yzcdn.cn/upload_files/2016/12/11/FtYY0top_3ooV5l3YQ_v8wcGsr_0.jpg?imageView2/2/w/730/h/0/q/75/format/webp" />
         </div>
-      </div>
-      <div class=" clearfix info-title">
-        <h4>选择: </h4>
-        <button type="button" class="btn btn-default">8:00 - 10:00</button>
-      </div>
-    </div>
-    <div class="info article-block" style="margin-bottom: 0">
-      <label class=" clearfix info-title ">
+        <div class="info article-block">
+            <div class=" clearfix info-title">
+                <h4>{{ post.title }}</h4>
+            </div>
+            <div class=" clearfix info-price">
+                <p class="goods-price">
+                    <em>￥{{ post.price }}</em>
+                </p>
+            </div>
+        </div>
+        <div class="info article-block">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static">email@example.com</p>
+                </div>
+            </div>
+            <div class=" clearfix info-title">
+                <h4>选择: </h4>
+                <button type="button" class="btn btn-default">8:00 - 10:00</button>
+            </div>
+        </div>
+        <div class="info article-block" style="margin-bottom: 0">
+            <label class=" clearfix info-title ">
         <h4>商品详情 </h4>
       </label >
       <div class=" clearfix info-content">
@@ -39,5 +38,5 @@
     {% endif %}
   </div>
 </div>
-<script type="text/javascript" src="/default/assets/js/enroll.detail.js"></script>
+<script type="text/javascript" src="/default/assets/js/enroll.detail.js?v=1.0"></script>
 {% endblock %}

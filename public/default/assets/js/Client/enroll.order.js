@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    $("#btnPay").hide();
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
         if ($("#originalOrder").val()) {
             location.href = "/enroll/originalclass/" + $("#classId").val();
@@ -19,6 +20,7 @@ $(document).ready(function() {
             }
         });
     } else {
+        $("#btnPay").show();
         renderData();
     }
     $(".enroll .exam-detail #coupon").on("change blur", setPrice);

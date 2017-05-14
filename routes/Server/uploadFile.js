@@ -12,6 +12,7 @@ var xlsx = require("node-xlsx"),
     TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
     archiver = require('archiver'),
+    crypto = require('crypto'),
     Year = require('../../models/year.js'),
     Grade = require('../../models/grade.js'),
     Subject = require('../../models/subject.js'),
@@ -239,7 +240,7 @@ module.exports = function(app) {
                                                                     }
                                                                     var pTrainClass;
                                                                     if (data[16] && data[16].trim() != "") {
-                                                                        pTrainClass = TrainClass.getFilter({ name: data[16].trim() });
+                                                                        pTrainClass = TrainClass.getFilter({ name: data[16].trim(), schoolArea: data[19].trim() });
                                                                     } else {
                                                                         pTrainClass = Promise.resolve();
                                                                     }
@@ -318,37 +319,95 @@ module.exports = function(app) {
 
     function addStudentToClass(data) {
         var option = {
+            isSucceed: 1,
             isPayed: true,
             payWay: 0
         };
-        TrainClass.getFilter({ name: data[0] }).then(function(existTrainClass) {
-            if (existTrainClass) {
-                option.trainId = existTrainClass._id;
-                option.trainName = existTrainClass.name;
-                return StudentInfo.getFilter({ name: data[1].trim(), mobile: data[2] })
-                    .then(function(student) {
-                        if (student) {
-                            option.studentId = student._id;
-                            option.studentName = student.name;
-                            AdminEnrollTrain.getFilter({
-                                    trainId: existTrainClass._id,
-                                    studentId: student._id,
-                                    isSucceed: 1
-                                })
-                                .then(function(order) {
-                                    if (!order) {
-                                        var newAdminEnrollTrain = new AdminEnrollTrain(option);
-                                        return newAdminEnrollTrain.save();
-                                    }
-                                });
-                        } else {
-                            failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到学生");
-                        }
-                    });
-            } else {
-                failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到班级");
-            }
-        });
+        return TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[3].trim() })
+            .then(function(existTrainClass) {
+                if (existTrainClass) {
+                    option.trainId = existTrainClass._id;
+                    option.trainName = existTrainClass.name;
+                    return StudentInfo.getFilter({ name: data[1].trim(), mobile: data[2] })
+                        .then(function(student) {
+                            if (student) {
+                                option.studentId = student._id;
+                                option.studentName = student.name;
+                                return AdminEnrollTrain.getFilter({
+                                        trainId: existTrainClass._id,
+                                        studentId: student._id,
+                                        isSucceed: 1
+                                    })
+                                    .then(function(order) {
+                                        if (!order) {
+                                            var newAdminEnrollTrain = new AdminEnrollTrain(option);
+                                            return newAdminEnrollTrain.save();
+                                        }
+                                    });
+                            } else {
+                                return Grade.getFilter({ name: data[5].trim() })
+                                    .then(function(grade) {
+                                        if (grade) {
+                                            return StudentAccount.getFilter({ name: data[2] })
+                                                .then(function(account) {
+                                                    var pStudent;
+                                                    if (account) {
+                                                        pStudent = Promise.resolve(account);
+                                                    } else {
+                                                        var md5 = crypto.createHash('md5');
+                                                        var studentAccount = new StudentAccount({
+                                                            name: data[2],
+                                                            password: password = md5.update("111111").digest('hex')
+                                                        });
+                                                        pStudent = studentAccount.save();
+                                                    }
+                                                    return pStudent.then(function(account) {
+                                                        if (account) {
+                                                            var studentInfo = new StudentInfo({
+                                                                name: data[1].trim(),
+                                                                sex: (data[7].trim() == "男" ? false : true),
+                                                                accountId: account._id,
+                                                                mobile: data[2],
+                                                                gradeId: grade._id,
+                                                                gradeName: grade.name,
+                                                                School: data[4].trim(),
+                                                                className: data[6]
+                                                            });
+                                                            return studentInfo.save()
+                                                                .then(function(student) {
+                                                                    if (student) {
+                                                                        option.studentId = student._id;
+                                                                        option.studentName = student.name;
+                                                                        return AdminEnrollTrain.getFilter({
+                                                                                trainId: existTrainClass._id,
+                                                                                studentId: student._id,
+                                                                                isSucceed: 1
+                                                                            })
+                                                                            .then(function(order) {
+                                                                                if (!order) {
+                                                                                    var newAdminEnrollTrain = new AdminEnrollTrain(option);
+                                                                                    return newAdminEnrollTrain.save();
+                                                                                }
+                                                                            });
+                                                                    } else {
+                                                                        failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "新增学生出错");
+                                                                    }
+                                                                });
+                                                        } else {
+                                                            failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "添加账号出错");
+                                                        }
+                                                    });
+                                                });
+                                        } else {
+                                            failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到年级");
+                                        }
+                                    });
+                            }
+                        });
+                } else {
+                    failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到班级");
+                }
+            });
     };
 
     app.post('/admin/batchAddStudentToTrainClass', upload.single('avatar'), function(req, res, next) {
