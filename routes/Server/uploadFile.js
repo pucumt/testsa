@@ -582,7 +582,7 @@ module.exports = function(app) {
                         orders.forEach(function(order) {
                             var Px = StudentInfo.get(order.studentId).then(function(student) {
                                 return StudentAccount.get(student.accountId).then(function(account) {
-                                    var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam + '.doc';
+                                    var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam.substr(0, 19) + '.doc';
                                     fs.createReadStream(src).pipe(fs.createWriteStream(path.join(disPath, fileName)));
                                 });
                             });
