@@ -29,6 +29,13 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/enrollOriginalClass', function(req, res) {
+        res.render('Client/enroll_originalclass.html', {
+            title: '课程报名',
+            user: req.session.user
+        });
+    });
+
     app.get('/enrollClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
         res.render('Client/enroll_class.html', {
             title: '课程报名',
@@ -60,6 +67,35 @@ module.exports = function(app) {
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         var filter = { isWeixin: 1 };
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
+        if (req.body.gradeId) {
+            filter.gradeId = req.body.gradeId;
+        }
+        if (req.body.subjectId) {
+            filter.subjectId = req.body.subjectId;
+        }
+        if (req.body.categoryId) {
+            filter.categoryId = req.body.categoryId;
+        }
+        //查询并返回第 page 页的 14 篇文章
+        TrainClass.getAllToEnroll(null, page, filter, function(err, classs, total) {
+            if (err) {
+                classs = [];
+            }
+            res.jsonp({
+                classs: classs,
+                isLastPage: ((page - 1) * 14 + classs.length) == total
+            });
+        });
+    });
+
+    app.post('/enroll/originalclass', function(req, res) {
+        //debugger;
+        // number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+        var filter = { isWeixin: 2 };
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
         }

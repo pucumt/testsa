@@ -248,6 +248,7 @@ module.exports = function(app) {
                                                                         if (trainClass) {
                                                                             option.fromClassId = trainClass._id;
                                                                             option.fromClassName = trainClass.name;
+                                                                            option.isWeixin = 2;
                                                                         }
                                                                         if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，TBD
                                                                             option.protectedDate = (new Date(1900, 0, parseInt(data[17]) - 1));
