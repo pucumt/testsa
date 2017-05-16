@@ -24,11 +24,11 @@
             <input type="hidden" id="id" value="{{ exam._id }}" />
         </div>{% endif %}
     </div>
-    {% if exam.enrollCount != exam.examCount %}
+    {% if exam.enrollCount != exam.examCount %} {% if not isExpired %}
     <div class="enroll-submit exam">
         <button id="btnEnroll" class="btn btn-primary" type="button">立刻报名</button>
     </div>
-    {% endif %}
+    {% endif %} {% endif %}
 </div>
 <div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
 <div id="Enroll-select" style="display:none;">

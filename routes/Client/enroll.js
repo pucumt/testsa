@@ -89,7 +89,8 @@ module.exports = function(app) {
             .then(function(exam) {
                 res.render('Client/enroll_exam_detail.html', {
                     title: '考试报名',
-                    exam: exam
+                    exam: exam,
+                    isExpired: ((new Date()) > exam.examDate)
                 });
             });
     });

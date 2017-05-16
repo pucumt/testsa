@@ -186,3 +186,14 @@ AdminEnrollTrain.getCount = function(filter) {
     }
     return adminEnrollTrainModel.find(filter).count();
 };
+
+AdminEnrollTrain.getDistinctStudents = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+        filter.isSucceed = 1;
+    } else {
+        filter = { isDeleted: { $ne: true } };
+        filter.isSucceed = 1;
+    }
+    return adminEnrollTrainModel.distinct("studentId", { isSucceed: 1, isDeleted: { $ne: true } });
+};
