@@ -2,14 +2,14 @@ var newStudent = true,
     editStudent;
 $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/enrollClass/schoolId/" + $(".exam-detail #schoolId").val() +
+        location.href = "/enrollOriginalClass/schoolId/" + $(".exam-detail #schoolId").val() +
             "/gradeId/" + $(".exam-detail #gradeId").val() +
             "/subjectId/" + $(".exam-detail #subjectId").val() +
             "/categoryId/" + $(".exam-detail #categoryId").val();
     });
 
     $("#btnEnroll").on("click", function(e) {
-        $.post("/enroll/students", { originalUrl: "/enroll/class/" + $("#id").val() }, function(data) {
+        $.post("/enroll/students", { originalUrl: "/enroll/originalclass/" + $("#id").val() }, function(data) {
             if (data) {
                 if (data.notLogin) {
                     location.href = "/login";
@@ -77,7 +77,7 @@ $(document).ready(function() {
                     className: $.trim($('#studentInfo #className').val()),
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
-                    originalUrl: "/enroll/class/" + $("#id").val()
+                    originalUrl: "/enroll/originalclass/" + $("#id").val()
                 };
             if (!newStudent) {
                 postURI = "/studentInfo/edit";

@@ -47,6 +47,17 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/enrollOriginalClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
+        res.render('Client/enroll_originalclass.html', {
+            title: '课程报名',
+            user: req.session.user,
+            schoolId: req.params.schoolId,
+            gradeId: req.params.gradeId,
+            subjectId: req.params.subjectId,
+            categoryId: req.params.categoryId
+        });
+    });
+
     app.get('/enroll/exam', function(req, res) {
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
