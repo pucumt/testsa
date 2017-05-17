@@ -54,7 +54,9 @@ var getClassStatus = function(isWeixin) {
 
 function searchClass(p) {
     var filter = {
-            name: $(".mainModal #InfoSearch #className").val()
+            name: $.trim($(".mainModal #InfoSearch #className").val()),
+            school: $.trim($(".mainModal #InfoSearch #school").val()),
+            gradeName: $.trim($(".mainModal #InfoSearch #grade").val())
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();

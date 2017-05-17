@@ -79,7 +79,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
+    // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改类别");
     $('#name').val(entity.name);
     $('#id').val(entity._id);

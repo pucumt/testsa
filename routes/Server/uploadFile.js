@@ -115,9 +115,9 @@ module.exports = function(app) {
             courseStartDate: (new Date(1900, 0, parseInt(data[5]) - 1)),
             courseEndDate: (new Date(1900, 0, parseInt(data[6]) - 1)),
             courseTime: data[7],
-            courseContent: data[18].trim()
+            courseContent: data[18] && data[18].trim()
         };
-        TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[14].trim() }).then(function(existTrainClass) {
+        TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[14].trim(), yearName: data[1].trim() }).then(function(existTrainClass) {
             if (existTrainClass) {
                 // TrainClass
                 //学费 教材费 教室 校区 依赖的考试
@@ -240,7 +240,7 @@ module.exports = function(app) {
                                                                     }
                                                                     var pTrainClass;
                                                                     if (data[16] && data[16].trim() != "") {
-                                                                        pTrainClass = TrainClass.getFilter({ name: data[16].trim(), schoolArea: data[19].trim() });
+                                                                        pTrainClass = TrainClass.getFilter({ name: data[16].trim(), schoolArea: data[19].trim(), yearName: data[20].trim() });
                                                                     } else {
                                                                         pTrainClass = Promise.resolve();
                                                                     }
@@ -249,7 +249,10 @@ module.exports = function(app) {
                                                                             option.fromClassId = trainClass._id;
                                                                             option.fromClassName = trainClass.name;
                                                                             option.isWeixin = 2;
+                                                                        } else if (data[16] && data[16].trim() != "") {
+                                                                            failedAddStudentToClass("", "", data[0].trim(), "没找到原班");
                                                                         }
+
                                                                         if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，TBD
                                                                             option.protectedDate = (new Date(1900, 0, parseInt(data[17]) - 1));
                                                                         }
@@ -336,7 +339,7 @@ module.exports = function(app) {
             isPayed: true,
             payWay: 0
         };
-        return TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[3].trim() })
+        return TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[3].trim(), yearName: data[8].trim() })
             .then(function(existTrainClass) {
                 if (existTrainClass) {
                     option.trainId = existTrainClass._id;
@@ -358,7 +361,7 @@ module.exports = function(app) {
                                         }
                                     });
                             } else {
-                                return Grade.getFilter({ name: data[5].trim() })
+                                return Grade.getFilter({ name: data[5] && data[5].trim() })
                                     .then(function(grade) {
                                         if (grade) {
                                             return StudentAccount.getFilter({ name: data[2] })
@@ -378,12 +381,12 @@ module.exports = function(app) {
                                                         if (account) {
                                                             var studentInfo = new StudentInfo({
                                                                 name: data[1].trim(),
-                                                                sex: (data[7].trim() == "男" ? false : true),
+                                                                sex: (data[7] && data[7].trim() == "男" ? false : true),
                                                                 accountId: account._id,
                                                                 mobile: data[2],
                                                                 gradeId: grade._id,
                                                                 gradeName: grade.name,
-                                                                School: data[4].trim(),
+                                                                School: data[4] && data[4].trim(),
                                                                 className: data[6]
                                                             });
                                                             return studentInfo.save()
@@ -403,22 +406,22 @@ module.exports = function(app) {
                                                                                 }
                                                                             });
                                                                     } else {
-                                                                        failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "新增学生出错");
+                                                                        failedAddStudentToClass(data[1].trim(), data[2], data[0].trim(), "新增学生出错");
                                                                     }
                                                                 });
                                                         } else {
-                                                            failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "添加账号出错");
+                                                            failedAddStudentToClass(data[1].trim(), data[2], data[0].trim(), "添加账号出错");
                                                         }
                                                     });
                                                 });
                                         } else {
-                                            failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到年级");
+                                            failedAddStudentToClass(data[1].trim(), data[2], data[0].trim(), "没找到年级");
                                         }
                                     });
                             }
                         });
                 } else {
-                    failedAddStudentToClass(data[1].trim(), data[2].trim(), data[0].trim(), "没找到班级");
+                    failedAddStudentToClass(data[1].trim(), data[2], data[0].trim(), "没找到班级");
                 }
             });
     };

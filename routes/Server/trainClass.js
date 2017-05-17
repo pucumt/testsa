@@ -309,6 +309,12 @@ module.exports = function(app) {
                 $regex: reg
             };
         }
+        if (req.body.school) {
+            filter.schoolArea = req.body.school;
+        }
+        if (req.body.gradeName) {
+            filter.gradeName = req.body.gradeName;
+        }
         if (req.body.grade) {
             filter.gradeId = req.body.grade;
         }
