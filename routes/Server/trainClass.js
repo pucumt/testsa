@@ -324,6 +324,9 @@ module.exports = function(app) {
         if (req.body.category) {
             filter.categoryId = req.body.category;
         }
+        if (req.body.yearId) {
+            filter.yearId = req.body.yearId;
+        }
 
         TrainClass.getAll(null, page, filter, function(err, trainClasss, total) {
             if (err) {

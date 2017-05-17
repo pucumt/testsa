@@ -17,7 +17,7 @@ $(document).ready(function() {
         changeMonth: true,
         dateFormat: "yy-mm-dd"
     });
-    searchClass();
+    renderSearchYearDropDown(); //search class after get years
     $("#btnBatchAdd").on("click", function(e) {
         location.href = "/admin/batchTrainClass";
     });
@@ -30,6 +30,18 @@ $(document).ready(function() {
 });
 
 //------------search funfunction
+
+
+function renderSearchYearDropDown() {
+    $.post("/admin/year/all", function(data) {
+        if (data && data.length > 0) {
+            data.forEach(function(year) {
+                $(".mainModal #InfoSearch #searchYear").append("<option value='" + year._id + "'>" + year.name + "</option>");
+            });
+        };
+        searchClass();
+    });
+};
 
 var $mainSelectBody = $('.content.mainModal table tbody');
 var getButtons = function(isWeixin) {
@@ -55,8 +67,9 @@ var getClassStatus = function(isWeixin) {
 function searchClass(p) {
     var filter = {
             name: $.trim($(".mainModal #InfoSearch #className").val()),
-            school: $.trim($(".mainModal #InfoSearch #school").val()),
-            gradeName: $.trim($(".mainModal #InfoSearch #grade").val())
+            school: $.trim($(".mainModal #InfoSearch #searchSchool").val()),
+            gradeName: $.trim($(".mainModal #InfoSearch #searchGrade").val()),
+            yearId: $(".mainModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
@@ -330,31 +343,31 @@ $("#myModal #btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/trainClass/add",
             postObj = {
-                name: $.trim($('#name').val()),
-                trainPrice: $.trim($('#trainPrice').val()),
-                materialPrice: $.trim($('#materialPrice').val()),
-                courseStartDate: $.trim($('#courseStartDate').val()),
-                courseEndDate: $.trim($('#courseEndDate').val()),
-                courseTime: $.trim($('#courseTime').val()),
-                totalStudentCount: $.trim($('#totalStudentCount').val()),
-                totalClassCount: $.trim($('#totalClassCount').val()),
-                courseContent: $.trim($('#courseContent').val()),
-                classRoomName: $.trim($('#classRoom').val()), //TBD
-                classRoomId: $('#classRoomid').val(), //
-                schoolArea: $('#school').val(), //TBD
-                schoolId: $('#schoolid').val(), //
-                teacherName: $('#teacher').val(), //TBD
-                teacherId: $('#teacherid').val(), //
-                yearId: $('#year').val(),
-                yearName: $('#year').find("option:selected").text(),
-                gradeId: $('#grade').val(),
-                gradeName: $('#grade').find("option:selected").text(),
-                subjectId: $('#subject').val(),
-                subjectName: $('#subject').find("option:selected").text(),
-                categoryId: $('#category').val(),
-                categoryName: $('#category').find("option:selected").text(),
-                attributeId: $('#classAttribute').val(),
-                attributeName: $('#classAttribute').find("option:selected").text(),
+                name: $.trim($('#myModal #name').val()),
+                trainPrice: $.trim($('#myModal #trainPrice').val()),
+                materialPrice: $.trim($('#myModal #materialPrice').val()),
+                courseStartDate: $.trim($('#myModal #courseStartDate').val()),
+                courseEndDate: $.trim($('#myModal #courseEndDate').val()),
+                courseTime: $.trim($('#myModal #courseTime').val()),
+                totalStudentCount: $.trim($('#myModal #totalStudentCount').val()),
+                totalClassCount: $.trim($('#myModal #totalClassCount').val()),
+                courseContent: $.trim($('#myModal #courseContent').val()),
+                classRoomName: $.trim($('#myModal #classRoom').val()), //TBD
+                classRoomId: $('#myModal #classRoomid').val(), //
+                schoolArea: $('#myModal #school').val(), //TBD
+                schoolId: $('#myModal #schoolid').val(), //
+                teacherName: $('#myModal #teacher').val(), //TBD
+                teacherId: $('#myModal #teacherid').val(), //
+                yearId: $('#myModal #year').val(),
+                yearName: $('#myModal #year').find("option:selected").text(),
+                gradeId: $('#myModal #grade').val(),
+                gradeName: $('#myModal #grade').find("option:selected").text(),
+                subjectId: $('#myModal #subject').val(),
+                subjectName: $('#myModal #subject').find("option:selected").text(),
+                categoryId: $('#myModal #category').val(),
+                categoryName: $('#myModal #category').find("option:selected").text(),
+                attributeId: $('#myModal #classAttribute').val(),
+                attributeName: $('#myModal #classAttribute').find("option:selected").text(),
                 exams: getAllExams()
             };
         if (!isNew) {
@@ -413,21 +426,21 @@ $("#btnAdd").on("click", function(e) {
     addValidation();
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增课程");
-    $('#name').val("");
-    $('#trainPrice').val(0);
-    $('#materialPrice').val(0);
-    $('#courseStartDate').val("");
-    $('#courseEndDate').val("");
-    $('#courseTime').val("");
-    $('#totalStudentCount').val(0);
-    $('#totalClassCount').val(0);
-    $('#courseContent').val("");
-    $('#classRoom').val(""); //
-    $('#classRoomid').val(""); //
-    $('#school').val(""); //
-    $('#schoolid').val(""); //
-    $('#teacher').val(""); //
-    $('#teacherid').val(""); //
+    $('#myModal #name').val("");
+    $('#myModal #trainPrice').val(0);
+    $('#myModal #materialPrice').val(0);
+    $('#myModal #courseStartDate').val("");
+    $('#myModal #courseEndDate').val("");
+    $('#myModal #courseTime').val("");
+    $('#myModal #totalStudentCount').val(0);
+    $('#myModal #totalClassCount').val(0);
+    $('#myModal #courseContent').val("");
+    $('#myModal #classRoom').val(""); //
+    $('#myModal #classRoomid').val(""); //
+    $('#myModal #school').val(""); //
+    $('#myModal #schoolid').val(""); //
+    $('#myModal #teacher').val(""); //
+    $('#myModal #teacherid').val(""); //
     // $('#minScore').val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
@@ -440,25 +453,25 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
+    $('#myModal #name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改课程");
-    $('#name').val(entity.name);
-    $('#trainPrice').val(entity.trainPrice);
-    $('#materialPrice').val(entity.materialPrice);
+    $('#myModal #name').val(entity.name);
+    $('#myModal #trainPrice').val(entity.trainPrice);
+    $('#myModal #materialPrice').val(entity.materialPrice);
     var startDate = entity.courseStartDate && moment(entity.courseStartDate).format("YYYY-M-D");
-    $('#courseStartDate').val(startDate);
+    $('#myModal #courseStartDate').val(startDate);
     var endDate = entity.courseEndDate && moment(entity.courseEndDate).format("YYYY-M-D");
-    $('#courseEndDate').val(endDate);
-    $('#courseTime').val(entity.courseTime);
-    $('#totalStudentCount').val(entity.totalStudentCount);
-    $('#totalClassCount').val(entity.totalClassCount);
-    $('#courseContent').val(entity.courseContent);
-    $('#classRoom').val(entity.classRoomName); //
-    $('#classRoomid').val(entity.classRoomId); //
-    $('#school').val(entity.schoolArea); //
-    $('#schoolid').val(entity.schoolId); //
-    $('#teacher').val(entity.teacherName); //
-    $('#teacherid').val(entity.teacherId); //
+    $('#myModal #courseEndDate').val(endDate);
+    $('#myModal #courseTime').val(entity.courseTime);
+    $('#myModal #totalStudentCount').val(entity.totalStudentCount);
+    $('#myModal #totalClassCount').val(entity.totalClassCount);
+    $('#myModal #courseContent').val(entity.courseContent);
+    $('#myModal #classRoom').val(entity.classRoomName); //
+    $('#myModal #classRoomid').val(entity.classRoomId); //
+    $('#myModal #school').val(entity.schoolArea); //
+    $('#myModal #schoolid').val(entity.schoolId); //
+    $('#myModal #teacher').val(entity.teacherName); //
+    $('#myModal #teacherid').val(entity.teacherId); //
     // $('#minScore').val(entity.minScore);
     resetDropDown({
         yearid: entity.yearId,
@@ -468,7 +481,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
         attributeid: entity.attributeId,
         exams: entity.exams
     });
-    $('#id').val(entity._id);
+    $('#myModal #id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
