@@ -18,9 +18,21 @@ $("#editfile #btnSubmit").on("click", function(e) {
         }).then(function(data) {
             if (data && data.sucess) {
                 showAlert("批量生成成功！");
+                location.href = "/admin/batchAddStudentToTrainClassResult";
             } else {
                 showAlert("批量生成失败！");
             }
         });
     }
+});
+
+$("#editfile #btnResult").on("click", function(e) {
+    location.href = "/admin/batchAddStudentToTrainClassResult";
+});
+$("#editfile #btnClear").on("click", function(e) {
+    $.get("/admin/batchAddStudentToTrainClass/clearAll", function(data) {
+        if (data && data.sucess) {
+            showAlert("删除失败记录成功");
+        }
+    });
 });

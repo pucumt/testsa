@@ -56,8 +56,12 @@ module.exports = TrainClass;
 
 //存储学区信息
 TrainClass.prototype.save = function() {
-    this.option.isWeixin = 0;
-    this.option.enrollCount = 0;
+    if (!this.option.isWeixin) {
+        this.option.isWeixin = 0;
+    }
+    if (!this.option.enrollCount) {
+        this.option.enrollCount = 0;
+    }
     this.option.isFullOrder = false;
     var newtrainClass = new trainClassModel(this.option);
 

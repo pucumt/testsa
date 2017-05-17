@@ -107,7 +107,7 @@ module.exports = function(app) {
 
     function createNewClass(data) {
         var option = {
-            name: data[0],
+            name: data[0].trim(),
             totalStudentCount: data[9],
             totalClassCount: data[8],
             trainPrice: data[10],
@@ -117,7 +117,7 @@ module.exports = function(app) {
             courseTime: data[7],
             courseContent: data[18].trim()
         };
-        TrainClass.getFilter({ name: data[0], schoolArea: data[14].trim() }).then(function(existTrainClass) {
+        TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[14].trim() }).then(function(existTrainClass) {
             if (existTrainClass) {
                 // TrainClass
                 //学费 教材费 教室 校区 依赖的考试
@@ -257,12 +257,24 @@ module.exports = function(app) {
                                                                         return trainClass.save();
                                                                     });
                                                                 });
+                                                            }).catch(function() {
+                                                                failedAddStudentToClass("", "", data[0].trim(), "没找到校区");
                                                             });
                                                     });
+                                                }).catch(function() {
+                                                    failedAddStudentToClass("", "", data[0].trim(), "没找到属性");
                                                 });
+                                            }).catch(function() {
+                                                failedAddStudentToClass("", "", data[0].trim(), "没找到难度");
                                             });
+                                    }).catch(function() {
+                                        failedAddStudentToClass("", "", data[0].trim(), "没找到科目");
                                     });
+                            }).catch(function() {
+                                failedAddStudentToClass("", "", data[0].trim(), "没找到年级");
                             });
+                    }).catch(function() {
+                        failedAddStudentToClass("", "", data[0].trim(), "没找到年度");
                     });
             }
         });
