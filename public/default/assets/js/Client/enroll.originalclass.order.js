@@ -30,7 +30,7 @@ function renderData() {
     var filter = {
         classId: $("#classId").val(),
         studentId: $("#studentId").val(),
-        originalUrl: "/enroll/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
+        originalUrl: "/enroll/original/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
     };
     $.post("/studentInfo/coupon", filter, function(data) {
         if (data) {
@@ -95,8 +95,8 @@ function getOrderId(payWay, callback) {
         coupon: $('.enroll .exam-detail .coupon #coupon').val(),
         payWay: payWay
     };
-    filter.originalUrl = "/enroll/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
-    $.post("/enroll/pay", filter, function(data) {
+    filter.originalUrl = "/enroll/original/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
+    $.post("/enroll/original/pay", filter, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";

@@ -6,7 +6,8 @@ var studentAccountSchema = new mongoose.Schema({
     name: String,
     password: String,
     wechat: String,
-    isDeleted: Boolean
+    isDeleted: Boolean,
+    createDate: { type: Date, default: Date.now }
 }, {
     collection: 'studentAccounts'
 });
@@ -43,6 +44,10 @@ StudentAccount.get = function(id) {
     return studentAccountModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
+StudentAccount.getSpecial = function(id) {
+    //打开数据库
+    return studentAccountModel.findOne({ _id: id });
+};
 //一次获取20个学区信息
 StudentAccount.getAll = function(id, page, filter, callback) {
     if (filter) {
@@ -86,4 +91,20 @@ StudentAccount.getFilters = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
     return studentAccountModel.find(filter);
+};
+
+StudentAccount.deleteAccount = function(id) {
+    return studentAccountModel.update({
+        _id: id
+    }, {
+        isDeleted: true
+    }).exec();
+};
+
+StudentAccount.recoverAccount = function(id) {
+    return studentAccountModel.update({
+        _id: id
+    }, {
+        isDeleted: false
+    }).exec();
 };

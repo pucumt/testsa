@@ -21,6 +21,10 @@ module.exports = function(app) {
                     studentId: student._id,
                     isSucceed: 1
                 };
+                if (global.currentYear) {
+                    filter.yearId = global.currentYear._id;
+                }
+
                 var p = AdminEnrollTrain.getFilters(filter)
                     .then(function(trains) {
                         var orders = [];

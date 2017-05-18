@@ -56,6 +56,9 @@ module.exports = function(app) {
         if (req.body.studentId) {
             filter.studentId = req.body.studentId;
         }
+        if (req.body.yearId) {
+            filter.yearId = req.body.yearId;
+        }
         AdminEnrollTrain.getAll(null, page, filter, function(err, adminEnrollTrains, total) {
             if (err) {
                 adminEnrollTrains = [];
@@ -135,7 +138,7 @@ module.exports = function(app) {
                     return;
                 }
 
-                TrainClass.enroll(req.body.trainId)
+                TrainClass.adminEnroll(req.body.trainId)
                     .then(function(trainClassResult) {
                         if (trainClassResult && trainClassResult.ok && trainClassResult.nModified == 1) {
                             //报名成功

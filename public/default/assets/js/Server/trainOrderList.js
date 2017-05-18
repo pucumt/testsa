@@ -3,8 +3,20 @@ var isNew = true;
 $(document).ready(function() {
     $("#left_btnTrainOrder").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
-    searchOrder();
+    renderSearchYearDropDown(); //search orders after get years
+
 });
+
+function renderSearchYearDropDown() {
+    $.post("/admin/year/all", function(data) {
+        if (data && data.length > 0) {
+            data.forEach(function(year) {
+                $("#InfoSearch #searchYear").append("<option value='" + year._id + "'>" + year.name + "</option>");
+            });
+        };
+        searchOrder();
+    });
+};
 
 var $selectBody = $('.content table tbody');
 
@@ -12,7 +24,8 @@ function searchOrder(p) {
     var filter = {
             studentName: $("#InfoSearch #studentName").val(),
             className: $("#InfoSearch #className").val(),
-            isSucceed: $("#InfoSearch #isSucceed").val()
+            isSucceed: $("#InfoSearch #isSucceed").val(),
+            yearId: $("#InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();

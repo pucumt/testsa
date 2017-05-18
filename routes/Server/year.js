@@ -6,6 +6,16 @@ var Year = require('../../models/year.js'),
     serverPath = __dirname;
 
 module.exports = function(app) {
+    function checkcurrentYear() {
+        Year.getFilter({ isCurrentYear: true })
+            .then(function(year) {
+                if (year) {
+                    global.currentYear = year.toJSON();
+                }
+            });
+    };
+    checkcurrentYear();
+
     app.get('/admin/yearList', checkLogin);
     app.get('/admin/yearList', function(req, res) {
         //var list = xlsx.parse(path.join(serverPath, "../../../1.xlsx"));
@@ -33,28 +43,50 @@ module.exports = function(app) {
     app.post('/admin/year/add', checkLogin);
     app.post('/admin/year/add', function(req, res) {
         var year = new Year({
-            name: req.body.name
+            name: req.body.name,
+            isCurrentYear: req.body.iscurrent || false
         });
-
-        year.save(function(err, year) {
-            if (err) {
-                year = {};
-            }
-            res.jsonp(year);
+        var p = Promise.resolve();
+        if (req.body.iscurrent) {
+            p = Year.clearCurrentYear();
+        }
+        p.then(function() {
+            year.save(function(err, year) {
+                if (err) {
+                    year = {};
+                }
+                if (req.body.iscurrent) {
+                    global.currentYear = year.toJSON();
+                }
+                res.jsonp(year);
+            });
         });
     });
 
     app.post('/admin/year/edit', checkLogin);
     app.post('/admin/year/edit', function(req, res) {
         var year = new Year({
-            name: req.body.name
+            name: req.body.name,
+            isCurrentYear: req.body.iscurrent || false
         });
 
-        year.update(req.body.id, function(err, year) {
-            if (err) {
-                year = {};
-            }
-            res.jsonp(year);
+        var p = Promise.resolve();
+        if (req.body.iscurrent) {
+            p = Year.clearCurrentYear();
+        }
+        p.then(function() {
+            year.update(req.body.id, function(err, year) {
+                if (err) {
+                    year = {};
+                }
+                if (req.body.iscurrent) {
+                    global.currentYear = {
+                        _id: req.body.id,
+                        name: req.body.name
+                    };
+                }
+                res.jsonp(year);
+            });
         });
     });
 

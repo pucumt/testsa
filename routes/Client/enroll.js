@@ -120,7 +120,7 @@ module.exports = function(app) {
             filter.categoryId = req.body.categoryId;
         }
         //查询并返回第 page 页的 14 篇文章
-        TrainClass.getAllToEnroll(null, page, filter, function(err, classs, total) {
+        TrainClass.getAllToOriginalEnroll(null, page, filter, function(err, classs, total) {
             if (err) {
                 classs = [];
             }
@@ -416,7 +416,7 @@ module.exports = function(app) {
                                 if (results.some(function(result) {
                                         return result;
                                     })) {
-                                    res.render('Client/enroll_class_order.html', {
+                                    res.render('Client/enroll_originalclass_order.html', {
                                         title: '课程报名',
                                         trainClass: trainClass,
                                         classId: req.query.classId,
@@ -424,7 +424,7 @@ module.exports = function(app) {
                                         originalOrder: 1
                                     });
                                 } else {
-                                    res.render('Client/enroll_class_order.html', {
+                                    res.render('Client/enroll_originalclass_order.html', {
                                         title: '课程报名',
                                         trainClass: trainClass,
                                         classId: req.query.classId,
@@ -435,7 +435,7 @@ module.exports = function(app) {
                                 }
                             });
                         } else {
-                            res.render('Client/enroll_class_order.html', {
+                            res.render('Client/enroll_originalclass_order.html', {
                                 title: '课程报名',
                                 trainClass: trainClass,
                                 classId: req.query.classId,
@@ -444,7 +444,7 @@ module.exports = function(app) {
                             });
                         }
                     } else {
-                        res.render('Client/enroll_class_order.html', {
+                        res.render('Client/enroll_originalclass_order.html', {
                             title: '课程报名',
                             trainClass: trainClass,
                             classId: req.query.classId,
@@ -517,7 +517,127 @@ module.exports = function(app) {
                                             attributeId: trainClass.attributeId,
                                             attributeName: trainClass.attributeName,
                                             isSucceed: 1,
-                                            payWay: req.body.payWay
+                                            payWay: req.body.payWay,
+                                            yearId: trainClass.yearId,
+                                            yearName: trainClass.yearName
+                                        });
+                                        adminEnrollTrain.save()
+                                            .then(function(enrollExam) {
+                                                //修改优惠券状态
+                                                if (coupon && coupon != "0") {
+                                                    CouponAssign.get(coupon)
+                                                        .then(function(couponAssign) {
+                                                            if (couponAssign) {
+                                                                CouponAssign.use(coupon, enrollExam._id);
+                                                                res.jsonp({ orderId: enrollExam._id });
+                                                                return;
+                                                            } else {
+                                                                //报名3科减
+                                                                Coupon.get(coupon)
+                                                                    .then(function(coupon) {
+                                                                        var couponAssign = new CouponAssign({
+                                                                            couponId: coupon._id,
+                                                                            couponName: coupon.name,
+                                                                            gradeId: coupon.gradeId,
+                                                                            gradeName: coupon.gradeName,
+                                                                            subjectId: coupon.subjectId,
+                                                                            subjectName: coupon.subjectName,
+                                                                            reducePrice: coupon.reducePrice,
+                                                                            couponStartDate: coupon.couponStartDate,
+                                                                            couponEndDate: coupon.couponEndDate,
+                                                                            studentId: req.body.studentId,
+                                                                            studentName: student.name,
+                                                                            isUsed: true,
+                                                                            orderId: enrollExam._id
+                                                                        });
+                                                                        couponAssign.save().then(function(couponAssign) {
+                                                                            res.jsonp({ orderId: enrollExam._id });
+                                                                            return;
+                                                                        });
+                                                                    });
+                                                            }
+                                                        });
+
+                                                } else {
+                                                    res.jsonp({ orderId: enrollExam._id });
+                                                    return;
+                                                }
+                                            });
+                                    });
+                                });
+                            });
+                        } else {
+                            //报名失败
+                            res.jsonp({ error: "报名失败,很可能报满" });
+                            return;
+                        }
+                    });
+            });
+    });
+
+    app.post('/enroll/original/pay', checkJSONLogin);
+    app.post('/enroll/original/pay', function(req, res) {
+        AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
+            .then(function(enrollTrain) {
+                if (enrollTrain) {
+                    res.jsonp({ error: "你已经报过名了，将跳转到订单页!" });
+                    return;
+                }
+                TrainClass.adminEnroll(req.body.classId)
+                    .then(function(resultClass) {
+                        if (resultClass && resultClass.ok && resultClass.nModified == 1) {
+                            //报名成功
+                            TrainClass.get(req.body.classId).then(function(trainClass) {
+                                if (trainClass.enrollCount == trainClass.totalStudentCount) {
+                                    TrainClass.full(req.body.classId);
+                                    //updated to full
+                                }
+
+                                StudentInfo.get(req.body.studentId).then(function(student) {
+                                    var coupon = req.body.coupon,
+                                        price, p;
+                                    if (coupon) {
+                                        if (coupon == "0") {
+                                            price = Math.round(trainClass.trainPrice * student.discount) / 100;
+                                            p = Promise.resolve(price);
+                                        } else {
+                                            p = CouponAssign.get(coupon).then(function(assign) {
+                                                if (assign) {
+                                                    price = trainClass.trainPrice - assign.reducePrice;
+                                                    return price > 0 ? price : 0;
+                                                } else {
+                                                    return Coupon.get(coupon).then(function(couponObject) {
+                                                        if (couponObject) {
+                                                            price = trainClass.trainPrice - couponObject.reducePrice;
+                                                            return price > 0 ? price : 0;
+                                                        } else {
+                                                            return trainClass.trainPrice;
+                                                        }
+                                                    })
+                                                }
+                                            });
+                                        }
+                                    } else {
+                                        p = Promise.resolve(trainClass.trainPrice);
+                                    }
+                                    p.then(function(totalPrice) {
+                                        var adminEnrollTrain = new AdminEnrollTrain({
+                                            studentId: student._id,
+                                            studentName: student.name,
+                                            mobile: student.mobile,
+                                            trainId: trainClass._id,
+                                            trainName: trainClass.name,
+                                            trainPrice: trainClass.trainPrice,
+                                            materialPrice: trainClass.materialPrice,
+                                            discount: student.discount,
+                                            totalPrice: totalPrice.toFixed(2),
+                                            realMaterialPrice: trainClass.materialPrice,
+                                            attributeId: trainClass.attributeId,
+                                            attributeName: trainClass.attributeName,
+                                            isSucceed: 1,
+                                            payWay: req.body.payWay,
+                                            yearId: trainClass.yearId,
+                                            yearName: trainClass.yearName
                                         });
                                         adminEnrollTrain.save()
                                             .then(function(enrollExam) {

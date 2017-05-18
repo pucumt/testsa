@@ -43,6 +43,7 @@ $("#btnAdd").on("click", function(e) {
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增年度");
     $('#name').val("");
+    $('#iscurrent').removeAttr('checked');
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -51,7 +52,8 @@ $("#btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/year/add",
             postObj = {
-                name: $('#name').val()
+                name: $('#name').val(),
+                iscurrent: $('#iscurrent').prop('checked')
             };
         if (!isNew) {
             postURI = "/admin/year/edit";
@@ -64,10 +66,12 @@ $("#btnSave").on("click", function(e) {
                 $tr.find(".btn-group").data("obj", data);
                 $('#gridBody').append($tr);
             } else {
-                var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
+                // var name = $('#' + data._id + ' td:first-child');
+                // name.text(data.name);
+                // name.next().text();
+                // var $lastDiv = $('#' + data._id + ' td:last-child div');
+                // $lastDiv.data("obj", data);
+                location.href = location.href;
             }
         });
     }
@@ -82,6 +86,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改年度");
     $('#name').val(entity.name);
+    entity.isCurrentYear ? $('#iscurrent').prop('checked', true) : $('#iscurrent').removeAttr('checked');
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });

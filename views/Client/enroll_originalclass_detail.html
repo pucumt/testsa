@@ -21,9 +21,6 @@
                 <div>教材费：{{ trainClass.materialPrice }}元 </div>
                 <div>合计：{{ totalPrice }}元</div>
                 <div class="enroll-info">
-                    <p class="exam-count">已报{{ trainClass.enrollCount }}&nbsp;&nbsp;共{{trainClass.totalStudentCount}} {% if trainClass.enrollCount == trainClass.totalStudentCount %}
-                        <span class="full">(已满)</span>{% endif %}
-                    </p>
                 </div>
             </div>
             <div class="exam-content">
@@ -33,11 +30,9 @@
             <input type="hidden" id="id" value="{{ trainClass._id }}" />
         </div>{% endif %}
     </div>
-    {% if trainClass.enrollCount != trainClass.totalStudentCount %}
     <div class="enroll-submit exam">
         <button id="btnEnroll" class="btn btn-primary" type="button">立刻报名</button>
     </div>
-    {% endif %}
 </div>
 <div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
 <div id="Enroll-select" style="display:none;">
@@ -117,6 +112,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.originalclass.detail.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.originalclass.detail.js?v=1.001"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}

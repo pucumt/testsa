@@ -4,7 +4,8 @@ var db = mongoose.connection;
 
 var yearSchema = new mongoose.Schema({
     name: String,
-    isDeleted: Boolean
+    isDeleted: Boolean,
+    isCurrentYear: { type: Boolean, default: false }
 }, {
     collection: 'years'
 });
@@ -108,4 +109,11 @@ Year.getFilters = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
     return yearModel.find(filter);
+};
+
+Year.clearCurrentYear = function() {
+    //打开数据库
+    return yearModel.update({
+        isCurrentYear: true
+    }, { isCurrentYear: false }).exec();
 };

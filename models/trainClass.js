@@ -176,6 +176,15 @@ TrainClass.enroll = function(id) {
         });
 };
 
+TrainClass.adminEnroll = function(id) {
+    return trainClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
+        .then(function(exam) {
+            return trainClassModel.update({
+                _id: id
+            }, { $inc: { enrollCount: 1 } }).exec();
+        });
+};
+
 TrainClass.full = function(id) {
     return trainClassModel.update({
         _id: id
@@ -201,10 +210,27 @@ TrainClass.getAllToEnroll = function(id, page, filter, callback) {
     } else {
         filter = { isDeleted: { $ne: true } };
     }
+    filter.$where = "this.enrollCount < this.totalStudentCount";
     var query = trainClassModel.count(filter);
     query.exec(function(err, count) {
         query.find()
-            .sort({ isFull: 1, _id: 1 })
+            .skip((page - 1) * 14)
+            .limit(14)
+            .exec(function(err, trainClasss) {
+                callback(null, trainClasss, count);
+            });
+    });
+};
+
+TrainClass.getAllToOriginalEnroll = function(id, page, filter, callback) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    var query = trainClassModel.count(filter);
+    query.exec(function(err, count) {
+        query.find()
             .skip((page - 1) * 14)
             .limit(14)
             .exec(function(err, trainClasss) {
@@ -248,5 +274,23 @@ TrainClass.unpublishWithYear = function(id) {
         isDeleted: { $ne: true }
     }, {
         isWeixin: 9
+    }, { multi: true }).exec();
+};
+
+TrainClass.add100 = function(id) {
+    return trainClassModel.update({
+        yearId: id,
+        isDeleted: { $ne: true }
+    }, {
+        $inc: { trainPrice: 100 }
+    }, { multi: true }).exec();
+};
+
+TrainClass.min100 = function(id) {
+    return trainClassModel.update({
+        yearId: id,
+        isDeleted: { $ne: true }
+    }, {
+        $inc: { trainPrice: -100 }
     }, { multi: true }).exec();
 };

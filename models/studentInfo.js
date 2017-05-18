@@ -14,7 +14,8 @@ var studentInfoSchema = new mongoose.Schema({
     accountId: String,
     discount: Number, //原始购买打折(特价课程除外)
     gradeId: String,
-    gradeName: String
+    gradeName: String,
+    createDate: { type: Date, default: Date.now }
 }, {
     collection: 'studentInfos'
 });
@@ -125,4 +126,26 @@ StudentInfo.deleteFilter = function(filter, callback) {
         }
         callback(null, studentInfo);
     });
+};
+
+StudentInfo.getAllDuplicated = function() {
+    return studentInfoModel.aggregate({ $match: { isDeleted: { $ne: true } } })
+        .group({
+            _id: {
+                name: "$name",
+                mobile: "$mobile",
+            },
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 1 } })
+        .exec();
+
+};
+
+StudentInfo.deleteUser = function(id) {
+    return studentInfoModel.update({
+        _id: id
+    }, {
+        isDeleted: true
+    }).exec();
 };

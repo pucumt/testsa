@@ -23,7 +23,9 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     orderDate: { type: Date, default: Date.now },
     cancelDate: Date,
     comment: String,
-    fromId: String //调班从哪里调过来
+    fromId: String, //调班从哪里调过来
+    yearId: String,
+    yearName: String
 }, {
     collection: 'adminEnrollTrains'
 });
@@ -39,8 +41,21 @@ module.exports = AdminEnrollTrain;
 //存储学区信息
 AdminEnrollTrain.prototype.save = function() {
     this.option.orderDate = new Date();
-    this.option.rebatePrice = 0;
-    this.option.isSucceed = 1;
+    if (!this.option.rebatePrice) {
+        this.option.rebatePrice = 0;
+    }
+
+    if (!this.option.isSucceed) {
+        this.option.isSucceed = 1;
+    }
+
+    if (!this.option.yearId) {
+        if (global.currentYear) {
+            this.option.yearId = global.currentYear.yearId;
+            this.option.yearName = global.currentYear.yearName;
+        }
+    }
+
     var newadminEnrollTrain = new adminEnrollTrainModel(this.option);
     return newadminEnrollTrain.save();
 };
@@ -196,4 +211,20 @@ AdminEnrollTrain.getDistinctStudents = function(filter) {
         filter.isSucceed = 1;
     }
     return adminEnrollTrainModel.distinct("studentId", { isSucceed: 1, isDeleted: { $ne: true } });
+};
+
+AdminEnrollTrain.getSpecialFilters = function(filter) {
+    return adminEnrollTrainModel.find(filter)
+        .exec();
+};
+
+AdminEnrollTrain.updateyear = function(id, option) {
+    return adminEnrollTrainModel.update({
+        _id: id
+    }, option).exec();
+};
+
+AdminEnrollTrain.updateUserInfo = function(filter, option) {
+    //打开数据库
+    return adminEnrollTrainModel.update(filter, option).exec();
 };

@@ -326,6 +326,10 @@ module.exports = function(app) {
         }
         if (req.body.yearId) {
             filter.yearId = req.body.yearId;
+        } else { //当前年度的课程
+            if (global.currentYear) {
+                filter.yearId = global.currentYear._id;
+            }
         }
 
         TrainClass.getAll(null, page, filter, function(err, trainClasss, total) {
@@ -353,6 +357,21 @@ module.exports = function(app) {
     app.post('/admin/batchTrainClassUnpublish', checkLogin);
     app.post('/admin/batchTrainClassUnpublish', function(req, res) {
         TrainClass.unpublishWithYear(req.body.id)
+            .then(function() {
+                res.jsonp({ sucess: true });
+            });
+    });
+
+    app.post('/admin/batchAdd100', checkLogin);
+    app.post('/admin/batchAdd100', function(req, res) {
+        TrainClass.add100(req.body.id)
+            .then(function() {
+                res.jsonp({ sucess: true });
+            });
+    });
+    app.post('/admin/batchMin100', checkLogin);
+    app.post('/admin/batchMin100', function(req, res) {
+        TrainClass.min100(req.body.id)
             .then(function() {
                 res.jsonp({ sucess: true });
             });

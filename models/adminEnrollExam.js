@@ -152,3 +152,8 @@ AdminEnrollExam.getFilters = function(filter) {
     filter.isDeleted = { $ne: true };
     return adminEnrollExamModel.find(filter);
 };
+
+AdminEnrollExam.updateUserInfo = function(filter, option) {
+    //打开数据库
+    return adminEnrollExamModel.update(filter, option).exec();
+};

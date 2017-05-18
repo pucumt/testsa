@@ -344,6 +344,8 @@ module.exports = function(app) {
                 if (existTrainClass) {
                     option.trainId = existTrainClass._id;
                     option.trainName = existTrainClass.name;
+                    option.yearId = existTrainClass.yearId;
+                    option.yearName = existTrainClass.yearName;
                     return StudentInfo.getFilter({ name: data[1].trim(), mobile: data[2] })
                         .then(function(student) {
                             if (student) {
@@ -430,16 +432,27 @@ module.exports = function(app) {
         var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
-        var pArray = [];
-        for (var i = 1; i < length; i++) {
-            if (!list[0].data[i][0]) {
-                break;
+        var promiseAdd = function(i) {
+            if (i >= length || !list[0].data[i][0]) {
+                res.jsonp({ sucess: true });
+                return;
             }
-            pArray.push(addStudentToClass(list[0].data[i]));
-        }
-        Promise.all(pArray).then(function() {
-            res.jsonp({ sucess: true });
-        });
+            addStudentToClass(list[0].data[i])
+                .then(function() {
+                    promiseAdd(i + 1);
+                });
+        };
+        promiseAdd(1);
+        // var pArray = [];
+        // for (var i = 1; i < length; i++) {
+        //     if (!list[0].data[i][0]) {
+        //         break;
+        //     }
+        //     pArray.push(addStudentToClass(list[0].data[i]));
+        // }
+        // Promise.all(pArray).then(function() {
+        //     res.jsonp({ sucess: true });
+        // });
     });
 
     app.get('/admin/score/getAllWithoutPage', checkLogin);
@@ -844,5 +857,94 @@ module.exports = function(app) {
             fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
         });
+    });
+
+    app.post('/admin/adminEnrollTrain/addYearToOrder', checkLogin);
+    app.post('/admin/adminEnrollTrain/addYearToOrder', function(req, res) {
+        AdminEnrollTrain.getSpecialFilters({})
+            .then(function(orders) {
+                if (orders && orders.length > 0) {
+                    var pArray = [];
+                    orders.forEach(function(order) {
+                        var p = TrainClass.get(order.trainId)
+                            .then(function(trainClass) {
+                                if (trainClass) {
+                                    return AdminEnrollTrain.updateyear(order._id, {
+                                        yearId: trainClass.yearId,
+                                        yearName: trainClass.yearName
+                                    });
+                                } else {
+                                    failedAddStudentToClass(order.trainId, "", "", "没找到课程");
+                                }
+                            });
+                        pArray.push(p);
+                    });
+                    Promise.all(pArray)
+                        .then(function() {
+                            res.jsonp({ sucess: true });
+                        });
+                } else {
+                    res.jsonp({ error: "没找到任何订单" });
+                }
+            });
+    });
+
+    app.post('/admin/studentAccount/DuplicateAccount', checkLogin);
+    app.post('/admin/studentAccount/DuplicateAccount', function(req, res) {
+        var deleteCount = 0;
+        StudentInfo.getAllDuplicated({})
+            .then(function(specialStudents) {
+                var pArray = []
+                specialStudents.forEach(function(specialStudent) {
+                    var p = StudentInfo.getFilters({ name: specialStudent._id.name, mobile: specialStudent._id.mobile })
+                        .then(function(students) {
+                            if (students.length > 0) {
+                                var realStudent = students[0];
+                                var pChildStudentArray = [];
+                                for (var i = 1; i < students.length; i++) {
+                                    //1. update examorder
+                                    var pChildStudent1 = AdminEnrollExam.updateUserInfo({
+                                        studentId: students[i]._id
+                                    }, {
+                                        studentId: realStudent._id
+                                    });
+                                    pChildStudentArray.push(pChildStudent1);
+                                    //2. update train order
+                                    var pChildStudent2 = AdminEnrollTrain.updateUserInfo({
+                                        studentId: students[i]._id
+                                    }, {
+                                        studentId: realStudent._id
+                                    });
+                                    pChildStudentArray.push(pChildStudent2);
+                                    //3. delete useless account and user
+                                    var pChildStudent3 = StudentInfo.deleteUser(students[i]._id);
+                                    pChildStudentArray.push(pChildStudent3);
+
+                                    if (students[i].accountId != realStudent.accountId) {
+                                        var pChildStudent4 = StudentAccount.deleteAccount(students[i].accountId);
+                                        pChildStudentArray.push(pChildStudent4);
+                                    }
+                                }
+                                var pChildStudent5 = StudentAccount.getSpecial(realStudent.accountId).then(function(account) {
+                                    if (account) {
+                                        if (account.isDeleted) {
+                                            return StudentAccount.recoverAccount(realStudent.accountId);
+                                        }
+                                    } else {
+                                        return failedAddStudentToClass(specialStudent._id.name, specialStudent._id.mobile, realStudent.accountId, "没找到第一个账号");
+                                    }
+                                });
+                                pChildStudentArray.push(pChildStudent5);
+                                return Promise.all(pChildStudentArray);
+                            } else {
+                                return failedAddStudentToClass(specialStudent._id.name, specialStudent._id.mobile, "", "没找到");
+                            }
+                        });
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function() {
+                    res.jsonp({ sucess: true });
+                });
+            });
     });
 }
