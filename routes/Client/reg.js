@@ -41,7 +41,7 @@ module.exports = function(app) {
                     newUser.save().then(function(user) {
                         if (user) {
                             //将用户信息存入 session
-                            req.session.user = user;
+                            req.session.user = user.toJSON();
                             res.redirect(req.session.originalUrl ? req.session.originalUrl : '/'); //登陆成功后跳转到主页
                             //return res.redirect('/login'); //注册成功
                             return;
