@@ -117,7 +117,7 @@ module.exports = function(app) {
             courseTime: data[7],
             courseContent: data[18] && data[18].trim()
         };
-        TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[14].trim(), yearName: data[1].trim() }).then(function(existTrainClass) {
+        return TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[14].trim(), yearName: data[1].trim() }).then(function(existTrainClass) {
             if (existTrainClass) {
                 // TrainClass
                 //学费 教材费 教室 校区 依赖的考试
@@ -161,8 +161,28 @@ module.exports = function(app) {
                                 if (examArray.length > 0) {
                                     option.exams = examArray;
                                 }
-                                var newTrainClass = new TrainClass(option);
-                                return newTrainClass.update(existTrainClass._id);
+                                var pTrainClass;
+                                if (data[16] && data[16].trim() != "") {
+                                    pTrainClass = TrainClass.getFilter({ name: data[16].trim(), schoolArea: data[19].trim(), yearName: data[20].trim() });
+                                } else {
+                                    pTrainClass = Promise.resolve();
+                                }
+                                return pTrainClass.then(function(trainClass) {
+                                    if (trainClass) {
+                                        option.fromClassId = trainClass._id;
+                                        option.fromClassName = trainClass.name;
+                                        option.isWeixin = 2;
+                                    } else if (data[16] && data[16].trim() != "") {
+                                        failedAddStudentToClass("", "", data[0].trim(), "没找到原班");
+                                        return;
+                                    }
+
+                                    if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，TBD
+                                        option.protectedDate = (new Date(1900, 0, parseInt(data[17]) - 1));
+                                    }
+                                    var newTrainClass = new TrainClass(option);
+                                    return newTrainClass.update(existTrainClass._id);
+                                });
                             });
                         });
                 });
@@ -251,6 +271,7 @@ module.exports = function(app) {
                                                                             option.isWeixin = 2;
                                                                         } else if (data[16] && data[16].trim() != "") {
                                                                             failedAddStudentToClass("", "", data[0].trim(), "没找到原班");
+                                                                            return;
                                                                         }
 
                                                                         if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，TBD

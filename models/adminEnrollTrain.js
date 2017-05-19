@@ -51,8 +51,8 @@ AdminEnrollTrain.prototype.save = function() {
 
     if (!this.option.yearId) {
         if (global.currentYear) {
-            this.option.yearId = global.currentYear.yearId;
-            this.option.yearName = global.currentYear.yearName;
+            this.option.yearId = global.currentYear._id;
+            this.option.yearName = global.currentYear.name;
         }
     }
 
