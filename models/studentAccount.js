@@ -108,3 +108,13 @@ StudentAccount.recoverAccount = function(id) {
         isDeleted: false
     }).exec();
 };
+
+StudentAccount.getAllDuplicated = function() {
+    return studentAccountModel.aggregate({ $match: { isDeleted: { $ne: true } } })
+        .group({
+            _id: "$name",
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 1 } })
+        .exec();
+};

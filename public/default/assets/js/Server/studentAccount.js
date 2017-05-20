@@ -199,3 +199,18 @@ $("#btnDuplicateAccount").on("click", function(e) {
             });
     });
 });
+
+$("#btnDuplicateAccountOnly").on("click", function(e) {
+    showComfirm("真的要删除同号码吗？");
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/studentAccount/OnlyDuplicateAccount",
+            function(data) {
+                var msg;
+                if (data.sucess) {
+                    showAlert("同号码删除成功", null, true);
+                } else {
+                    showAlert(data.error, null, true);
+                }
+            });
+    });
+});

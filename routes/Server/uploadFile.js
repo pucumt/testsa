@@ -968,4 +968,41 @@ module.exports = function(app) {
                 });
             });
     });
+
+    app.post('/admin/studentAccount/OnlyDuplicateAccount', checkLogin);
+    app.post('/admin/studentAccount/OnlyDuplicateAccount', function(req, res) {
+        var deleteCount = 0;
+        StudentAccount.getAllDuplicated({})
+            .then(function(specialAccounts) {
+                var pArray = []
+                specialAccounts.forEach(function(specialAccount) {
+                    var p = StudentAccount.getFilters({ name: specialAccount._id })
+                        .then(function(accounts) {
+                            if (accounts.length > 1) {
+                                var realAccount = accounts[0];
+                                var pChildAccountArray = [];
+                                for (var i = 1; i < accounts.length; i++) {
+                                    //1. update student
+                                    var pChildAccount1 = StudentInfo.updateUserInfo({
+                                        accountId: accounts[i]._id
+                                    }, {
+                                        accountId: realAccount._id
+                                    });
+                                    pChildAccountArray.push(pChildAccount1);
+                                    //2. delete useless account
+                                    var pChildAccount2 = StudentAccount.deleteAccount(accounts[i]._id);
+                                    pChildAccountArray.push(pChildAccount2);
+                                }
+                                return Promise.all(pChildAccountArray);
+                            } else {
+                                return failedAddStudentToClass(specialAccount._id, "", "", "没找到");
+                            }
+                        });
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function() {
+                    res.jsonp({ sucess: true });
+                });
+            });
+    });
 }
