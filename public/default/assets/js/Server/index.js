@@ -9,7 +9,7 @@ $(document).ready(function() {
         location.href = "/admin/studentAccountList";
     });
     $("#header_btnFinancial").on("click", function(e) {
-        location.href = "/admin/schoolAreaList";
+        location.href = "/admin/schoolReportList";
     });
     $("#header_btnBasic").on("click", function(e) {
         location.href = "/admin/schoolAreaList";

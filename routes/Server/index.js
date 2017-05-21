@@ -27,6 +27,8 @@
     couponAssign = require('./couponAssign.js'),
     uploadFile = require('./uploadFile.js'),
 
+    schoolReport = require('./schoolReport.js'),
+
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -72,4 +74,7 @@ module.exports = function(app) {
     couponAssign(app);
 
     uploadFile(app);
+
+    //finatial
+    schoolReport(app);
 };

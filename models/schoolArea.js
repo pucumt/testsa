@@ -102,3 +102,9 @@ SchoolArea.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return schoolAreaModel.findOne(filter);
 };
+
+SchoolArea.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return schoolAreaModel.find(filter);
+};
