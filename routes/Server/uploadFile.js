@@ -631,10 +631,12 @@ module.exports = function(app) {
                         var PArray = [];
                         orders.forEach(function(order) {
                             var Px = StudentInfo.get(order.studentId).then(function(student) {
-                                return StudentAccount.get(student.accountId).then(function(account) {
-                                    var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam.substr(0, 19) + '.doc';
-                                    fs.createReadStream(src).pipe(fs.createWriteStream(path.join(disPath, fileName)));
-                                });
+                                if (student) {
+                                    return StudentAccount.get(student.accountId).then(function(account) {
+                                        var fileName = student.name + '_' + account.name + '_' + req.body.subject + '_' + req.body.exam.substr(0, 19) + '.doc';
+                                        fs.createReadStream(src).pipe(fs.createWriteStream(path.join(disPath, fileName)));
+                                    });
+                                }
                             });
                             PArray.push(Px);
                         });
@@ -875,6 +877,45 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                 fileName = '报名情况4' + '.xlsx';
+            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/export/classTemplate5', function(req, res) {
+        var data = [
+            ['姓名', '联系方式', '科目', '校区', '课程', '年级']
+        ];
+        var p = AdminEnrollTrain.getFilters({
+            yearId: global.currentYear._id,
+            isSucceed: 1
+        }).then(function(orders) {
+            if (orders.length > 0) {
+                var PArray = [];
+                orders.forEach(function(order) {
+                    var Px = StudentInfo.get(order.studentId).then(function(student) {
+                        if (student) {
+                            return TrainClass.get(newOrder.trainId)
+                                .then(function(newClass) {
+                                    if (newClass) {
+                                        var singleInfo = [student.name, student.mobile, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName];
+                                        data.push(singleInfo);
+                                    } else {
+                                        data.push([studentId, newOrder.trainId]);
+                                    }
+                                });
+                        } else {
+                            data.push([studentId]);
+                        }
+                    });
+                    PArray.push(Px);
+                });
+                return Promise.all(PArray);
+            }
+        });
+        p.then(function() {
+            var buffer = xlsx.build([{ name: "报名情况", data: data }]),
+                fileName = '报名情况5' + '.xlsx';
             fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
         });
