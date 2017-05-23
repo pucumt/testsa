@@ -79,17 +79,9 @@ ExamClass.getAll = function(id, page, filter, callback) {
     var query = examClassModel.count(filter);
     query.exec(function(err, count) {
         query.find()
+            .sort({ sequence: 1, _id: 1 })
             .skip((page - 1) * 14)
             .limit(14)
-            // .select({
-            //     name: 1,
-            //     examDate: 1,
-            //     examTime: 1,
-            //     examCategoryId: 1,
-            //     examCategoryName: 1,
-            //     examCount: 1,
-            //     enrollCount: 1
-            // })
             .exec(function(err, examClasss) {
                 callback(null, examClasss, count);
             });

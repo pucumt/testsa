@@ -144,6 +144,17 @@ function addValidation(callback) {
                             message: '填写的不是数字',
                         }
                     }
+                },
+                'examSequence': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '顺序不能为空'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
+                    }
                 }
             }
         });
@@ -224,6 +235,7 @@ $("#btnAdd").on("click", function(e) {
     $('#examTime').val("");
     $('#examCount').val(0);
     $('#courseContent').val("");
+    $('#examSequence').val(0);
     resetDropDown();
     resetCheckBox();
     resetExamArea();
@@ -268,6 +280,7 @@ $("#btnSave").on("click", function(e) {
                 examCategoryName: $('#examCategoryName').find("option:selected").text(),
                 examCount: $('#examCount').val(),
                 courseContent: $('#courseContent').val(),
+                sequence: $('#examSequence').val(),
                 subjects: subjects.length > 0 ? JSON.stringify(subjects) : [],
                 examAreas: examAreas.length > 0 ? JSON.stringify(examAreas) : []
             };
@@ -322,6 +335,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#examDate').val(examDate);
     $('#examTime').val(entity.examTime);
     $('#examCount').val(entity.examCount);
+    $('#examSequence').val(entity.sequence);
     $('#id').val(entity._id);
     $('#courseContent').val(entity.courseContent);
     resetDropDown(entity.examCategoryId);

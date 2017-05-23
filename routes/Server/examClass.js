@@ -22,6 +22,7 @@ module.exports = function(app) {
             examCategoryId: req.body.examCategoryId,
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
+            sequence: req.body.sequence,
             enrollCount: 0,
             isWeixin: 0,
             courseContent: req.body.courseContent,
@@ -70,6 +71,7 @@ module.exports = function(app) {
             examCategoryId: req.body.examCategoryId,
             examCategoryName: req.body.examCategoryName,
             examCount: req.body.examCount,
+            sequence: req.body.sequence,
             courseContent: req.body.courseContent,
             subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : [])
                 // examAreaId: req.body.examAreaId,
