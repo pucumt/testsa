@@ -1,0 +1,57 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="startDate" class="control-label" style="width: 65px;">开始日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="startDate" id="startDate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="endDate" class="control-label" style="width: 65px;">截至日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="endDate" id="endDate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="searchSchool" class="control-label">校区:</label>
+                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:200px;">校区</th>
+                <th style="width:200px;">科目</th>
+                <th style="width:120px;">培训费</th>
+                <th style="width:120px;">教材费</th>
+                <th>总金额</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Server/rebateReportList.js?v=1.000"></script>
+{% endblock %}
