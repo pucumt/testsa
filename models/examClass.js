@@ -21,7 +21,8 @@ var examClassSchema = new mongoose.Schema({
     seatNumber: Number,
     examAreaId: String, //means old enroll
     examAreaName: String,
-    isScorePublished: { type: Boolean, default: false }
+    isScorePublished: { type: Boolean, default: false },
+    sequence: { type: Number, default: 0 }
 }, {
     collection: 'examClasss'
 });
