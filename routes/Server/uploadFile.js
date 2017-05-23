@@ -895,17 +895,17 @@ module.exports = function(app) {
                 orders.forEach(function(order) {
                     var Px = StudentInfo.get(order.studentId).then(function(student) {
                         if (student) {
-                            return TrainClass.get(newOrder.trainId)
+                            return TrainClass.get(order.trainId)
                                 .then(function(newClass) {
                                     if (newClass) {
                                         var singleInfo = [student.name, student.mobile, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName];
                                         data.push(singleInfo);
                                     } else {
-                                        data.push([studentId, newOrder.trainId]);
+                                        data.push([order.studentId, order.trainId]);
                                     }
                                 });
                         } else {
-                            data.push([studentId]);
+                            data.push([order.studentId]);
                         }
                     });
                     PArray.push(Px);
