@@ -75,7 +75,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/peopleCountList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/peopleCountList/search?" + pStr, filter, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(schoolReport) {
                 var $tr = $('<tr ><td>' + schoolReport.name + '</td><td>' +

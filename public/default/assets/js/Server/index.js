@@ -61,6 +61,25 @@ window.setSelectEvent = function($selectBody, callback) {
     });
 };
 
+window.selfAjax = function(method, url, filter, callback) {
+    loading();
+    $[method](
+        url,
+        filter,
+        function(data) {
+            callback(data);
+            hideLoading();
+        }
+    );
+};
+
+window.loading = function() {
+    $("#loadingIndicator").modal({ backdrop: 'static', keyboard: false });
+};
+
+window.hideLoading = function() {
+    $("#loadingIndicator").modal('hide');
+};
 //Html编码获取Html转义实体  
 // function htmlEncode(value) {
 //     return encodeURI(value);

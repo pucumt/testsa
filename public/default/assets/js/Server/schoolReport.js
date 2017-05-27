@@ -25,7 +25,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/schoolReportList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/schoolReportList/search?" + pStr, filter, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(schoolReport) {
                 var $tr = $('<tr id=' + schoolReport._id + '><td>' + schoolReport.name + '</td><td>' +
