@@ -181,6 +181,14 @@ $("#editfile #btnExportClass5").on("click", function(e) {
     });
 });
 
+$("#editfile #btnExportClass6").on("click", function(e) {
+    $.post("/admin/export/classTemplate6").then(function(data) {
+        if (data && data.sucess) {
+            location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况6.xlsx");
+        }
+    });
+});
+
 $("#editfile #btnReport").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {

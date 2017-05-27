@@ -33,7 +33,8 @@ var $mainSelectBody = $('.content.mainModal table tbody');
 function search(p) {
     var filter = {
             startDate: $(".mainModal #InfoSearch #startDate").val(),
-            endDate: $(".mainModal #InfoSearch #endDate").val()
+            endDate: $(".mainModal #InfoSearch #endDate").val(),
+            schoolId: $(".mainModal #InfoSearch #searchSchool").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
@@ -41,7 +42,7 @@ function search(p) {
         if (data && data.length > 0) {
             data.forEach(function(schoolReport) {
                 var $tr = $('<tr ><td>' + schoolReport.name + '</td><td>' +
-                    schoolReport.trainPrice + '</td><td>' + schoolReport.materialPrice + '</td><td>' + schoolReport.totalPrice + '</td></tr>');
+                    schoolReport.rebatePrice + '</td></tr>');
                 $mainSelectBody.append($tr);
             });
         }

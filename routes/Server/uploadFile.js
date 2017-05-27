@@ -672,7 +672,7 @@ module.exports = function(app) {
 
     app.post('/admin/export/classTemplate', function(req, res) {
         var data = [
-            ['姓名', '联系方式', '科目']
+            ['姓名', '联系方式', '年级', '科目']
         ];
         var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
             .then(function(orders) {
@@ -691,6 +691,7 @@ module.exports = function(app) {
                                         classOrders.forEach(function(newOrder) {
                                             var pClass = TrainClass.get(newOrder.trainId)
                                                 .then(function(newClass) {
+                                                    singleInfo.push(newClass.gradeName);
                                                     singleInfo.push(newClass.subjectName);
                                                 });
                                             p2Array.push(pClass);
@@ -724,7 +725,7 @@ module.exports = function(app) {
         var data = [
             ['课程', '年级', '科目', '难度', '校区', '报名人数', '总人数']
         ];
-        var p = TrainClass.getFilters({})
+        var p = TrainClass.getFilters({ yearId: global.currentYear._id })
             .then(function(classes) {
                 if (classes.length > 0) {
                     classes.forEach(function(order) {
@@ -813,7 +814,7 @@ module.exports = function(app) {
 
     app.post('/admin/export/classTemplate4', function(req, res) {
         var data = [
-            ['姓名', '联系方式', '科目', '时间', '校区', '培训费', '教材费', '科目', '时间', '校区', '培训费', '教材费', '科目', '时间', '校区', '培训费', '教材费']
+            ['姓名', '联系方式', '年级', '科目', '时间', '校区', '培训费', '教材费', '年级', '科目', '时间', '校区', '培训费', '教材费', '年级', '科目', '时间', '校区', '培训费', '教材费']
         ];
         var p = AdminEnrollTrain.getDistinctStudents({}).then(function(students) {
             if (students.length > 0) {
@@ -884,11 +885,12 @@ module.exports = function(app) {
 
     app.post('/admin/export/classTemplate5', function(req, res) {
         var data = [
-            ['姓名', '联系方式', '科目', '校区', '课程', '年级']
+            ['姓名', '联系方式', '报名日期', '科目', '校区', '课程', '年级']
         ];
         var p = AdminEnrollTrain.getFilters({
             yearId: global.currentYear._id,
-            isSucceed: 1
+            isSucceed: 1,
+            isPayed: true
         }).then(function(orders) {
             if (orders.length > 0) {
                 var PArray = [];
@@ -898,7 +900,7 @@ module.exports = function(app) {
                             return TrainClass.get(order.trainId)
                                 .then(function(newClass) {
                                     if (newClass) {
-                                        var singleInfo = [student.name, student.mobile, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName];
+                                        var singleInfo = [student.name, student.mobile, order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName];
                                         data.push(singleInfo);
                                     } else {
                                         data.push([order.studentId, order.trainId]);
@@ -919,6 +921,26 @@ module.exports = function(app) {
             fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
         });
+    });
+
+    app.post('/admin/export/classTemplate6', function(req, res) {
+        var data = [
+            ['课程', '科目', '校区', '年级', '时间', '已报', '总数']
+        ];
+        return TrainClass.getFilters({ yearId: global.currentYear._id })
+            .then(function(newClasses) {
+                if (newClasses.length > 0) {
+                    newClasses.forEach(function(newClass) {
+                        var singleInfo = [newClass.name, newClass.subjectName, newClass.schoolArea, newClass.gradeName, newClass.courseTime, newClass.enrollCount, newClass.totalStudentCount];
+                        data.push(singleInfo);
+                    });
+
+                    var buffer = xlsx.build([{ name: "报名情况", data: data }]),
+                        fileName = '报名情况6' + '.xlsx';
+                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    res.jsonp({ sucess: true });
+                }
+            });
     });
 
     app.post('/admin/adminEnrollTrain/addYearToOrder', checkLogin);

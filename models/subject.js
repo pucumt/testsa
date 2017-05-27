@@ -103,3 +103,9 @@ Subject.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return subjectModel.findOne(filter);
 };
+
+Subject.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return subjectModel.find(filter);
+};

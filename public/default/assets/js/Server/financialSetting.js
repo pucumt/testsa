@@ -14,4 +14,8 @@ $(document).ready(function() {
     $("#left_btnPeopleCount").on("click", function(e) {
         location.href = "/admin/peopleCountList";
     });
+
+    $("#left_btnCompareLast").on("click", function(e) {
+        location.href = "/admin/compareLastList";
+    });
 });

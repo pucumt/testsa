@@ -1,6 +1,8 @@
 var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     SchoolArea = require('../../models/schoolArea.js'),
     TrainClass = require('../../models/trainClass.js'),
+    Subject = require('../../models/subject.js'),
+    Year = require('../../models/year.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -25,6 +27,22 @@ module.exports = function(app) {
     app.get('/admin/rebateReportList', function(req, res) {
         res.render('Server/rebateReportList.html', {
             title: '>退费报表',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/peopleCountList', checkLogin);
+    app.get('/admin/peopleCountList', function(req, res) {
+        res.render('Server/peopleCountList.html', {
+            title: '>人数统计',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/compareLastList', checkLogin);
+    app.get('/admin/compareLastList', function(req, res) {
+        res.render('Server/compareLastList.html', {
+            title: '>留存报表',
             user: req.session.admin
         });
     });
@@ -118,10 +136,10 @@ module.exports = function(app) {
     app.post('/admin/rebateReportList/search', checkLogin);
     app.post('/admin/rebateReportList/search', function(req, res) {
         var list = [];
-        SchoolArea.getFilters({}).then(function(schools) {
+        Subject.getFilters({}).then(function(subjects) {
             var pArray = [];
-            schools.forEach(function(school) {
-                var p = TrainClass.getFilters({ schoolId: school._id })
+            subjects.forEach(function(subject) {
+                var p = TrainClass.getFilters({ schoolId: req.body.schoolId, subjectId: subject._id })
                     .then(function(trainClasses) {
                         if (trainClasses && trainClasses.length > 0) {
                             var classIds = trainClasses.map(function(singleClass) {
@@ -131,26 +149,21 @@ module.exports = function(app) {
                                 trainId: { $in: classIds },
                                 orderDate: { $lte: req.body.endDate },
                                 orderDate: { $gte: req.body.startDate },
-                                isSucceed: 1,
                                 isPayed: true
                             }).then(function(orders) {
-                                var trainPrice = 0,
-                                    materialPrice = 0;
+                                var rebatePrice = 0;
                                 orders.forEach(function(order) {
-                                    trainPrice = trainPrice + order.trainPrice;
-                                    materialPrice = materialPrice + order.materialPrice;
+                                    rebatePrice = rebatePrice + order.rebatePrice;
                                 });
 
                                 list.push({
-                                    _id: school._id,
-                                    name: school.name,
-                                    trainPrice: trainPrice.toFixed(2),
-                                    materialPrice: materialPrice.toFixed(2),
-                                    totalPrice: (trainPrice + materialPrice).toFixed(2)
+                                    _id: subject._id,
+                                    name: subject.name,
+                                    rebatePrice: rebatePrice.toFixed(2)
                                 });
                             });
                         } else {
-                            list.push({ _id: school._id, name: school.name, trainPrice: 0, materialPrice: 0, totalPrice: 0 });
+                            list.push({ _id: subject._id, name: subject.name, rebatePrice: 0 });
                         }
                     });
                 pArray.push(p);
@@ -159,5 +172,134 @@ module.exports = function(app) {
                 res.json(list);
             });
         });
+    });
+
+    app.post('/admin/peopleCountList/search', checkLogin);
+    app.post('/admin/peopleCountList/search', function(req, res) {
+        var list = [],
+            filter = {
+                schoolId: req.body.schoolId,
+                yearId: global.currentYear._id
+            };
+        if (req.body.gradeId) {
+            filter.gradeId = req.body.gradeId;
+        }
+
+        if (req.body.subjectId) {
+            filter.subjectId = req.body.subjectId;
+        }
+
+        if (req.body.categoryId) {
+            filter.categoryId = req.body.categoryId;
+        }
+        TrainClass.getFilters(filter)
+            .then(function(trainClasses) {
+                if (trainClasses && trainClasses.length > 0) {
+                    trainClasses.forEach(function(trainClass) {
+                        list.push({
+                            _id: trainClass._id,
+                            name: trainClass.name,
+                            enrollCount: trainClass.enrollCount,
+                            totalStudentCount: trainClass.totalStudentCount
+                        });
+                    });
+                }
+                res.json(list);
+            });
+    });
+
+    app.post('/admin/compareLastList/search', checkLogin);
+    app.post('/admin/compareLastList/search', function(req, res) {
+        Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
+            .then(function(year) {
+                if (year) {
+                    var list = [],
+                        filter = {
+                            schoolId: req.body.schoolId,
+                            yearId: year._id
+                        };
+                    if (req.body.gradeId) {
+                        filter.gradeId = req.body.gradeId;
+                    }
+
+                    if (req.body.subjectId) {
+                        filter.subjectId = req.body.subjectId;
+                    }
+
+                    if (req.body.name) {
+                        var reg = new RegExp(req.body.name, 'i')
+                        filter.name = {
+                            $regex: reg
+                        };
+                    }
+                    TrainClass.getFilters(filter)
+                        .then(function(trainClasses) {
+                            var pArray = [];
+                            if (trainClasses && trainClasses.length > 0) {
+                                trainClasses.forEach(function(trainClass) {
+                                    var p = AdminEnrollTrain.getFilters({
+                                            trainId: trainClass._id,
+                                            isSucceed: 1
+                                        })
+                                        .then(function(orders) {
+                                            if (orders && orders.length > 0) {
+                                                var studentIds = orders.map(function(order) {
+                                                    return order.studentId;
+                                                });
+                                                return TrainClass.getFilters({ fromClassId: trainClass._id })
+                                                    .then(function(newClasses) {
+                                                        if (newClasses && newClasses.length > 0) {
+                                                            var newClassIds = newClasses.map(function(newClass) {
+                                                                return newClass._id;
+                                                            });
+                                                            return AdminEnrollTrain.getCount({
+                                                                    trainId: { $in: newClassIds },
+                                                                    studentId: { $in: studentIds },
+                                                                    yearId: global.currentYear._id,
+                                                                    isSucceed: 1
+                                                                })
+                                                                .then(function(count) {
+                                                                    list.push({
+                                                                        _id: trainClass._id,
+                                                                        name: trainClass.name,
+                                                                        gradeName: trainClass.gradeName,
+                                                                        teacherName: trainClass.teacherName,
+                                                                        originalCount: orders.length,
+                                                                        enrollCount: count,
+                                                                        enrollRatio: (orders.length > 0 ? (count * 100 / orders.length).toFixed(2) : 0)
+                                                                    });
+                                                                });
+                                                        } else {
+                                                            list.push({
+                                                                _id: trainClass._id,
+                                                                name: trainClass.name,
+                                                                teacherName: "没找到对应新课程",
+                                                                originalCount: 0,
+                                                                enrollCount: 0,
+                                                                enrollRatio: 0
+                                                            });
+                                                        }
+                                                    });
+                                            } else {
+                                                list.push({
+                                                    _id: trainClass._id,
+                                                    name: trainClass.name,
+                                                    teacherName: "没找到学生",
+                                                    originalCount: 0,
+                                                    enrollCount: 0,
+                                                    enrollRatio: 0
+                                                });
+                                            }
+
+                                        });
+                                    pArray.push(p);
+                                });
+                            }
+                            Promise.all(pArray).then(function() {
+                                res.json(list);
+                            });
+                        });
+                }
+            });
     });
 }

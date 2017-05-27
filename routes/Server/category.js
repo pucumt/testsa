@@ -62,4 +62,11 @@ module.exports = function(app) {
             res.jsonp({ sucess: true });
         });
     });
+
+    app.get('/admin/category/all', checkLogin);
+    app.get('/admin/category/all', function(req, res) {
+        Category.getAllWithoutPage({}).then(function(categories) {
+            res.jsonp(categories);
+        });
+    });
 }

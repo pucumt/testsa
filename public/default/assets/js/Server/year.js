@@ -30,6 +30,17 @@ function addValidation(callback) {
                             message: '年度在4-30个字符之间'
                         }
                     }
+                },
+                'sequence': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '顺序不能为空'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
+                    }
                 }
             }
         });
@@ -43,6 +54,7 @@ $("#btnAdd").on("click", function(e) {
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增年度");
     $('#name').val("");
+    $('#sequence').val($("#total").val());
     $('#iscurrent').removeAttr('checked');
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
@@ -53,7 +65,8 @@ $("#btnSave").on("click", function(e) {
         var postURI = "/admin/year/add",
             postObj = {
                 name: $('#name').val(),
-                iscurrent: $('#iscurrent').prop('checked')
+                iscurrent: $('#iscurrent').prop('checked'),
+                sequence: $('#sequence').val()
             };
         if (!isNew) {
             postURI = "/admin/year/edit";
@@ -62,15 +75,12 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
+                // var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + (data.isCurrentYear ? "当前年度" : "") + "</td><td>" + data.sequence +
+                //     "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
+                // $tr.find(".btn-group").data("obj", data);
+                // $('#gridBody').append($tr);
+                location.href = location.href;
             } else {
-                // var name = $('#' + data._id + ' td:first-child');
-                // name.text(data.name);
-                // name.next().text();
-                // var $lastDiv = $('#' + data._id + ' td:last-child div');
-                // $lastDiv.data("obj", data);
                 location.href = location.href;
             }
         });
@@ -86,6 +96,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改年度");
     $('#name').val(entity.name);
+    $('#sequence').val(entity.sequence);
     entity.isCurrentYear ? $('#iscurrent').prop('checked', true) : $('#iscurrent').removeAttr('checked');
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });

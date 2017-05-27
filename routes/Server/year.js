@@ -44,6 +44,7 @@ module.exports = function(app) {
     app.post('/admin/year/add', function(req, res) {
         var year = new Year({
             name: req.body.name,
+            sequence: req.body.sequence,
             isCurrentYear: req.body.iscurrent || false
         });
         var p = Promise.resolve();
@@ -67,6 +68,7 @@ module.exports = function(app) {
     app.post('/admin/year/edit', function(req, res) {
         var year = new Year({
             name: req.body.name,
+            sequence: req.body.sequence,
             isCurrentYear: req.body.iscurrent || false
         });
 
@@ -82,7 +84,8 @@ module.exports = function(app) {
                 if (req.body.iscurrent) {
                     global.currentYear = {
                         _id: req.body.id,
-                        name: req.body.name
+                        name: req.body.name,
+                        sequence: req.body.sequence
                     };
                 }
                 res.jsonp(year);

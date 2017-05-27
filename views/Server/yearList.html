@@ -15,6 +15,7 @@
             <tr>
                 <th style="width:200px;">年度</th>
                 <th style="width:150px;">状态</th>
+                <th style="width:150px;">顺序</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -26,6 +27,9 @@
                 </td>
                 <td>
                     {{ "当前年度" if year.isCurrentYear }}
+                </td>
+                <td>
+                    {{ year.sequence }}
                 </td>
                 <td>
                     <div data-obj={{ year|dump }} class="btn-group">
@@ -53,6 +57,10 @@
                     <div class="form-group">
                         <label for="name" class="control-label">年度:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="sequence" class="control-label">顺序:</label>
+                        <input type="text" maxlength="30" class="form-control" name="sequence" id="sequence">
                     </div>
                     <div class="form-group">
                         <label for="iscurrent" class="control-label">是否当前年度:</label>

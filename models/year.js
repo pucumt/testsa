@@ -5,7 +5,8 @@ var db = mongoose.connection;
 var yearSchema = new mongoose.Schema({
     name: String,
     isDeleted: Boolean,
-    isCurrentYear: { type: Boolean, default: false }
+    isCurrentYear: { type: Boolean, default: false },
+    sequence: { type: Number, default: 0 }
 }, {
     collection: 'years'
 });
