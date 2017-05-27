@@ -246,7 +246,10 @@ module.exports = function(app) {
                                                 var studentIds = orders.map(function(order) {
                                                     return order.studentId;
                                                 });
-                                                return TrainClass.getFilters({ fromClassId: trainClass._id })
+                                                return TrainClass.getFilters({
+                                                        yearId: global.currentYear._id,
+                                                        subjectId: trainClass.subjectId
+                                                    })
                                                     .then(function(newClasses) {
                                                         if (newClasses && newClasses.length > 0) {
                                                             var newClassIds = newClasses.map(function(newClass) {
