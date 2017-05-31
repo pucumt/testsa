@@ -21,6 +21,12 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="searchSchool" class="control-label">校区:</label>
+                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
                 </div>
             </div>
@@ -46,5 +52,7 @@
     </table>
 </div>
 {% endblock %} {% block modal %}
-<script type="text/javascript" src="/default/assets/js/Server/payWayReportList.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/payWayReportList.js?v=1.001"></script>
+<script type="text/javascript" src="/default/assets/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/default/assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
 {% endblock %}

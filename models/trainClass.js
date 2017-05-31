@@ -277,20 +277,16 @@ TrainClass.unpublishWithYear = function(id) {
     }, { multi: true }).exec();
 };
 
-TrainClass.add100 = function(id) {
-    return trainClassModel.update({
-        yearId: id,
-        isDeleted: { $ne: true }
-    }, {
+TrainClass.add100 = function(filter) {
+    filter.isDeleted = { $ne: true };
+    return trainClassModel.update(filter, {
         $inc: { trainPrice: 100 }
     }, { multi: true }).exec();
 };
 
 TrainClass.min100 = function(id) {
-    return trainClassModel.update({
-        yearId: id,
-        isDeleted: { $ne: true }
-    }, {
+    filter.isDeleted = { $ne: true };
+    return trainClassModel.update(filter, {
         $inc: { trainPrice: -100 }
     }, { multi: true }).exec();
 };

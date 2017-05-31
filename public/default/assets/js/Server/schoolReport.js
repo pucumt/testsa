@@ -7,12 +7,15 @@ $(document).ready(function() {
 
     $("#startDate").datepicker({
         changeMonth: true,
-        dateFormat: "yy-mm-dd"
+        dateFormat: "yy-mm-dd",
     });
     $("#endDate").datepicker({
         changeMonth: true,
         dateFormat: "yy-mm-dd"
     });
+
+    $("#startDate").datepicker("setDate", new Date());
+    $("#endDate").datepicker("setDate", new Date());
 });
 
 //------------search funfunction

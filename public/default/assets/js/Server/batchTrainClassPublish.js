@@ -3,6 +3,7 @@ var isNew = true;
 $(document).ready(function() {
     $("#left_btnTrainClass").addClass("active");
     renderDropDown();
+    renderSearchGradeDropDown();
 });
 //------------search funfunction
 $("#btnSubmit").on("click", function(e) {
@@ -43,10 +44,24 @@ function renderDropDown() {
     });
 };
 
+function renderSearchGradeDropDown() {
+    $(".mainModal #searchGrade").append("<option value=''></option>");
+    $.get("/admin/grade/getAll", function(data) {
+        if (data && data.length > 0) {
+            data.forEach(function(grade) {
+                $(".mainModal #searchGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
+            });
+        };
+    });
+};
+
 $("#btnBatchAdd").on("click", function(e) {
     showComfirm("真的要加100吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/batchAdd100", { id: $("#year").val() }, function(data) {
+        $.post("/admin/batchAdd100", {
+            id: $("#year").val(),
+            gradeId: $(".mainModal #searchGrade").val()
+        }, function(data) {
             if (data && data.sucess) {
                 showAlert("加100成功！", null, true);
             } else {
@@ -59,7 +74,10 @@ $("#btnBatchAdd").on("click", function(e) {
 $("#btnBatchMin").on("click", function(e) {
     showComfirm("真的要减100吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/batchMin100", { id: $("#year").val() }, function(data) {
+        $.post("/admin/batchMin100", {
+            id: $("#year").val(),
+            gradeId: $(".mainModal #searchGrade").val()
+        }, function(data) {
             if (data && data.sucess) {
                 showAlert("减100成功！", null, true);
             } else {

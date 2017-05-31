@@ -4,7 +4,6 @@ $(document).ready(function() {
     $("#left_btnTrainOrder").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
     renderSearchYearDropDown(); //search orders after get years
-
 });
 
 function renderSearchYearDropDown() {
@@ -19,6 +18,24 @@ function renderSearchYearDropDown() {
 };
 
 var $selectBody = $('.content table tbody');
+
+function getPayway(way) {
+    switch (way) {
+        case 0:
+            return "现金";
+        case 1:
+            return "刷卡";
+        case 2:
+            return "转账";
+        case 8:
+            return "支付宝";
+        case 9:
+            return "微信";
+        case 6:
+            return "在线";
+    }
+    return "";
+};
 
 function searchOrder(p) {
     var filter = {
@@ -44,8 +61,8 @@ function searchOrder(p) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' +
-                    trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.isPayed ? "是" : "否") + '</td><td>' + (trainOrder.rebatePrice || '') +
+                    trainOrder.totalPrice + '</td><td>' + trainOrder.realMaterialPrice + '</td><td>' +
+                    (trainOrder.isPayed ? "是" : "否") + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') +
                     '</td><td><div class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
                 $selectBody.append($tr);

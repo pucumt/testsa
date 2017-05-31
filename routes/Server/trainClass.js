@@ -364,14 +364,26 @@ module.exports = function(app) {
 
     app.post('/admin/batchAdd100', checkLogin);
     app.post('/admin/batchAdd100', function(req, res) {
-        TrainClass.add100(req.body.id)
+        var filter = {
+            yearId: req.body.id
+        };
+        if (req.body.gradeId) {
+            filter.gradeId = { $ne: req.body.gradeId };
+        }
+        TrainClass.add100(filter)
             .then(function() {
                 res.jsonp({ sucess: true });
             });
     });
     app.post('/admin/batchMin100', checkLogin);
     app.post('/admin/batchMin100', function(req, res) {
-        TrainClass.min100(req.body.id)
+        var filter = {
+            yearId: req.body.id
+        };
+        if (req.body.gradeId) {
+            filter.gradeId = { $ne: req.body.gradeId };
+        }
+        TrainClass.min100(filter)
             .then(function() {
                 res.jsonp({ sucess: true });
             });

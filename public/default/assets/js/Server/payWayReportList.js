@@ -5,23 +5,45 @@ $(document).ready(function() {
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
-    $("#startDate").datepicker({
-        changeMonth: true,
-        dateFormat: "yy-mm-dd"
+    var dateStr = (new Date()).toLocaleDateString() + " 00:00";
+    $("#startDate").val(dateStr);
+    $("#endDate").val(dateStr);
+
+    $("#startDate").datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        autoclose: true,
+        language: "zh-CN"
     });
-    $("#endDate").datepicker({
-        changeMonth: true,
-        dateFormat: "yy-mm-dd"
+    $("#endDate").datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        autoclose: true,
+        language: "zh-CN"
     });
+
+
+
+    renderSearchSchoolDropDown();
 });
 
 //------------search funfunction
+function renderSearchSchoolDropDown() {
+    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
+        $(".mainModal #InfoSearch #searchSchool").append("<option value=''></option>");
+        if (data && data.length > 0) {
+            data.forEach(function(school) {
+                $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
+            });
+        };
+    });
+};
+
 var $mainSelectBody = $('.content.mainModal table tbody');
 
 function search(p) {
     var filter = {
             startDate: $(".mainModal #InfoSearch #startDate").val(),
-            endDate: $(".mainModal #InfoSearch #endDate").val()
+            endDate: $(".mainModal #InfoSearch #endDate").val(),
+            schoolId: $(".mainModal #InfoSearch #searchSchool").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();

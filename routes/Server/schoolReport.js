@@ -106,30 +106,51 @@ module.exports = function(app) {
                 { name: "在线支付", value: 6 }
             ];
         payWays.forEach(function(payWay) {
-            var p0 = AdminEnrollTrain.getFilters({
-                orderDate: { $lte: req.body.endDate },
-                orderDate: { $gte: req.body.startDate },
-                isSucceed: 1,
-                isPayed: true,
-                payWay: payWay.value
-            }).then(function(orders) {
-                var trainPrice = 0,
-                    materialPrice = 0;
-                orders.forEach(function(order) {
-                    trainPrice = trainPrice + order.trainPrice;
-                    materialPrice = materialPrice + order.materialPrice;
+            var pPromise;
+            if (req.body.schoolId) {
+                pPromise = TrainClass.getFilters({
+                    yearId: global.currentYear._id,
+                    schoolId: req.body.schoolId
                 });
-                list.push({
-                    name: payWay.name,
-                    trainPrice: trainPrice.toFixed(2),
-                    materialPrice: materialPrice.toFixed(2),
-                    totalPrice: (trainPrice + materialPrice).toFixed(2)
-                });
+            } else {
+                pPromise = Promise.resolve();
+            }
+            var p0 = pPromise.then(function(trainClasses) {
+                var filter = {
+                    orderDate: { $lte: req.body.endDate },
+                    orderDate: { $gte: req.body.startDate },
+                    isSucceed: 1,
+                    isPayed: true,
+                    payWay: payWay.value
+                };
+                if (trainClasses && trainClasses.length > 0) {
+                    var ids = trainClasses.map(function(trainClass) {
+                        return trainClass._id;
+                    });
+                    filter.trainId = { $in: ids };
+                }
+                return AdminEnrollTrain.getFilters(filter)
+                    .then(function(orders) {
+                        var trainPrice = 0,
+                            materialPrice = 0;
+                        orders.forEach(function(order) {
+                            trainPrice = trainPrice + order.trainPrice;
+                            materialPrice = materialPrice + order.materialPrice;
+                        });
+                        list.push({
+                            name: payWay.name,
+                            trainPrice: trainPrice.toFixed(2),
+                            materialPrice: materialPrice.toFixed(2),
+                            totalPrice: (trainPrice + materialPrice).toFixed(2)
+                        });
+                    });
             });
             pArray.push(p0);
         });
         Promise.all(pArray).then(function() {
-            res.json(list);
+            res.json(list.sort(function(a, b) {
+                return a.name < b.name;
+            }));
         });
     });
 
