@@ -11,6 +11,10 @@ $(document).ready(function() {
         location.href = "/admin/rebateOrderList";
     });
 
+    $("#left_btnPayway").on("click", function(e) {
+        location.href = "/admin/paywayOrderList";
+    });
+
     $("#left_btnChangeClass").on("click", function(e) {
         location.href = "/admin/changeClassList";
     });

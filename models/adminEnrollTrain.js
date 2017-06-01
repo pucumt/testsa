@@ -228,3 +228,11 @@ AdminEnrollTrain.updateUserInfo = function(filter, option) {
     //打开数据库
     return adminEnrollTrainModel.update(filter, option).exec();
 };
+
+AdminEnrollTrain.changePayway = function(id, payWay) {
+    return adminEnrollTrainModel.update({
+        _id: id
+    }, {
+        payWay: payWay
+    }).exec();
+};

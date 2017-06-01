@@ -5,7 +5,8 @@ var db = mongoose.connection;
 var schoolAreaSchema = new mongoose.Schema({
     name: String,
     address: String,
-    isDeleted: Boolean
+    isDeleted: Boolean,
+    sequence: { type: Number, default: 0 }
 }, {
     collection: 'schoolAreas'
 });
@@ -67,6 +68,7 @@ SchoolArea.getAll = function(id, page, filter, callback) {
     var query = schoolAreaModel.count(filter);
     query.exec(function(err, count) {
         query.find()
+            .sort({ sequence: 1, _id: 1 })
             .exec(function(err, schoolAreas) {
                 callback(null, schoolAreas, count);
             });
@@ -94,7 +96,9 @@ SchoolArea.getAllWithoutPage = function(filter) {
     } else {
         filter = { isDeleted: { $ne: true } };
     }
-    return schoolAreaModel.find(filter).exec();
+    return schoolAreaModel.find(filter)
+        .sort({ sequence: 1, _id: 1 })
+        .exec();
 };
 
 SchoolArea.getFilter = function(filter) {
@@ -106,5 +110,6 @@ SchoolArea.getFilter = function(filter) {
 SchoolArea.getFilters = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
-    return schoolAreaModel.find(filter);
+    return schoolAreaModel.find(filter)
+        .sort({ sequence: 1, _id: 1 });
 };

@@ -1,6 +1,7 @@
 var StudentInfo = require('../../models/studentInfo.js'),
     StudentAccount = require('../../models/studentAccount.js'),
     AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+    crypto = require('crypto'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -37,34 +38,50 @@ module.exports = function(app) {
     app.post('/admin/studentInfo/edit', function(req, res) {
         StudentAccount.getFilter({ name: req.body.mobile })
             .then(function(account) {
-                var accountId = account._id == req.body.accountId ? req.body.accountId : account._id;
-                StudentInfo.getFilter({ accountId: accountId, name: req.body.name, _id: { $ne: req.body.id } })
-                    .then(function(student) {
-                        if (student) {
-                            res.jsonp({ error: "此学生已经存在" });
-                        } else {
-                            var studentInfo = new StudentInfo({
-                                name: req.body.name,
-                                address: req.body.address,
-                                mobile: req.body.mobile,
-                                studentNo: req.body.studentNo,
-                                sex: req.body.sex,
-                                School: req.body.School,
-                                className: req.body.className,
-                                discount: req.body.discount,
-                                gradeId: req.body.gradeId,
-                                gradeName: req.body.gradeName,
-                                accountId: accountId
-                            });
-
-                            studentInfo.update(req.body.id, function(err, studentInfo) {
-                                if (err) {
-                                    studentInfo = {};
-                                }
-                                res.jsonp(studentInfo);
-                            });
-                        }
+                var p;
+                if (account) {
+                    var accountId = account._id == req.body.accountId ? req.body.accountId : account._id;
+                    p = Promise.resolve(accountId);
+                } else {
+                    var md5 = crypto.createHash('md5');
+                    var studentAccount = new StudentAccount({
+                        name: req.body.mobile,
+                        password: md5.update("111111").digest('hex')
                     });
+                    p = studentAccount.save().then(function(account) {
+                        return account._id;
+                    });
+                }
+                p.then(function(accountId) {
+                    StudentInfo.getFilter({ accountId: accountId, name: req.body.name, _id: { $ne: req.body.id } })
+                        .then(function(student) {
+                            if (student) {
+                                res.jsonp({ error: "此学生已经存在" });
+                            } else {
+                                var studentInfo = new StudentInfo({
+                                    name: req.body.name,
+                                    address: req.body.address,
+                                    mobile: req.body.mobile,
+                                    studentNo: req.body.studentNo,
+                                    sex: req.body.sex,
+                                    School: req.body.School,
+                                    className: req.body.className,
+                                    discount: req.body.discount,
+                                    gradeId: req.body.gradeId,
+                                    gradeName: req.body.gradeName,
+                                    accountId: accountId
+                                });
+
+                                studentInfo.update(req.body.id, function(err, studentInfo) {
+                                    if (err) {
+                                        studentInfo = {};
+                                    }
+                                    res.jsonp(studentInfo);
+                                });
+                            }
+                        });
+                });
+
             });
     });
 

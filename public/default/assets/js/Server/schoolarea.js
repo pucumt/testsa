@@ -62,7 +62,8 @@ $("#btnSave").on("click", function(e) {
         var postURI = "/admin/schoolArea/add",
             postObj = {
                 name: $('#name').val(),
-                address: $('#address').val()
+                address: $('#address').val(),
+                sequence: $('#sequence').val()
             };
         if (!isNew) {
             postURI = "/admin/schoolArea/edit";
@@ -70,17 +71,18 @@ $("#btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
-            if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
-            } else {
-                var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
-                name.next().text(data.address);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
-            }
+            location.href = location.href;
+            // if (isNew) {
+            //     var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
+            //     $tr.find(".btn-group").data("obj", data);
+            //     $('#gridBody').append($tr);
+            // } else {
+            //     var name = $('#' + data._id + ' td:first-child');
+            //     name.text(data.name);
+            //     name.next().text(data.address);
+            //     var $lastDiv = $('#' + data._id + ' td:last-child div');
+            //     $lastDiv.data("obj", data);
+            // }
         });
     }
 });
@@ -95,6 +97,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModalLabel').text("修改校区");
     $('#name').val(entity.name);
     $('#address').val(entity.address);
+    $('#sequence').val(entity.sequence);
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });

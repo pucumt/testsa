@@ -24,7 +24,8 @@ module.exports = function(app) {
     app.post('/admin/schoolArea/add', function(req, res) {
         var schoolArea = new SchoolArea({
             name: req.body.name,
-            address: req.body.address
+            address: req.body.address,
+            sequence: req.body.sequence
         });
 
         schoolArea.save(function(err, schoolArea) {
@@ -39,7 +40,8 @@ module.exports = function(app) {
     app.post('/admin/schoolArea/edit', function(req, res) {
         var schoolArea = new SchoolArea({
             name: req.body.name,
-            address: req.body.address
+            address: req.body.address,
+            sequence: req.body.sequence
         });
 
         schoolArea.update(req.body.id, function(err, schoolArea) {

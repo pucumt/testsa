@@ -81,6 +81,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/paywayOrderList', checkLogin);
+    app.get('/admin/paywayOrderList', function(req, res) {
+        res.render('Server/paywayOrderList.html', {
+            title: '>支付方式修改',
+            user: req.session.admin
+        });
+    });
+
     app.get('/admin/changeClassList', checkLogin);
     app.get('/admin/changeClassList', function(req, res) {
         res.render('Server/changeClassList.html', {
@@ -315,7 +323,7 @@ module.exports = function(app) {
                     return;
                 }
 
-                TrainClass.enroll(req.body.trainId)
+                TrainClass.adminEnroll(req.body.trainId)
                     .then(function(trainClassResult) {
                         if (trainClassResult && trainClassResult.ok && trainClassResult.nModified == 1) {
                             //报名成功
@@ -325,24 +333,28 @@ module.exports = function(app) {
                                     //updated to full
                                 }
                             });
-                            var adminEnrollTrain = new AdminEnrollTrain({
-                                studentId: req.body.studentId,
-                                studentName: req.body.studentName,
-                                mobile: req.body.mobile,
-                                trainId: req.body.trainId,
-                                trainName: req.body.trainName,
-                                attributeId: req.body.attributeId,
-                                attributeName: req.body.attributeName,
-                                trainPrice: req.body.trainPrice,
-                                materialPrice: req.body.materialPrice,
-                                discount: req.body.discount,
-                                totalPrice: req.body.totalPrice,
-                                realMaterialPrice: req.body.materialPrice,
-                                fromId: req.body.oldOrderId,
-                                comment: req.body.comment,
-                                isPayed: true
-                            });
-                            return adminEnrollTrain.save();
+                            return AdminEnrollTrain.get(req.body.oldOrderId)
+                                .then(function(oldOrder) {
+                                    var adminEnrollTrain = new AdminEnrollTrain({
+                                        studentId: req.body.studentId,
+                                        studentName: req.body.studentName,
+                                        mobile: req.body.mobile,
+                                        trainId: req.body.trainId,
+                                        trainName: req.body.trainName,
+                                        attributeId: req.body.attributeId,
+                                        attributeName: req.body.attributeName,
+                                        trainPrice: req.body.trainPrice,
+                                        materialPrice: req.body.materialPrice,
+                                        discount: req.body.discount,
+                                        totalPrice: req.body.totalPrice,
+                                        realMaterialPrice: req.body.materialPrice,
+                                        fromId: req.body.oldOrderId,
+                                        comment: req.body.comment,
+                                        isPayed: true,
+                                        payWay: oldOrder.payWay
+                                    });
+                                    return adminEnrollTrain.save();
+                                });
                         } else {
                             //报名失败
                             res.jsonp({ error: "报名失败,很可能报满" });
@@ -541,6 +553,19 @@ module.exports = function(app) {
                         });
                 } else {
                     res.jsonp(false);
+                }
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/changePayway', checkLogin);
+    app.post('/admin/adminEnrollTrain/changePayway', function(req, res) {
+        AdminEnrollTrain.changePayway(req.body.id, req.body.payWay)
+            .then(function(adminEnrollTrain) {
+                if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
+                    res.jsonp({ sucess: true });
+                } else {
+                    res.jsonp({ error: "修改支付方式失败" });
+                    return;
                 }
             });
     });

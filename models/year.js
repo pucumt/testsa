@@ -68,6 +68,7 @@ Year.getAll = function(id, page, filter, callback) {
     var query = yearModel.count(filter);
     query.exec(function(err, count) {
         query.find()
+            .sort({ sequence: 1, _id: 1 })
             .skip((page - 1) * 14)
             .limit(14)
             .exec(function(err, years) {
@@ -97,7 +98,9 @@ Year.getAllWithoutPage = function(filter) {
     } else {
         filter = { isDeleted: { $ne: true } };
     }
-    return yearModel.find(filter).exec();
+    return yearModel.find(filter)
+        .sort({ sequence: 1, _id: 1 })
+        .exec();
 };
 
 Year.getFilter = function(filter) {
@@ -109,7 +112,8 @@ Year.getFilter = function(filter) {
 Year.getFilters = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
-    return yearModel.find(filter);
+    return yearModel.find(filter)
+        .sort({ sequence: 1, _id: 1 });
 };
 
 Year.clearCurrentYear = function() {
