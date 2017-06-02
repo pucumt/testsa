@@ -236,3 +236,22 @@ AdminEnrollTrain.changePayway = function(id, payWay) {
         payWay: payWay
     }).exec();
 };
+
+AdminEnrollTrain.get3ordersOfPeople = function(ids) {
+    return adminEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                trainId: { $in: ids },
+                isSucceed: 1
+            }
+        })
+        .group({
+            _id: {
+                studentId: "$studentId",
+                studentName: "$studentName"
+            },
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 2 } })
+        .exec();
+};

@@ -15,6 +15,10 @@ $(document).ready(function() {
         location.href = "/admin/peopleCountList";
     });
 
+    $("#left_btngradeMone").on("click", function(e) {
+        location.href = "/admin/gradeMOneList";
+    });
+
     $("#left_btnCompareLast").on("click", function(e) {
         location.href = "/admin/compareLastList";
     });

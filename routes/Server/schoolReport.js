@@ -39,6 +39,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/gradeMOneList', checkLogin);
+    app.get('/admin/gradeMOneList', function(req, res) {
+        res.render('Server/gradeMOneList.html', {
+            title: '>小升初报名情况',
+            user: req.session.admin
+        });
+    });
+
     app.get('/admin/compareLastList', checkLogin);
     app.get('/admin/compareLastList', function(req, res) {
         res.render('Server/compareLastList.html', {
