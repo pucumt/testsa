@@ -36,7 +36,11 @@ function renderSearchYearDropDown() {
     $.post("/admin/year/all", function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
-                $(".mainModal #InfoSearch #searchYear").append("<option value='" + year._id + "'>" + year.name + "</option>");
+                var select = "";
+                if (year.isCurrentYear) {
+                    select = "selected";
+                }
+                $(".mainModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
             });
         };
         searchClass();
