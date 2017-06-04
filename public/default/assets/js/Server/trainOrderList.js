@@ -48,7 +48,8 @@ function searchOrder(p) {
             studentName: $("#InfoSearch #studentName").val(),
             className: $("#InfoSearch #className").val(),
             isSucceed: $("#InfoSearch #isSucceed").val(),
-            yearId: $("#InfoSearch #searchYear").val()
+            yearId: $("#InfoSearch #searchYear").val(),
+            orderId: $("#InfoSearch #orderId").val()
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();

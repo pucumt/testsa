@@ -78,7 +78,7 @@ function search(p) {
     selfAjax("post", "/admin/peopleCountList/search?" + pStr, filter, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(schoolReport) {
-                var $tr = $('<tr ><td>' + schoolReport.name + '</td><td>' +
+                var $tr = $('<tr ><td class="trainClass" id="' + schoolReport._id + '">' + schoolReport.name + '</td><td>' +
                     schoolReport.enrollCount + '</td><td>' +
                     schoolReport.totalStudentCount + '</td></tr>');
                 $mainSelectBody.append($tr);
@@ -90,4 +90,14 @@ function search(p) {
 $(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
     search();
 });
+
+$(".mainModal #gridBody").on("click", "tr .trainClass", function(e) {
+    var id = $(e.currentTarget).attr("id");
+    if (id) {
+        location.href = "/admin/adminEnrollTrain/orderlist/" + id;
+    } else {
+        showAlert("出错了！");
+    }
+});
+
 //------------end

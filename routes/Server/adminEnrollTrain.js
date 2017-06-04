@@ -47,6 +47,9 @@ module.exports = function(app) {
                 $regex: reg
             };
         }
+        if (req.body.trainId) {
+            filter.trainId = req.body.trainId;
+        }
         if (req.body.isSucceed) {
             filter.isSucceed = req.body.isSucceed;
         }
@@ -58,6 +61,9 @@ module.exports = function(app) {
         }
         if (req.body.yearId) {
             filter.yearId = req.body.yearId;
+        }
+        if (req.body.orderId) {
+            filter._id = req.body.orderId;
         }
         AdminEnrollTrain.getAll(null, page, filter, function(err, adminEnrollTrains, total) {
             if (err) {
@@ -86,6 +92,15 @@ module.exports = function(app) {
         res.render('Server/paywayOrderList.html', {
             title: '>支付方式修改',
             user: req.session.admin
+        });
+    });
+
+    app.get('/admin/adminEnrollTrain/orderlist/:id', checkLogin);
+    app.get('/admin/adminEnrollTrain/orderlist/:id', function(req, res) {
+        res.render('Server/singleClassOrderList.html', {
+            title: '>课程详细订单',
+            user: req.session.admin,
+            id: req.params.id
         });
     });
 
