@@ -64,7 +64,7 @@ function searchOrder(p) {
                 return buttons;
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {
-                var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
+                var $tr = $('<tr id=' + trainOrder._id + '><td class="id">' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' + trainOrder.realMaterialPrice + '</td><td>' +
@@ -119,4 +119,11 @@ $("#gridBody").on("click", "td .btnPay", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     location.href = "/admin/payList/" + entity._id;
+});
+
+$("#gridBody").on("click", "tr .id", function(e) {
+    var obj = e.currentTarget;
+    var entityId = $(obj).html();
+
+    location.href = "/admin/adminEnrollTrain/orderDetail/" + entityId;
 });

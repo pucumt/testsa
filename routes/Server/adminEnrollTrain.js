@@ -569,4 +569,26 @@ module.exports = function(app) {
                 }
             });
     });
+
+    app.get('/admin/adminEnrollTrain/orderDetail/:id', checkLogin);
+    app.get('/admin/adminEnrollTrain/orderDetail/:id', function(req, res) {
+        res.render('Server/trainOrderDetail.html', {
+            title: '>订单详情',
+            user: req.session.admin,
+            id: req.params.id
+        });
+    });
+
+    app.post('/admin/adminEnrollTrain/getorder', checkLogin);
+    app.post('/admin/adminEnrollTrain/getorder', function(req, res) {
+        AdminEnrollTrain.get(req.body.id)
+            .then(function(adminEnrollTrain) {
+                if (adminEnrollTrain) {
+                    res.jsonp(adminEnrollTrain);
+                } else {
+                    res.jsonp({ error: "没找到订单" });
+                    return;
+                }
+            });
+    });
 }

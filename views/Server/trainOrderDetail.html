@@ -1,0 +1,45 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }} > <a id="btnReturn" href="">返回</a>
+        <input type="hidden" id="id" value="{{ id }}" />
+        <input type="hidden" id="fromPage" value="{{ fromPage }}" />
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <div class="score detail">
+            <div>
+                <strong>学员:</strong><span class="studentName"></span>
+            </div>
+            <div>
+                <strong>课程:</strong><span class="trainName"></span>
+            </div>
+            <div>
+                <strong>订单日期:</strong><span class="orderDate"></span>
+            </div>
+            <div>
+                <strong>培训费:</strong><span class="totalPrice"></span>
+            </div>
+            <div>
+                <strong>教程费:</strong><span class="realMaterialPrice"></span>
+            </div>
+            <div>
+                <strong>退费:</strong><span class="rebatePrice"></span>
+            </div>
+            <div>
+                <strong>支付方式:</strong><span class="payWay"></span>
+            </div>
+            <div>
+                <strong>备注:</strong><span class="comment"></span>
+            </div>
+            <div>
+                <strong>原先订单:</strong><span class="fromId"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Server/trainOrderDetail.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}
