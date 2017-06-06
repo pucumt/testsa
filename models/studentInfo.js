@@ -15,7 +15,9 @@ var studentInfoSchema = new mongoose.Schema({
     discount: Number, //原始购买打折(特价课程除外)
     gradeId: String,
     gradeName: String,
-    createDate: { type: Date, default: Date.now }
+    createDate: { type: Date, default: Date.now },
+    createdBy: String,
+    DeleteDate: Date
 }, {
     collection: 'studentInfos'
 });

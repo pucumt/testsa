@@ -7,7 +7,9 @@ var studentAccountSchema = new mongoose.Schema({
     password: String,
     wechat: String,
     isDeleted: Boolean,
-    createDate: { type: Date, default: Date.now }
+    createDate: { type: Date, default: Date.now },
+    createdBy: String,
+    DeleteDate: Date
 }, {
     collection: 'studentAccounts'
 });

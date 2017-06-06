@@ -107,7 +107,8 @@ module.exports = function(app) {
                     var md5 = crypto.createHash('md5');
                     var studentAccount = new StudentAccount({
                         name: req.body.mobile,
-                        password: md5.update("111111").digest('hex')
+                        password: md5.update("111111").digest('hex'),
+                        createdBy: req.session.admin._id
                     });
                     return studentAccount.save();
                 }
@@ -131,7 +132,8 @@ module.exports = function(app) {
                     gradeId: req.body.gradeId,
                     gradeName: req.body.gradeName,
                     School: req.body.School,
-                    className: req.body.className
+                    className: req.body.className,
+                    createdBy: req.session.admin._id
                 });
 
                 return studentInfo.save();

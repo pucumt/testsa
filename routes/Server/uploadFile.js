@@ -883,9 +883,41 @@ module.exports = function(app) {
         });
     });
 
+    function getPayway(way) {
+        switch (way) {
+            case 0:
+                return "现金";
+            case 1:
+                return "刷卡";
+            case 2:
+                return "转账";
+            case 8:
+                return "支付宝";
+            case 9:
+                return "微信";
+            case 6:
+                return "在线";
+            case 7:
+                return "在线";
+        }
+        return "";
+    };
+
+    function getOrderPayway(order) {
+        if (order.fromId) {
+            return AdminEnrollTrain.getFilter({
+                _id: order.fromId
+            }).then(function(oldOrder) {
+                return getOrderPayway(oldOrder);
+            });
+        } else {
+            return Promise.resolve(getPayway(order.payWay));
+        }
+    };
+
     app.post('/admin/export/classTemplate5', function(req, res) {
         var data = [
-            ['姓名', '联系方式', '报名日期', '科目', '校区', '课程', '年级']
+            ['姓名', '联系方式', '报名日期', '科目', '校区', '课程', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
         ];
         var p = AdminEnrollTrain.getFilters({
             yearId: global.currentYear._id,
@@ -900,14 +932,17 @@ module.exports = function(app) {
                             return TrainClass.get(order.trainId)
                                 .then(function(newClass) {
                                     if (newClass) {
-                                        var singleInfo = [student.name, student.mobile, order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName];
-                                        data.push(singleInfo);
+                                        return getOrderPayway(order)
+                                            .then(function(way) {
+                                                var singleInfo = [student.name, student.mobile, order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
+                                                data.push(singleInfo);
+                                            });
                                     } else {
-                                        data.push([order.studentId, order.trainId]);
+                                        data.push([order.studentId, order._id, order.orderDate, order.trainId, "", "", "", order.totalPrice, order.realMaterialPrice, order.rebatePrice, order.payWay, order.comment]);
                                     }
                                 });
                         } else {
-                            data.push([order.studentId]);
+                            data.push([order.studentId, order._id, order.orderDate, order.trainId]);
                         }
                     });
                     PArray.push(Px);
