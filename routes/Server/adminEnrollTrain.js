@@ -1,4 +1,5 @@
 var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+    AdminEnrollTrainHistory = require('../../models/adminEnrollTrainHistory.js'),
     AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     TrainClass = require('../../models/trainClass.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
@@ -127,19 +128,53 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/admin/adminEnrollTrain/edit', checkLogin);
-    app.post('/admin/adminEnrollTrain/edit', function(req, res) {
-        var adminEnrollTrain = new AdminEnrollTrain({
-            name: req.body.name,
-            address: req.body.address
-        });
+    app.post('/admin/adminEnrollTrain/changecomment', checkLogin);
+    app.post('/admin/adminEnrollTrain/changecomment', function(req, res) {
+        var option = {
+            comment: req.body.comment
+        };
+        var adminEnrollTrain = new AdminEnrollTrain(option);
 
         adminEnrollTrain.update(req.body.id, function(err, adminEnrollTrain) {
             if (err) {
                 adminEnrollTrain = {};
+                res.jsonp({ error: "更新出错了" });
             }
-            res.jsonp(adminEnrollTrain);
+            res.jsonp({ sucess: true });
         });
+    });
+
+    app.post('/admin/adminEnrollTrain/changeStudent', checkLogin);
+    app.post('/admin/adminEnrollTrain/changeStudent', function(req, res) {
+        AdminEnrollTrain.get(req.body.id)
+            .then(function(order) {
+                if (order) {
+                    var history = order.toJSON();
+                    history.historyid = history._id;
+                    history._id = null;
+                    var adminEnrollTrainHistory = new AdminEnrollTrainHistory(history);
+                    return adminEnrollTrainHistory.save()
+                        .then(function(history) {
+                            if (history) {
+                                var option = {
+                                    studentId: req.body.studentId,
+                                    studentName: req.body.studentName,
+                                };
+                                var adminEnrollTrain = new AdminEnrollTrain(option);
+
+                                return adminEnrollTrain.update(req.body.id, function(err, adminEnrollTrain) {
+                                    if (err) {
+                                        adminEnrollTrain = {};
+                                        res.jsonp({ error: "更新出错了" });
+                                    }
+                                    res.jsonp({ sucess: true });
+                                });
+                            }
+                            return res.jsonp({ error: "订单历史保存失败" });
+                        });
+                }
+                return res.jsonp({ error: "没找到订单" });
+            });
     });
 
     app.post('/admin/adminEnrollTrain/delete', checkLogin);
