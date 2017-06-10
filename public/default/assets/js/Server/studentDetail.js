@@ -157,7 +157,8 @@ function searchClass(p) {
         if (data && data.adminEnrollTrains.length > 0) {
             data.adminEnrollTrains.forEach(function(trainOrder) {
                 $classSelectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' + trainOrder.studentName +
-                    '</td><td>' + trainOrder.trainName + '</td><td>' + getTrainOrderStatus(trainOrder.isSucceed) + '</td></tr>');
+                    '</td><td>' + trainOrder.trainName + '</td><td>' + trainOrder.yearName + '</td><td>' + trainOrder.totalPrice + '</td><td>' +
+                    trainOrder.realMaterialPrice + '</td><td>' + getTrainOrderStatus(trainOrder.isSucceed) + '</td></tr>');
             });
         }
         $(".classModal #total").val(data.total);

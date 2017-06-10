@@ -89,6 +89,7 @@ AdminEnrollTrain.getAll = function(id, page, filter, callback) {
     query.exec(function(err, count) {
         query.find()
             .skip((page - 1) * 14)
+            .sort({ _id: -1 })
             .limit(14)
             .exec(function(err, adminEnrollTrains) {
                 callback(null, adminEnrollTrains, count);
