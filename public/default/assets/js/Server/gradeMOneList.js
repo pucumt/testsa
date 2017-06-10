@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderSearchGradeDropDown() {
-    $(".mainModal #InfoSearch #searchGrade").append("<option value=''></option>");
+    // $(".mainModal #InfoSearch #searchGrade").append("<option value=''></option>");
     $.get("/admin/grade/getAll", function(data) {
         if (data && data.length > 0) {
             data.forEach(function(grade) {

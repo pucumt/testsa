@@ -334,4 +334,112 @@ module.exports = function(app) {
                 }
             });
     });
+
+    app.get('/admin/enrollAggregateList', checkLogin);
+    app.get('/admin/enrollAggregateList', function(req, res) {
+        res.render('Server/enrollAggregateList.html', {
+            title: '>报名情况统计',
+            user: req.session.admin
+        });
+    });
+
+    app.post('/admin/enrollAggregateList/search', checkLogin);
+    app.post('/admin/enrollAggregateList/search', function(req, res) {
+        var list = [],
+            filter = {
+                yearId: global.currentYear._id
+            };
+        if (req.body.gradeId) {
+            filter.gradeId = req.body.gradeId;
+        }
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
+
+        TrainClass.getFilters(filter)
+            .then(function(trainClasses) {
+                var pArray = [];
+                if (trainClasses && trainClasses.length > 0) {
+                    var ids = trainClasses.map(function(trainClass) {
+                        return trainClass._id.toJSON();
+                    });
+
+                    var p0 = AdminEnrollTrain.getOrderCount({
+                            trainId: { $in: ids },
+                            yearId: global.currentYear._id,
+                            isSucceed: 1
+                        })
+                        .then(function(count) {
+                            list.push({ name: "总订单", value: count });
+                        });
+                    pArray.push(p0);
+
+                    var p1 = AdminEnrollTrain.getStudentwithOrderCount({
+                            trainId: { $in: ids },
+                            yearId: global.currentYear._id.toJSON(),
+                            isSucceed: 1
+                        })
+                        .then(function(aggs) {
+                            if (aggs && aggs.length > 0) {
+                                list.push({ name: "下单总人数", value: aggs[0].count });
+                            }
+                        });
+                    pArray.push(p1);
+
+                    var p2 = AdminEnrollTrain.getStudent2OrderMore({
+                            trainId: { $in: ids },
+                            yearId: global.currentYear._id.toJSON(),
+                            isSucceed: 1
+                        })
+                        .then(function(aggs) {
+                            if (aggs && aggs.length > 0) {
+                                list.push({ name: "连报2门以上", value: aggs[0].count });
+                            }
+                        });
+                    pArray.push(p2);
+
+                    var p3 = AdminEnrollTrain.getStudent3OrderMore({
+                            trainId: { $in: ids },
+                            yearId: global.currentYear._id.toJSON(),
+                            isSucceed: 1
+                        })
+                        .then(function(aggs) {
+                            if (aggs && aggs.length > 0) {
+                                list.push({ name: "连报3门以上", value: aggs[0].count });
+                            }
+                        });
+                    pArray.push(p3);
+
+                    var p4 = AdminEnrollTrain.getStudent4OrderMore({
+                            trainId: { $in: ids },
+                            yearId: global.currentYear._id.toJSON(),
+                            isSucceed: 1
+                        })
+                        .then(function(aggs) {
+                            if (aggs && aggs.length > 0) {
+                                list.push({ name: "连报4门以上", value: aggs[0].count });
+                            }
+                        });
+                    pArray.push(p4);
+
+                    var p5 = AdminEnrollTrain.getStudent5OrderMore({
+                            trainId: { $in: ids },
+                            yearId: global.currentYear._id.toJSON(),
+                            isSucceed: 1
+                        })
+                        .then(function(aggs) {
+                            if (aggs && aggs.length > 0) {
+                                list.push({ name: "连报5门以上", value: aggs[0].count });
+                            }
+                        });
+                    pArray.push(p5);
+                }
+                Promise.all(pArray).then(function() {
+                    res.json(list.sort(function(a, b) {
+                        return a.name > b.name;
+                    }));
+                });
+            });
+
+    });
 }

@@ -22,4 +22,8 @@ $(document).ready(function() {
     $("#left_btnCompareLast").on("click", function(e) {
         location.href = "/admin/compareLastList";
     });
+
+    $("#left_btnEnrollAggregate").on("click", function(e) {
+        location.href = "/admin/enrollAggregateList";
+    });
 });

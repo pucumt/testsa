@@ -1,0 +1,38 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="startDate" class="control-label" style="width: 65px;">年级:</label>
+                        <select name="searchGrade" id="searchGrade" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:200px;">统计方式</th>
+                <th style="">人数</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Server/enrollAggregateList.js?v=1.000"></script>
+{% endblock %}

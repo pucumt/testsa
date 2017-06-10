@@ -114,6 +114,7 @@ $("#btnEnroll").on("click", function(e) {
                 materialPrice: $('#enrollInfo #materialPrice').val(),
                 discount: $('#enrollInfo #discount').val(),
                 totalPrice: $('#enrollInfo #totalPrice').val(),
+                realMaterialPrice: $('#enrollInfo #realMaterialPrice').val(),
                 oldOrderId: $('#enrollInfo #oldOrderId').val(),
                 comment: $('#enrollInfo #comment').val()
             };

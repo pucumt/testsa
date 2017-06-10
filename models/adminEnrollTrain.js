@@ -255,3 +255,87 @@ AdminEnrollTrain.get3ordersOfPeople = function(ids) {
         .match({ count: { $gt: 2 } })
         .exec();
 };
+
+AdminEnrollTrain.getOrderCount = function(filter) {
+    return adminEnrollTrainModel.count(filter)
+        .exec();
+};
+
+AdminEnrollTrain.getStudentwithOrderCount = function(filter) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .group({
+            _id: "$studentId",
+            count: { $sum: 1 }
+        })
+        .group({
+            _id: null,
+            count: { $sum: 1 }
+        })
+        .exec();
+};
+
+AdminEnrollTrain.getStudent2OrderMore = function(filter) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .group({
+            _id: "$studentId",
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 1 } })
+        .group({
+            _id: null,
+            count: { $sum: 1 }
+        })
+        .exec();
+};
+
+AdminEnrollTrain.getStudent3OrderMore = function(filter) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .group({
+            _id: "$studentId",
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 2 } })
+        .group({
+            _id: null,
+            count: { $sum: 1 }
+        })
+        .exec();
+};
+
+AdminEnrollTrain.getStudent4OrderMore = function(filter) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .group({
+            _id: "$studentId",
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 3 } })
+        .group({
+            _id: null,
+            count: { $sum: 1 }
+        })
+        .exec();
+};
+
+AdminEnrollTrain.getStudent5OrderMore = function(filter) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .group({
+            _id: "$studentId",
+            count: { $sum: 1 }
+        })
+        .match({ count: { $gt: 4 } })
+        .group({
+            _id: null,
+            count: { $sum: 1 }
+        })
+        .exec();
+};
