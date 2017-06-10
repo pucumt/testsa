@@ -44,7 +44,13 @@ function generateLi(examClass) {
     //$goodContainer.append($countContainer);
     $infoContainer.append($('<div><h3>' + examClass.name + '</h3></div>'));
     $infoContainer.append($('<div>日期：' + moment(examClass.examDate).format("YYYY-M-D") + '&nbsp;&nbsp;时间：' + examClass.examTime + '</div>'));
-    var isFull = examClass.enrollCount == examClass.examCount ? "<span class='full'>(已满)</span>" : "";
+    var isFull = "";
+    if (moment().subtract(1, 'd').isAfter(examClass.examDate)) {
+        isFull = "<span class='full'>(已过期)</span>";
+    } else if (examClass.enrollCount == examClass.examCount) {
+        isFull = "<span class='full'>(已满)</span>";
+    }
+
     $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + examClass.enrollCount + '&nbsp;&nbsp;共' + examClass.examCount + isFull +
         '</p><span></span></div>'));
     $infoContainer.append('<div class="enroll-buttons pull-right"><button type="button" class="btn btn-primary btn-xs btnEnroll">报名</button><button type="button" class="btn btn-primary btn-xs btnExam">准考证</button><button type="button" class="btn btn-primary btn-xs btnScore">成绩</button></div>');
