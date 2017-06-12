@@ -20,6 +20,7 @@ var xlsx = require("node-xlsx"),
     ClassRoom = require('../../models/classRoom.js'),
     SchoolArea = require('../../models/schoolArea.js'),
     ClassAttribute = require('../../models/classAttribute.js'),
+    RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
 
     checkLogin = auth.checkLogin,
     serverPath = __dirname,
@@ -1152,6 +1153,33 @@ module.exports = function(app) {
                             });
                         });
                 }
+            });
+    });
+
+    app.post('/admin/export/rebateAllList', function(req, res) {
+        var data = [
+            ['学生', '电话', '订单', '课程', '校区', '年级', '科目', '退费', '退费日期']
+        ];
+        RebateEnrollTrain.getFilters({})
+            .then(function(rebates) {
+                var pArray = [];
+                rebates.forEach(function(rebate) {
+                    var p = AdminEnrollTrain.get(rebate.trainOrderId)
+                        .then(function(order) {
+                            return TrainClass.get(order.trainId)
+                                .then(function(originalClass) {
+                                    var singleInfo = [order.studentName, order.mobile, order._id, order.trainName, originalClass.schoolArea, originalClass.gradeName, originalClass.subjectName, rebate.rebatePrice, rebate.createDate];
+                                    data.push(singleInfo);
+                                });
+                        });
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function() {
+                    var buffer = xlsx.build([{ name: "退费情况", data: data }]),
+                        fileName = '全部退费列表' + '.xlsx';
+                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    res.jsonp({ sucess: true });
+                });
             });
     });
 }

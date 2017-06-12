@@ -5,7 +5,9 @@ var db = mongoose.connection;
 var rebateEnrollTrainSchema = new mongoose.Schema({
     trainOrderId: String,
     originalPrice: Number, //原来价格
+    originalMaterialPrice: Number, //原来教材费价格
     rebatePrice: Number, //退费
+    rebateMaterialPrice: Number, //教材费退费
     isDeleted: Boolean,
     createDate: Date
 }, {
@@ -82,4 +84,14 @@ RebateEnrollTrain.delete = function(id, callback) {
         }
         callback(null, rebateEnrollTrain);
     });
+};
+
+RebateEnrollTrain.getFilters = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return rebateEnrollTrainModel.find(filter)
+        .exec();
 };

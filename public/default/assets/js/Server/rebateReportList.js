@@ -55,4 +55,14 @@ function search(p) {
 $(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
     search();
 });
+
+$(".mainModal #InfoSearch #btnExport").on("click", function(e) {
+    selfAjax("post", "/admin/export/rebateAllList", {
+        // gradeId: $(".mainModal #InfoSearch #searchGrade").val()
+    }, function(data) {
+        if (data && data.sucess) {
+            location.href = "/admin/export/scoreTemplate?name=" + encodeURI("全部退费列表.xlsx");
+        }
+    });
+});
 //------------end

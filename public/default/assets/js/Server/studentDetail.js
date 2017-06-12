@@ -147,6 +147,26 @@ function renderGrids() {
     setPaingNextPre(".couponModal", searchCoupon);
 };
 
+function getPayway(way) {
+    switch (way) {
+        case 0:
+            return "现金";
+        case 1:
+            return "刷卡";
+        case 2:
+            return "转账";
+        case 8:
+            return "支付宝";
+        case 9:
+            return "微信";
+        case 6:
+            return "在线";
+        case 7:
+            return "在线";
+    }
+    return "";
+};
+
 function searchClass(p) {
     var filter = {
             studentId: $("#id").val()
@@ -156,9 +176,10 @@ function searchClass(p) {
     $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             data.adminEnrollTrains.forEach(function(trainOrder) {
-                $classSelectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' + trainOrder.studentName +
+                $classSelectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' + (trainOrder.fromId || "") + '</td><td>' + trainOrder.studentName +
                     '</td><td>' + trainOrder.trainName + '</td><td>' + trainOrder.yearName + '</td><td>' + trainOrder.totalPrice + '</td><td>' +
-                    trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || "") + '</td><td>' + getTrainOrderStatus(trainOrder.isSucceed) + '</td></tr>');
+                    trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || "") + '</td><td>' + getPayway(trainOrder.payWay) +
+                    '</td><td>' + getTrainOrderStatus(trainOrder.isSucceed) + '</td></tr>');
             });
         }
         $(".classModal #total").val(data.total);
