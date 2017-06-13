@@ -148,11 +148,12 @@ AdminEnrollTrain.cancel = function(id, callback) {
     });
 };
 
-AdminEnrollTrain.rebate = function(id, price) {
+AdminEnrollTrain.rebate = function(id, price, comment) {
     return adminEnrollTrainModel.update({
         _id: id
     }, {
-        $inc: { rebatePrice: price, totalPrice: -price }
+        $inc: { rebatePrice: price, totalPrice: -price },
+        comment: comment
     }).exec();
 };
 

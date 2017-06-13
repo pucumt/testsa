@@ -9,7 +9,8 @@ var rebateEnrollTrainSchema = new mongoose.Schema({
     rebatePrice: Number, //退费
     rebateMaterialPrice: Number, //教材费退费
     isDeleted: Boolean,
-    createDate: Date
+    createDate: Date,
+    comment: String
 }, {
     collection: 'rebateEnrollTrains'
 });

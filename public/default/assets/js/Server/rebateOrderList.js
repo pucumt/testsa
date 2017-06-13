@@ -39,7 +39,7 @@ function searchOrder(p) {
     $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             var getButtons = function(isPayed, isSucceed) {
-                if (isPayed && isSucceed !== 9) { //isPayed &&
+                if (isPayed) { //isPayed &&
                     return '<a class="btn btn-default btnRebate">退费</a>';
                 }
                 return '';
@@ -116,7 +116,7 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
     $('#myModal #totalPrice').val(entity.totalPrice);
     $('#myModal #rebatePrice').val(entity.rebatePrice);
     $('#myModal #price').val("");
-    $('#myModal #comment').val("");
+    $('#myModal #comment').val(entity.comment);
     $('#myModal #Id').val(entity._id);
     if (entity.attributeId) {
         $.post("/admin/adminEnrollTrain/isAttributCouponUsed", {
@@ -124,7 +124,9 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
             attributeId: entity.attributeId
         }, function(data) {
             if (data) {
-                $('#myModal #comment').val("订单使用优惠券：" + data);
+                if (entity.comment.indexOf("优惠券") < 0) {
+                    $('#myModal #comment').val(entity.comment + "; 订单使用优惠券：" + data);
+                }
             }
             $('#myModal').modal({ backdrop: 'static', keyboard: false });
         });
@@ -149,7 +151,8 @@ $("#btnSave").on("click", function(e) {
             var name = $('#' + data._id + ' td:first-child');
             var col2 = name.next().text("已退款");
             var price = col2.next().next().next().next().next().text(data.totalPrice);
-            price.next().text(data.rebatePrice);
+            var material = price.next().text(data.realMaterialPrice);
+            material.next().text(data.rebatePrice);
             var $lastDiv = $('#' + data._id + ' td:last-child div');
             $lastDiv.data("obj", data);
         });

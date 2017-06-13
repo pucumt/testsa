@@ -338,7 +338,7 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollTrain/rebate', checkLogin);
     app.post('/admin/adminEnrollTrain/rebate', function(req, res) {
-        AdminEnrollTrain.rebate(req.body.Id, req.body.price)
+        AdminEnrollTrain.rebate(req.body.Id, req.body.price, req.body.comment)
             .then(function(adminEnrollTrain) {
                 if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
                     var rebateEnrollTrain = new RebateEnrollTrain({

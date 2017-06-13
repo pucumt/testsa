@@ -212,7 +212,7 @@ function addValidation(callback) {
                                 max: 10,
                                 message: '课时总数不能超过10个字符'
                             },
-                            integer: {
+                            numeric: {
                                 message: '填写的不是数字',
                             }
                         }
