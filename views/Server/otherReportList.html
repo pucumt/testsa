@@ -1,0 +1,20 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-24">
+                    <button type="button" id="btnExportOrder1" class="btn btn-primary">导出已支付被取消订单</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Server/otherReportList.js?v=1.000"></script>
+{% endblock %}

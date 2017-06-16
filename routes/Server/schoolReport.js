@@ -343,6 +343,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/otherReportList', checkLogin);
+    app.get('/admin/otherReportList', function(req, res) {
+        res.render('Server/otherReportList.html', {
+            title: '>其他报表情况',
+            user: req.session.admin
+        });
+    });
+
     app.post('/admin/enrollAggregateList/search', checkLogin);
     app.post('/admin/enrollAggregateList/search', function(req, res) {
         var list = [],
@@ -440,6 +448,5 @@ module.exports = function(app) {
                     }));
                 });
             });
-
     });
 }

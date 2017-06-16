@@ -1182,4 +1182,40 @@ module.exports = function(app) {
                 });
             });
     });
+
+    app.post('/admin/export/otherOrder1', function(req, res) {
+        var data = [
+            ['学生', '电话', '订单', '订单日期', '课程', '校区', '年级', '科目', '退费']
+        ];
+        AdminEnrollTrain.getFilters({
+                isSucceed: 9,
+                isPayed: true,
+                fromId: null,
+                payWay: 6
+            })
+            .then(function(orders) {
+                var pArray = [];
+                orders.forEach(function(order) {
+                    var p = AdminEnrollTrain.getFilter({
+                            fromId: order._id
+                        })
+                        .then(function(changeOrder) {
+                            if (!changeOrder) {
+                                return TrainClass.get(order.trainId)
+                                    .then(function(originalClass) {
+                                        var singleInfo = [order.studentName, order.mobile, order._id, order.orderDate, order.trainName, originalClass.schoolArea, originalClass.gradeName, originalClass.subjectName, order.rebatePrice];
+                                        data.push(singleInfo);
+                                    });
+                            }
+                        });
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function() {
+                    var buffer = xlsx.build([{ name: "订单情况", data: data }]),
+                        fileName = '已支付被取消订单' + '.xlsx';
+                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    res.jsonp({ sucess: true });
+                });
+            });
+    });
 }

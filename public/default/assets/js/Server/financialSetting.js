@@ -26,4 +26,8 @@ $(document).ready(function() {
     $("#left_btnEnrollAggregate").on("click", function(e) {
         location.href = "/admin/enrollAggregateList";
     });
+
+    $("#left_btnOtherReport").on("click", function(e) {
+        location.href = "/admin/otherReportList";
+    });
 });
