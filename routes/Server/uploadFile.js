@@ -918,7 +918,7 @@ module.exports = function(app) {
 
     app.post('/admin/export/classTemplate5', function(req, res) {
         var data = [
-            ['姓名', '联系方式', '报名日期', '科目', '校区', '课程', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
+            ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
         ];
         var p = AdminEnrollTrain.getFilters({
             yearId: global.currentYear._id,
@@ -935,11 +935,11 @@ module.exports = function(app) {
                                     if (newClass) {
                                         return getOrderPayway(order)
                                             .then(function(way) {
-                                                var singleInfo = [student.name, student.mobile, order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
+                                                var singleInfo = [student.name, student.mobile, student.School, student.className, (student.sex ? "女" : "男"), order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
                                                 data.push(singleInfo);
                                             });
                                     } else {
-                                        data.push([order.studentId, order._id, order.orderDate, order.trainId, "", "", "", order.totalPrice, order.realMaterialPrice, order.rebatePrice, order.payWay, order.comment]);
+                                        data.push([order.studentId, order._id, "", "", "", order.orderDate, order.trainId, "", "", "", order.totalPrice, order.realMaterialPrice, order.rebatePrice, order.payWay, order.comment]);
                                     }
                                 });
                         } else {
