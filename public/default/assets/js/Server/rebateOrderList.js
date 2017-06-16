@@ -125,7 +125,7 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
         }, function(data) {
             if (data) {
                 if ((!entity.comment) || entity.comment.indexOf("优惠券") < 0) {
-                    $('#myModal #comment').val(entity.comment + "; 订单使用优惠券：" + data);
+                    $('#myModal #comment').val((entity.comment ? entity.comment + ";" : "") + "订单使用优惠券：" + data);
                 }
             }
             $('#myModal').modal({ backdrop: 'static', keyboard: false });
