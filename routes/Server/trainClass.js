@@ -375,6 +375,7 @@ module.exports = function(app) {
                 res.jsonp({ sucess: true });
             });
     });
+
     app.post('/admin/batchMin100', checkLogin);
     app.post('/admin/batchMin100', function(req, res) {
         var filter = {
@@ -386,6 +387,19 @@ module.exports = function(app) {
         TrainClass.min100(filter)
             .then(function() {
                 res.jsonp({ sucess: true });
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/getTrain', checkLogin);
+    app.post('/admin/adminEnrollTrain/getTrain', function(req, res) {
+        TrainClass.get(req.body.id)
+            .then(function(trainClass) {
+                if (trainClass) {
+                    res.jsonp(trainClass);
+                } else {
+                    res.jsonp({ error: "没找到订单" });
+                    return;
+                }
             });
     });
 }

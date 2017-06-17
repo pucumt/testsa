@@ -66,8 +66,8 @@ function searchOrder(p) {
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td class="id">' + trainOrder._id + '</td><td>' +
-                    getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
+                    getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td class="train" id="' + trainOrder.trainId +
+                    '">' + trainOrder.trainName + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' + trainOrder.realMaterialPrice + '</td><td>' +
                     (trainOrder.isPayed ? "是" : "否") + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') +
                     '</td><td><div class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
@@ -127,4 +127,11 @@ $("#gridBody").on("click", "tr .id", function(e) {
     var entityId = $(obj).html();
 
     location.href = "/admin/adminEnrollTrain/orderDetail/" + entityId;
+});
+
+$("#gridBody").on("click", "tr .train", function(e) {
+    var obj = e.currentTarget;
+    var entityId = $(obj).attr("id");
+
+    location.href = "/admin/adminEnrollTrain/trainDetail/" + entityId;
 });

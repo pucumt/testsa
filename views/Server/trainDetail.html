@@ -1,0 +1,71 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }} > <a id="btnReturn" href="">返回</a>
+        <input type="hidden" id="id" value="{{ id }}" />
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <div class="score detail">
+            <div>
+                <strong>课程:</strong><span class="trainName"></span>
+            </div>
+            <div>
+                <strong>年度:</strong><span class="yearName"></span>
+            </div>
+            <div>
+                <strong>年级:</strong><span class="gradeName"></span>
+            </div>
+            <div>
+                <strong>科目:</strong><span class="subjectName"></span>
+            </div>
+            <div>
+                <strong>难度:</strong><span class="categoryName"></span>
+            </div>
+            <div>
+                <strong>招生人数:</strong><span class="totalStudentCount"></span>
+            </div>
+            <div>
+                <strong>报名人数:</strong><span class="enrollCount"></span>
+            </div>
+            <div>
+                <strong>课时数:</strong><span class="totalClassCount"></span>
+            </div>
+            <div>
+                <strong>培训费:</strong><span class="trainPrice"></span>
+            </div>
+            <div>
+                <strong>教材费:</strong><span class="materialPrice"></span>
+            </div>
+            <div>
+                <strong>老师:</strong><span class="teacherName"></span>
+            </div>
+            <div>
+                <strong>特殊属性:</strong><span class="attributeName"></span>
+            </div>
+            <div>
+                <strong>开课日期:</strong><span class="courseStartDate"></span>
+            </div>
+            <div>
+                <strong>结课日期:</strong><span class="courseEndDate"></span>
+            </div>
+            <div>
+                <strong>上课时间:</strong><span class="courseTime"></span>
+            </div>
+            <div>
+                <strong>教室:</strong><span class="classRoomName"></span>
+            </div>
+            <div>
+                <strong>校区:</strong><span class="schoolArea"></span>
+            </div>
+            <div>
+                <strong>原班:</strong><span class="fromClassName"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Server/trainDetail.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

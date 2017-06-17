@@ -629,6 +629,15 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/adminEnrollTrain/trainDetail/:id', checkLogin);
+    app.get('/admin/adminEnrollTrain/trainDetail/:id', function(req, res) {
+        res.render('Server/trainDetail.html', {
+            title: '>课程详情',
+            user: req.session.admin,
+            id: req.params.id
+        });
+    });
+
     app.post('/admin/adminEnrollTrain/getorder', checkLogin);
     app.post('/admin/adminEnrollTrain/getorder', function(req, res) {
         AdminEnrollTrain.get(req.body.id)

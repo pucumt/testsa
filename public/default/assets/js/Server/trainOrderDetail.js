@@ -29,7 +29,7 @@ function getPayway(way) {
 };
 
 function renderOrderDetail() {
-    $.post("/admin/adminEnrollTrain/getorder", { id: $("#id").val() }, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/getorder", { id: $("#id").val() }, function(data) {
         if (data) {
             if (!data.error) {
                 $(".mainModal #studentId").val(data.studentId);
@@ -57,7 +57,7 @@ $(".mainModal #btnSave").on("click", function(e) {
             id: $("#id").val(),
             comment: $.trim($('.mainModal #comment').val())
         };
-    $.post(postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function(data) {
         if (data.sucess) {
             location.href = location.href;
         } else {
@@ -73,7 +73,7 @@ $(".mainModal #btnChangeStudent").on("click", function(e) {
             studentId: $(".mainModal #studentId").val(),
             studentName: $(".mainModal #studentName").val()
         };
-    $.post(postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function(data) {
         if (data.sucess) {
             location.href = location.href;
         } else {
@@ -96,7 +96,7 @@ function openStudent(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
                 student.School = "";
