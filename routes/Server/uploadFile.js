@@ -1,4 +1,5 @@
 var xlsx = require("node-xlsx"),
+    rawXLSX = require("xlsx"),
     path = require('path'),
     multer = require('multer'),
     fs = require('fs'),
@@ -617,6 +618,7 @@ module.exports = function(app) {
             });
         }
     };
+
     app.post('/admin/export/reportTemplate', function(req, res) {
         var outputPath = path.join(serverPath, "../../public/downloads/", req.body.examId + ".zip");
         if (fs.existsSync(outputPath)) {
@@ -1217,5 +1219,37 @@ module.exports = function(app) {
                     res.jsonp({ sucess: true });
                 });
             });
+    });
+
+    //rawXLSX
+    app.post('/admin/export/rollCallList', function(req, res) {
+        var workbook = rawXLSX.readFile(path.join(serverPath, "../../public/downloads/", 'test.xlsx'));
+        var first_sheet_name = workbook.SheetNames[0];
+        /* Get worksheet */
+        var worksheet = workbook.Sheets[first_sheet_name];
+        var new_ws_name = "SheetJS";
+
+        /* make worksheet */
+        var ws_data = [
+            ["S", "h", "e", "e", "t", "J", "S"],
+            [1, 2, 3, 4, 5]
+        ];
+        var ws = rawXLSX.utils.aoa_to_sheet(ws_data);
+
+        /* Add the sheet name to the list */
+        workbook.SheetNames.push(new_ws_name);
+
+        /* Load the worksheet object */
+        workbook.Sheets[new_ws_name] = ws;
+
+        rawXLSX.writeFile(workbook, 'out.xlsx');
+
+        // var data = [
+        //             ['学生', '电话', '订单', '订单日期', '课程', '校区', '年级', '科目', '退费']
+        //         ];
+        // var buffer = xlsx.build([{ name: "订单情况", data: data }]),
+        //     fileName = '已支付被取消订单' + '.xlsx';
+        // fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+        // res.jsonp({ sucess: true });
     });
 }

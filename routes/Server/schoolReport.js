@@ -210,8 +210,8 @@ module.exports = function(app) {
                 schoolId: req.body.schoolId,
                 yearId: global.currentYear._id
             };
-        if (req.body.gradeId) {
-            filter.gradeId = req.body.gradeId;
+        if (req.body.gradeId && req.body.gradeId != '[""]') {
+            filter.gradeId = { $in: JSON.parse(req.body.gradeId) };
         }
 
         if (req.body.subjectId) {
@@ -224,13 +224,21 @@ module.exports = function(app) {
         TrainClass.getFilters(filter)
             .then(function(trainClasses) {
                 if (trainClasses && trainClasses.length > 0) {
+                    var totalEnrollCount = 0;
                     trainClasses.forEach(function(trainClass) {
+                        totalEnrollCount += trainClass.enrollCount;
                         list.push({
                             _id: trainClass._id,
                             name: trainClass.name,
                             enrollCount: trainClass.enrollCount,
                             totalStudentCount: trainClass.totalStudentCount
                         });
+                    });
+                    list.push({
+                        _id: "",
+                        name: "总报名人数",
+                        enrollCount: totalEnrollCount,
+                        totalStudentCount: ""
                     });
                 }
                 res.json(list);

@@ -67,9 +67,10 @@ function renderSearchCategoryDropDown() {
 var $mainSelectBody = $('.content.mainModal table tbody');
 
 function search(p) {
+    var gradeIds = $(".mainModal #InfoSearch #searchGrade").val();
     var filter = {
             schoolId: $(".mainModal #InfoSearch #searchSchool").val(),
-            gradeId: $(".mainModal #InfoSearch #searchGrade").val(),
+            gradeId: ((gradeIds && gradeIds[0]) ? JSON.stringify(gradeIds) : ""),
             subjectId: $(".mainModal #InfoSearch #searchSubject").val(),
             categoryId: $(".mainModal #InfoSearch #searchCategory").val()
         },
@@ -96,7 +97,7 @@ $(".mainModal #gridBody").on("click", "tr .trainClass", function(e) {
     if (id) {
         location.href = "/admin/adminEnrollTrain/orderlist/" + id;
     } else {
-        showAlert("出错了！");
+        // showAlert("出错了！");
     }
 });
 

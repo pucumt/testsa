@@ -16,12 +16,6 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="searchGrade" class="control-label">年级:</label>
-                        <select name="searchGrade" id="searchGrade" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
                         <label for="searchSubject" class="control-label">科目:</label>
                         <select name="searchSubject" id="searchSubject" class="form-control"></select>
                     </div>
@@ -30,6 +24,12 @@
                     <div class="form-group">
                         <label for="searchCategory" class="control-label">难度:</label>
                         <select name="searchCategory" id="searchCategory" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchGrade" class="control-label">年级:</label>
+                        <select name="searchGrade" multiple="true" id="searchGrade" class="form-control"></select>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -57,5 +57,5 @@
     </table>
 </div>
 {% endblock %} {% block modal %}
-<script type="text/javascript" src="/default/assets/js/Server/peopleCountList.js?v=1.001"></script>
+<script type="text/javascript" src="/default/assets/js/Server/peopleCountList.js?v=1.002"></script>
 {% endblock %}
