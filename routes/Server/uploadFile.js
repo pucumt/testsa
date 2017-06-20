@@ -757,7 +757,8 @@ module.exports = function(app) {
                                     singleInfo = [student.name, student.mobile, '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
                                 return AdminEnrollTrain.getFilters({
                                     studentId: student._id,
-                                    isSucceed: 1
+                                    isSucceed: 1,
+                                    yearId: global.currentYear._id
                                 }).then(function(classOrders) {
                                     if (classOrders && classOrders.length > 0) {
                                         classOrders.forEach(function(newOrder) {

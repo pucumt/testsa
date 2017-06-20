@@ -24,7 +24,8 @@ module.exports = function(app) {
     app.post('/admin/user/add', function(req, res) {
         var user = new User({
             name: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            role: 3
         });
 
         user.save(function(err, user) {
@@ -39,7 +40,8 @@ module.exports = function(app) {
     app.post('/admin/user/edit', function(req, res) {
         var user = new User({
             name: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            role: 3
         });
 
         user.update(function(err, user) {
@@ -75,4 +77,21 @@ module.exports = function(app) {
             }
         });
     });
+
+    app.post('/admin/user/SetSuper', checkLogin);
+    app.post('/admin/user/SetSuper', function(req, res) {
+        var user = new User({
+            name: "bfbadmin",
+            role: 0
+        });
+
+        user.update(function(err, user) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
 }

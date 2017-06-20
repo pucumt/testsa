@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema({
     password: String,
     email: String,
     mobile: String,
-    role: Number,
+    role: Number, //0 superAdmin, 3 schoolAdmin, 5 teacher, 7 team leader
     isDeleted: Boolean
 }, {
     collection: 'users'

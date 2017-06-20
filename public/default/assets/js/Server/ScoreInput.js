@@ -148,16 +148,16 @@ $("#editfile #btnExportReport").on("click", function(e) {
 
 
 $("#editfile #btnExportClass").on("click", function(e) {
-    // var validator = $('#editfile').data('formValidation').validate();
-    // if (validator.isValid()) {
-    //     $.post("/admin/export/classTemplate4", {
-    //         examId: $("#editfile #examId").val()
-    //     }).then(function(data) {
-    //         if (data && data.sucess) {
-    //             location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况4.xlsx");
-    //         }
-    //     });
-    // }
+    var validator = $('#editfile').data('formValidation').validate();
+    if (validator.isValid()) {
+        $.post("/admin/export/classTemplate3", {
+            examId: $("#editfile #examId").val()
+        }).then(function(data) {
+            if (data && data.sucess) {
+                location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况3.xlsx");
+            }
+        });
+    }
 });
 
 $("#editfile #btnExportClass3").on("click", function(e) {

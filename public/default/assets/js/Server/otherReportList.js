@@ -19,3 +19,11 @@ $(".mainModal #InfoSearch #btnExportRoll").on("click", function(e) {
         }
     });
 });
+
+$(".mainModal #InfoSearch #btnSetSuper").on("click", function(e) {
+    selfAjax("post", "/admin/user/SetSuper", {}, function(data) {
+        if (data && data.sucess) {
+            showAlert("设置成功！");
+        }
+    });
+});
