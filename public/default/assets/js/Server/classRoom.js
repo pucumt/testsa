@@ -118,6 +118,10 @@ $("#btnAdd").on("click", function(e) {
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
+$("#btnBatchAdd").on("click", function(e) {
+    location.href = "/admin/batchAddClassRoom";
+});
+
 $("#btnSave").on("click", function(e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {

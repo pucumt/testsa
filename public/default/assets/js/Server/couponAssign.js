@@ -154,3 +154,7 @@ $("#panel_btnTrain").on("click", function(e) {
         '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     openTrain();
 });
+
+$("#btnBatchAssign").on("click", function() {
+    location.href = "/admin/couponAssign/batchAssign/" + $('#id').val();
+});

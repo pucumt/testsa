@@ -1,0 +1,436 @@
+body {
+    background-color: #f8f8f8;
+}
+
+footer,
+.container {
+    margin: 0 auto;
+    width: 100%;
+    background-color: #f8f8f8;
+}
+
+@media (min-width: 360px) {
+    .nav-bar-header {
+        height: 112.5px;
+    }
+}
+
+@media (min-width: 414px) {
+    .nav-bar-header {
+        height: 129.375px;
+    }
+}
+
+@media (min-width: 540px) {
+    .nav-bar-header {
+        height: 168.75px;
+    }
+}
+
+#loginForm {
+    margin: 10px 25px;
+}
+
+.enroll-filter {
+    position: relative;
+    padding: 0 45px;
+}
+
+.enroll-filter .btn {
+    border-radius: 0;
+    height: 40px;
+    width: 100%;
+}
+
+.enroll-filter .glyphicon-remove-circle {
+    margin-top: 15px;
+    font-size: 20px;
+}
+
+.enroll-filter .row {
+    margin-bottom: 20px;
+}
+
+.enroll .pageTitle {
+    text-align: center;
+    height: 40px;
+    background-color: #286090;
+    line-height: 40px;
+    color: white;
+    margin: 0 -15px;
+    padding-right: 20px;
+    font-size: 15px;
+}
+
+.enroll .pageTitle .glyphicon-menu-left {
+    font-size: 20px;
+    margin-left: 5px;
+    margin-top: 10px;
+}
+
+.enroll .enroll-submit {
+    width: 100%;
+    border-top: 1px solid #CBCBCB;
+    background-color: #fff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 41px;
+    color: #666;
+}
+
+.enroll .exam-list {
+    background-color: #e7e9ec;
+}
+
+.enroll .exam-list .exam-card {
+    padding: 10px 15px 10px 10px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 6px;
+    background-color: #f8f8f8;
+}
+
+.enroll .exam-list .exam-card .enroll-buttons .btn {
+    margin-left: 15px;
+}
+
+.enroll .exam-list .exam-card .exam .exam-info .enroll-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.enroll .exam-list .exam-card .exam .exam-info .enroll-info span .btn {
+    margin-left: 20px;
+}
+
+.enroll .exam-list .exam-card div.exam .exam-info,
+.exam-detail .exam .exam-info {
+    padding-left: 10px;
+    color: #555;
+    font-size: 13px;
+}
+
+.enroll .exam-list .exam-card div.exam .exam-info h3 {
+    font-size: 15px;
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    margin: 0 0 5px;
+}
+
+.enroll .exam-list .exam-card div.exam .exam-info .exam-count {
+    margin-bottom: 0;
+}
+
+.enroll .exam-list .exam-card div.exam .exam-info .exam-count .full,
+.exam-detail .exam .exam-info .exam-count .full {
+    color: #F44;
+    font-weight: bold;
+}
+
+.exam-detail {
+    margin: 7px 7px 7px 0px;
+}
+
+.exam-detail .exam .exam-info h2 {
+    font-size: 1.8rem;
+    margin-bottom: 22px;
+    color: #555;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.exam-detail .exam .exam-content {
+    font-size: 1.5rem;
+    line-height: 1.8em;
+    margin-bottom: 50px;
+    color: #444;
+    margin-left: 10px;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.exam-detail .exam .exam-content .title,
+#Enroll-select .title,
+#Enroll-student .title,
+#Enroll-student-edit .title {
+    border-bottom: solid 1px #ddd;
+    font-size: 14px;
+    color: #555;
+    font-weight: 700;
+    line-height: normal;
+    padding: 20px 0 5px 5px;
+    margin-bottom: 10px;
+}
+
+#Enroll-student .title .title,
+#Enroll-student-edit .title .title {
+    border-bottom: 0;
+}
+
+#Enroll-select .title,
+#Enroll-student .title,
+#Enroll-student-edit .title {
+    text-align: center;
+}
+
+.enroll .enroll-submit.exam button,
+#Enroll-select #btnNext,
+#Enroll-student #btnNewStudent,
+#Enroll-student-edit #btnSave {
+    width: 100%;
+    height: 40px;
+    border-radius: 0;
+}
+
+#Enroll-select,
+#Enroll-student,
+#Enroll-student-edit {
+    padding: 0 25px;
+    /*overflow: hidden;*/
+    position: fixed;
+    z-index: 1000;
+    background: white;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    visibility: visible;
+    transform: translate3d(0px, 0px, 0px);
+    transition: all 300ms ease;
+    opacity: 1;
+}
+
+#confirmModal {
+    padding: 0;
+    /*overflow: hidden;*/
+    position: absolute;
+    z-index: 1000;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    visibility: visible;
+    opacity: 1;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+}
+
+#confirmModal .modal-backdrop {
+    opacity: 0.5;
+    background-color: #000000;
+}
+
+#confirmModal .modal-dialog {
+    position: fixed;
+    top: 20px;
+    width: 100%;
+    margin: 0;
+}
+
+#confirmModal .modal-content {
+    margin: 0 20px;
+    background: white;
+    transform: translate3d(0px, 0px, 0px);
+    transition: all 300ms ease;
+    /*margin-top: 20px;*/
+}
+
+#Enroll-select .title .glyphicon-remove-circle {
+    margin-top: -10px;
+    font-size: 20px;
+}
+
+#Enroll-select .student {
+    height: 40px;
+}
+
+#Enroll-student .student .student-list {
+    border-top: solid 1px #ddd;
+}
+
+#Enroll-student .student .student-list li {
+    border-bottom: solid 1px #ddd;
+    padding: 5px;
+    font-size: 14px;
+}
+
+#Enroll-student .student .student-list li .glyphicon {
+    /*width: 60px;
+    text-align: center;
+    border: 1px solid #cccccc;*/
+}
+
+#Enroll-student .student .glyphicon-ok {
+    color: #d9534f;
+    margin-right: 10px;
+}
+
+.enroll.personalCenter .account {
+    text-align: center;
+    margin: 10px -15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #f8f8f8;
+}
+
+.enroll.personalCenter .account .reset {
+    margin-left: 20px;
+    font-weight: normal;
+}
+
+.enroll.personalCenter {
+    background-color: #e7e9ec;
+}
+
+.enroll.personalCenter .students,
+.enroll.personalCenter .coupon,
+.enroll.personalCenter .order,
+.enroll.personalCenter .exam,
+.enroll.personalCenter .randomCoupon {
+    margin: 10px -15px;
+    padding: 8px 15px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #f8f8f8;
+    height: auto;
+    width: auto;
+}
+
+.enroll.personalCenter .exit #btnExit {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    border-radius: 0;
+}
+
+.enroll.personalCenter .exam,
+.enroll.personalCenter .randomCoupon {
+    margin-bottom: 0;
+}
+
+#Enroll-student.personalCenter {
+    position: relative;
+    padding: 0 15px;
+}
+
+.enroll.personalCenter .enroll-submit {
+    position: relative;
+}
+
+.enroll.personalCenter .couponlist .student-list li {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.enroll.personalCenter .couponlist .student-list li,
+.enroll.personalCenter .orderList .student-list li {
+    border-bottom: 1px solid #ccc;
+}
+
+.enroll.personalCenter .couponlist .student-list span.studentName {
+    display: inline-block;
+    width: 80px;
+}
+
+.enroll.personalCenter .randomCouponList .student-list li {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
+    margin-top: 10px;
+}
+
+.enroll.personalCenter .randomCouponList .student-list li .take {
+    width: 80px;
+    background-color: #fa9899;
+    color: white;
+    margin-top: -10px;
+    margin-bottom: -10px;
+    line-height: 40px;
+    border: 0;
+}
+
+
+/*.enroll.personalCenter .orderList ul {
+    margin-top: 15px;
+}*/
+
+.enroll.personalCenter .orderList ul li {
+    margin-top: 15px;
+    background-color: white;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-top: 1px solid #ddd;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .detail {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .title {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    padding-left: 20px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .price span,
+#Enroll-student.enroll.personalCenter .orderList ul li .price button {
+    margin-bottom: 10px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .price button {
+    width: 80px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList {
+    background-color: #f8f8f8;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .score {
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+#pay-select {
+    padding: 0;
+    /* overflow: hidden; */
+    position: fixed;
+    z-index: 1000;
+    background: white;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    visibility: visible;
+    transform: translate3d(0px, 0px, 0px);
+    transition: all 300ms ease;
+    opacity: 1;
+}
+
+#pay-select .payway {
+    text-align: center;
+    padding: 15px 0;
+}
+
+#pay-select .payway.wechat {
+    border-bottom: 1px solid #ccc;
+}
+
+.container.imgCode {
+    z-index: 1001;
+    opacity: 1;
+    background: white;
+    position: fixed;
+    top: 50px;
+    padding-bottom: 40px;
+}

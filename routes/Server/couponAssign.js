@@ -188,4 +188,16 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/couponAssign/batchAssign/:id', checkLogin);
+    app.get('/admin/couponAssign/batchAssign/:id', function(req, res) {
+        Coupon.get(req.params.id).then(function(coupon) {
+            if (coupon) {
+                res.render('Server/couponBatchAssign.html', {
+                    title: '>优惠券分配',
+                    user: req.session.admin,
+                    coupon: coupon
+                });
+            }
+        });
+    });
 }

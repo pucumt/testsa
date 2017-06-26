@@ -98,6 +98,23 @@ $("#editfile #btnScore").on("click", function(e) {
     }
 });
 
+$("#editfile #btnCheckStudent").on("click", function(e) {
+    var file = document.getElementById('upfileStudent').files;
+    if (file.length > 0) {
+        var formData = new FormData();
+        formData.append("avatar", file[0]);
+        $.ajax({
+            type: "POST",
+            data: formData,
+            url: "/admin/checkstudent",
+            contentType: false,
+            processData: false,
+        }).then(function(data) {
+            location.href = "/admin/score";
+        });
+    }
+});
+
 $("#editfile #btnExportScore").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {

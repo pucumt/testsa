@@ -68,6 +68,17 @@
                 <button type="button" id="btnExportClass5" class="btn btn-primary">导出所有报名</button>
                 <button type="button" id="btnExportClass6" class="btn btn-primary">导出课程</button>
             </div>
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="avatar" class="control-label">学生校对</label>
+                        <div style="padding-top: 0;">
+                            <input name="avatar" id='upfileStudent' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" type='file' />
+                            <button type="button" id="btnCheckStudent" class="btn btn-primary">提交学生</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -179,6 +190,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/ScoreInput.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/ScoreInput.js?v=1.003"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

@@ -11,6 +11,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/batchAddClassRoom', checkLogin);
+    app.get('/admin/batchAddClassRoom', function(req, res) {
+        res.render('Server/batchAddClassRoom.html', {
+            title: '批量添加教室',
+            user: req.session.admin
+        });
+    });
+
     app.post('/admin/classRoom/add', checkLogin);
     app.post('/admin/classRoom/add', function(req, res) {
         var classRoom = new ClassRoom({

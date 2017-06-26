@@ -10,7 +10,7 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    $.post("/admin/year/all", function(data) {
+    selfAjax("post", "/admin/year/all", {}, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
                 var select = "";
@@ -36,7 +36,7 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             var getButtons = function(isPayed, isSucceed) {
                 if (isPayed) { //isPayed &&
@@ -119,7 +119,7 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
     $('#myModal #comment').val(entity.comment);
     $('#myModal #Id').val(entity._id);
     if (entity.attributeId) {
-        $.post("/admin/adminEnrollTrain/isAttributCouponUsed", {
+        selfAjax("post", "/admin/adminEnrollTrain/isAttributCouponUsed", {
             studentId: entity.studentId,
             attributeId: entity.attributeId
         }, function(data) {
@@ -145,7 +145,7 @@ $("#btnSave").on("click", function(e) {
                 price: $('#myModal #price').val(),
                 comment: $('#myModal #comment').val()
             };
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             showAlert("退费成功！");
             $('#myModal').modal('hide');
             var name = $('#' + data._id + ' td:first-child');

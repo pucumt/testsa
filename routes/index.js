@@ -2,6 +2,7 @@ var client = require('./Client/index.js'),
     exec = require('child_process').exec, //,
     updateStudentAccount = require('./Test/updateStudentAccount.js'),
     server = require('./Server/index.js'),
+    teacher = require('./Teacher/index.js'),
     // test = require('./Test/index.js'),
     generator = require('./Test/generator.js');
 // dbPressure = require('./Test/dbPressure.js'),
@@ -10,6 +11,7 @@ var client = require('./Client/index.js'),
 module.exports = function(app) {
     client(app);
     server(app);
+    teacher(app);
     //test(app);
     generator(app);
     // dbPressure(app);

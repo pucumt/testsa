@@ -22,6 +22,7 @@ var xlsx = require("node-xlsx"),
     SchoolArea = require('../../models/schoolArea.js'),
     ClassAttribute = require('../../models/classAttribute.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
+    Coupon = require('../../models/coupon.js'),
 
     checkLogin = auth.checkLogin,
     serverPath = __dirname,
@@ -75,7 +76,7 @@ module.exports = function(app) {
             examId: examId,
             subject: subject
         });
-        newScoreFails.save();
+        return newScoreFails.save();
     };
 
     app.get('/admin/score', checkLogin);
@@ -921,7 +922,7 @@ module.exports = function(app) {
 
     app.post('/admin/export/classTemplate5', function(req, res) {
         var data = [
-            ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
+            ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
         ];
         var p = AdminEnrollTrain.getFilters({
             yearId: global.currentYear._id,
@@ -938,7 +939,7 @@ module.exports = function(app) {
                                     if (newClass) {
                                         return getOrderPayway(order)
                                             .then(function(way) {
-                                                var singleInfo = [student.name, student.mobile, student.School, student.className, (student.sex ? "女" : "男"), order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
+                                                var singleInfo = [student.name, student.mobile, student.School, student.className, (student.sex ? "女" : "男"), order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.courseTime, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
                                                 data.push(singleInfo);
                                             });
                                     } else {
@@ -1252,5 +1253,118 @@ module.exports = function(app) {
         //     fileName = '已支付被取消订单' + '.xlsx';
         // fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
         // res.jsonp({ sucess: true });
+    });
+
+    function checkstudent(score) {
+        StudentInfo.getFilter({ name: score[0] })
+            .then(function(student) {
+                if (student) {
+                    if (student.mobile != score[1]) {
+                        failedScore(score[0], score[1], student.mobile, '该学生号码不匹配');
+                    }
+                } else {
+                    failedScore(score[0], score[1], '', '没找到该学生');
+                }
+            });
+    };
+
+    //check is the student is exist in db
+    app.post('/admin/checkstudent', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length;
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break;
+            }
+            checkstudent(list[0].data[i]);
+        }
+        // res.redirect('/admin/score');
+        res.jsonp({});
+    });
+
+    function couponAssignStudent(score, couponId) {
+        return StudentInfo.getFilter({ name: score[0], mobile: score[1] })
+            .then(function(student) {
+                if (student) {
+                    return Coupon.get(couponId)
+                        .then(function(coupon) {
+                            return CouponAssign.get({ couponId: coupon.couponId, studentId: student.studentId })
+                                .then(function(couponAssign) {
+                                    if (!couponAssign) {
+                                        //assign student with coupon
+                                        var couponAssign = new CouponAssign({
+                                            couponId: coupon.couponId,
+                                            couponName: coupon.couponName,
+                                            gradeId: coupon.gradeId,
+                                            gradeName: coupon.gradeName,
+                                            subjectId: coupon.subjectId,
+                                            subjectName: coupon.subjectName,
+                                            reducePrice: coupon.reducePrice,
+                                            couponStartDate: coupon.couponStartDate,
+                                            couponEndDate: coupon.couponEndDate,
+                                            studentId: student.studentId,
+                                            studentName: student.studentName
+                                        });
+                                        return couponAssign.save();
+                                    }
+                                });
+                        });
+                } else {
+                    // return StudentAccount.getFilter({ name: score[1] })
+                    //     .then(function(account) {
+                    //         var pStudent;
+                    //         if (account) {
+                    //             pStudent = Promise.resolve(account);
+                    //         } else {
+                    //             var md5 = crypto.createHash('md5');
+                    //             var studentAccount = new StudentAccount({
+                    //                 name: data[2],
+                    //                 password: password = md5.update("111111").digest('hex')
+                    //             });
+                    //             pStudent = studentAccount.save();
+                    //         }
+                    //         return pStudent.then(function(account) {
+                    //             if (account) {
+                    //                 var studentInfo = new StudentInfo({
+                    //                     name: score[0].trim(),
+                    //                     sex: true,
+                    //                     accountId: account._id,
+                    //                     mobile: score[1],
+                    //                     gradeId: grade._id,
+                    //                     gradeName: grade.name,
+                    //                     School: data[4] && data[4].trim(),
+                    //                     className: data[6]
+                    //                 });
+                    //                 return studentInfo.save();
+                    //             } else {
+                    //                 return failedScore(score[0], score[1], '', '添加账号出错');
+                    //             }
+                    //         });
+                    //     });
+                    //create new student and assign with coupon
+                    return failedScore(score[0], score[1], '', '没找到该学生');
+                }
+            });
+    };
+
+    //if student in db, assign it. it not, created and assign
+    app.post('/admin/coupon/batchAssign', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+
+        var length = list[0].data.length,
+            pArray = [];
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break; //already done
+            }
+            pArray.push(couponAssignStudent(list[0].data[i], req.body.couponId));
+        }
+
+        // res.redirect('/admin/score');
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
     });
 }
