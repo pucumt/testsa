@@ -77,8 +77,8 @@ module.exports = function(app) {
                                 var trainPrice = 0,
                                     materialPrice = 0;
                                 orders.forEach(function(order) {
-                                    trainPrice = trainPrice + order.trainPrice;
-                                    materialPrice = materialPrice + order.materialPrice;
+                                    trainPrice = trainPrice + order.totalPrice;
+                                    materialPrice = materialPrice + order.realMaterialPrice;
                                 });
 
                                 list.push({

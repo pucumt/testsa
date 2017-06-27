@@ -27,3 +27,19 @@ $(".mainModal #InfoSearch #btnSetSuper").on("click", function(e) {
         }
     });
 });
+
+$(".mainModal #InfoSearch #btnChangeTrainId").on("click", function(e) {
+    selfAjax("post", "/admin/AdminEnrollTrain/ChangeTrainId", {}, function(data) {
+        if (data && data.sucess) {
+            showAlert("修改成功！");
+        }
+    });
+});
+
+$(".mainModal #InfoSearch #btnRemoveSession").on("click", function(e) {
+    selfAjax("post", "/admin/session/removeAll", {}, function(data) {
+        if (data && data.sucess) {
+            showAlert("移除成功！");
+        }
+    });
+});

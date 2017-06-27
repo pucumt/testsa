@@ -1,12 +1,13 @@
 var crypto = require('crypto');
 var mongoose = require('./db');
-var db = mongoose.connection;
+var db = mongoose.connection,
+    ObjectId = mongoose.Schema.Types.ObjectId;
 
 var adminEnrollTrainSchema = new mongoose.Schema({
     studentId: String,
     studentName: String,
     mobile: String, //useless
-    trainId: String,
+    trainId: ObjectId,
     trainName: String,
     trainPrice: { type: Number, default: 0 },
     materialPrice: { type: Number, default: 0 },
@@ -340,4 +341,12 @@ AdminEnrollTrain.getStudent5OrderMore = function(filter) {
             count: { $sum: 1 }
         })
         .exec();
+};
+
+AdminEnrollTrain.changeTrainId = function(order) {
+    return adminEnrollTrainModel.update({
+        _id: order._id
+    }, {
+        trainId: order.trainId
+    }).exec();
 };

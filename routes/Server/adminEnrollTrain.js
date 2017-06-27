@@ -650,4 +650,19 @@ module.exports = function(app) {
                 }
             });
     });
+
+    app.post('/admin/AdminEnrollTrain/ChangeTrainId', checkLogin);
+    app.post('/admin/AdminEnrollTrain/ChangeTrainId', function(req, res) {
+        AdminEnrollTrain.getFilters({})
+            .then(function(orders) {
+                var pArray = [];
+                orders.forEach(function(order) {
+                    pArray.push(AdminEnrollTrain.changeTrainId(order));
+                });
+
+                Promise.all(pArray).then(function() {
+                    res.jsonp({ sucess: true });
+                });
+            });
+    });
 }

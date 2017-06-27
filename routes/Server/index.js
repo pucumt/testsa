@@ -28,6 +28,7 @@
     uploadFile = require('./uploadFile.js'),
 
     schoolReport = require('./schoolReport.js'),
+    session = require('./session.js'),
 
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -77,4 +78,5 @@ module.exports = function(app) {
 
     //finatial
     schoolReport(app);
+    session(app);
 };
