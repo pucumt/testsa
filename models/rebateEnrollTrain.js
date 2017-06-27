@@ -1,9 +1,10 @@
 var crypto = require('crypto');
 var mongoose = require('./db');
-var db = mongoose.connection;
+var db = mongoose.connection,
+    ObjectId = mongoose.Schema.Types.ObjectId;
 
 var rebateEnrollTrainSchema = new mongoose.Schema({
-    trainOrderId: String,
+    trainOrderId: ObjectId,
     originalPrice: Number, //原来价格
     originalMaterialPrice: Number, //原来教材费价格
     rebatePrice: Number, //退费
@@ -94,5 +95,47 @@ RebateEnrollTrain.getFilters = function(filter) {
         filter = { isDeleted: { $ne: true } };
     }
     return rebateEnrollTrainModel.find(filter)
+        .exec();
+};
+
+RebateEnrollTrain.changeTrainId = function(order) {
+    return rebateEnrollTrainModel.update({
+        _id: order._id
+    }, {
+        trainOrderId: order.trainOrderId
+    }).exec();
+};
+
+RebateEnrollTrain.getRebateReportList = function(yearId, startDate, endDate, schoolId) {
+    ///TBD
+    return rebateEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                createDate: { $gte: (new Date(startDate)), $lte: (new Date(endDate)) }
+            }
+        })
+        .lookup({
+            from: "adminEnrollTrains",
+            localField: "trainOrderId",
+            foreignField: "_id",
+            as: "orders"
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "orders.trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        });
+
+    if (schoolId) {
+        aggQuery = aggQuery.match({
+            "trainClasss.schoolId": schoolId
+        });
+    }
+    return aggQuery.group({
+            _id: "$payWay",
+            trainPrice: { $sum: "$totalPrice" },
+            materialPrice: { $sum: "$realMaterialPrice" }
+        })
         .exec();
 };

@@ -653,16 +653,28 @@ module.exports = function(app) {
 
     app.post('/admin/AdminEnrollTrain/ChangeTrainId', checkLogin);
     app.post('/admin/AdminEnrollTrain/ChangeTrainId', function(req, res) {
-        AdminEnrollTrain.getFilters({})
+        var p0 = AdminEnrollTrain.getFilters({})
             .then(function(orders) {
                 var pArray = [];
                 orders.forEach(function(order) {
                     pArray.push(AdminEnrollTrain.changeTrainId(order));
                 });
 
-                Promise.all(pArray).then(function() {
-                    res.jsonp({ sucess: true });
-                });
+                return Promise.all(pArray);
             });
+
+        var p1 = RebateEnrollTrain.getFilters({})
+            .then(function(orders) {
+                var pArray = [];
+                orders.forEach(function(order) {
+                    pArray.push(RebateEnrollTrain.changeTrainId(order));
+                });
+
+                return Promise.all(pArray);
+            });
+
+        Promise.all([p0, p1]).then(function() {
+            res.jsonp({ sucess: true });
+        });
     });
 }

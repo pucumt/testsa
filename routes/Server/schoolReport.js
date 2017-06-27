@@ -58,108 +58,59 @@ module.exports = function(app) {
     app.post('/admin/schoolReportList/search', checkLogin);
     app.post('/admin/schoolReportList/search', function(req, res) {
         var list = [];
-        SchoolArea.getFilters({}).then(function(schools) {
-            var pArray = [];
-            schools.forEach(function(school) {
-                var p = TrainClass.getFilters({ schoolId: school._id })
-                    .then(function(trainClasses) {
-                        if (trainClasses && trainClasses.length > 0) {
-                            var classIds = trainClasses.map(function(singleClass) {
-                                return singleClass._id;
-                            });
-                            return AdminEnrollTrain.getFilters({
-                                trainId: { $in: classIds },
-                                orderDate: { $lte: req.body.endDate },
-                                orderDate: { $gte: req.body.startDate },
-                                isSucceed: 1,
-                                isPayed: true
-                            }).then(function(orders) {
-                                var trainPrice = 0,
-                                    materialPrice = 0;
-                                orders.forEach(function(order) {
-                                    trainPrice = trainPrice + order.totalPrice;
-                                    materialPrice = materialPrice + order.realMaterialPrice;
-                                });
-
-                                list.push({
-                                    _id: school._id,
-                                    name: school.name,
-                                    trainPrice: trainPrice.toFixed(2),
-                                    materialPrice: materialPrice.toFixed(2),
-                                    totalPrice: (trainPrice + materialPrice).toFixed(2)
-                                });
-                            });
-                        } else {
-                            list.push({ _id: school._id, name: school.name, trainPrice: 0, materialPrice: 0, totalPrice: 0 });
-                        }
+        AdminEnrollTrain.getSchoolReportList(global.currentYear._id, req.body.startDate, req.body.endDate)
+            .then(function(orders) {
+                orders.forEach(function(order) {
+                    list.push({
+                        _id: order._id.schoolId,
+                        name: order._id.schoolArea,
+                        trainPrice: order.trainPrice.toFixed(2),
+                        materialPrice: order.materialPrice.toFixed(2),
+                        totalPrice: (order.trainPrice + order.materialPrice).toFixed(2)
                     });
-                pArray.push(p);
+                });
+                res.json(list.sort(function(a, b) {
+                    return a.name < b.name;
+                }));
             });
-            Promise.all(pArray).then(function() {
-                res.json(list);
-            });
-        });
     });
 
     app.post('/admin/payWayReportList/search', checkLogin);
     app.post('/admin/payWayReportList/search', function(req, res) {
-        var list = [],
-            pArray = [],
-            payWays = [
-                { name: "现金", value: 0 },
-                { name: "刷卡", value: 1 },
-                { name: "转账", value: 2 },
-                { name: "支付宝扫码", value: 8 },
-                { name: "微信扫码", value: 9 },
-                { name: "在线支付", value: 6 }
-            ];
-        payWays.forEach(function(payWay) {
-            var pPromise;
-            if (req.body.schoolId) {
-                pPromise = TrainClass.getFilters({
-                    yearId: global.currentYear._id,
-                    schoolId: req.body.schoolId
-                });
-            } else {
-                pPromise = Promise.resolve();
+        var list = [];
+
+        function getPayWay(way) {
+            switch (way) {
+                case 0:
+                    return "现金";
+                case 1:
+                    return "刷卡";
+                case 2:
+                    return "转账";
+                case 8:
+                    return "支付宝扫码";
+                case 9:
+                    return "微信扫码";
+                case 6:
+                    return "在线支付";
+                default:
+                    return "No payWay";
             }
-            var p0 = pPromise.then(function(trainClasses) {
-                var filter = {
-                    orderDate: { $lte: req.body.endDate },
-                    orderDate: { $gte: req.body.startDate },
-                    isSucceed: 1,
-                    isPayed: true,
-                    payWay: payWay.value
-                };
-                if (trainClasses && trainClasses.length > 0) {
-                    var ids = trainClasses.map(function(trainClass) {
-                        return trainClass._id;
+        }
+        AdminEnrollTrain.getPayWayReportList(global.currentYear._id, req.body.startDate, req.body.endDate, req.body.schoolId)
+            .then(function(orders) {
+                orders.forEach(function(order) {
+                    list.push({
+                        name: getPayWay(order._id),
+                        trainPrice: order.trainPrice.toFixed(2),
+                        materialPrice: order.materialPrice.toFixed(2),
+                        totalPrice: (order.trainPrice + order.materialPrice).toFixed(2)
                     });
-                    filter.trainId = { $in: ids };
-                }
-                return AdminEnrollTrain.getFilters(filter)
-                    .then(function(orders) {
-                        var trainPrice = 0,
-                            materialPrice = 0;
-                        orders.forEach(function(order) {
-                            trainPrice = trainPrice + order.trainPrice;
-                            materialPrice = materialPrice + order.materialPrice;
-                        });
-                        list.push({
-                            name: payWay.name,
-                            trainPrice: trainPrice.toFixed(2),
-                            materialPrice: materialPrice.toFixed(2),
-                            totalPrice: (trainPrice + materialPrice).toFixed(2)
-                        });
-                    });
+                });
+                res.json(list.sort(function(a, b) {
+                    return a.name < b.name;
+                }));
             });
-            pArray.push(p0);
-        });
-        Promise.all(pArray).then(function() {
-            res.json(list.sort(function(a, b) {
-                return a.name < b.name;
-            }));
-        });
     });
 
     app.post('/admin/rebateReportList/search', checkLogin);

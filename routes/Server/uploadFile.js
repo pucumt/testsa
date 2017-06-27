@@ -1113,50 +1113,39 @@ module.exports = function(app) {
         var data = [
             ['学生', '电话', '课程', '培训费', '教材费', '课程', '培训费', '教材费', '课程', '培训费', '教材费']
         ];
-        return TrainClass.getFilters({
-                yearId: global.currentYear._id,
-                gradeId: req.body.gradeId
-            })
-            .then(function(newClasses) {
-                if (newClasses.length > 0) {
-                    var ids = newClasses.map(function(newClass) {
-                        return newClass._id.toString();
-                    });
-                    AdminEnrollTrain.get3ordersOfPeople(ids)
-                        .then(function(people) {
-                            var pArray = [];
-                            people.forEach(function(person) {
-                                var p = StudentInfo.get(person._id.studentId)
-                                    .then(function(student) {
-                                        var singleInfo
-                                        if (student) {
-                                            singleInfo = [student.name, student.mobile];
-                                        } else {
-                                            singleInfo = [person._id.studentId, ""];
-                                        }
-                                        data.push(singleInfo);
-                                        return AdminEnrollTrain.getFilters({
-                                            studentId: person._id.studentId,
-                                            yearId: global.currentYear._id,
-                                            isSucceed: 1
-                                        }).then(function(orders) {
-                                            orders.forEach(function(order) {
-                                                singleInfo.push(order.trainName);
-                                                singleInfo.push(order.totalPrice);
-                                                singleInfo.push(order.realMaterialPrice);
-                                            })
-                                        });
-                                    });
-                                pArray.push(p);
-                            });
-                            Promise.all(pArray).then(function() {
-                                var buffer = xlsx.build([{ name: "报名情况", data: data }]),
-                                    fileName = '小升初3门报名情况' + '.xlsx';
-                                fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
-                                res.jsonp({ sucess: true });
+        return AdminEnrollTrain.get3ordersOfPeople(global.currentYear._id, req.body.gradeId)
+            .then(function(people) {
+                var pArray = [];
+                people.forEach(function(person) {
+                    var p = StudentInfo.get(person._id.studentId)
+                        .then(function(student) {
+                            var singleInfo
+                            if (student) {
+                                singleInfo = [student.name, student.mobile];
+                            } else {
+                                singleInfo = [person._id.studentId, ""];
+                            }
+                            data.push(singleInfo);
+                            return AdminEnrollTrain.getFilters({
+                                studentId: person._id.studentId,
+                                yearId: global.currentYear._id,
+                                isSucceed: 1
+                            }).then(function(orders) {
+                                orders.forEach(function(order) {
+                                    singleInfo.push(order.trainName);
+                                    singleInfo.push(order.totalPrice);
+                                    singleInfo.push(order.realMaterialPrice);
+                                })
                             });
                         });
-                }
+                    pArray.push(p);
+                });
+                Promise.all(pArray).then(function() {
+                    var buffer = xlsx.build([{ name: "报名情况", data: data }]),
+                        fileName = '小升初3门报名情况' + '.xlsx';
+                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    res.jsonp({ sucess: true });
+                });
             });
     });
 

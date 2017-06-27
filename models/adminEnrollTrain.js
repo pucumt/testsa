@@ -240,13 +240,22 @@ AdminEnrollTrain.changePayway = function(id, payWay) {
     }).exec();
 };
 
-AdminEnrollTrain.get3ordersOfPeople = function(ids) {
+AdminEnrollTrain.get3ordersOfPeople = function(yearId, gradeId) {
     return adminEnrollTrainModel.aggregate({
             $match: {
                 isDeleted: { $ne: true },
-                trainId: { $in: ids },
-                isSucceed: 1
+                isSucceed: 1,
+                yearId: yearId.toJSON()
             }
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        })
+        .match({
+            "trainClasss.gradeId": gradeId
         })
         .group({
             _id: {
@@ -349,4 +358,59 @@ AdminEnrollTrain.changeTrainId = function(order) {
     }, {
         trainId: order.trainId
     }).exec();
+};
+
+AdminEnrollTrain.getSchoolReportList = function(yearId, startDate, endDate) {
+    return adminEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                isSucceed: 1,
+                yearId: yearId.toJSON(),
+                orderDate: { $gte: (new Date(startDate)), $lte: (new Date(endDate)) } //, $gte: startDate //$gte: (new Date(startDate)) //$lte: (new Date(endDate))
+            }
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        })
+        .group({
+            _id: {
+                schoolId: "$trainClasss.schoolId",
+                schoolArea: "$trainClasss.schoolArea"
+            },
+            trainPrice: { $sum: "$totalPrice" },
+            materialPrice: { $sum: "$realMaterialPrice" }
+        })
+        .exec();
+};
+
+
+AdminEnrollTrain.getPayWayReportList = function(yearId, startDate, endDate, schoolId) {
+    var aggQuery = adminEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                isSucceed: 1,
+                yearId: yearId.toJSON(),
+                orderDate: { $gte: (new Date(startDate)), $lte: (new Date(endDate)) }
+            }
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        });
+    if (schoolId) {
+        aggQuery = aggQuery.match({
+            "trainClasss.schoolId": schoolId
+        });
+    }
+    return aggQuery.group({
+            _id: "$payWay",
+            trainPrice: { $sum: "$totalPrice" },
+            materialPrice: { $sum: "$realMaterialPrice" }
+        })
+        .exec();
 };
