@@ -471,3 +471,12 @@ AdminEnrollTrain.getFiltersWithClass = function(yearId) {
         })
         .exec();
 };
+
+// return qry.out("temps").exec().then(function() {
+//         return mongoose.model('temp', new mongoose.Schema({
+//             studentId: String,
+//             studentName: String
+//         }, {
+//             collection: 'temps'
+//         })).find();
+//     });
