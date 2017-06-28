@@ -118,11 +118,11 @@ $("#editfile #btnCheckStudent").on("click", function(e) {
 $("#editfile #btnExportScore").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {
-        $.post("/admin/export/scoreTemplate", {
+        selfAjax("post", "/admin/export/scoreTemplate", {
             examId: $("#editfile #examId").val(),
             exam: $("#editfile #examName").val(),
             subject: $("#editfile #subject").find("option:selected").text()
-        }).then(function(data) {
+        }, function(data) {
             if (data && data.sucess) {
                 var fileName = $("#editfile #examName").val().substr(0, 19) + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
@@ -134,11 +134,11 @@ $("#editfile #btnExportScore").on("click", function(e) {
 $("#editfile #btnExportSchool").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {
-        $.post("/admin/export/scoreSchoolTemplate", {
+        selfAjax("post", "/admin/export/scoreSchoolTemplate", {
             examId: $("#editfile #examId").val(),
             exam: $("#editfile #examName").val(),
             subject: $("#editfile #subject").find("option:selected").text()
-        }).then(function(data) {
+        }, function(data) {
             if (data && data.sucess) {
                 var fileName = $("#editfile #examName").val().substr(0, 19) + '_' + $("#editfile #subject").find("option:selected").text() + '.xlsx';
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
@@ -150,11 +150,11 @@ $("#editfile #btnExportSchool").on("click", function(e) {
 $("#editfile #btnExportReport").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {
-        $.post("/admin/export/reportTemplate", {
+        selfAjax("post", "/admin/export/reportTemplate", {
             examId: $("#editfile #examId").val(),
             exam: $("#editfile #examName").val(),
             subject: $("#editfile #subject").find("option:selected").text()
-        }).then(function(data) {
+        }, function(data) {
             if (data && data.sucess) {
                 var fileName = $("#editfile #examId").val() + '.zip';
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI(fileName);
@@ -191,7 +191,7 @@ $("#editfile #btnExportClass3").on("click", function(e) {
 });
 
 $("#editfile #btnExportClass5").on("click", function(e) {
-    $.post("/admin/export/classTemplate5").then(function(data) {
+    selfAjax("post", "/admin/export/classTemplate5", {}, function(data) {
         if (data && data.sucess) {
             location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况5.xlsx");
         }
@@ -199,7 +199,7 @@ $("#editfile #btnExportClass5").on("click", function(e) {
 });
 
 $("#editfile #btnExportClass6").on("click", function(e) {
-    $.post("/admin/export/classTemplate6").then(function(data) {
+    selfAjax("post", "/admin/export/classTemplate6", {}, function(data) {
         if (data && data.sucess) {
             location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况6.xlsx");
         }

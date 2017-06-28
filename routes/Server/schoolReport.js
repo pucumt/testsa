@@ -234,42 +234,19 @@ module.exports = function(app) {
                                                 var studentIds = orders.map(function(order) {
                                                     return order.studentId;
                                                 });
-                                                return TrainClass.getFilters({
-                                                        yearId: global.currentYear._id,
-                                                        subjectId: trainClass.subjectId
-                                                    })
-                                                    .then(function(newClasses) {
-                                                        if (newClasses && newClasses.length > 0) {
-                                                            var newClassIds = newClasses.map(function(newClass) {
-                                                                return newClass._id;
-                                                            });
-                                                            return AdminEnrollTrain.getCount({
-                                                                    trainId: { $in: newClassIds },
-                                                                    studentId: { $in: studentIds },
-                                                                    yearId: global.currentYear._id,
-                                                                    isSucceed: 1
-                                                                })
-                                                                .then(function(count) {
-                                                                    list.push({
-                                                                        _id: trainClass._id,
-                                                                        name: trainClass.name,
-                                                                        gradeName: trainClass.gradeName,
-                                                                        teacherName: trainClass.teacherName,
-                                                                        originalCount: orders.length,
-                                                                        enrollCount: count,
-                                                                        enrollRatio: (orders.length > 0 ? (count * 100 / orders.length).toFixed(2) : 0)
-                                                                    });
-                                                                });
-                                                        } else {
-                                                            list.push({
-                                                                _id: trainClass._id,
-                                                                name: trainClass.name,
-                                                                teacherName: "没找到对应新课程",
-                                                                originalCount: 0,
-                                                                enrollCount: 0,
-                                                                enrollRatio: 0
-                                                            });
-                                                        }
+
+                                                return AdminEnrollTrain.getCountOfStudentSubject(global.currentYear._id, trainClass.subjectId, studentIds)
+                                                    .then(function(result) {
+                                                        var count = (result[0] && result[0].count) || 0;
+                                                        list.push({
+                                                            _id: trainClass._id,
+                                                            name: trainClass.name,
+                                                            gradeName: trainClass.gradeName,
+                                                            teacherName: trainClass.teacherName,
+                                                            originalCount: orders.length,
+                                                            enrollCount: count,
+                                                            enrollRatio: (orders.length > 0 ? (count * 100 / orders.length).toFixed(2) : 0)
+                                                        });
                                                     });
                                             } else {
                                                 list.push({
@@ -312,100 +289,16 @@ module.exports = function(app) {
 
     app.post('/admin/enrollAggregateList/search', checkLogin);
     app.post('/admin/enrollAggregateList/search', function(req, res) {
-        var list = [],
-            filter = {
-                yearId: global.currentYear._id
-            };
-        if (req.body.gradeId) {
-            filter.gradeId = req.body.gradeId;
-        }
-        if (req.body.schoolId) {
-            filter.schoolId = req.body.schoolId;
-        }
+        var list = [];
+        AdminEnrollTrain.getOrderCount(global.currentYear._id, req.body.gradeId, req.body.schoolId)
+            .then(function(result) {
+                list.push({ name: "总订单", value: result.totalCount || 0 });
+                list.push({ name: "下单总人数", value: result.peopleCount || 0 });
+                list.push({ name: "连报2门", value: result.twoOrderCount || 0 });
+                list.push({ name: "连报3门", value: result.threeOrderCount || 0 });
+                list.push({ name: "连报4门及以上", value: result.fourOrMoreCount || 0 });
 
-        TrainClass.getFilters(filter)
-            .then(function(trainClasses) {
-                var pArray = [];
-                if (trainClasses && trainClasses.length > 0) {
-                    var ids = trainClasses.map(function(trainClass) {
-                        return trainClass._id.toJSON();
-                    });
-
-                    var p0 = AdminEnrollTrain.getOrderCount({
-                            trainId: { $in: ids },
-                            yearId: global.currentYear._id,
-                            isSucceed: 1
-                        })
-                        .then(function(count) {
-                            list.push({ name: "总订单", value: count });
-                        });
-                    pArray.push(p0);
-
-                    var p1 = AdminEnrollTrain.getStudentwithOrderCount({
-                            trainId: { $in: ids },
-                            yearId: global.currentYear._id.toJSON(),
-                            isSucceed: 1
-                        })
-                        .then(function(aggs) {
-                            if (aggs && aggs.length > 0) {
-                                list.push({ name: "下单总人数", value: aggs[0].count });
-                            }
-                        });
-                    pArray.push(p1);
-
-                    var p2 = AdminEnrollTrain.getStudent2OrderMore({
-                            trainId: { $in: ids },
-                            yearId: global.currentYear._id.toJSON(),
-                            isSucceed: 1
-                        })
-                        .then(function(aggs) {
-                            if (aggs && aggs.length > 0) {
-                                list.push({ name: "连报2门以上", value: aggs[0].count });
-                            }
-                        });
-                    pArray.push(p2);
-
-                    var p3 = AdminEnrollTrain.getStudent3OrderMore({
-                            trainId: { $in: ids },
-                            yearId: global.currentYear._id.toJSON(),
-                            isSucceed: 1
-                        })
-                        .then(function(aggs) {
-                            if (aggs && aggs.length > 0) {
-                                list.push({ name: "连报3门以上", value: aggs[0].count });
-                            }
-                        });
-                    pArray.push(p3);
-
-                    var p4 = AdminEnrollTrain.getStudent4OrderMore({
-                            trainId: { $in: ids },
-                            yearId: global.currentYear._id.toJSON(),
-                            isSucceed: 1
-                        })
-                        .then(function(aggs) {
-                            if (aggs && aggs.length > 0) {
-                                list.push({ name: "连报4门以上", value: aggs[0].count });
-                            }
-                        });
-                    pArray.push(p4);
-
-                    var p5 = AdminEnrollTrain.getStudent5OrderMore({
-                            trainId: { $in: ids },
-                            yearId: global.currentYear._id.toJSON(),
-                            isSucceed: 1
-                        })
-                        .then(function(aggs) {
-                            if (aggs && aggs.length > 0) {
-                                list.push({ name: "连报5门以上", value: aggs[0].count });
-                            }
-                        });
-                    pArray.push(p5);
-                }
-                Promise.all(pArray).then(function() {
-                    res.json(list.sort(function(a, b) {
-                        return a.name > b.name;
-                    }));
-                });
+                res.json(list);
             });
     });
 }

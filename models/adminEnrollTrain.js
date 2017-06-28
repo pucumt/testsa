@@ -268,63 +268,87 @@ AdminEnrollTrain.get3ordersOfPeople = function(yearId, gradeId) {
         .exec();
 };
 
-AdminEnrollTrain.getOrderCount = function(filter) {
-    return adminEnrollTrainModel.count(filter)
-        .exec();
+function getAggQuery(yearId, gradeId, schoolId) {
+    var aggQuery = adminEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                isSucceed: 1,
+                yearId: yearId.toJSON()
+            }
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        });
+
+    var filter = {};
+    if (gradeId) {
+        filter["trainClasss.gradeId"] = gradeId;
+    }
+    if (schoolId) {
+        filter["trainClasss.schoolId"] = schoolId;
+    }
+    return aggQuery.match(filter);
 };
 
-AdminEnrollTrain.getStudentwithOrderCount = function(filter) {
-    return adminEnrollTrainModel.aggregate({
-            $match: filter
+AdminEnrollTrain.getOrderCount = function(yearId, gradeId, schoolId) {
+    var result = {},
+        pArray = [];
+
+    var p0 = getAggQuery(yearId, gradeId, schoolId).group({
+            _id: null,
+            count: { $sum: 1 }
+        }).exec()
+        .then(function(obj) {
+            result.totalCount = obj[0] && obj[0].count;
+        });
+    pArray.push(p0);
+
+    var p1 = getAggQuery(yearId, gradeId, schoolId).group({
+            _id: "$studentId"
+        }).group({
+            _id: null,
+            count: { $sum: 1 }
         })
-        .group({
+        .exec()
+        .then(function(obj) {
+            result.peopleCount = obj[0] && obj[0].count;
+        });
+    pArray.push(p1);
+
+    var p2 = getAggQuery(yearId, gradeId, schoolId).group({
             _id: "$studentId",
             count: { $sum: 1 }
         })
+        .match({ count: 2 })
         .group({
             _id: null,
             count: { $sum: 1 }
         })
-        .exec();
-};
+        .exec()
+        .then(function(obj) {
+            result.twoOrderCount = obj[0] && obj[0].count;
+        });
+    pArray.push(p2);
 
-AdminEnrollTrain.getStudent2OrderMore = function(filter) {
-    return adminEnrollTrainModel.aggregate({
-            $match: filter
-        })
-        .group({
+    var p3 = getAggQuery(yearId, gradeId, schoolId).group({
             _id: "$studentId",
             count: { $sum: 1 }
         })
-        .match({ count: { $gt: 1 } })
+        .match({ count: 3 })
         .group({
             _id: null,
             count: { $sum: 1 }
         })
-        .exec();
-};
+        .exec()
+        .then(function(obj) {
+            result.threeOrderCount = obj[0] && obj[0].count;
+        });
+    pArray.push(p3);
 
-AdminEnrollTrain.getStudent3OrderMore = function(filter) {
-    return adminEnrollTrainModel.aggregate({
-            $match: filter
-        })
-        .group({
-            _id: "$studentId",
-            count: { $sum: 1 }
-        })
-        .match({ count: { $gt: 2 } })
-        .group({
-            _id: null,
-            count: { $sum: 1 }
-        })
-        .exec();
-};
-
-AdminEnrollTrain.getStudent4OrderMore = function(filter) {
-    return adminEnrollTrainModel.aggregate({
-            $match: filter
-        })
-        .group({
+    var p4 = getAggQuery(yearId, gradeId, schoolId).group({
             _id: "$studentId",
             count: { $sum: 1 }
         })
@@ -333,23 +357,15 @@ AdminEnrollTrain.getStudent4OrderMore = function(filter) {
             _id: null,
             count: { $sum: 1 }
         })
-        .exec();
-};
+        .exec()
+        .then(function(obj) {
+            result.fourOrMoreCount = obj[0] && obj[0].count;
+        });
+    pArray.push(p4);
 
-AdminEnrollTrain.getStudent5OrderMore = function(filter) {
-    return adminEnrollTrainModel.aggregate({
-            $match: filter
-        })
-        .group({
-            _id: "$studentId",
-            count: { $sum: 1 }
-        })
-        .match({ count: { $gt: 4 } })
-        .group({
-            _id: null,
-            count: { $sum: 1 }
-        })
-        .exec();
+    return Promise.all(pArray).then(function() {
+        return result;
+    });
 };
 
 AdminEnrollTrain.changeTrainId = function(order) {
@@ -411,6 +427,47 @@ AdminEnrollTrain.getPayWayReportList = function(yearId, startDate, endDate, scho
             _id: "$payWay",
             trainPrice: { $sum: "$totalPrice" },
             materialPrice: { $sum: "$realMaterialPrice" }
+        })
+        .exec();
+};
+
+AdminEnrollTrain.getCountOfStudentSubject = function(yearId, subjectId, studentIds) {
+    return adminEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                isSucceed: 1,
+                yearId: yearId.toJSON(),
+                studentId: { $in: studentIds }
+            }
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        })
+        .match({ "trainClasss.subjectId": subjectId })
+        .group({
+            _id: null,
+            count: { $sum: 1 },
+        })
+        .exec();
+};
+
+AdminEnrollTrain.getFiltersWithClass = function(yearId) {
+    return adminEnrollTrainModel.aggregate({
+            $match: {
+                isDeleted: { $ne: true },
+                isSucceed: 1,
+                yearId: yearId.toJSON(),
+                isPayed: true
+            }
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
         })
         .exec();
 };

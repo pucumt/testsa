@@ -924,37 +924,28 @@ module.exports = function(app) {
         var data = [
             ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
         ];
-        var p = AdminEnrollTrain.getFilters({
-            yearId: global.currentYear._id,
-            isSucceed: 1,
-            isPayed: true
-        }).then(function(orders) {
-            if (orders.length > 0) {
-                var PArray = [];
-                orders.forEach(function(order) {
-                    var Px = StudentInfo.get(order.studentId).then(function(student) {
-                        if (student) {
-                            return TrainClass.get(order.trainId)
-                                .then(function(newClass) {
-                                    if (newClass) {
-                                        return getOrderPayway(order)
-                                            .then(function(way) {
-                                                var singleInfo = [student.name, student.mobile, student.School, student.className, (student.sex ? "女" : "男"), order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.courseTime, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
-                                                data.push(singleInfo);
-                                            });
-                                    } else {
-                                        data.push([order.studentId, order._id, "", "", "", order.orderDate, order.trainId, "", "", "", order.totalPrice, order.realMaterialPrice, order.rebatePrice, order.payWay, order.comment]);
-                                    }
-                                });
-                        } else {
-                            data.push([order.studentId, order._id, order.orderDate, order.trainId]);
-                        }
+        var p = AdminEnrollTrain.getFiltersWithClass(global.currentYear._id)
+            .then(function(orders) {
+                if (orders.length > 0) {
+                    var PArray = [];
+                    orders.forEach(function(order) {
+                        var Px = StudentInfo.get(order.studentId).then(function(student) {
+                            if (student) {
+                                return getOrderPayway(order)
+                                    .then(function(way) {
+                                        var newClass = order.trainClasss[0] || {};
+                                        var singleInfo = [student.name, student.mobile, student.School, student.className, (student.sex ? "女" : "男"), order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.courseTime, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
+                                        data.push(singleInfo);
+                                    });
+                            } else {
+                                data.push([order.studentId, order._id, order.orderDate, order.trainId]);
+                            }
+                        });
+                        PArray.push(Px);
                     });
-                    PArray.push(Px);
-                });
-                return Promise.all(PArray);
-            }
-        });
+                    return Promise.all(PArray);
+                }
+            });
         p.then(function() {
             var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                 fileName = '报名情况5' + '.xlsx';
