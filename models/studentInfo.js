@@ -155,5 +155,5 @@ StudentInfo.deleteUser = function(id) {
 
 StudentInfo.updateUserInfo = function(filter, option) {
     //打开数据库
-    return studentInfoModel.update(filter, option).exec();
+    return studentInfoModel.update(filter, option, { multi: true }).exec();
 };

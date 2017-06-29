@@ -434,3 +434,7 @@ footer,
     top: 50px;
     padding-bottom: 40px;
 }
+
+.rollCall ul li .checkbox {
+    margin: 0;
+}

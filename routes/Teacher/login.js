@@ -1,5 +1,5 @@
 var crypto = require('crypto'),
-    StudentAccount = require('../../models/studentAccount.js'),
+    Teacher = require('../../models/teacher.js'),
     auth = require("./auth"),
     checkNotLogin = auth.checkNotLogin;
 
@@ -8,7 +8,7 @@ module.exports = function(app) {
     app.get('/Teacher/login', function(req, res) {
         res.render('Teacher/login.html', {
             title: '登录',
-            user: req.session.user
+            user: req.session.teacher
         });
     });
 
@@ -19,7 +19,7 @@ module.exports = function(app) {
         var md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         //检查用户是否存在
-        StudentAccount.getFilter({ name: req.body.name })
+        Teacher.getFilter({ mobile: req.body.name })
             .then(function(user) {
                 if (!user) {
                     return res.redirect('/Teacher/login'); //用户不存在则跳转到登录页
@@ -29,8 +29,8 @@ module.exports = function(app) {
                     return res.redirect('/Teacher/login'); //密码错误则跳转到登录页
                 }
                 //用户名密码都匹配后，将用户信息存入 session
-                req.session.user = user;
-                res.redirect(req.session.originalUrl ? req.session.originalUrl : '/'); //登陆成功后跳转到主页
+                req.session.teacher = user;
+                res.redirect(req.session.originalUrl ? req.session.originalUrl : '/Teacher/rollCallClasses'); //登陆成功后跳转到主页
             });
     });
 }

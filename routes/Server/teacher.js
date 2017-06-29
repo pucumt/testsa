@@ -1,5 +1,6 @@
 var Teacher = require('../../models/teacher.js'),
     auth = require("./auth"),
+    crypto = require('crypto'),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
@@ -26,10 +27,12 @@ module.exports = function(app) {
 
     app.post('/admin/teacher/add', checkLogin);
     app.post('/admin/teacher/add', function(req, res) {
+        var md5 = crypto.createHash('md5');
         var teacher = new Teacher({
             name: req.body.name,
             mobile: req.body.mobile,
-            address: req.body.address
+            address: req.body.address,
+            password: md5.update("111111").digest('hex')
         });
 
         teacher.save(function(err, teacher) {

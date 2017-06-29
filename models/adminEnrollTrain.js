@@ -229,7 +229,7 @@ AdminEnrollTrain.updateyear = function(id, option) {
 
 AdminEnrollTrain.updateUserInfo = function(filter, option) {
     //打开数据库
-    return adminEnrollTrainModel.update(filter, option).exec();
+    return adminEnrollTrainModel.update(filter, option, { multi: true }).exec();
 };
 
 AdminEnrollTrain.changePayway = function(id, payWay) {

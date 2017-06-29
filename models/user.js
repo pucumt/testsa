@@ -1,14 +1,17 @@
 var crypto = require('crypto');
 var mongoose = require('./db');
-var db = mongoose.connection;
+var db = mongoose.connection,
+    ObjectId = mongoose.Schema.Types.ObjectId;
 
 var userSchema = new mongoose.Schema({
     name: String,
     password: String,
     email: String,
     mobile: String,
-    role: Number, //0 superAdmin, 3 schoolAdmin, 5 teacher, 7 team leader
-    isDeleted: Boolean
+    role: Number, //0 superAdmin, 3 schoolAdmin
+    isDeleted: Boolean,
+    schoolId: ObjectId,
+    schoolArea: String
 }, {
     collection: 'users'
 });

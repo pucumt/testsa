@@ -5,6 +5,7 @@ var db = mongoose.connection;
 var absentStudentsSchema = new mongoose.Schema({
     studentId: String,
     studentName: String,
+    mobile: String,
     absentDate: { type: Date, default: Date.now }, //缺勤日期
     classId: String,
     className: String, //缺勤课程
@@ -13,7 +14,7 @@ var absentStudentsSchema = new mongoose.Schema({
     schoolId: String,
     schoolName: String, //校区
     comment: String, //缺勤原因
-    isCheck: Number, //是否处理过
+    isCheck: { type: Boolean, default: false }, //是否处理过
     isDeleted: { type: Boolean, default: false }, //缺勤或者点错
     createdDate: { type: Date, default: Date.now } //创建日期
 }, {
@@ -66,10 +67,8 @@ AbsentStudents.getAll = function(id, page, filter, callback) {
 };
 
 //删除一个学区
-AbsentStudents.delete = function(id) {
-    return absentStudentsModel.update({
-        _id: id
-    }, {
+AbsentStudents.delete = function(filter) {
+    return absentStudentsModel.update(filter, {
         isDeleted: true
-    }).exec();
+    }, { multi: true }).exec();
 };

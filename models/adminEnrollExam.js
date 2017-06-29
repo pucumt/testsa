@@ -155,5 +155,5 @@ AdminEnrollExam.getFilters = function(filter) {
 
 AdminEnrollExam.updateUserInfo = function(filter, option) {
     //打开数据库
-    return adminEnrollExamModel.update(filter, option).exec();
+    return adminEnrollExamModel.update(filter, option, { multi: true }).exec();
 };

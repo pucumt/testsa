@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var mongoose = require('./db');
-var db = mongoose.connection;
+var db = mongoose.connection,
+    ObjectId = mongoose.Schema.Types.ObjectId;
 
 var trainClassSchema = new mongoose.Schema({
     name: String,
@@ -17,7 +18,7 @@ var trainClassSchema = new mongoose.Schema({
     totalClassCount: { type: Number, default: 0 }, //共多少课时
     trainPrice: { type: Number, default: 0 },
     materialPrice: { type: Number, default: 0 },
-    teacherId: String,
+    teacherId: ObjectId,
     teacherName: String,
     attributeId: String, //now used to check coupon, maybe change later
     attributeName: String,

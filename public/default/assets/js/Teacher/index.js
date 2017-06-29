@@ -28,20 +28,6 @@ window.showComfirm = function(msg, title, hidecallback) {
 };
 
 $(document).ready(function() {
-    $("#btnExam").on("click", function(e) {
-        location.href = "/enrollExam";
-    });
-    $("#btnClass").on("click", function(e) {
-        location.href = "/enrollClass";
-    });
-    $("#btnPersonal").on("click", function(e) {
-        location.href = "/personalCenter";
-    });
-
-    $("#btnOpenId").on("click", function(e) {
-        location.href = "/openIdGeter";
-    });
-
     $('#confirmModal #btnConfirmSave').on("click", function(e) {
 
     });
@@ -52,16 +38,15 @@ $(document).ready(function() {
 
 });
 
-window.selfAjax = function(method, url, filter, callback) {
+window.selfAjax = function(method, url, filter) {
     loading();
-    $[method](
+    return $[method](
         url,
-        filter,
-        function(data) {
-            callback(data);
-            hideLoading();
-        }
-    );
+        filter
+    ).then(function(data) {
+        hideLoading();
+        return data;
+    });
 };
 
 window.loading = function() {

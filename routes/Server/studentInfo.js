@@ -172,7 +172,9 @@ module.exports = function(app) {
                 });
             });
         } else {
-            filter.gradeId = req.body.gradeId;
+            if (req.body.gradeId) {
+                filter.gradeId = req.body.gradeId;
+            }
             if (req.body.name) {
                 var reg = new RegExp(req.body.name, 'i')
                 filter.name = {

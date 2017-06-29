@@ -28,6 +28,7 @@ function search(p) {
     var filter = {
             gradeId: $(".mainModal #InfoSearch #grade").val(),
             trainId: $(".mainModal #InfoSearch #trainId").val(),
+            name: $(".mainModal #InfoSearch #Name").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();

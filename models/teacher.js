@@ -6,7 +6,9 @@ var teacherSchema = new mongoose.Schema({
     name: String,
     mobile: String,
     address: String,
-    isDeleted: Boolean
+    isDeleted: { type: Boolean, default: false },
+    password: String,
+    role: { type: Number, default: 0 } // 0 teacher, 1 team leader
 }, {
     collection: 'teachers'
 });
@@ -101,4 +103,13 @@ Teacher.getAllWithoutPage = function(filter, callback) {
         .exec(function(err, teachers) {
             callback(null, teachers);
         });
+};
+
+Teacher.getFilter = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return teacherModel.findOne(filter);
 };
