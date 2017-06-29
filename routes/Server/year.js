@@ -73,7 +73,7 @@ module.exports = function(app) {
         });
 
         var p = Promise.resolve();
-        if (req.body.iscurrent) {
+        if (req.body.iscurrent == "true") {
             p = Year.clearCurrentYear();
         }
         p.then(function() {
