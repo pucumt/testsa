@@ -24,8 +24,8 @@ function search(p) {
     $.post("/admin/teacher/search?" + pStr, filter, function(data) {
         if (data && data.teachers.length > 0) {
             data.teachers.forEach(function(teacher) {
-                var $tr = $('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' +
-                    teacher.mobile + '</td><td>' + teacher.address + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                var $tr = $('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' + (teacher.engName || "") + '</td><td>' +
+                    teacher.mobile + '</td><td>' + (teacher.address || "") + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", teacher);
                 $mainSelectBody.append($tr);
             });
@@ -105,9 +105,14 @@ $("#btnAdd").on("click", function(e) {
     $('#myModal #name').removeAttr("disabled");
     $('#myModalLabel').text("新增老师");
     $('#myModal #name').val("");
+    $('#myModal #engName').val("");
     $('#myModal #mobile').val("");
     $('#myModal #address').val("");
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
+});
+
+$("#btnBatchAdd").on("click", function(e) {
+    location.href = "/admin/batchAddTeacher";
 });
 
 $("#btnSave").on("click", function(e) {
@@ -116,6 +121,7 @@ $("#btnSave").on("click", function(e) {
         var postURI = "/admin/teacher/add",
             postObj = {
                 name: $('#myModal #name').val(),
+                engName: $('#myModal #engName').val(),
                 mobile: $('#myModal #mobile').val(),
                 address: $('#myModal #address').val()
             };
@@ -125,19 +131,8 @@ $("#btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
-            if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.mobile + "</td><td>" + data.address +
-                    "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
-            } else {
-                var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
-                var mobile = name.next().text(data.mobile);
-                mobile.next().text(data.address);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
-            }
+            var page = parseInt($("#mainModal #page").val());
+            search(page);
         });
     }
 });
@@ -151,6 +146,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModal #name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改老师");
     $('#myModal #name').val(entity.name);
+    $('#myModal #engName').val(entity.engName);
     $('#myModal #mobile').val(entity.mobile);
     $('#myModal #address').val(entity.address);
     $('#myModal #id').val(entity._id);

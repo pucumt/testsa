@@ -25,20 +25,26 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/batchAddTeacher', checkLogin);
+    app.get('/admin/batchAddTeacher', function(req, res) {
+        res.render('Server/batchAddTeacher.html', {
+            title: '>批量添加老师',
+            user: req.session.admin
+        });
+    });
+
     app.post('/admin/teacher/add', checkLogin);
     app.post('/admin/teacher/add', function(req, res) {
         var md5 = crypto.createHash('md5');
         var teacher = new Teacher({
             name: req.body.name,
+            engName: req.body.engName,
             mobile: req.body.mobile,
             address: req.body.address,
             password: md5.update("111111").digest('hex')
         });
 
-        teacher.save(function(err, teacher) {
-            if (err) {
-                teacher = {};
-            }
+        teacher.save().then(function(teacher) {
             res.jsonp(teacher);
         });
     });
@@ -47,6 +53,7 @@ module.exports = function(app) {
     app.post('/admin/teacher/edit', function(req, res) {
         var teacher = new Teacher({
             name: req.body.name,
+            engName: req.body.engName,
             mobile: req.body.mobile,
             address: req.body.address
         });

@@ -36,8 +36,10 @@ function loadData() {
     selfAjax("post", "/Teacher/rollCall/students", { id: $("#id").val() }).then(function(data) {
         if (data && data.students.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.students.forEach(function(student) {
-                d.append(generateLi(student));
+            data.students.sort(function(a, b) {
+                return a.name.localeCompare(b.name);
+            }).forEach(function(student) {
+                d.append(generateLi(student, data.abStudents));
             });
             $selectBody.append(d);
         } else {
@@ -46,13 +48,16 @@ function loadData() {
     });
 };
 
-function generateLi(student) {
+function generateLi(student, abStudents) {
     var $li = $('<li class="exam-card card" ></li>'),
         $goodContainer = $('<div class="exam link"></div>'),
-        $infoContainer = $('<div class="exam-info"></div>');
+        $infoContainer = $('<div class="exam-info"></div>'),
+        checkStr = (abStudents && abStudents.some(function(abStudent) {
+            return abStudent.studentId == student._id;
+        })) ? "checked" : "";
     $li.data("obj", student);
     $li.append($goodContainer);
     $goodContainer.append($infoContainer);
-    $infoContainer.append($('<div class="checkbox"><label><input class="chkStudent" type="checkbox" value=' + student._id + ' />' + student.name + '(' + student.mobile + ')</label></div>'));
+    $infoContainer.append($('<div class="checkbox"><label><input class="chkStudent" ' + checkStr + ' type="checkbox" value=' + student._id + ' />' + student.name + '(' + student.mobile + ')</label></div>'));
     return $li;
 };

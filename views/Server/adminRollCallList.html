@@ -1,4 +1,4 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/rollCallSetting.html" %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -10,8 +10,17 @@
             <div class="row form-horizontal">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="Name" class="control-label">考场:</label>
-                        <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
+                        <label for="Name" class="control-label">校区:</label>
+                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Name" class="control-label">状态:</label>
+                        <select name="isChecked" id="isChecked" class="form-control">
+                            <option value="0">未处理</option>
+                            <option value="1">已处理</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -25,11 +34,12 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:200px;">校区</th>
-                <th style="width:200px;">课程</th>
+                <th style="width:400px;">课程</th>
+                <th style="width:100px;">老师</th>
                 <th style="width:100px;">学生</th>
                 <th style="width:100px;">电话</th>
-                <th>操作</th>
+                <th style="">备注</th>
+                <th style="width:100px;">操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -52,19 +62,16 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">校区:</label>
-                        <input type="text" maxlength="30" class="form-control" name="name" id="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="address" class="control-label">地址:</label>
-                        <textarea maxlength="100" rows="3" class="form-control" name="address" id="address"></textarea>
+                        <label for="comment" class="control-label">备注:</label>
+                        <textarea maxlength="100" rows="3" class="form-control" name="comment" id="comment"></textarea>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+                <button type="button" id="btnDone" class="btn btn-primary">已处理</button>
+                <button type="button" id="btnBak" class="btn btn-primary">未处理</button>
             </div>
         </div>
     </div>
@@ -88,5 +95,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/absentStudents.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminRollCallList.js?v=1.000"></script>
 {% endblock %}

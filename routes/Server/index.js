@@ -30,6 +30,8 @@
     schoolReport = require('./schoolReport.js'),
     session = require('./session.js'),
 
+    absentStudents = require('./absentStudents.js'),
+
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -79,4 +81,6 @@ module.exports = function(app) {
     //finatial
     schoolReport(app);
     session(app);
+
+    absentStudents(app);
 };

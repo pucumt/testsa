@@ -5,6 +5,7 @@ var db = mongoose.connection;
 var teacherSchema = new mongoose.Schema({
     name: String,
     mobile: String,
+    engName: String,
     address: String,
     isDeleted: { type: Boolean, default: false },
     password: String,
@@ -25,14 +26,7 @@ module.exports = Teacher;
 Teacher.prototype.save = function(callback) {
     var newteacher = new teacherModel(this.option);
 
-    newteacher.save(function(err, teacher) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, teacher);
-
-        //db.close();
-    });
+    return newteacher.save();
 };
 
 Teacher.prototype.update = function(id, callback) {

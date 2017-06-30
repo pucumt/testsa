@@ -17,6 +17,10 @@ $(document).ready(function() {
     $("#header_btnEnrollExam").on("click", function(e) {
         location.href = "/admin/adminEnrollExamList";
     });
+    $("#header_btnRollCall").on("click", function(e) {
+        location.href = "/admin/adminRollCallList";
+    });
+
 });
 
 window.getTrainOrderStatus = function(isSucceed) {

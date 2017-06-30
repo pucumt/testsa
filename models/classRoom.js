@@ -21,17 +21,10 @@ function ClassRoom(option) {
 module.exports = ClassRoom;
 
 //存储学区信息
-ClassRoom.prototype.save = function(callback) {
+ClassRoom.prototype.save = function() {
     var newclassRoom = new classRoomModel(this.option);
 
-    newclassRoom.save(function(err, classRoom) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, classRoom);
-
-        //db.close();
-    });
+    return newclassRoom.save();
 };
 
 ClassRoom.prototype.update = function(id, callback) {
@@ -98,4 +91,15 @@ ClassRoom.getAllWithoutPage = function(filter, callback) {
         .exec(function(err, classRooms) {
             callback(null, classRooms);
         });
+};
+
+//读取学区信息
+ClassRoom.getFilter = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    //打开数据库
+    return classRoomModel.findOne(filter);
 };

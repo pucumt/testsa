@@ -6,7 +6,7 @@ module.exports = function(app) {
     app.get('/admin/classRoomList', checkLogin);
     app.get('/admin/classRoomList', function(req, res) {
         res.render('Server/classRoomList.html', {
-            title: '教室设置',
+            title: '>教室设置',
             user: req.session.admin
         });
     });
@@ -14,7 +14,7 @@ module.exports = function(app) {
     app.get('/admin/batchAddClassRoom', checkLogin);
     app.get('/admin/batchAddClassRoom', function(req, res) {
         res.render('Server/batchAddClassRoom.html', {
-            title: '批量添加教室',
+            title: '>批量添加教室',
             user: req.session.admin
         });
     });
@@ -28,12 +28,10 @@ module.exports = function(app) {
             schoolArea: req.body.schoolArea
         });
 
-        classRoom.save(function(err, classRoom) {
-            if (err) {
-                classRoom = {};
-            }
-            res.jsonp(classRoom);
-        });
+        classRoom.save()
+            .then(function(classRoom) {
+                res.jsonp(classRoom);
+            });
     });
 
     app.post('/admin/classRoom/edit', checkLogin);

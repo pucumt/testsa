@@ -51,10 +51,14 @@ module.exports = function(app) {
                 });
 
                 Promise.all(pArray).then(function() {
-                    res.jsonp({
-                        students: students.sort(function(a, b) {
-                            return a.name.localeCompare(b.name);
-                        })
+                    AbsentStudents.getFilters({
+                        classId: req.body.id,
+                        absentDate: (new Date()).toLocaleDateString()
+                    }).then(function(abStudents) {
+                        res.jsonp({
+                            students: students,
+                            abStudents: abStudents
+                        });
                     });
                 });
             });

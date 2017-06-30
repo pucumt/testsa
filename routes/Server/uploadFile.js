@@ -23,6 +23,7 @@ var xlsx = require("node-xlsx"),
     ClassAttribute = require('../../models/classAttribute.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
     Coupon = require('../../models/coupon.js'),
+    Teacher = require('../../models/teacher.js'),
 
     checkLogin = auth.checkLogin,
     serverPath = __dirname,
@@ -920,6 +921,7 @@ module.exports = function(app) {
         }
     };
 
+    //导出所以报名订单
     app.post('/admin/export/classTemplate5', function(req, res) {
         var data = [
             ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
@@ -954,6 +956,7 @@ module.exports = function(app) {
         });
     });
 
+    //导出所有课程情况
     app.post('/admin/export/classTemplate6', function(req, res) {
         var data = [
             ['课程', '科目', '校区', '年级', '时间', '已报', '总数']
@@ -974,6 +977,7 @@ module.exports = function(app) {
             });
     });
 
+    //给订单添加年度
     app.post('/admin/adminEnrollTrain/addYearToOrder', checkLogin);
     app.post('/admin/adminEnrollTrain/addYearToOrder', function(req, res) {
         AdminEnrollTrain.getSpecialFilters({})
@@ -1004,6 +1008,7 @@ module.exports = function(app) {
             });
     });
 
+    //重复账号合并
     app.post('/admin/studentAccount/DuplicateAccount', checkLogin);
     app.post('/admin/studentAccount/DuplicateAccount', function(req, res) {
         var deleteCount = 0;
@@ -1063,6 +1068,7 @@ module.exports = function(app) {
             });
     });
 
+    //重复账号合并
     app.post('/admin/studentAccount/OnlyDuplicateAccount', checkLogin);
     app.post('/admin/studentAccount/OnlyDuplicateAccount', function(req, res) {
         var deleteCount = 0;
@@ -1100,6 +1106,7 @@ module.exports = function(app) {
             });
     });
 
+    //3门报名情况 主要用于小升初
     app.post('/admin/export/gradeMOneList', function(req, res) {
         var data = [
             ['学生', '电话', '课程', '培训费', '教材费', '课程', '培训费', '教材费', '课程', '培训费', '教材费']
@@ -1140,6 +1147,7 @@ module.exports = function(app) {
             });
     });
 
+    //退费报表
     app.post('/admin/export/rebateAllList', function(req, res) {
         var data = [
             ['学生', '电话', '订单', '课程', '校区', '年级', '科目', '退费', '退费日期']
@@ -1167,6 +1175,7 @@ module.exports = function(app) {
             });
     });
 
+    //已经支付，但被系统误认为取消的订单
     app.post('/admin/export/otherOrder1', function(req, res) {
         var data = [
             ['学生', '电话', '订单', '订单日期', '课程', '校区', '年级', '科目', '退费']
@@ -1203,7 +1212,7 @@ module.exports = function(app) {
             });
     });
 
-    //rawXLSX
+    //rawXLSX 点名列表
     app.post('/admin/export/rollCallList', function(req, res) {
         var workbook = rawXLSX.readFile(path.join(serverPath, "../../public/downloads/", 'test.xlsx'));
         var first_sheet_name = workbook.SheetNames[0];
@@ -1225,14 +1234,6 @@ module.exports = function(app) {
         workbook.Sheets[new_ws_name] = ws;
 
         rawXLSX.writeFile(workbook, 'out.xlsx');
-
-        // var data = [
-        //             ['学生', '电话', '订单', '订单日期', '课程', '校区', '年级', '科目', '退费']
-        //         ];
-        // var buffer = xlsx.build([{ name: "订单情况", data: data }]),
-        //     fileName = '已支付被取消订单' + '.xlsx';
-        // fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
-        // res.jsonp({ sucess: true });
     });
 
     function checkstudent(score) {
@@ -1249,6 +1250,7 @@ module.exports = function(app) {
     };
 
     //check is the student is exist in db
+    //跟系统学生进行匹配
     app.post('/admin/checkstudent', upload.single('avatar'), function(req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
@@ -1291,37 +1293,6 @@ module.exports = function(app) {
                                 });
                         });
                 } else {
-                    // return StudentAccount.getFilter({ name: score[1] })
-                    //     .then(function(account) {
-                    //         var pStudent;
-                    //         if (account) {
-                    //             pStudent = Promise.resolve(account);
-                    //         } else {
-                    //             var md5 = crypto.createHash('md5');
-                    //             var studentAccount = new StudentAccount({
-                    //                 name: data[2],
-                    //                 password: password = md5.update("111111").digest('hex')
-                    //             });
-                    //             pStudent = studentAccount.save();
-                    //         }
-                    //         return pStudent.then(function(account) {
-                    //             if (account) {
-                    //                 var studentInfo = new StudentInfo({
-                    //                     name: score[0].trim(),
-                    //                     sex: true,
-                    //                     accountId: account._id,
-                    //                     mobile: score[1],
-                    //                     gradeId: grade._id,
-                    //                     gradeName: grade.name,
-                    //                     School: data[4] && data[4].trim(),
-                    //                     className: data[6]
-                    //                 });
-                    //                 return studentInfo.save();
-                    //             } else {
-                    //                 return failedScore(score[0], score[1], '', '添加账号出错');
-                    //             }
-                    //         });
-                    //     });
                     //create new student and assign with coupon
                     return failedScore(score[0], score[1], '', '没找到该学生');
                 }
@@ -1329,6 +1300,7 @@ module.exports = function(app) {
     };
 
     //if student in db, assign it. it not, created and assign
+    //批量给系统学生分配优惠券
     app.post('/admin/coupon/batchAssign', upload.single('avatar'), function(req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
@@ -1340,6 +1312,84 @@ module.exports = function(app) {
                 break; //already done
             }
             pArray.push(couponAssignStudent(list[0].data[i], req.body.couponId));
+        }
+
+        // res.redirect('/admin/score');
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    //  failedScore(score[0], score[1], score[2], examId, subject);
+    function addClassRoom(score) {
+        return SchoolArea.getFilter({ name: score[2].trim() })
+            .then(function(school) {
+                if (school) {
+                    return ClassRoom.getFilter({ name: score[0], schoolId: school._id })
+                        .then(function(classRoom) {
+                            if (!classRoom) {
+                                classRoom = new ClassRoom({
+                                    name: score[0],
+                                    sCount: score[1],
+                                    schoolId: school._id,
+                                    schoolArea: school.name
+                                });
+                                return classRoom.save();
+                            }
+                        });
+                } else {
+                    return failedScore(score[0], score[1], score[2], "没找到校区");
+                }
+            });
+    };
+
+    //批量添加教室
+    app.post('/admin/batchAddClassRoom', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length,
+            pArray = [];
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break; //already done
+            }
+            pArray.push(addClassRoom(list[0].data[i]));
+        }
+
+        // res.redirect('/admin/score');
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    //  failedScore(score[0], score[1], score[2], examId, subject);
+    function addTeacher(score) {
+        return Teacher.getFilter({ name: score[0].trim(), mobile: score[2] })
+            .then(function(teacher) {
+                if (!teacher) {
+                    var md5 = crypto.createHash('md5');
+                    teacher = new Teacher({
+                        name: score[0].trim(),
+                        mobile: score[2],
+                        engName: score[1].trim(),
+                        password: md5.update("111111").digest('hex')
+                    });
+                    return teacher.save();
+                }
+            });
+    };
+
+    //批量添加老师
+    app.post('/admin/batchAddTeacher', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length,
+            pArray = [];
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break; //already done
+            }
+            pArray.push(addTeacher(list[0].data[i]));
         }
 
         // res.redirect('/admin/score');

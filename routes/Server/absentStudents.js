@@ -3,52 +3,11 @@ var AbsentStudents = require('../../models/absentStudents.js'),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
-    app.get('/admin/absentStudentsList', checkLogin);
-    app.get('/admin/absentStudentsList', function(req, res) {
-        res.render('Server/absentStudentsList.html', {
+    app.get('/admin/adminRollCallList', checkLogin);
+    app.get('/admin/adminRollCallList', function(req, res) {
+        res.render('Server/adminRollCallList.html', {
             title: '>缺席学生列表',
             user: req.session.admin
-        });
-    });
-
-    app.post('/admin/absentStudents/add', checkLogin);
-    app.post('/admin/absentStudents/add', function(req, res) {
-        var absentStudents = new AbsentStudents({
-            name: req.body.name,
-            address: req.body.address
-        });
-
-        absentStudents.save(function(err, absentStudents) {
-            if (err) {
-                absentStudents = {};
-            }
-            res.jsonp(absentStudents);
-        });
-    });
-
-    app.post('/admin/absentStudents/edit', checkLogin);
-    app.post('/admin/absentStudents/edit', function(req, res) {
-        var absentStudents = new AbsentStudents({
-            name: req.body.name,
-            address: req.body.address
-        });
-
-        absentStudents.update(req.body.id, function(err, absentStudents) {
-            if (err) {
-                absentStudents = {};
-            }
-            res.jsonp(absentStudents);
-        });
-    });
-
-    app.post('/admin/absentStudents/delete', checkLogin);
-    app.post('/admin/absentStudents/delete', function(req, res) {
-        AbsentStudents.delete(req.body.id, function(err, absentStudents) {
-            if (err) {
-                res.jsonp({ error: err });
-                return;
-            }
-            res.jsonp({ sucess: true });
         });
     });
 
@@ -58,25 +17,43 @@ module.exports = function(app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
-            filter.name = {
-                $regex: reg
-            };
+        var filter = {
+            // absentDate: (new Date()).toLocaleDateString()
+        };
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
+        if (req.body.isChecked) {
+            filter.isCheck = (req.body.isChecked == "1");
         }
 
-        AbsentStudents.getAll(null, page, filter, function(err, absentStudentss, total) {
+        AbsentStudents.getAll(null, page, filter, function(err, absentStudents, total) {
             if (err) {
-                absentStudentss = [];
+                absentStudents = [];
             }
             res.jsonp({
-                absentStudentss: absentStudentss,
+                absentStudents: absentStudents,
                 total: total,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + absentStudentss.length) == total
+                isLastPage: ((page - 1) * 14 + absentStudents.length) == total
             });
         });
+    });
+
+    app.post('/admin/absentStudents/comment', checkLogin);
+    app.post('/admin/absentStudents/comment', function(req, res) {
+        var option = {
+            comment: req.body.comment
+        };
+        if (req.body.isCheck == "1") {
+            option.isCheck = true;
+        }
+        var abStudent = new AbsentStudents(option);
+
+        abStudent.update(req.body.id)
+            .then(function(result) {
+                res.jsonp({ sucess: true });
+            });
     });
 }

@@ -58,6 +58,7 @@ AbsentStudents.getAll = function(id, page, filter, callback) {
     var query = absentStudentsModel.count(filter);
     query.exec(function(err, count) {
         query.find()
+            .sort({ _id: 1 })
             .skip((page - 1) * 14)
             .limit(14)
             .exec(function(err, absentStudentss) {
@@ -71,4 +72,13 @@ AbsentStudents.delete = function(filter) {
     return absentStudentsModel.update(filter, {
         isDeleted: true
     }, { multi: true }).exec();
+};
+
+AbsentStudents.getFilters = function(filter) {
+    if (filter) {
+        filter.isDeleted = { $ne: true };
+    } else {
+        filter = { isDeleted: { $ne: true } };
+    }
+    return absentStudentsModel.find(filter);
 };
