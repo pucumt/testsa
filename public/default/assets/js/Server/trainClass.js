@@ -55,7 +55,7 @@ function renderSearchYearDropDown() {
 
 var $mainSelectBody = $('.content.mainModal table tbody');
 var getButtons = function(isWeixin) {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">升班链接</a>';
+    var buttons = '<a class="btn btn-default btnReset hidden">重算</a><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">升班链接</a>';
     if (isWeixin == 1) {
         buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
     } else {
@@ -558,6 +558,22 @@ $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
     });
 });
 
+$(".content.mainModal #gridBody").on("click", "td .btnReset", function(e) {
+    showComfirm("确定要重新计算吗？");
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/trainClass/reset", {
+            id: entity._id
+        }, function(data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                var page = parseInt($("#mainModal #page").val());
+                searchClass(page);
+            }
+        });
+    });
+});
 //------------end
 
 //------------select Form

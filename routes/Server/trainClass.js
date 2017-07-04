@@ -6,6 +6,7 @@ var TrainClass = require('../../models/trainClass.js'),
     ExamCategory = require('../../models/examCategory.js'),
     ExamClass = require('../../models/examClass.js'),
     ClassAttribute = require('../../models/classAttribute.js'),
+    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -38,6 +39,14 @@ module.exports = function(app) {
     app.get('/admin/batchAddStudentToTrainClass', function(req, res) {
         res.render('Server/batchAddStudentToTrainClass.html', {
             title: '>批量添加学生到课程',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/batchAddTeacherToTrainClass', checkLogin);
+    app.get('/admin/batchAddTeacherToTrainClass', function(req, res) {
+        res.render('Server/batchAddTeacherToTrainClass.html', {
+            title: '>批量添加老师教室到课程',
             user: req.session.admin
         });
     });
@@ -275,6 +284,21 @@ module.exports = function(app) {
                 return;
             }
             res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/trainClass/reset', checkLogin);
+    app.post('/admin/trainClass/reset', function(req, res) {
+        AdminEnrollTrain.getFilters({
+            isSucceed: 1,
+            trainId: req.body.id
+        }).then(function(orders) {
+            var trainClass = new TrainClass({
+                enrollCount: orders.length
+            });
+            trainClass.update(req.body.id).then(function() {
+                res.jsonp({ sucess: true });
+            });
         });
     });
 

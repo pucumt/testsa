@@ -1371,7 +1371,7 @@ module.exports = function(app) {
                     teacher = new Teacher({
                         name: score[0].trim(),
                         mobile: score[2],
-                        engName: score[1].trim(),
+                        engName: score[1] && score[1].trim(),
                         password: md5.update("111111").digest('hex')
                     });
                     return teacher.save();
@@ -1393,6 +1393,63 @@ module.exports = function(app) {
         }
 
         // res.redirect('/admin/score');
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    function addTeacherClassRoomToClass(data) {
+        var option = {};
+        return TrainClass.getFilter({ name: data[0].trim(), schoolArea: data[2].trim(), yearName: data[8].trim() }).then(function(existTrainClass) {
+            if (existTrainClass) {
+                var pRoom;
+                if (data[9] && data[9].trim() != "") { //9 is classroom
+                    pRoom = ClassRoom.getFilter({ name: data[9].trim() });
+                } else {
+                    pRoom = Promise.resolve();
+                }
+                return pRoom.then(function(classRoom) {
+                    if (classRoom) {
+                        option.classRoomId = classRoom._id;
+                        option.classRoomName = classRoom.name;
+                    }
+
+                    var pTeacher;
+                    if (data[6]) { //6 is mobile
+                        pTeacher = Teacher.getFilter({ mobile: data[6] });
+                    } else {
+                        pTeacher = Promise.resolve();
+                    }
+                    return pTeacher.then(function(teacher) {
+                        if (teacher) {
+                            option.teacherId = teacher._id;
+                            option.teacherName = teacher.name;
+
+                            var newTrainClass = new TrainClass(option);
+                            return newTrainClass.update(existTrainClass._id);
+                        } else {
+                            return failedScore(data[0].trim(), data[2].trim(), data[8].trim(), "没找到老师");
+                        }
+                    });
+                });
+            } else {
+                return failedScore(data[0].trim(), data[2].trim(), data[8].trim(), "没找到课程");
+            }
+        });
+    };
+
+    //批量添加老师教室到课程
+    app.post('/admin/batchAddTeacherToTrainClass', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length;
+        var pArray = [];
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break;
+            }
+            pArray.push(addTeacherClassRoomToClass(list[0].data[i]));
+        }
         Promise.all(pArray).then(function() {
             res.jsonp({ sucess: true });
         });
