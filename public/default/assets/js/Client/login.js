@@ -20,4 +20,8 @@ $(document).ready(function() {
             }
         }
     });
+
+    if (location.search.startsWith("?err")) {
+        $("#loginForm .warning").html("用户名或密码不正确！");
+    }
 });

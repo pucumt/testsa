@@ -22,11 +22,11 @@ module.exports = function(app) {
         StudentAccount.getFilter({ name: req.body.name })
             .then(function(user) {
                 if (!user) {
-                    return res.redirect('/login'); //用户不存在则跳转到登录页
+                    return res.redirect('/login?err=1'); //用户不存在则跳转到登录页
                 }
                 //检查密码是否一致
                 if (user.password != password) {
-                    return res.redirect('/login'); //密码错误则跳转到登录页
+                    return res.redirect('/login?err=2'); //密码错误则跳转到登录页
                 }
                 //用户名密码都匹配后，将用户信息存入 session
                 req.session.user = user;

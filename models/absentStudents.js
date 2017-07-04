@@ -16,7 +16,9 @@ var absentStudentsSchema = new mongoose.Schema({
     comment: String, //缺勤原因
     isCheck: { type: Boolean, default: false }, //是否处理过
     isDeleted: { type: Boolean, default: false }, //缺勤或者点错
-    createdDate: { type: Date, default: Date.now } //创建日期
+    createdDate: { type: Date, default: Date.now }, //创建日期
+    isExtra: { type: Boolean, default: false }, //是否补课
+    deletedDate: Date //删除日期
 }, {
     collection: 'absentStudentss'
 });
@@ -70,7 +72,8 @@ AbsentStudents.getAll = function(id, page, filter, callback) {
 //删除一个学区
 AbsentStudents.delete = function(filter) {
     return absentStudentsModel.update(filter, {
-        isDeleted: true
+        isDeleted: true,
+        deletedDate: new Date()
     }, { multi: true }).exec();
 };
 
@@ -81,4 +84,12 @@ AbsentStudents.getFilters = function(filter) {
         filter = { isDeleted: { $ne: true } };
     }
     return absentStudentsModel.find(filter);
+};
+
+//删除一个学区
+AbsentStudents.makeUp = function(filter) {
+    return absentStudentsModel.update(filter, {
+        isDeleted: true,
+        isExtra: true
+    }, { multi: true }).exec();
 };

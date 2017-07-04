@@ -43,6 +43,7 @@ module.exports = function(app) {
             password: req.body.password
         });
         studentAccount.update(currentUser._id, function(error, account) {
+            currentUser.password = req.body.password;
             res.jsonp({ sucess: true });
             return;
         });

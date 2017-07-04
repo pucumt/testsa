@@ -1,0 +1,53 @@
+﻿{% extends "Teacher/partial/main-header.html" %} {% block main %}
+<div class="container enroll rollCall makeup">
+    <input type="hidden" id="id" value="{{ id }}" />
+    <div class="pageTitle" style="padding-right: 0;">
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>点名<span class="pull-right filter" style="font-size: 12px;">筛选<span class="glyphicon glyphicon-filter"></span></span>
+    </div>
+    <div class="row" style="margin-bottom: 30px;">
+        <ul class="exam-list clearfix list-unstyled">
+        </ul>
+    </div>
+    <div class="enroll-submit exam">
+        <button id="btnMakeUp" class="btn btn-info pull-left" type="button">补课</button>
+        <button id="btnAbsent" class="btn btn-primary" type="button">缺勤</button>
+    </div>
+</div>
+<!--modal-->
+<div class="container enroll-filter" style="display: none;">
+    <div class="row text-center">
+        <label style="margin-top: 15px;">选择日期</label><span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="orgDate" class="control-label">日期:</label>
+            <input type="date" maxlength="30" class="form-control" name="orgDate" id="orgDate">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <input class="btn btn-large btn-primary btn-search" type="submit" value="确定" />
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="confirmModal" style="display:none; height: 100%;">
+    <div class="modal-backdrop fade in" style="height: 100%;"></div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                出错了！
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+<script type="text/javascript" src="/default/assets/js/Teacher/rollCall_class_students.extra.js?v=1.000"></script>
+{% endblock %}

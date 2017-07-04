@@ -110,4 +110,19 @@ module.exports = function(app) {
             });
         });
     });
+
+    app.post('/admin/teacher/reset', checkLogin);
+    app.post('/admin/teacher/reset', function(req, res) {
+        var md5 = crypto.createHash('md5');
+        var teacher = new Teacher({
+            password: password = md5.update("111111").digest('hex')
+        });
+        teacher.update(req.body.id, function(err, teacher) {
+            if (err) {
+                teacher = {};
+            }
+            res.jsonp({ sucess: true });
+            return;
+        });
+    });
 }

@@ -11,7 +11,7 @@ $(document).ready(function() {
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
 var getButtons = function() {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnReset">重置</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
 
@@ -151,6 +151,27 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModal #address').val(entity.address);
     $('#myModal #id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
+});
+
+
+$("#gridBody").on("click", "td .btnReset", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    showComfirm("真的要重置 (" + entity.name + ") 的密码吗？");
+
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/teacher/reset", {
+            id: entity._id
+        }, function(data) {
+            var msg;
+            if (data.sucess) {
+                msg = "密码重置成功！";
+            } else {
+                msg = "密码重置失败！";
+            }
+            showAlert(msg, null, true);
+        });
+    });
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {

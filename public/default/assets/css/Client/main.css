@@ -31,6 +31,10 @@ footer,
     margin: 10px 25px;
 }
 
+#loginForm .warning {
+    color: red;
+}
+
 .enroll-filter {
     position: relative;
     padding: 0 45px;

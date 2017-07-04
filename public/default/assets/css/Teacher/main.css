@@ -31,6 +31,10 @@ footer,
     margin: 10px 25px;
 }
 
+#loginForm .warning {
+    color: red;
+}
+
 .enroll-filter {
     position: relative;
     padding: 0 45px;
@@ -286,11 +290,8 @@ footer,
     background-color: #e7e9ec;
 }
 
-.enroll.personalCenter .students,
-.enroll.personalCenter .coupon,
-.enroll.personalCenter .order,
-.enroll.personalCenter .exam,
-.enroll.personalCenter .randomCoupon {
+.enroll.personalCenter .rollCall,
+.enroll.personalCenter .makeUp {
     margin: 10px -15px;
     padding: 8px 15px;
     border-top: 1px solid #ccc;
@@ -309,8 +310,7 @@ footer,
     border-radius: 0;
 }
 
-.enroll.personalCenter .exam,
-.enroll.personalCenter .randomCoupon {
+.enroll.personalCenter .makeUp {
     margin-bottom: 0;
 }
 
@@ -437,4 +437,9 @@ footer,
 
 .rollCall ul li .checkbox {
     margin: 0;
+}
+
+.enroll.makeup .enroll-submit.exam #btnMakeUp,
+.enroll.makeup .enroll-submit.exam #btnAbsent {
+    width: 50%;
 }

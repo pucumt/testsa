@@ -5,5 +5,5 @@ var login = require('./login.js'),
 module.exports = function(app) {
     login(app);
     rollCall(app);
-    //user(app);
+    user(app);
 };
