@@ -86,7 +86,7 @@ function addValidation(callback) {
 
 function checkAttributeCoupon() {
     if ($('#enrollInfo #attributeId').val() != "") {
-        $.post("/admin/adminEnrollTrain/isAttributCouponUsed", {
+        selfAjax("post", "/admin/adminEnrollTrain/isAttributCouponUsed", {
             studentId: $('#enrollInfo #studentId').val(),
             attributeId: $('#enrollInfo #attributeId').val()
         }, function(data) {
@@ -118,7 +118,7 @@ $("#btnEnroll").on("click", function(e) {
                 oldOrderId: $('#enrollInfo #oldOrderId').val(),
                 comment: $('#enrollInfo #comment').val()
             };
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             if (data && data.sucess) {
                 showAlert("调班成功");
                 $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
@@ -142,7 +142,7 @@ function openStudent(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
                 var sex = student.sex ? "女" : "男";
@@ -178,7 +178,7 @@ function openTrain(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/难度</th><th width="180px">校区</th><th width="140px">培训费/教材费</th><th width="100px">报名情况</th></tr>');
-    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function(data) {
         if (data && data.trainClasss.length > 0) {
             data.trainClasss.forEach(function(trainClass) {
                 trainClass.courseContent = "";
@@ -277,7 +277,7 @@ function renderGradeSubjectCategory(callback) {
     $('#selectModal #InfoSearch').find("#grade option").remove();
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
-    $.get("/admin/trainClass/gradesubjectcategory", function(data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategory", {}, function(data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function(grade) {

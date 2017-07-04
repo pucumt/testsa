@@ -10,7 +10,7 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    $.post("/admin/year/all", function(data) {
+    selfAjax("post", "/admin/year/all", {}, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
                 var select = "";
@@ -62,7 +62,7 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         $selectBody.empty();
         if (data && data.adminEnrollTrains.length > 0) {
 
@@ -116,7 +116,7 @@ $("#myModal #btnSave").on("click", function(e) {
             payWay: $.trim($('#myModal #payWay').val()),
             id: $('#id').val()
         };
-    $.post(postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function(data) {
         $('#myModal').modal('hide');
         if (data && data.sucess) {
             showAlert("修改成功！");

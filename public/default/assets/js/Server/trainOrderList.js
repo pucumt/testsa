@@ -7,7 +7,7 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    $.post("/admin/year/all", function(data) {
+    selfAjax("post", "/admin/year/all", {}, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
                 var select = "";
@@ -53,7 +53,7 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         $selectBody.empty();
         if (data && data.adminEnrollTrains.length > 0) {
             var getButtons = function(isPayed, isSucceed) {
@@ -101,7 +101,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     showComfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/adminEnrollTrain/cancel", {
+        selfAjax("post", "/admin/adminEnrollTrain/cancel", {
             id: entity._id,
             trainId: entity.trainId
         }, function(data) {

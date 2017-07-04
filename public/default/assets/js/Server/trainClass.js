@@ -21,11 +21,17 @@ $(document).ready(function() {
     $("#btnBatchAdd").on("click", function(e) {
         location.href = "/admin/batchTrainClass";
     });
+
     $("#btnBatchPublish").on("click", function(e) {
         location.href = "/admin/batchTrainClasspublish";
     });
+
     $("#btnBatchAddStudent").on("click", function(e) {
         location.href = "/admin/batchAddStudentToTrainClass";
+    });
+
+    $("#btnBatchAddTeacher").on("click", function(e) {
+        location.href = "/admin/batchAddTeacherToTrainClass";
     });
 });
 
