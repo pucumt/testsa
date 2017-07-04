@@ -317,23 +317,34 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollTrain/cancel', checkLogin);
     app.post('/admin/adminEnrollTrain/cancel', function(req, res) {
-        TrainClass.cancel(req.body.trainId)
-            .then(function(trainClass) {
-                if (trainClass && trainClass.ok && trainClass.nModified == 1) {
-                    AdminEnrollTrain.cancel(req.body.id, function(err, adminEnrollTrain) {
-                        if (err) {
-                            res.jsonp({ error: err });
+        AdminEnrollTrain.getFilter({
+            _id: req.body.id,
+            isSucceed: 9
+        }).then(function(order) {
+            if (order) {
+                res.jsonp({ error: "取消失败，或许订单已经取消" });
+                return;
+            } else {
+                TrainClass.cancel(req.body.trainId)
+                    .then(function(trainClass) {
+                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                            AdminEnrollTrain.cancel(req.body.id, function(err, adminEnrollTrain) {
+                                if (err) {
+                                    res.jsonp({ error: err });
+                                    return;
+                                }
+                                res.jsonp({ sucess: true });
+                                //send message to xingye
+                                payHelper.closeOrder(req.body.id);
+                            });
+                        } else {
+                            res.jsonp({ error: "取消失败" });
                             return;
                         }
-                        res.jsonp({ sucess: true });
-                        //send message to xingye
-                        payHelper.closeOrder(req.body.id);
                     });
-                } else {
-                    res.jsonp({ error: "取消失败" });
-                    return;
-                }
-            });
+            }
+        });
+
     });
 
     app.post('/admin/adminEnrollTrain/rebate', checkLogin);
