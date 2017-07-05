@@ -2,6 +2,7 @@ var TrainClass = require('../../models/trainClass.js'),
     AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     AbsentStudents = require('../../models/absentStudents.js'),
+    AbsentClass = require('../../models/absentClass.js'),
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
@@ -114,9 +115,34 @@ module.exports = function(app) {
             classId: req.body.classId,
         };
         if (req.body.absentDate) {
+            //补课点名
             filter.absentDate = moment(req.body.absentDate).format("YYYY-MM-DD");
         } else {
+            //当天点名
             filter.absentDate = moment().format("YYYY-MM-DD");
+            AbsentClass.getFilters({
+                absentDate: filter.absentDate,
+                classId: req.body.classId
+            }).then(function(abClass) {
+                if (abClass.length == 0) {
+                    TrainClass.get(req.body.classId)
+                        .then(function(trainClass) {
+                            if (trainClass) {
+                                abClass = new AbsentClass({
+                                    absentDate: filter.absentDate, //缺勤日期
+                                    classId: trainClass._id,
+                                    className: trainClass.name, //缺勤课程
+                                    teacherId: trainClass.teacherId,
+                                    teacherName: trainClass.teacherName, //缺勤老师
+                                    schoolId: trainClass.schoolId,
+                                    schoolName: trainClass.schoolName, //校区
+                                    courseTime: trainClass.courseTime
+                                });
+                                abClass.save();
+                            }
+                        });
+                }
+            });
         }
         var studentIds = JSON.parse(req.body.studentIds);
         AbsentStudents.getFilters(filter).then(function(orgAbStudents) {

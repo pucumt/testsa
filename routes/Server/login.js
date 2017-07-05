@@ -27,8 +27,13 @@ module.exports = function(app) {
                 return res.redirect('/admin/login'); //密码错误则跳转到登录页
             }
             //用户名密码都匹配后，将用户信息存入 session
-            req.session.admin = user;
-            res.redirect('/admin/adminEnrollTrainList'); //登陆成功后跳转到主页
+            if (user.role == 10) {
+                req.session.adminRollCall = user;
+                res.redirect('/admin/adminRollCallList'); //登陆成功后跳转到主页
+            } else {
+                req.session.admin = user;
+                res.redirect('/admin/adminEnrollTrainList'); //登陆成功后跳转到主页
+            }
         });
     });
 }

@@ -11,7 +11,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderSearchSchoolDropDown() {
-    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
+    selfAjax("post", "/admin/adminRollCallClassList/schoolArea", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(school) {
                 $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");

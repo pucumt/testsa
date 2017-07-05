@@ -4,8 +4,60 @@ $(document).ready(function() {
     $("#left_btnAdmin").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    searchAdmins();
 })
 
+//--begin search functions
+var $mainSelectBody = $('.content.mainModal table tbody');
+var getButtons = function() {
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+    return buttons;
+};
+
+function searchAdmins(p) {
+    var filter = {
+            name: $.trim($(".mainModal #InfoSearch #className").val())
+        },
+        pStr = p ? "p=" + p : "";
+    $mainSelectBody.empty();
+    $.post("/admin/adminList/search?" + pStr, filter, function(data) {
+        $mainSelectBody.empty();
+        if (data && data.users.length > 0) {
+            var d = $(document.createDocumentFragment());
+            data.users.forEach(function(user) {
+                var buttons = getButtons();
+                if (user.name == "bfbadmin") {
+                    buttons = "";
+                }
+                var trObject = $('<tr id=' + user._id + '><td><span><input type="checkbox" name="trainId" value=' + user._id + ' /></span>' + user.name +
+                    '</td><td>' + (user.schoolArea || "") + '</td><td>' + (user.role || "") +
+                    '</td><td><div class="btn-group">' + buttons + '</div></td></tr>');
+                trObject.find(".btn-group").data("obj", user);
+                d.append(trObject);
+            });
+            $mainSelectBody.append(d);
+        }
+        $("#mainModal #total").val(data.total);
+        $("#mainModal #page").val(data.page);
+        setPaging("#mainModal", data);
+    });
+};
+
+$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+    searchAdmins();
+});
+
+$("#mainModal .paging .prepage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) - 1;
+    searchAdmins(page);
+});
+
+$("#mainModal .paging .nextpage").on("click", function(e) {
+    var page = parseInt($("#mainModal #page").val()) + 1;
+    searchAdmins(page);
+});
+//--end search functions
 function destroy() {
     var validator = $('#myModal').data('formValidation');
     if (validator) {
@@ -69,15 +121,31 @@ function addUser() {
     }
     $.post(postURI, {
         username: $('#user-name').val(),
-        password: hex_md5($('#user-pwd').val())
+        password: hex_md5($('#user-pwd').val()),
+        schoolId: $('#myModal #school').val(),
+        schoolArea: $('#myModal #school').find("option:selected").text(),
+        role: $("#myModal #role").val()
     }, function(data) {
         $('#myModal').modal('hide');
-        if (isNew) {
-            $('#gridBody').append($('<tr><td>' + data.name + '</td><td><div data="' + data.name +
-                '" class="btn-group"><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a></div></td></tr>'));
-        }
+        var page = parseInt($("#mainModal #page").val());
+        searchAdmins(page);
     });
 }
+
+function resetSchool(id) {
+    $('#myModal').find("#school option").remove();
+    $.get("/admin/schoolArea/all", function(data) {
+        if (data && data.length > 0) {
+            data.forEach(function(school) {
+                var select = "";
+                if (school._id == id) {
+                    select = "selected";
+                }
+                $("#myModal #school").append("<option " + select + " value='" + school._id + "'>" + school.name + "</option>");
+            });
+        }
+    });
+};
 
 $("#btnAdd").on("click", function(e) {
     isNew = true;
@@ -94,7 +162,7 @@ $("#btnAdd").on("click", function(e) {
             type: 'POST'
         };
     });
-
+    resetSchool();
     $('#user-name').removeAttr("disabled");
     $('#myModalLabel').text("新增管理员");
     $('#user-name').val("");
@@ -107,25 +175,41 @@ $("#btnSave").on("click", function(e) {
     validator.validate();
 });
 
+$("#btnChangeRole").on("click", function(e) {
+    $.post("/admin/user/setRole", {
+        username: $('#user-name').val(),
+        schoolId: $('#myModal #school').val(),
+        schoolArea: $('#myModal #school').find("option:selected").text(),
+        role: $("#myModal #role").val()
+    }, function(data) {
+        $('#myModal').modal('hide');
+        var page = parseInt($("#mainModal #page").val());
+        searchAdmins(page);
+    });
+});
+
 $("#gridBody").on("click", "td .btnEdit", function(e) {
     destroy();
     addValidation();
-
     isNew = false;
     var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
     $('#user-name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改管理员");
-    $('#user-name').val($(obj).parent().attr("data"));
+    $('#user-name').val(entity.name);
     $('#user-pwd').val("");
+    resetSchool(entity.schoolId);
+    $("#myModal #role").val(entity.role);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
     showComfirm("确定要删除吗？");
     var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         $.post("/admin/user/delete", {
-            username: $(obj).parent().attr("data")
+            username: entity.name
         }, function(data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {

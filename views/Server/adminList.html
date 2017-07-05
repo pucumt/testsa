@@ -4,36 +4,45 @@
         {{ title }}
     </h1>
 </div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name" class="control-label">名称:</label>
+                        <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
     </div>
 </div>
-<div class="content">
+<div class="content mainModal">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:50%;">用户名</th>
+                <th style="width:150px;">用户名</th>
+                <th style="width:250px">校区</th>
+                <th style="width:100px">角色</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
-            {% if users %} {% for user in users %}
-            <tr>
-                <td>
-                    {{ user.name }}
-                </td>
-                <td>
-                    <div data="{{ user.name }}" class="btn-group">
-                        {% if user.name!="bfbadmin" %}
-                        <a class="btn btn-default btnEdit">编辑</a>
-                        <a class="btn btn-default btnDelete">删除</a> {% endif %}
-                    </div>
-                </td>
-            </tr>
-            {% endfor %} {% endif %}
         </tbody>
     </table>
+</div>
+<div id="mainModal">
+    <input type="hidden" id="total" value="0" />
+    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -54,11 +63,24 @@
                         <label for="user-pwd" class="control-label">密码:</label>
                         <input type="password" maxlength="15" class="form-control" name="user-pwd" id="user-pwd">
                     </div>
+                    <div class="form-group">
+                        <label for="school" class="control-label">校区:</label>
+                        <select name="school" id="school" class="form-control">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="role" class="control-label">角色:</label>
+                        <select name="role" id="role" class="form-control">
+                            <option value="3">管理员</option>
+                            <option value="10">点名</option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+                <button type="button" id="btnChangeRole" class="btn btn-primary">重置角色</button>
             </div>
         </div>
     </div>

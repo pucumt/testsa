@@ -8,7 +8,7 @@ var userSchema = new mongoose.Schema({
     password: String,
     email: String,
     mobile: String,
-    role: Number, //0 superAdmin, 3 schoolAdmin
+    role: Number, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser
     isDeleted: Boolean,
     schoolId: ObjectId,
     schoolArea: String
