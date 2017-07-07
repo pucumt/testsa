@@ -2,7 +2,7 @@
 <div class="container enroll rollCall">
     <input type="hidden" id="id" value="{{ id }}" />
     <div class="pageTitle" style="padding-right: 0;">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>点名
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>点名{{ "(已点名)" if isRollCall else "" }}
     </div>
     <div class="row" style="margin-bottom: 30px;">
         <ul class="exam-list clearfix list-unstyled">

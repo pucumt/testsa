@@ -122,18 +122,20 @@ function generateLi(student, abStudents) {
         $goodContainer = $('<div class="exam link"></div>'),
         $infoContainer = $('<div class="exam-info"></div>'),
         isAbsent = 0,
+        checkStr = "",
         absentStr = "";
 
     if (abStudents && abStudents.some(function(abStudent) {
             return abStudent.studentId == student._id;
         })) {
         isAbsent = 1;
+        checkStr = " checked";
         absentStr = "<B>缺勤</B>";
     }
 
     $li.data("obj", student);
     $li.append($goodContainer);
     $goodContainer.append($infoContainer);
-    $infoContainer.append($('<div class="checkbox"><label><input class="chkStudent" type="checkbox" isAbsent=' + isAbsent + ' value=' + student._id + ' />' + student.name + '(' + student.mobile + ')' + absentStr + '</label></div>'));
+    $infoContainer.append($('<div class="checkbox"><label><input class="chkStudent" type="checkbox"  isAbsent=' + isAbsent + checkStr + ' value=' + student._id + ' />' + student.name + '(' + student.mobile + ')' + absentStr + '</label></div>'));
     return $li;
 };

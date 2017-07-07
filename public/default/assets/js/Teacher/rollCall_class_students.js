@@ -37,7 +37,7 @@ function loadData() {
         if (data && data.students.length > 0) {
             var d = $(document.createDocumentFragment());
             data.students.sort(function(a, b) {
-                return a.name.localeCompare(b.name);
+                return a.mobile.localeCompare(b.mobile);
             }).forEach(function(student) {
                 d.append(generateLi(student, data.abStudents));
             });
@@ -52,12 +52,20 @@ function generateLi(student, abStudents) {
     var $li = $('<li class="exam-card card" ></li>'),
         $goodContainer = $('<div class="exam link"></div>'),
         $infoContainer = $('<div class="exam-info"></div>'),
-        checkStr = (abStudents && abStudents.some(function(abStudent) {
-            return abStudent.studentId == student._id;
-        })) ? "checked" : "";
+        checkStr = "",
+        bak = "";
+    if ((abStudents && abStudents.some(function(abStudent) {
+            if (abStudent.studentId == student._id) {
+                bak = (abStudent.comment ? "(" + abStudent.comment + ")" : "");
+                return true;
+            }
+        }))) {
+        checkStr = "checked";
+    }
     $li.data("obj", student);
     $li.append($goodContainer);
     $goodContainer.append($infoContainer);
-    $infoContainer.append($('<div class="checkbox"><label><input class="chkStudent" ' + checkStr + ' type="checkbox" value=' + student._id + ' />' + student.name + '(' + student.mobile + ')</label></div>'));
+
+    $infoContainer.append($('<div class="checkbox"><label><input class="chkStudent" ' + checkStr + ' type="checkbox" value=' + student._id + ' />' + student.name + '(' + student.mobile + ')' + bak + '</label></div>'));
     return $li;
 };

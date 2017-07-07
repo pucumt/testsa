@@ -38,10 +38,16 @@ module.exports = function(app) {
 
     app.get('/Teacher/rollCall/students/:id', checkLogin);
     app.get('/Teacher/rollCall/students/:id', function(req, res) {
-        res.render('Teacher/rollCall_class_students.html', {
-            title: '点名',
-            user: req.session.teacher,
-            id: req.params.id
+        AbsentClass.getFilters({
+            absentDate: moment().format("YYYY-MM-DD"),
+            classId: req.params.id
+        }).then(function(abClass) {
+            res.render('Teacher/rollCall_class_students.html', {
+                title: '点名',
+                user: req.session.teacher,
+                id: req.params.id,
+                isRollCall: (abClass.length == 1)
+            });
         });
     });
 
@@ -157,7 +163,7 @@ module.exports = function(app) {
                         needRemoveStudentIds.push(orgAbStudent.studentId);
                     }
                 });
-                filter.studentId = { $id: needRemoveStudentIds };
+                filter.studentId = { $in: needRemoveStudentIds };
                 var p0 = AbsentStudents.delete(filter);
                 //添加新缺席的学生
                 var newAbStudents = studentIds.filter(function(id) {
