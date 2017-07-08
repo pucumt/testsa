@@ -56,7 +56,13 @@ function generateLi(student, abStudents) {
         bak = "";
     if ((abStudents && abStudents.some(function(abStudent) {
             if (abStudent.studentId == student._id) {
-                bak = (abStudent.comment ? "(" + abStudent.comment + ")" : "");
+                if (abStudent.comment) {
+                    if ($.trim(abStudent.comment) == "迟到") {
+                        bak = "<b style='color:red;'>(" + abStudent.comment + ")</b>";
+                    } else {
+                        bak = "(" + abStudent.comment + ")";
+                    }
+                }
                 return true;
             }
         }))) {

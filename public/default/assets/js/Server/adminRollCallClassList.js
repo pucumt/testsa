@@ -30,6 +30,7 @@ function renderSearchSchoolDropDown() {
             data.forEach(function(school) {
                 $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
             });
+            search();
         };
     });
 };

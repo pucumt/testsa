@@ -16,6 +16,7 @@ function renderSearchSchoolDropDown() {
             data.forEach(function(school) {
                 $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
             });
+            search();
         };
     });
 };
@@ -39,6 +40,7 @@ function search(p) {
             data.absentStudents.forEach(function(absentStudent) {
                 var $tr = $('<tr id=' + absentStudent._id + '><td>' + absentStudent.className + '</td><td>' +
                     absentStudent.teacherName + '</td><td>' + absentStudent.studentName + '</td><td>' + absentStudent.mobile +
+                    '</td><td>' + moment(absentStudent.createdDate).format("YYYY-MM-DD HH:mm") +
                     '</td><td>' + (absentStudent.comment || "") + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", absentStudent);
                 $mainSelectBody.append($tr);
