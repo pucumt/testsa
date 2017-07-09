@@ -60,8 +60,12 @@ function searchOrder(p) {
                 var buttons = "";
                 if (!isPayed && isSucceed == 1) {
                     buttons = '<a class="btn btn-default btnPay">支付</a>';
+                } else if (isPayed && isSucceed == 1) {
+                    buttons = '<a class="btn btn-default btnPreSave">预存</a>';
                 }
-                buttons += '<a class="btn btn-default btnDelete">取消</a>';
+                if (isSucceed == 1) {
+                    buttons += '<a class="btn btn-default btnDelete">取消</a>';
+                }
                 return buttons;
             };
             data.adminEnrollTrains.forEach(function(trainOrder) {
@@ -107,10 +111,27 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
         }, function(data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("已取消");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnDelete").remove();
+                var page = parseInt($("#selectModal #page").val());
+                searchOrder(page);
+            }
+        });
+    });
+});
+
+$("#gridBody").on("click", "td .btnPreSave", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    showComfirm("确定要预存订单" + entity._id + "吗？");
+
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        selfAjax("post", "/admin/adminEnrollTrain/preSave", {
+            id: entity._id,
+            trainId: entity.trainId
+        }, function(data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                var page = parseInt($("#selectModal #page").val());
+                searchOrder(page);
             }
         });
     });

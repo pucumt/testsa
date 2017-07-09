@@ -14,19 +14,28 @@
                         <select name="searchSchool" id="searchSchool" class="form-control"></select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="startDate" class="control-label" style="width: 65px;">开始时间:</label>
                         <input type="text" maxlength="30" class="form-control" name="startDate" id="startDate">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="endDate" class="control-label" style="width: 65px;">截至时间:</label>
                         <input type="text" maxlength="30" class="form-control" name="endDate" id="endDate">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="isDeleted" class="control-label">状态:</label>
+                        <select name="isDeleted" id="isDeleted" class="form-control">
+                            <option value="0">未删除</option>
+                            <option value="1">已删除</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
                 </div>
             </div>

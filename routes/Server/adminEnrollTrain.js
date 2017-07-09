@@ -319,12 +319,9 @@ module.exports = function(app) {
     app.post('/admin/adminEnrollTrain/cancel', function(req, res) {
         AdminEnrollTrain.getFilter({
             _id: req.body.id,
-            isSucceed: 9
+            isSucceed: 1
         }).then(function(order) {
             if (order) {
-                res.jsonp({ error: "取消失败，或许订单已经取消" });
-                return;
-            } else {
                 TrainClass.cancel(req.body.trainId)
                     .then(function(trainClass) {
                         if (trainClass && trainClass.ok && trainClass.nModified == 1) {
@@ -342,9 +339,40 @@ module.exports = function(app) {
                             return;
                         }
                     });
+            } else {
+                res.jsonp({ error: "取消失败，或许订单已经取消" });
+                return;
             }
         });
+    });
 
+    app.post('/admin/adminEnrollTrain/preSave', checkLogin);
+    app.post('/admin/adminEnrollTrain/preSave', function(req, res) {
+        AdminEnrollTrain.getFilter({
+            _id: req.body.id,
+            isSucceed: 1
+        }).then(function(order) {
+            if (order) {
+                TrainClass.cancel(req.body.trainId)
+                    .then(function(trainClass) {
+                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
+                            AdminEnrollTrain.preSave(req.body.id, function(err, adminEnrollTrain) {
+                                if (err) {
+                                    res.jsonp({ error: err });
+                                    return;
+                                }
+                                res.jsonp({ sucess: true });
+                            });
+                        } else {
+                            res.jsonp({ error: "预存失败" });
+                            return;
+                        }
+                    });
+            } else {
+                res.jsonp({ error: "预存失败，或许订单已经预存" });
+                return;
+            }
+        });
     });
 
     app.post('/admin/adminEnrollTrain/rebate', checkLogin);

@@ -15,7 +15,7 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     totalPrice: { type: Number, default: 0 }, //实际培训费
     realMaterialPrice: { type: Number, default: 0 }, //实际教材费
     rebatePrice: { type: Number, default: 0 }, //退费
-    isSucceed: { type: Number, default: 1 }, //1 succeed, 9 canceled
+    isSucceed: { type: Number, default: 1 }, //1 succeed, 9 canceled, 6 use soon
     isPayed: { type: Boolean, default: false },
     payWay: Number, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin 6 weixinOnline 7 zhifubaoOnline
     isDeleted: { type: Boolean, default: false },
@@ -140,6 +140,20 @@ AdminEnrollTrain.cancel = function(id, callback) {
         _id: id
     }, {
         isSucceed: 9,
+        cancelDate: new Date()
+    }).exec(function(err, adminEnrollTrain) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, adminEnrollTrain);
+    });
+};
+
+AdminEnrollTrain.preSave = function(id, callback) {
+    adminEnrollTrainModel.update({
+        _id: id
+    }, {
+        isSucceed: 6, //presave
         cancelDate: new Date()
     }).exec(function(err, adminEnrollTrain) {
         if (err) {

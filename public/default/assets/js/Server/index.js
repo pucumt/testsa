@@ -28,6 +28,9 @@ window.getTrainOrderStatus = function(isSucceed) {
         case 1:
             return "已报名"
             break;
+        case 6:
+            return "已预存"
+            break;
         case 9:
             return "已取消"
             break;

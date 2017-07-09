@@ -158,3 +158,23 @@ $("#btnSave").on("click", function(e) {
         });
     }
 });
+
+$("#btnOnlineRebate").on("click", function(e) {
+    //TBD
+    var validator = $('#myModal').data('formValidation').validate();
+    if (validator.isValid()) {
+        var postURI = "/admin/adminEnrollTrain/rebate",
+            postObj = {
+                Id: $('#myModal #Id').val(),
+                originalPrice: $('#myModal #totalPrice').val(),
+                price: $('#myModal #price').val(),
+                comment: $('#myModal #comment').val()
+            };
+        selfAjax("post", postURI, postObj, function(data) {
+            showAlert("退费成功！");
+            $('#myModal').modal('hide');
+            var page = parseInt($("#selectModal #page").val());
+            searchOrder(page);
+        });
+    }
+});

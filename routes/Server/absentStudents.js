@@ -77,6 +77,9 @@ module.exports = function(app) {
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
         }
+        if (req.body.isDeleted) {
+            filter.isDeleted = (req.body.isDeleted == "1" ? true : false);
+        }
 
         var dayStr = moment().format("YYYY-MM-DD");
         filter.createdDate = {
@@ -101,6 +104,15 @@ module.exports = function(app) {
     app.post('/admin/adminRollCallClassList/cancel', checkLogin);
     app.post('/admin/adminRollCallClassList/cancel', function(req, res) {
         AbsentClass.delete({
+            _id: req.body.id
+        }).then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+
+    app.post('/admin/adminRollCallClassList/recover', checkLogin);
+    app.post('/admin/adminRollCallClassList/recover', function(req, res) {
+        AbsentClass.recover({
             _id: req.body.id
         }).then(function() {
             res.jsonp({ sucess: true });

@@ -38,9 +38,21 @@ function renderSearchSchoolDropDown() {
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
 
+function getButtons(objClasses) {
+    var strButtons = "";
+    if (objClasses.isDeleted) {
+        strButtons += '<a class="btn btn-default btnRecover">还原</a>';
+    } else {
+        strButtons += '<a class="btn btn-default btnDelete">删除</a>';
+    }
+
+    return strButtons;
+};
+
 function search(p) {
     var filter = {
             schoolId: $(".mainModal #InfoSearch #searchSchool").val(),
+            isDeleted: $(".mainModal #InfoSearch #isDeleted").val(),
             startDate: $("#startDate").val(),
             endDate: $("#endDate").val()
         },
@@ -51,7 +63,7 @@ function search(p) {
             data.absentClasses.forEach(function(absentClass) {
                 var $tr = $('<tr id=' + absentClass._id + '><td>' + absentClass.className + '</td><td>' + absentClass.teacherName +
                     '</td><td>' + absentClass.courseTime + '</td><td>' + moment(absentClass.createdDate).format("YYYY-MM-DD HH:mm") +
-                    '</td><td><div class="btn-group"><a class="btn btn-default btnDelete">删除</a></div></td></tr>');
+                    '</td><td><div class="btn-group">' + getButtons(absentClass) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", absentClass);
                 $mainSelectBody.append($tr);
             });
@@ -84,6 +96,24 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminRollCallClassList/cancel", {
+            id: entity._id
+        }, function(data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                var page = parseInt($("#mainModal #page").val());
+                search(page);
+            }
+        });
+    });
+});
+
+$("#gridBody").on("click", "td .btnRecover", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    showComfirm("确定要恢复点名 (" + entity.className + ") 吗？");
+
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        selfAjax("post", "/admin/adminRollCallClassList/recover", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

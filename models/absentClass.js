@@ -47,11 +47,7 @@ AbsentClass.get = function(id) {
 
 //一次获取20个学区信息
 AbsentClass.getAll = function(id, page, filter, callback) {
-    if (filter) {
-        filter.isDeleted = { $ne: true };
-    } else {
-        filter = { isDeleted: { $ne: true } };
-    }
+    //special situation
     var query = absentClassModel.count(filter);
     query.exec(function(err, count) {
         query.find()
@@ -79,4 +75,10 @@ AbsentClass.getFilters = function(filter) {
         filter = { isDeleted: { $ne: true } };
     }
     return absentClassModel.find(filter);
+};
+
+AbsentClass.recover = function(filter) {
+    return absentClassModel.update(filter, {
+        isDeleted: false
+    }, { multi: true }).exec();
 };

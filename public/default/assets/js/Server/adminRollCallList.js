@@ -52,6 +52,10 @@ function search(p) {
     });
 };
 
+$("#myModal .modal-body ul.dropdown-menu-right li a").on("click", function(e) {
+    $("#myModal .modal-body #comment").val($(e.currentTarget).html());
+});
+
 $(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
     search();
 });

@@ -64,7 +64,20 @@
                 <form>
                     <div class="form-group">
                         <label for="comment" class="control-label">备注:</label>
-                        <textarea maxlength="4" rows="3" class="form-control" placeholder="病假|事假|迟到|已到|联系不上" name="comment" id="comment"></textarea>
+                        <div class="input-group">
+                            <input type="text" name="comment" id="comment" maxlength="6" class="form-control" placeholder="病假|事假|迟到|已到|联系不上">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li><a href="#">病假</a></li>
+                                    <li><a href="#">事假</a></li>
+                                    <li><a href="#">迟到</a></li>
+                                    <li><a href="#">已到</a></li>
+                                    <li><a href="#">联系不上</a></li>
+                                </ul>
+                            </div>
+                            <!-- /btn-group -->
+                        </div>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -96,6 +109,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/adminRollCallList.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminRollCallList.js?v=1.001"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}
