@@ -129,10 +129,10 @@ module.exports = function(app) {
 
     app.post('/admin/adminRollCallClassList/clearAll', checkLogin);
     app.post('/admin/adminRollCallClassList/clearAll', function(req, res) {
-        AbsentClass.delete({}).then(function() {
-            AbsentStudents.delete({}).then(function() {
-                res.jsonp({ sucess: true });
-            })
-        });
+        // AbsentClass.delete({}).then(function() {
+        //     AbsentStudents.delete({}).then(function() {
+        //         res.jsonp({ sucess: true });
+        //     })
+        // });
     });
 }

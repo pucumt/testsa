@@ -107,17 +107,3 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
-
-$(".mainModal #InfoSearch #btnClearAll").on("click", function(e) {
-    showComfirm("确定要清空点名吗？");
-
-    $("#btnConfirmSave").off("click").on("click", function(e) {
-        selfAjax("post", "/admin/adminRollCallClassList/clearAll", {}, function(data) {
-            $('#confirmModal').modal('hide');
-            if (data.sucess) {
-                var page = parseInt($("#mainModal #page").val());
-                search(page);
-            }
-        });
-    });
-});
