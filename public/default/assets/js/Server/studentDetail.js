@@ -13,7 +13,7 @@ $(document).ready(function() {
 /***----------studentInfo------------ */
 function resetDropDown(id) {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {
@@ -30,7 +30,7 @@ function resetDropDown(id) {
 
 function renderStudent() {
     var id = $("#id").val();
-    $.get("/admin/studentInfo/" + id, function(data) {
+    selfAjax("get", "/admin/studentInfo/" + id, null, function(data) {
         if (data) {
             $("#studentInfo #studentName").val(data.name);
             $("#studentInfo #mobile").val(data.mobile);
@@ -48,7 +48,7 @@ function renderStudent() {
 };
 
 function renderAccount(id) {
-    $.get("/admin/studentAccount/" + id, function(data) {
+    selfAjax("get", "/admin/studentAccount/" + id, null, function(data) {
         if (data) {
             $(".mainModal .panel-heading .account").text(data.name);
         }
@@ -89,27 +89,30 @@ function addValidation() {
 $("#studentInfo #btnSave").on("click", function(e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/studentInfo/edit",
-            postObj = {
-                name: $('#studentInfo #studentName').val(),
-                mobile: $('#studentInfo #mobile').val(),
-                studentNo: $('#studentInfo #studentNo').val(),
-                sex: $('#studentInfo #sex').val(),
-                School: $('#studentInfo #School').val(),
-                className: $("#studentInfo #className").val(),
-                address: $('#studentInfo #address').val(),
-                discount: $('#studentInfo #discount').val(),
-                id: $('#id').val(),
-                accountId: $("#accountId").val(),
-                gradeId: $('#studentInfo #grade').val(),
-                gradeName: $('#studentInfo #grade').find("option:selected").text(),
-            };
-        $.post(postURI, postObj, function(data) {
-            if (data.error) {
-                showAlert(data.error);
-            } else {
-                showAlert("保存成功");
-            }
+        showComfirm("真的要保存" + $('#studentInfo #studentName').val() + "吗？");
+        $("#btnConfirmSave").off("click").on("click", function(e) {
+            var postURI = "/admin/studentInfo/edit",
+                postObj = {
+                    name: $('#studentInfo #studentName').val(),
+                    mobile: $('#studentInfo #mobile').val(),
+                    studentNo: $('#studentInfo #studentNo').val(),
+                    sex: $('#studentInfo #sex').val(),
+                    School: $('#studentInfo #School').val(),
+                    className: $("#studentInfo #className").val(),
+                    address: $('#studentInfo #address').val(),
+                    discount: $('#studentInfo #discount').val(),
+                    id: $('#id').val(),
+                    accountId: $("#accountId").val(),
+                    gradeId: $('#studentInfo #grade').val(),
+                    gradeName: $('#studentInfo #grade').find("option:selected").text(),
+                };
+            selfAjax("post", postURI, postObj, function(data) {
+                if (data.error) {
+                    showAlert(data.error);
+                } else {
+                    showAlert("保存成功");
+                }
+            });
         });
     }
 });
@@ -117,7 +120,7 @@ $("#studentInfo #btnSave").on("click", function(e) {
 $("#studentInfo #btnDelete").on("click", function(e) {
     showComfirm("真的要删除" + $('#studentInfo #studentName').val() + "吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentInfo/delete", {
+        selfAjax("post", "/admin/studentInfo/delete", {
             id: $('#id').val()
         }, function(data) {
             if (data.sucess) {
@@ -173,7 +176,7 @@ function searchClass(p) {
         },
         pStr = p ? "p=" + p : "";
     $classSelectBody.empty();
-    $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             data.adminEnrollTrains.forEach(function(trainOrder) {
                 $classSelectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' + (trainOrder.fromId || "") + '</td><td>' + trainOrder.studentName +
@@ -194,7 +197,7 @@ function searchExam(p) {
         },
         pStr = p ? "p=" + p : "";
     $examSelectBody.empty();
-    $.post("/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
             data.adminEnrollExams.forEach(function(examOrder) {
                 var button = (examOrder.isSucceed == 1 ? '<a id="btnDelete" class="btn btn-default">取消</a><a id="btnChange" class="btn btn-default">更新学生</a>' : '');
@@ -218,7 +221,7 @@ $('.content .examModal table tbody').on("click", "td #btnDelete", function(e) {
     showComfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/adminEnrollExam/cancel", {
+        selfAjax("post", "/admin/adminEnrollExam/cancel", {
             id: entity._id,
             examId: entity.examId,
             examAreaId: entity.examAreaId
@@ -242,7 +245,7 @@ $('.content .examModal table tbody').on("click", "td #btnChange", function(e) {
     showComfirm("确定要更新订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/adminEnrollExam/changeStudent", {
+        selfAjax("post", "/admin/adminEnrollExam/changeStudent", {
             id: entity._id,
             studentId: $('#id').val(),
             studentName: $('#studentName').val()
@@ -265,7 +268,7 @@ function searchCoupon(p) {
         },
         pStr = p ? "p=" + p : "";
     $couponSelectBody.empty();
-    $.post("/admin/couponAssignList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponAssignList/search?" + pStr, filter, function(data) {
         if (data && data.couponAssigns.length > 0) {
             data.couponAssigns.forEach(function(coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
