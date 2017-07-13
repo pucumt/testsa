@@ -52,6 +52,26 @@ $(document).ready(function() {
 
 });
 
+
+window.selfAjax = function(method, url, filter, callback) {
+    loading();
+    return $[method](
+        url,
+        filter
+    ).then(function(data) {
+        callback(data);
+        hideLoading();
+        return data;
+    });
+};
+
+window.loading = function() {
+    $("#loadingIndicator").modal({ backdrop: 'static', keyboard: false });
+};
+
+window.hideLoading = function() {
+    $("#loadingIndicator").modal('hide');
+};
 //Html编码获取Html转义实体  
 // function htmlEncode(value) {
 //     return encodeURI(value);

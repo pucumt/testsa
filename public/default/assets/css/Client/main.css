@@ -66,7 +66,8 @@ footer,
     font-size: 15px;
 }
 
-.enroll .pageTitle .glyphicon-menu-left {
+.enroll .pageTitle .glyphicon-menu-left,
+.changeClass .title .glyphicon-menu-left {
     font-size: 20px;
     margin-left: 5px;
     margin-top: 10px;
@@ -169,6 +170,21 @@ footer,
     margin-bottom: 10px;
 }
 
+#Enroll-select.changeClass .title {
+    background-color: #286090;
+    line-height: 40px;
+    color: white;
+    /*margin: 0 -25px;*/
+    border-bottom: 0;
+    padding: 0 5px;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+#Enroll-select.changeClass .row {
+    margin: 0;
+}
+
 #Enroll-student .title .title,
 #Enroll-student-edit .title .title {
     border-bottom: 0;
@@ -183,7 +199,8 @@ footer,
 .enroll .enroll-submit.exam button,
 #Enroll-select #btnNext,
 #Enroll-student #btnNewStudent,
-#Enroll-student-edit #btnSave {
+#Enroll-student-edit #btnSave,
+.personalCenter .changeClass #btnChangeClass {
     width: 100%;
     height: 40px;
     border-radius: 0;
@@ -204,6 +221,10 @@ footer,
     transform: translate3d(0px, 0px, 0px);
     transition: all 300ms ease;
     opacity: 1;
+}
+
+#Enroll-select.changeClass {
+    padding: 0;
 }
 
 #confirmModal {
@@ -404,6 +425,17 @@ footer,
     border-top: 1px solid #ddd;
     padding: 10px 0;
     margin-top: 10px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .changeClass {
+    padding-bottom: 10px;
+}
+
+#Enroll-student.enroll.personalCenter .orderList ul li .changeClass .trainclass {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+    margin: 10px 0;
 }
 
 #pay-select {

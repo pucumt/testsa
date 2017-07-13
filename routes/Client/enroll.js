@@ -10,6 +10,7 @@ var ExamClass = require('../../models/examClass.js'),
     CouponAssign = require('../../models/couponAssign.js'),
     Coupon = require('../../models/coupon.js'),
     ExamClassExamArea = require('../../models/examClassExamArea.js'),
+    moment = require("moment"),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -77,7 +78,10 @@ module.exports = function(app) {
         //debugger;
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
-        var filter = { isWeixin: 1 };
+        var filter = {
+            isWeixin: 1,
+            yearId: global.currentYear._id.toJSON()
+        };
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
         }
@@ -98,6 +102,34 @@ module.exports = function(app) {
             res.jsonp({
                 classs: classs,
                 isLastPage: ((page - 1) * 14 + classs.length) == total
+            });
+        });
+    });
+
+    app.post('/enroll/filterClasses', function(req, res) {
+        //debugger;
+        var filter = {
+            isWeixin: 1,
+            yearId: global.currentYear._id.toJSON()
+        };
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
+        if (req.body.gradeId) {
+            filter.gradeId = req.body.gradeId;
+        }
+        if (req.body.subjectId) {
+            filter.subjectId = req.body.subjectId;
+        }
+        if (req.body.categoryId) {
+            filter.categoryId = req.body.categoryId;
+        }
+        if (req.body.timespan) {
+            filter.courseTime = req.body.timespan;
+        }
+        TrainClass.filtersToEnroll(filter).then(function(classs) {
+            res.jsonp({
+                classs: classs
             });
         });
     });
@@ -312,6 +344,30 @@ module.exports = function(app) {
                 console.log('errored');
             });
         Promise.all([p0, p1, p2, p3]).then(function() {
+                res.jsonp(objReturn);
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+    });
+
+    app.get('/enroll/school', function(req, res) {
+        var objReturn = {};
+        var p0 = SchoolArea.getAllWithoutPage()
+            .then(function(schools) {
+                objReturn.schools = schools;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        // var p1 = Grade.getAllWithoutPage()
+        //     .then(function(grades) {
+        //         objReturn.grades = grades;
+        //     })
+        //     .catch((err) => {
+        //         console.log('errored');
+        //     });
+        Promise.all([p0]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {
@@ -691,5 +747,92 @@ module.exports = function(app) {
                         }
                     });
             });
+    });
+
+    ///change class
+    app.post('/enroll/changeClass', checkJSONLogin);
+    app.post('/enroll/changeClass', function(req, res) {
+        AdminEnrollTrain.getFilter({
+            isSucceed: 1,
+            isPayed: true,
+            _id: req.body.orderId,
+            yearId: global.currentYear._id.toJSON()
+        }).then(function(oldOrder) {
+            if (oldOrder) {
+                TrainClass.getFilter({
+                    _id: oldOrder.trainId,
+                    yearId: global.currentYear._id.toJSON()
+                }).then(function(trainClass) {
+                    if (trainClass) {
+                        if (moment().add(2, 'day').isBefore(trainClass.courseStartDate)) {
+                            //could change class
+                            //enroll of new class
+                            AdminEnrollTrain.getByStudentAndClass(oldOrder.studentId, req.body.trainId)
+                                .then(function(enrollTrain) {
+                                    if (enrollTrain) {
+                                        res.jsonp({ error: "您已经报过新课程了!" });
+                                        return;
+                                    }
+                                    TrainClass.enroll(req.body.trainId)
+                                        .then(function(resultClass) {
+                                            if (resultClass && resultClass.ok && resultClass.nModified == 1) {
+                                                //报名成功
+                                                TrainClass.get(req.body.trainId).then(function(trainClass) {
+                                                    if (trainClass.enrollCount == trainClass.totalStudentCount) {
+                                                        TrainClass.full(req.body.classId);
+                                                        //updated to full
+                                                    }
+                                                    //new order
+                                                    var adminEnrollTrain = new AdminEnrollTrain({
+                                                        studentId: oldOrder.studentId,
+                                                        studentName: oldOrder.studentName,
+                                                        mobile: oldOrder.mobile,
+                                                        trainId: trainClass._id,
+                                                        trainName: trainClass.name,
+                                                        attributeId: trainClass.attributeId,
+                                                        attributeName: trainClass.attributeName,
+                                                        trainPrice: trainClass.trainPrice,
+                                                        materialPrice: trainClass.materialPrice,
+                                                        discount: oldOrder.discount,
+                                                        totalPrice: oldOrder.totalPrice,
+                                                        realMaterialPrice: oldOrder.realMaterialPrice,
+                                                        fromId: oldOrder._id,
+                                                        isPayed: true,
+                                                        payWay: oldOrder.payWay,
+                                                        yearId: global.currentYear._id,
+                                                        yearName: global.currentYear.name
+                                                    });
+                                                    adminEnrollTrain.save().then(function(newOrder) {
+                                                        //cancel of old class
+                                                        TrainClass.cancel(oldOrder.trainId).then(function() {
+                                                            AdminEnrollTrain.changeClass(oldOrder._id).then(function() {
+                                                                res.jsonp({ sucess: true });
+                                                                return;
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            } else {
+                                                //报名失败
+                                                res.jsonp({ error: "报名失败,很可能报满" });
+                                                return;
+                                            }
+                                        });
+                                });
+                        } else {
+                            //cannot change class
+                            res.jsonp({ error: "订单已经不能调班！" });
+                            return;
+                        }
+                    } else {
+                        res.jsonp({ error: "订单的课程已取消！" });
+                        return;
+                    }
+                });
+            } else {
+                res.jsonp({ error: "此订单不能调班！" });
+                return;
+            }
+        });
     });
 };

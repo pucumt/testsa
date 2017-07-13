@@ -210,6 +210,19 @@ AdminEnrollTrain.getFilters = function(filter) {
         .exec();
 };
 
+AdminEnrollTrain.getFiltersWithClass = function(filter) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        })
+        .exec();
+};
+
 AdminEnrollTrain.getCount = function(filter) {
     if (filter) {
         filter.isDeleted = { $ne: true };
@@ -468,23 +481,6 @@ AdminEnrollTrain.getCountOfStudentSubject = function(yearId, subjectId, studentI
         .exec();
 };
 
-AdminEnrollTrain.getFiltersWithClass = function(yearId) {
-    return adminEnrollTrainModel.aggregate({
-            $match: {
-                isDeleted: { $ne: true },
-                isSucceed: 1,
-                yearId: yearId.toJSON(),
-                isPayed: true
-            }
-        })
-        .lookup({
-            from: "trainClasss",
-            localField: "trainId",
-            foreignField: "_id",
-            as: "trainClasss"
-        })
-        .exec();
-};
 
 // return qry.out("temps").exec().then(function() {
 //         return mongoose.model('temp', new mongoose.Schema({

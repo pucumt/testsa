@@ -926,7 +926,13 @@ module.exports = function(app) {
         var data = [
             ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
         ];
-        var p = AdminEnrollTrain.getFiltersWithClass(global.currentYear._id)
+        var filter = {
+            isDeleted: { $ne: true },
+            isSucceed: 1,
+            yearId: global.currentYear._id.toJSON(),
+            isPayed: true
+        };
+        var p = AdminEnrollTrain.getFiltersWithClass(filter)
             .then(function(orders) {
                 if (orders.length > 0) {
                     var PArray = [];

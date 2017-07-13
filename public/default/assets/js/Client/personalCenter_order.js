@@ -23,23 +23,30 @@ $(document).ready(function() {
         // $("#bgBack").show();
         // $("#pay-select").show();
     });
+
+    $(".enroll.personalCenter .orderList ul").on("click", "#btnChangeClass", function(e) {
+        var curObj = $(e.currentTarget),
+            $li = curObj.parents("li");
+        location.href = "/personalCenter/changeClass/id/" + $li.attr("orderId");
+    });
 });
 
 function loadOrders() {
-    $.post("/personalCenter/order/all", { originalUrl: "/personalCenter/order" }, function(data) {
-        if (data) {
-            if (data.notLogin) {
-                location.href = "/login";
-                return;
-            }
+    selfAjax("post", "/personalCenter/order/all", { originalUrl: "/personalCenter/order" },
+        function(data) {
+            if (data) {
+                if (data.notLogin) {
+                    location.href = "/login";
+                    return;
+                }
 
-            if (data.length > 0) {
-                renderOrders(data);
-            } else {
-                $ul.text("还没有课程订单");
+                if (data.length > 0) {
+                    renderOrders(data);
+                } else {
+                    $ul.text("还没有课程订单");
+                }
             }
-        }
-    });
+        });
 };
 
 var $ul = $("#Enroll-student .orderList .student-list");
@@ -50,11 +57,16 @@ function renderOrders(orders) {
         // d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
         orders.forEach(function(order) {
             var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
-                status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>';
+                status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>',
+                buttons = '<button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-primary btn-xs">详情</button>';
+            if (moment().add(2, 'day').isBefore(order.courseStartDate)) {
+                buttons += '<button type="button" id="btnChangeClass" style="margin-right: 10px;" class="btn btn-primary btn-xs">调班</button>';
+            }
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
-                moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' + order.className +
-                '</div><div class="price"><button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-primary btn-xs">详情</button><span class="pull-right">总金额:' +
+                moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div><div class="">上课时间:' +
+                order.courseTime + '</div></div><div class="title">' + order.className +
+                '</div><div class="price">' + buttons + '<span class="pull-right">总金额:' +
                 price + '元</span>' + status + '</div></div></li>');
         });
         $ul.append(d);
@@ -70,7 +82,7 @@ function GotoDetail(e) {
 
 $("#pay-select .wechat").on("click", function(e) {
     $("#pay-select").hide();
-    $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+    selfAjax("get", "/personalCenter/order/wechatpay/" + orderId, null, function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
@@ -83,7 +95,7 @@ $("#pay-select .wechat").on("click", function(e) {
 
 $("#pay-select .zhifubao").on("click", function(e) {
     $("#pay-select").hide();
-    $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+    selfAjax("get", "/personalCenter/order/zhifubaopay/" + orderId, null, function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {

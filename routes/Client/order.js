@@ -18,17 +18,19 @@ module.exports = function(app) {
             var parray = [];
             students.forEach(function(student) {
                 var filter = {
-                    studentId: student._id,
-                    isSucceed: 1
+                    studentId: student._id.toJSON(),
+                    isSucceed: 1,
+                    isDeleted: { $ne: true }
                 };
                 if (global.currentYear) {
-                    filter.yearId = global.currentYear._id;
+                    filter.yearId = global.currentYear._id.toJSON();
                 }
 
-                var p = AdminEnrollTrain.getFilters(filter)
+                var p = AdminEnrollTrain.getFiltersWithClass(filter)
                     .then(function(trains) {
                         var orders = [];
                         trains.forEach(function(train) {
+                            var newClass = train.trainClasss[0] || {};
                             orders.push({
                                 studentName: student.name,
                                 _id: train._id,
@@ -36,7 +38,9 @@ module.exports = function(app) {
                                 className: train.trainName,
                                 totalPrice: train.totalPrice,
                                 realMaterialPrice: train.realMaterialPrice,
-                                orderDate: train.orderDate
+                                orderDate: train.orderDate,
+                                courseTime: newClass.courseTime,
+                                courseStartDate: newClass.courseStartDate
                             });
                         });
                         return orders;
@@ -103,6 +107,24 @@ module.exports = function(app) {
                     if (train) {
                         res.render('Client/personalCenter_order_detail.html', {
                             title: '测试列表',
+                            user: req.session.user,
+                            order: order,
+                            train: train
+                        });
+                    }
+                })
+            }
+        });
+    });
+
+    app.get('/personalCenter/changeClass/id/:id', checkLogin);
+    app.get('/personalCenter/changeClass/id/:id', function(req, res) {
+        AdminEnrollTrain.get(req.params.id).then(function(order) {
+            if (order) {
+                TrainClass.get(order.trainId).then(function(train) {
+                    if (train) {
+                        res.render('Client/personalCenter_order_changeClass.html', {
+                            title: '调班',
                             user: req.session.user,
                             order: order,
                             train: train

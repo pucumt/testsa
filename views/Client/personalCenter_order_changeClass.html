@@ -1,0 +1,117 @@
+{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll personalCenter" id="Enroll-student">
+    <div class="pageTitle">
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>调班
+    </div>
+    <div class="orderList">
+        <ul class="student-list clearfix list-unstyled">
+            {% if order %}
+            <li class="clearfix">
+                <input type="hidden" id="orderId" value="{{ order._id }}" />
+                <input type="hidden" id="trainId" value="{{ order.trainId }}" />
+                <div>
+                    <div class="detail">
+                        <div class="studentName">学员:{{ order.studentName }}</div>
+                    </div>
+                    <div class="title">{{ order.trainName }}</div>
+                    {% if train %}
+                    <div class="classDetail">
+                        <input type="hidden" id="gradeId" value="{{ train.gradeId }}" />
+                        <input type="hidden" id="subjectId" value="{{ train.subjectId }}" />
+                        <input type="hidden" id="categoryId" value="{{ train.categoryId }}" />
+                        <div class="">年级:&nbsp;&nbsp;{{ train.gradeName }}</div>
+                        <div class="">科目:&nbsp;&nbsp;{{ train.subjectName }}</div>
+                        <div class="">类别:&nbsp;&nbsp;{{ train.categoryName }}</div>
+                        <div class="">日期:&nbsp;&nbsp;{{ train.courseStartDate.toLocaleDateString() }} - {{ train.courseEndDate.toLocaleDateString() }}</div>
+                        <div class="">时间:&nbsp;&nbsp;{{ train.courseTime }}</div>
+                        <div class="">教室:&nbsp;&nbsp;{{ train.classRoomName }}</div>
+                        <div class="">校区:&nbsp;&nbsp;{{ train.schoolArea }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="price clearfix">
+                        {% if not order.isPayed %}
+                        <button type="button" id="btnPay" orderId="{{ order._id }}" class="btn btn-danger btn-xs">支付</button> {% endif %}
+                        <span class="pull-right">总金额:{{ (order.totalPrice+order.realMaterialPrice) }}元</span></div>
+                    <div class="changeClass clearfix">
+                        {% if order.isPayed %}
+                        <div class="trainclass clearfix">
+                            <span class="name">选择新班</span><span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+                            <input type="hidden" id="newClassId" />
+                        </div>
+                        <button type="button" id="btnChangeClass" class="btn btn-primary">调班</button> {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+<!--modal-->
+<div id="Enroll-select" class="changeClass enroll" style="display:none; height: 100%;">
+    <div class="title clearfix">
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>
+        <span class="title">课程列表</span>
+        <span class="pull-right filter" style="font-size: 12px;">筛选<span class="glyphicon glyphicon-filter"></span></span>
+    </div>
+    <div class="row">
+        <ul class="exam-list clearfix list-unstyled">
+        </ul>
+    </div>
+</div>
+<div class="container enroll-filter" style="display: none;">
+    <div class="row text-center">
+        <label style="margin-top: 15px;">选择课程</label><span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="drpSchool" class="control-label">校区:</label>
+            <select name="drpSchool" id="drpSchool" class="form-control"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="drpDateSpan" class="control-label">上课日期:</label>
+            <select name="drpDateSpan" id="drpDateSpan" class="form-control">
+                <option>一三五</option>
+                <option>二四六</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="drpTimeSpan" class="control-label">时间段:</label>
+            <select name="drpTimeSpan" id="drpTimeSpan" class="form-control">
+                <option>8:00-9:50</option>
+                <option>10:10-12:00</option>
+                <option>14:00-15:50</option>
+                <option>16:10-18:00</option>
+                <option>19:00-20:50</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <input class="btn btn-large btn-primary btn-search" type="submit" value="开始搜索" />
+        </div>
+    </div>
+</div>
+<div class="modal" id="confirmModal" style="display:none; height: 100%;">
+    <div class="modal-backdrop fade in" style="height: 100%;"></div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                出错了！
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/default/assets/js/Client/personalCenter_order.changeclass.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

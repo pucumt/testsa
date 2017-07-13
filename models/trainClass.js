@@ -252,6 +252,13 @@ TrainClass.getFilters = function(filter) {
     return trainClassModel.find(filter);
 };
 
+TrainClass.filtersToEnroll = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    filter.$where = "this.enrollCount < this.totalStudentCount";
+    return trainClassModel.find(filter);
+};
+
 TrainClass.deleteAll = function(ids) {
     return trainClassModel.update({
         _id: { $in: ids }
