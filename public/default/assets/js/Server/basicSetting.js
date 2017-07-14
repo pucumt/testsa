@@ -26,4 +26,17 @@ $(document).ready(function() {
     $("#left_btnYear").on("click", function(e) {
         location.href = "/admin/yearList";
     });
+
+    //课程设置相关
+    $("#left_btnWeekType").on("click", function(e) {
+        location.href = "/admin/weekType";
+    });
+
+    $("#left_btnTimeType").on("click", function(e) {
+        location.href = "/admin/timeType";
+    });
+
+    $("#left_btnChangeEnd").on("click", function(e) {
+        location.href = "/admin/changeEnd";
+    });
 });

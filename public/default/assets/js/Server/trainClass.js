@@ -36,8 +36,6 @@ $(document).ready(function() {
 });
 
 //------------search funfunction
-
-
 function renderSearchYearDropDown() {
     $.post("/admin/year/all", function(data) {
         if (data && data.length > 0) {

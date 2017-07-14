@@ -59,7 +59,7 @@ function renderOrders(orders) {
             var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
                 status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>',
                 buttons = '<button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-primary btn-xs">详情</button>';
-            if (moment().add(2, 'day').isBefore(order.courseStartDate)) {
+            if (moment().isBefore(order.courseStartDate)) {
                 buttons += '<button type="button" id="btnChangeClass" style="margin-right: 10px;" class="btn btn-primary btn-xs">调班</button>';
             }
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +

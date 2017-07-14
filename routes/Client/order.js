@@ -6,6 +6,7 @@ var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     ClassRoom = require('../../models/classRoom.js'),
     payHelper = require('../../util/payHelper.js'),
+    ChangeEnd = require('../../models/changeEnd.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -14,48 +15,50 @@ module.exports = function(app) {
     app.post('/personalCenter/order/all', checkJSONLogin);
     app.post('/personalCenter/order/all', function(req, res) {
         var currentUser = req.session.user;
-        StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
-            var parray = [];
-            students.forEach(function(student) {
-                var filter = {
-                    studentId: student._id.toJSON(),
-                    isSucceed: 1,
-                    isDeleted: { $ne: true }
-                };
-                if (global.currentYear) {
-                    filter.yearId = global.currentYear._id.toJSON();
-                }
-
-                var p = AdminEnrollTrain.getFiltersWithClass(filter)
-                    .then(function(trains) {
-                        var orders = [];
-                        trains.forEach(function(train) {
-                            var newClass = train.trainClasss[0] || {};
-                            orders.push({
-                                studentName: student.name,
-                                _id: train._id,
-                                isPayed: train.isPayed,
-                                className: train.trainName,
-                                totalPrice: train.totalPrice,
-                                realMaterialPrice: train.realMaterialPrice,
-                                orderDate: train.orderDate,
-                                courseTime: newClass.courseTime,
-                                courseStartDate: newClass.courseStartDate
-                            });
-                        });
-                        return orders;
-                    });
-                parray.push(p);
-            });
-            Promise.all(parray).then(function(results) {
-                var orders = [];
-                results.forEach(function(trains) {
-                    if (trains) {
-                        orders = orders.concat(trains);
+        ChangeEnd.get().then(function(changeEnd) {
+            StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
+                var parray = [];
+                students.forEach(function(student) {
+                    var filter = {
+                        studentId: student._id.toJSON(),
+                        isSucceed: 1,
+                        isDeleted: { $ne: true }
+                    };
+                    if (global.currentYear) {
+                        filter.yearId = global.currentYear._id.toJSON();
                     }
+
+                    var p = AdminEnrollTrain.getFiltersWithClass(filter)
+                        .then(function(trains) {
+                            var orders = [];
+                            trains.forEach(function(train) {
+                                var newClass = train.trainClasss[0] || {};
+                                orders.push({
+                                    studentName: student.name,
+                                    _id: train._id,
+                                    isPayed: train.isPayed,
+                                    className: train.trainName,
+                                    totalPrice: train.totalPrice,
+                                    realMaterialPrice: train.realMaterialPrice,
+                                    orderDate: train.orderDate,
+                                    courseTime: newClass.courseTime,
+                                    courseStartDate: ((changeEnd && changeEnd.endDate) || newClass.courseStartDate)
+                                });
+                            });
+                            return orders;
+                        });
+                    parray.push(p);
                 });
-                res.jsonp(orders);
-                return;
+                Promise.all(parray).then(function(results) {
+                    var orders = [];
+                    results.forEach(function(trains) {
+                        if (trains) {
+                            orders = orders.concat(trains);
+                        }
+                    });
+                    res.jsonp(orders);
+                    return;
+                });
             });
         });
     });

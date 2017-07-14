@@ -1,7 +1,3 @@
-var newStudent = true,
-    editStudent,
-    orderId;
-
 $(document).ready(function() {
     $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
         //back to order form
@@ -92,6 +88,16 @@ function renderfilter() {
             if (data.schools.length > 0) {
                 data.schools.forEach(function(school) {
                     $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
+                });
+            }
+            if (data.weekTypes.length > 0) {
+                data.weekTypes.forEach(function(weekType) {
+                    $(".enroll-filter #drpDateSpan").append("<option>" + weekType.name + "</option>");
+                });
+            }
+            if (data.timeTypes.length > 0) {
+                data.timeTypes.forEach(function(timeType) {
+                    $(".enroll-filter #drpTimeSpan").append("<option>" + timeType.name + "</option>");
                 });
             }
             loadData();

@@ -87,6 +87,17 @@ window.loading = function() {
 window.hideLoading = function() {
     $("#loadingIndicator").modal('hide');
 };
+
+window.getAllCheckedIds = function(objs) {
+    var trainIds = [];
+    objs.each(function(index) {
+        if (this.checked) {
+            trainIds.push($(this).val());
+        }
+    });
+    return trainIds;
+};
+
 //Html编码获取Html转义实体  
 // function htmlEncode(value) {
 //     return encodeURI(value);

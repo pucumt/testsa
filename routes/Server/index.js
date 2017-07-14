@@ -9,6 +9,9 @@
     examArea = require('./examArea.js'),
     teacher = require('./teacher.js'),
     year = require('./year.js'),
+    weekType = require('./weekType.js'),
+    timeType = require('./timeType.js'),
+    changeEnd = require('./changeEnd.js'),
 
     trainClass = require('./trainClass.js'),
     category = require('./category.js'),
@@ -56,6 +59,10 @@ module.exports = function(app) {
     examArea(app);
     teacher(app);
     year(app);
+    weekType(app);
+    timeType(app);
+    changeEnd(app);
+
     category(app);
     subject(app);
     classAttribute(app);
