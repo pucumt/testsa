@@ -85,7 +85,7 @@ StudentInfo.getAllOfStudent = function(id, page, filter, callback) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .select({ 'name': 1 })
+            // .select({ 'name': 1 })
             .exec(function(err, studentInfos) {
                 callback(null, studentInfos, count);
             });

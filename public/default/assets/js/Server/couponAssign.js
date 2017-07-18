@@ -44,7 +44,7 @@ function search(p) {
                         }).length > 0) {
                         checked = "checked";
                     }
-                    $mainSelectBody.append('<tr><td><input id=' + id + ' ' + checked + ' type="checkbox" name="student" value=' + id + '></td><td>' + name + '</td></tr>');
+                    $mainSelectBody.append('<tr><td><input id=' + id + ' ' + checked + ' type="checkbox" name="student" value=' + id + '></td><td>' + name + '</td><td>' + student.mobile + '</td></tr>');
                 });
             });
         }
