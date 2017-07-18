@@ -22,7 +22,7 @@
                         <input type="hidden" class="form-control" name="gradeId" id="gradeId" value={{coupon.gradeId}}>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 hidden">
                     <div class="form-group">
                         <label for="trainName" class="control-label">班级:</label>
                         <div class="btn-group">
@@ -54,7 +54,8 @@
         <thead>
             <tr>
                 <th style="width:80px;">选择</th>
-                <th>学生</th>
+                <th style="width:200px;">学生</th>
+                <th>电话</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -138,5 +139,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/couponAssign.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/couponAssign.js?v=1.001"></script>
 {% endblock %}

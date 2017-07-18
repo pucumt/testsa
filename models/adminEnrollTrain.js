@@ -109,7 +109,7 @@ AdminEnrollTrain.getAllOfStudent = function(id, page, filter, callback) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .select({ studentId: 1, studentName: 1 })
+            .select({ studentId: 1, studentName: 1, mobile: 1 })
             .exec(function(err, adminEnrollTrains) {
                 callback(null, adminEnrollTrains, count);
             });
