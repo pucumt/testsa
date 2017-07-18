@@ -223,6 +223,20 @@ AdminEnrollTrain.getFiltersWithClass = function(filter) {
         .exec();
 };
 
+AdminEnrollTrain.getFiltersWithClassFilters = function(filter, classFilters) {
+    return adminEnrollTrainModel.aggregate({
+            $match: filter
+        })
+        .lookup({
+            from: "trainClasss",
+            localField: "trainId",
+            foreignField: "_id",
+            as: "trainClasss"
+        })
+        .match(classFilters)
+        .exec();
+};
+
 AdminEnrollTrain.getCount = function(filter) {
     if (filter) {
         filter.isDeleted = { $ne: true };

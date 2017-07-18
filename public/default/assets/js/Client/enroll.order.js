@@ -1,12 +1,14 @@
 $(document).ready(function() {
     $("#btnPay").hide();
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+        //返回按钮
         if ($("#originalOrder").val()) {
             location.href = "/enroll/originalclass/" + $("#classId").val();
         } else {
             location.href = "/enroll/class/" + $("#classId").val();
         }
     });
+
     if ($("#notOriginal").val()) {
         showAlert("本课程是老班升报，您不符合要求，请等待后续课程！", "", function(e) {
             location.href = "/enroll/originalclass/" + $("#classId").val();
@@ -20,6 +22,11 @@ $(document).ready(function() {
             }
         });
     } else {
+        if ($("#isTimeDuplicated").val() == "true") {
+            //时间冲突，简单提醒
+            showAlert("上课时间跟已报课程有冲突了!", "", function(e) {});
+        }
+
         $("#btnPay").show();
         renderData();
     }

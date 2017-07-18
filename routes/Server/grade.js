@@ -67,4 +67,17 @@ module.exports = function(app) {
             res.jsonp(grades);
         });
     });
+
+    app.get('/admin/grade/settings/:id', checkLogin);
+    app.get('/admin/grade/settings/:id', function(req, res) {
+        Grade.get(req.params.id).then(function(grade) {
+            if (grade) {
+                res.render('Server/gradeSubjectRelationList.html', {
+                    title: '>' + grade.name + '>年级科目',
+                    user: req.session.admin,
+                    gradeId: req.params.id
+                });
+            }
+        });
+    });
 }

@@ -12,6 +12,9 @@
     weekType = require('./weekType.js'),
     timeType = require('./timeType.js'),
     changeEnd = require('./changeEnd.js'),
+    schoolGradeRelation = require('./schoolGradeRelation.js'),
+    gradeSubjectRelation = require('./gradeSubjectRelation.js'),
+    gradeSubjectCategoryRelation = require('./gradeSubjectCategoryRelation.js'),
 
     trainClass = require('./trainClass.js'),
     category = require('./category.js'),
@@ -62,6 +65,9 @@ module.exports = function(app) {
     weekType(app);
     timeType(app);
     changeEnd(app);
+    schoolGradeRelation(app);
+    gradeSubjectRelation(app);
+    gradeSubjectCategoryRelation(app);
 
     category(app);
     subject(app);

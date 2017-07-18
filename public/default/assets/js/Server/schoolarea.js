@@ -72,17 +72,6 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             location.href = location.href;
-            // if (isNew) {
-            //     var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
-            //     $tr.find(".btn-group").data("obj", data);
-            //     $('#gridBody').append($tr);
-            // } else {
-            //     var name = $('#' + data._id + ' td:first-child');
-            //     name.text(data.name);
-            //     name.next().text(data.address);
-            //     var $lastDiv = $('#' + data._id + ' td:last-child div');
-            //     $lastDiv.data("obj", data);
-            // }
         });
     }
 });
@@ -116,4 +105,10 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
             }
         });
     });
+});
+
+$("#gridBody").on("click", "td .btnReset", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/schoolArea/settings/" + entity._id;
 });

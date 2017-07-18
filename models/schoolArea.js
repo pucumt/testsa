@@ -46,16 +46,9 @@ SchoolArea.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-SchoolArea.get = function(id, callback) {
+SchoolArea.get = function(id) {
     //打开数据库
-    schoolAreaModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, schoolArea) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, schoolArea);
-
-        //db.close();
-    });
+    return schoolAreaModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

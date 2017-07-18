@@ -53,7 +53,7 @@ function renderSearchYearDropDown() {
 
 var $mainSelectBody = $('.content.mainModal table tbody');
 var getButtons = function(isWeixin) {
-    var buttons = '<a class="btn btn-default btnReset hidden">重算</a><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">升班链接</a>';
+    var buttons = '<a class="btn btn-default btnReset hidden">重算</a><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">原班</a>';
     if (isWeixin == 1) {
         buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
     } else {
@@ -64,6 +64,8 @@ var getButtons = function(isWeixin) {
 var getClassStatus = function(isWeixin) {
     if (isWeixin == 1) {
         return "发布";
+    } else if (isWeixin == 2) {
+        return "原班";
     } else if (isWeixin == 9) {
         return "停用";
     } else {
@@ -384,30 +386,8 @@ $("#myModal #btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
-            if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id +
-                    " /></span>" + data.name + "</td><td>新建</td><td>" + data.trainPrice + "</td><td>" + data.materialPrice +
-                    "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.categoryName +
-                    "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
-            } else {
-                data = postObj;
-                data._id = postObj.id;
-                var name = $('#' + data._id + ' td:first-child');
-                name.html("<span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name);
-                var $pub = name.next(),
-                    $trainPrice = $pub.next().text(data.trainPrice),
-                    $materialPrice = $trainPrice.next().text(data.materialPrice),
-                    $gradeName = $materialPrice.next().text(data.gradeName),
-                    $subjectName = $gradeName.next().text(data.subjectName),
-                    $categoryName = $subjectName.next().text(data.categoryName);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                if (data.exams != "") {
-                    data.exams = JSON.parse(data.exams);
-                }
-                $lastDiv.data("obj", data);
-            }
+            var page = parseInt($("#mainModal #page").val());
+            searchClass(page);
         });
     }
 });
@@ -519,21 +499,25 @@ $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
-            if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("发布");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnPublish").remove();
-                operation.append("<a class='btn btn-default btnUnPublish'>停用</a>");
-            }
+            var page = parseInt($("#mainModal #page").val());
+            searchClass(page);
         });
     });
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
+    showComfirm("确定要设为原班原报吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showAlert(location.host + "/enroll/originalclass/" + entity._id);
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        $.post("/admin/trainClass/originalclass", {
+            id: entity._id
+        }, function(data) {
+            $('#confirmModal').modal('hide');
+            var page = parseInt($("#mainModal #page").val());
+            searchClass(page);
+        });
+    });
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
@@ -545,13 +529,8 @@ $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
-            if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("停用");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnUnPublish").remove();
-                operation.append("<a class='btn btn-default btnPublish'>发布</a>");
-            }
+            var page = parseInt($("#mainModal #page").val());
+            searchClass(page);
         });
     });
 });

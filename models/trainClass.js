@@ -154,6 +154,19 @@ TrainClass.unPublish = function(id, callback) {
     });
 };
 
+TrainClass.setToOriginal = function(id, callback) {
+    trainClassModel.update({
+        _id: id
+    }, {
+        isWeixin: 2
+    }).exec(function(err, trainClass) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, trainClass);
+    });
+};
+
 TrainClass.unPublishAll = function(ids, callback) {
     trainClassModel.update({
         _id: { $in: ids }

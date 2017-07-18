@@ -75,4 +75,17 @@ module.exports = function(app) {
             res.jsonp(schoolAreas);
         });
     });
+
+    app.get('/admin/schoolArea/settings/:id', checkLogin);
+    app.get('/admin/schoolArea/settings/:id', function(req, res) {
+        SchoolArea.get(req.params.id).then(function(school) {
+            if (school) {
+                res.render('Server/schoolGradeRelationList.html', {
+                    title: '>' + school.name + '>校区年级',
+                    user: req.session.admin,
+                    schoolId: req.params.id
+                });
+            }
+        });
+    });
 }

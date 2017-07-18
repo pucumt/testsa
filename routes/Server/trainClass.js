@@ -287,6 +287,17 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/admin/trainClass/originalclass', checkLogin);
+    app.post('/admin/trainClass/originalclass', function(req, res) {
+        TrainClass.setToOriginal(req.body.id, function(err, trainClass) {
+            if (err) {
+                res.jsonp({ error: err });
+                return;
+            }
+            res.jsonp({ sucess: true });
+        });
+    });
+
     app.post('/admin/trainClass/reset', checkLogin);
     app.post('/admin/trainClass/reset', function(req, res) {
         AdminEnrollTrain.getFilters({

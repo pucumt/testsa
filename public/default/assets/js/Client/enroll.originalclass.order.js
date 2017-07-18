@@ -20,6 +20,11 @@ $(document).ready(function() {
             }
         });
     } else {
+        if ($("#isTimeDuplicated").val() == "true") {
+            //时间冲突，简单提醒
+            showAlert("上课时间跟已报课程有冲突了!", "", function(e) {});
+        }
+
         $("#btnPay").show();
         renderData();
     }

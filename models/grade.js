@@ -45,16 +45,9 @@ Grade.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Grade.get = function(id, callback) {
+Grade.get = function(id) {
     //打开数据库
-    gradeModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, grade) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, grade);
-
-        //db.close();
-    });
+    return gradeModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息
@@ -101,4 +94,10 @@ Grade.getFilter = function(filter) {
     //打开数据库
     filter.isDeleted = { $ne: true };
     return gradeModel.findOne(filter);
+};
+
+Grade.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return gradeModel.find(filter);
 };
