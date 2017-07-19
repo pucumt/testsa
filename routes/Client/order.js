@@ -8,6 +8,7 @@ var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
     payHelper = require('../../util/payHelper.js'),
     ChangeEnd = require('../../models/changeEnd.js'),
     auth = require("./auth"),
+    moment = require("moment"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
 
@@ -200,8 +201,10 @@ module.exports = function(app) {
                         out_trade_no: order._id,
                         body: order.trainName,
                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
-                        openId: openId
+                        openId: openId,
+                        time_expire: moment().add(10, 'minute').format("YYYYMMDDHHmmss")
                     };
+                    //time_expire is new function, maybe there is something wrong
                     payHelper.jsPay(payParas, res);
                 }
             });

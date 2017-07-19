@@ -142,6 +142,7 @@ var Pay = {
             'service': 'pay.weixin.jspay',
             'sub_appid': settings.AppID,
             'sub_openid': payParas.openId,
+            'time_expire': payParas.time_expire,
             'total_fee': payParas.total_fee
         };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
