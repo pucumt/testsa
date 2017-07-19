@@ -1,5 +1,6 @@
 var GradeSubjectRelation = require('../../models/gradeSubjectRelation.js'),
     Subject = require('../../models/subject.js'),
+    Grade = require('../../models/grade.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -30,7 +31,7 @@ module.exports = function(app) {
         if (removeSubjects.length > 0) {
             pArray.push(GradeSubjectRelation.deleteAll({
                 gradeId: gradeId,
-                gradeId: { $in: removeSubjects }
+                subjectId: { $in: removeSubjects }
             }));
         }
 
@@ -55,6 +56,22 @@ module.exports = function(app) {
 
         Promise.all([p0, p1]).then(function() {
             res.jsonp(result);
+        });
+    });
+
+    app.get('/admin/gradeSubject/settings/:gradeId/:subjectId', checkLogin);
+    app.get('/admin/gradeSubject/settings/:gradeId/:subjectId', function(req, res) {
+        Grade.get(req.params.gradeId).then(function(grade) {
+            if (grade) {
+                Subject.get(req.params.subjectId).then(function(subject) {
+                    res.render('Server/gradeSubjectCategoryRelationList.html', {
+                        title: '>' + grade.name + '>' + subject.name + '>年级科目难度',
+                        user: req.session.admin,
+                        gradeId: req.params.gradeId,
+                        subjectId: req.params.subjectId
+                    });
+                });
+            }
         });
     });
 }

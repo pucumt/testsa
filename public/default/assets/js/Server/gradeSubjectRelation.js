@@ -16,14 +16,18 @@ function search() {
     selfAjax("post", "/admin/gradeSubjectRelationList/search", filter, function(data) {
         if (data && data.subjects.length > 0) {
             data.subjects.forEach(function(subject) {
-                var checkStr = "";
+                var checkStr = "",
+                    buttonStr = "";
                 if (data.relations.some(function(relation) {
                         return relation.subjectId == subject._id;
                     })) {
                     checkStr = "checked isChecked=1";
+                    buttonStr = '<a class="btn btn-default btnReset">设置</a>';
                 }
-                var $tr = $('<tr id=' + subject._id + '><td><span><input type="checkbox" class="subjectId" name="subjectId" ' + checkStr + ' value=' + subject._id + ' /></span>' + subject.name + '</td></tr>');
-                $mainSelectBody.append($tr);
+                var trObject = $('<tr id=' + subject._id + '><td><span><input type="checkbox" class="subjectId" name="subjectId" ' + checkStr + ' value=' + subject._id + ' /></span>' +
+                    subject.name + '</td><td><div class="btn-group">' + buttonStr + '</div></td></tr>');
+                trObject.find(".btn-group").data("obj", subject);
+                $mainSelectBody.append(trObject);
             });
         }
     });
@@ -64,4 +68,10 @@ $("#btnSave").on("click", function(e) {
 
 $("#btnReturn").on("click", function(e) {
     location.href = "/admin/gradeList";
+});
+
+$(".mainModal #gridBody").on("click", "td .btnReset", function(e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/gradeSubject/settings/" + $("#gradeId").val() + "/" + entity._id;
 });

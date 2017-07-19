@@ -20,51 +20,110 @@ $(document).ready(function() {
             $(".enroll-filter").hide();
             $('.container.enroll').show();
         });
+
+    $(".enroll-filter #drpSchool")
+        .on("change", function(e) {
+            changeGrades();
+            changeSubjects();
+            changeCategories();
+        });
+    $(".enroll-filter #drpGrade")
+        .on("change", function(e) {
+            changeSubjects();
+            changeCategories();
+        });
+    $(".enroll-filter #drpSubject")
+        .on("change", function(e) {
+            changeCategories();
+        });
 });
 
+var objFilters;
+
 function renderfilter() {
-    $('.enroll-filter').find("#drpGrade option").remove();
-    $('.enroll-filter').find("#drpSubject option").remove();
     $.get("/enroll/schoolgradesubjectcategory", function(data) {
         if (data) {
-            if (data) {
-                if (data.schools.length > 0) {
-                    data.schools.forEach(function(school) {
-                        $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
-                    });
-                }
-                if (data.grades.length > 0) {
-                    data.grades.forEach(function(grade) {
-                        $(".enroll-filter #drpGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
-                    });
-                }
-                if (data.subjects.length > 0) {
-                    data.subjects.forEach(function(subject) {
-                        $(".enroll-filter #drpSubject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
-                    });
-                }
-                if (data.categorys.length > 0) {
-                    data.categorys.forEach(function(category) {
-                        $(".enroll-filter #drpCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
-                    });
-                }
+            objFilters = data;
+            if (data.schools.length > 0) {
+                data.schools.forEach(function(school) {
+                    $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
+                });
+            }
+            if ($("#schoolId").val() != "") {
+                $(".enroll-filter #drpSchool").val($("#schoolId").val());
+            }
+            changeGrades();
+            if ($("#gradeId").val() != "") {
+                $(".enroll-filter #drpGrade").val($("#gradeId").val());
+            }
+            changeSubjects();
+            if ($("#subjectId").val() != "") {
+                $(".enroll-filter #drpSubject").val($("#subjectId").val());
+            }
+            changeCategories();
+            if ($("#categoryId").val() != "") {
+                $(".enroll-filter #drpCategory").val($("#categoryId").val());
+            }
 
-                if ($("#schoolId").val() != "") {
-                    $(".enroll-filter #drpSchool").val($("#schoolId").val());
-                    $(".enroll-filter #drpGrade").val($("#gradeId").val());
-                    $(".enroll-filter #drpSubject").val($("#subjectId").val());
-                    $(".enroll-filter #drpCategory").val($("#categoryId").val());
-
-                    loadData();
-                    $(".enroll-filter").hide();
-                    $('.container.enroll').show();
-                } else {
-                    $(".enroll-filter").show();
-                    $('.container.enroll').hide();
-                }
+            if ($("#schoolId").val() != "") {
+                loadData();
+                $(".enroll-filter").hide();
+                $('.container.enroll').show();
+            } else {
+                $(".enroll-filter").show();
+                $('.container.enroll').hide();
             }
         }
     });
+};
+
+function changeGrades() {
+    $('.enroll-filter').find("#drpGrade option").remove();
+    if (objFilters.grades.length > 0) {
+        var schoolGradeRelations = objFilters.schoolGradeRelations.filter(function(relation) {
+            return relation.schoolId == $(".enroll-filter #drpSchool").val();
+        });
+        objFilters.grades.forEach(function(grade) {
+            if (schoolGradeRelations.some(function(relation) {
+                    return relation.gradeId == grade._id;
+                })) {
+                $(".enroll-filter #drpGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
+            }
+        });
+    }
+};
+
+function changeSubjects() {
+    $('.enroll-filter').find("#drpSubject option").remove();
+    if (objFilters.subjects.length > 0) {
+        var gradeSubjectRelations = objFilters.gradeSubjectRelations.filter(function(relation) {
+            return relation.gradeId == $(".enroll-filter #drpGrade").val();
+        });
+        objFilters.subjects.forEach(function(subject) {
+            if (gradeSubjectRelations.some(function(relation) {
+                    return relation.subjectId == subject._id;
+                })) {
+                $(".enroll-filter #drpSubject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
+            }
+        });
+    }
+};
+
+function changeCategories() {
+    $('.enroll-filter').find("#drpCategory option").remove();
+    if (objFilters.categorys.length > 0) {
+        var gradeSubjectCategoryRelations = objFilters.gradeSubjectCategoryRelations.filter(function(relation) {
+            return relation.subjectId == $(".enroll-filter #drpSubject").val() && relation.gradeId == $(".enroll-filter #drpGrade").val();
+        });
+
+        objFilters.categorys.forEach(function(category) {
+            if (gradeSubjectCategoryRelations.some(function(relation) {
+                    return relation.categoryId == category._id;
+                })) {
+                $(".enroll-filter #drpCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
+            }
+        });
+    }
 };
 
 var $selectBody = $('.container.enroll .exam-list');

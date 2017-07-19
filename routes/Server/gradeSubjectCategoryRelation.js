@@ -1,82 +1,64 @@
 var GradeSubjectCategoryRelation = require('../../models/gradeSubjectCategoryRelation.js'),
+    Category = require('../../models/category.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
-    app.get('/admin/gradeSubjectCategoryRelationList', checkLogin);
-    app.get('/admin/gradeSubjectCategoryRelationList', function(req, res) {
-        res.render('Server/gradeSubjectCategoryRelationList.html', {
-            title: '>校区列表',
-            user: req.session.admin
-        });
-    });
-
-    app.post('/admin/gradeSubjectCategoryRelation/add', checkLogin);
-    app.post('/admin/gradeSubjectCategoryRelation/add', function(req, res) {
+    function newGradeSubjectCategoryRelation(categoryId, subjectId, gradeId) {
         var gradeSubjectCategoryRelation = new GradeSubjectCategoryRelation({
-            name: req.body.name,
-            address: req.body.address
+            subjectId: subjectId,
+            gradeId: gradeId,
+            categoryId: categoryId
         });
 
-        gradeSubjectCategoryRelation.save(function(err, gradeSubjectCategoryRelation) {
-            if (err) {
-                gradeSubjectCategoryRelation = {};
-            }
-            res.jsonp(gradeSubjectCategoryRelation);
-        });
-    });
+        return gradeSubjectCategoryRelation.save();
+    };
 
-    app.post('/admin/gradeSubjectCategoryRelation/edit', checkLogin);
-    app.post('/admin/gradeSubjectCategoryRelation/edit', function(req, res) {
-        var gradeSubjectCategoryRelation = new GradeSubjectCategoryRelation({
-            name: req.body.name,
-            address: req.body.address
-        });
+    app.post('/admin/gradeSubjectCategoryRelation/save', checkLogin);
+    app.post('/admin/gradeSubjectCategoryRelation/save', function(req, res) {
+        ///content
+        var newCategories = JSON.parse(req.body.newCategories),
+            removeCategories = JSON.parse(req.body.removeCategories),
+            gradeId = req.body.gradeId,
+            subjectId = req.body.subjectId,
+            pArray = [];
 
-        gradeSubjectCategoryRelation.update(req.body.id, function(err, gradeSubjectCategoryRelation) {
-            if (err) {
-                gradeSubjectCategoryRelation = {};
-            }
-            res.jsonp(gradeSubjectCategoryRelation);
-        });
-    });
+        if (newCategories.length > 0) {
+            newCategories.forEach(function(categoryId) {
+                pArray.push(newGradeSubjectCategoryRelation(categoryId, subjectId, gradeId));
+            });
+        }
 
-    app.post('/admin/gradeSubjectCategoryRelation/delete', checkLogin);
-    app.post('/admin/gradeSubjectCategoryRelation/delete', function(req, res) {
-        GradeSubjectCategoryRelation.delete(req.body.id, function(err, gradeSubjectCategoryRelation) {
-            if (err) {
-                res.jsonp({ error: err });
-                return;
-            }
+        if (removeCategories.length > 0) {
+            pArray.push(GradeSubjectCategoryRelation.deleteAll({
+                gradeId: gradeId,
+                subjectId: subjectId,
+                categoryId: { $in: removeCategories }
+            }));
+        }
+
+        Promise.all(pArray).then(function() {
             res.jsonp({ sucess: true });
         });
     });
 
     app.post('/admin/gradeSubjectCategoryRelationList/search', checkLogin);
     app.post('/admin/gradeSubjectCategoryRelationList/search', function(req, res) {
+        var result = {};
 
-        //判断是否是第一页，并把请求的页数转换成 number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 20 篇文章
-        var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
-            filter.name = {
-                $regex: reg
-            };
-        }
+        var p0 = GradeSubjectCategoryRelation.getFilters({
+            gradeId: req.body.gradeId,
+            subjectId: req.body.subjectId
+        }).then(function(relations) {
+            result.relations = relations;
+        });
 
-        GradeSubjectCategoryRelation.getAll(null, page, filter, function(err, gradeSubjectCategoryRelations, total) {
-            if (err) {
-                gradeSubjectCategoryRelations = [];
-            }
-            res.jsonp({
-                gradeSubjectCategoryRelations: gradeSubjectCategoryRelations,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + gradeSubjectCategoryRelations.length) == total
-            });
+        var p1 = Category.getFilters({}).then(function(categories) {
+            result.categories = categories;
+        });
+
+        Promise.all([p0, p1]).then(function() {
+            res.jsonp(result);
         });
     });
 }

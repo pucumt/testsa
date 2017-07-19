@@ -25,17 +25,10 @@ function GradeSubjectCategoryRelation(option) {
 module.exports = GradeSubjectCategoryRelation;
 
 //存储学区信息
-GradeSubjectCategoryRelation.prototype.save = function(callback) {
+GradeSubjectCategoryRelation.prototype.save = function() {
     var newgradeSubjectCategoryRelation = new gradeSubjectCategoryRelationModel(this.option);
 
-    newgradeSubjectCategoryRelation.save(function(err, gradeSubjectCategoryRelation) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, gradeSubjectCategoryRelation);
-
-        //db.close();
-    });
+    return newgradeSubjectCategoryRelation.save();
 };
 
 GradeSubjectCategoryRelation.prototype.update = function(id, callback) {
@@ -93,4 +86,10 @@ GradeSubjectCategoryRelation.delete = function(id, callback) {
         }
         callback(null, gradeSubjectCategoryRelation);
     });
+};
+
+GradeSubjectCategoryRelation.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return gradeSubjectCategoryRelationModel.find(filter);
 };

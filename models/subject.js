@@ -44,16 +44,9 @@ Subject.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Subject.get = function(id, callback) {
+Subject.get = function(id) {
     //打开数据库
-    subjectModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, subject) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, subject);
-
-        //db.close();
-    });
+    return subjectModel.findOne({ _id: id, isDeleted: { $ne: true } });
 };
 
 //一次获取20个学区信息

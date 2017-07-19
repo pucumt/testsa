@@ -15,6 +15,9 @@ var ExamClass = require('../../models/examClass.js'),
     TimeType = require('../../models/timeType.js'),
     moment = require("moment"),
     auth = require("./auth"),
+    SchoolGradeRelation = require('../../models/schoolGradeRelation.js'),
+    GradeSubjectRelation = require('../../models/gradeSubjectRelation.js'),
+    GradeSubjectCategoryRelation = require('../../models/gradeSubjectCategoryRelation.js'),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
 
@@ -347,7 +350,28 @@ module.exports = function(app) {
             .catch((err) => {
                 console.log('errored');
             });
-        Promise.all([p0, p1, p2, p3]).then(function() {
+        var p4 = SchoolGradeRelation.getFilters({})
+            .then(function(schoolGradeRelations) {
+                objReturn.schoolGradeRelations = schoolGradeRelations;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p5 = GradeSubjectRelation.getFilters({})
+            .then(function(gradeSubjectRelations) {
+                objReturn.gradeSubjectRelations = gradeSubjectRelations;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        var p6 = GradeSubjectCategoryRelation.getFilters({})
+            .then(function(gradeSubjectCategoryRelations) {
+                objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
+            })
+            .catch((err) => {
+                console.log('errored');
+            });
+        Promise.all([p0, p1, p2, p3, p4, p5, p6]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch((err) => {

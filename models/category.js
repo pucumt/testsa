@@ -103,3 +103,9 @@ Category.getFilter = function(filter) {
     filter.isDeleted = { $ne: true };
     return categoryModel.findOne(filter);
 };
+
+Category.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return categoryModel.find(filter);
+};
