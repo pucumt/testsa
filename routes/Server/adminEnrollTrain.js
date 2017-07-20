@@ -30,6 +30,15 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/trainOrderList/id/:id', checkLogin);
+    app.get('/admin/trainOrderList/id/:id', function(req, res) {
+        res.render('Server/trainOrderList.html', {
+            title: '>课程订单',
+            user: req.session.admin,
+            orderId: req.params.id
+        });
+    });
+
     app.post('/admin/adminEnrollTrain/search', checkLogin);
     app.post('/admin/adminEnrollTrain/search', function(req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
@@ -377,22 +386,65 @@ module.exports = function(app) {
 
     app.post('/admin/adminEnrollTrain/rebate', checkLogin);
     app.post('/admin/adminEnrollTrain/rebate', function(req, res) {
-        AdminEnrollTrain.rebate(req.body.Id, req.body.price, req.body.comment)
+        AdminEnrollTrain.rebate(req.body.Id, parseFloat(req.body.price), parseFloat(req.body.materialPrice), req.body.comment)
             .then(function(adminEnrollTrain) {
+                //订单退款成功
                 if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
                     var rebateEnrollTrain = new RebateEnrollTrain({
                         trainOrderId: req.body.Id,
                         originalPrice: req.body.originalPrice,
+                        rebateTotalPrice: parseFloat(req.body.price) + parseFloat(req.body.materialPrice),
                         rebatePrice: req.body.price,
+                        rebateMaterialPrice: req.body.materialPrice,
                         comment: req.body.comment
                     });
-                    return rebateEnrollTrain.save(req.body.id)
+                    return rebateEnrollTrain.save()
                         .then(function(data) {
+                            //保存退款记录
                             if (data) {
-                                AdminEnrollTrain.get(req.body.Id)
-                                    .then(function(newEnrollTrain) {
-                                        res.jsonp(newEnrollTrain);
-                                        return;
+                                res.jsonp({ sucess: true });
+                                return;
+                            }
+                        });
+                } else {
+                    res.jsonp({ error: "退费失败" });
+                    return;
+                }
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/onlineRebate', checkLogin);
+    app.post('/admin/adminEnrollTrain/onlineRebate', function(req, res) {
+        AdminEnrollTrain.rebate(req.body.Id, parseFloat(req.body.price), parseFloat(req.body.materialPrice), req.body.comment)
+            .then(function(adminEnrollTrain) {
+                //订单退款成功
+                if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
+                    var rebateEnrollTrain = new RebateEnrollTrain({
+                        trainOrderId: req.body.Id,
+                        originalPrice: req.body.originalPrice,
+                        rebateTotalPrice: parseFloat(req.body.price) + parseFloat(req.body.materialPrice),
+                        rebatePrice: req.body.price,
+                        rebateMaterialPrice: req.body.materialPrice,
+                        comment: req.body.comment
+                    });
+                    return rebateEnrollTrain.save()
+                        .then(function(rebateRecord) {
+                            //保存退款记录
+                            if (rebateRecord) {
+                                //线上退款
+                                AdminEnrollTrain.get(req.body.id)
+                                    .then(function(order) {
+                                        if (order) {
+                                            var payParas = {
+                                                out_refund_no: rebateRecord._id,
+                                                out_trade_no: order._id,
+                                                refund_fee: rebateRecord.rebateTotalPrice * 100,
+                                                total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0) + (order.rebatePrice || 0)) * 100
+                                            };
+                                            payHelper.jsRebate(payParas, res);
+                                            return;
+                                        }
+                                        res.jsonp({ error: "没找到原订单" });
                                     });
                             }
                         });

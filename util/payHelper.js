@@ -185,6 +185,47 @@ var Pay = {
             }
         );
     },
+    jsRebate: function(payParas, res) {
+        debugger;
+        var sendObject = {
+            'mch_id': settings.mch_id, //--
+            'nonce_str': 'bfbeducation', //--
+            'op_user_id': settings.mch_id, //--
+            'out_refund_no': payParas.out_refund_no, //--
+            'out_trade_no': payParas.out_trade_no, //--
+            'refund_fee': payParas.refund_fee, //--
+            'service': 'unified.trade.refund', //--
+            'total_fee': payParas.total_fee //--
+        };
+        var keys = Object.getOwnPropertyNames(sendObject).sort(),
+            strPay = "";
+        keys.forEach(function(key) {
+            var v = sendObject[key];
+            if ("sign" != key && "key" != key) {
+                strPay = strPay + key + "=" + v + "&";
+            }
+        });
+        strPay = strPay + "key=" + settings.key;
+        var md5 = crypto.createHash('md5'),
+            sign = md5.update(strPay).digest('hex').toUpperCase();
+        sendObject.sign = sign;
+        var data = toxml(sendObject);
+        debugger;
+        request.post({
+                url: 'https://pay.swiftpass.cn:443/pay/gateway',
+                body: data
+            },
+            function(error, response, body) {
+                debugger;
+                if (response.statusCode == 200) {
+                    // 第三步 //3天后查询
+                    console.log(body);
+                } else {
+                    //res.redirect("/personalCenter/order");
+                }
+            }
+        );
+    },
     getOpenId: function(res, id) {
         // 这是编码后的地址
         //"http%3A%2F%2Fwww.bfbeducation.com%2Fget_wx_access_token%2F"

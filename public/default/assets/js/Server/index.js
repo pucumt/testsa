@@ -37,6 +37,26 @@ window.getTrainOrderStatus = function(isSucceed) {
     }
 };
 
+window.getPayway = function(way) {
+    switch (way) {
+        case 0:
+            return "现金";
+        case 1:
+            return "刷卡";
+        case 2:
+            return "转账";
+        case 8:
+            return "支付宝";
+        case 9:
+            return "微信";
+        case 6:
+            return "在线";
+        case 7:
+            return "在线";
+    }
+    return "";
+};
+
 window.showAlert = function(msg, title, isModal) {
     if (!isModal) {
         $('#confirmModal').modal({ backdrop: 'static', keyboard: false });

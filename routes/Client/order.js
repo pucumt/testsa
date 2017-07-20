@@ -79,16 +79,18 @@ module.exports = function(app) {
                     .then(function(trains) {
                         var pChildArray = [];
                         trains.forEach(function(train) {
-                            var pChild = ExamClass.get({ _id: train.examId })
+                            var pChild = ExamClass.getFilter({ _id: train.examId, isDeleted: { $ne: true } })
                                 .then(function(examClass) {
-                                    orders.push({
-                                        studentName: student.name,
-                                        _id: train._id,
-                                        className: train.examName,
-                                        orderDate: train.orderDate,
-                                        score: train.score,
-                                        examDate: examClass.examDate
-                                    });
+                                    if (examClass) {
+                                        orders.push({
+                                            studentName: student.name,
+                                            _id: train._id,
+                                            className: train.examName,
+                                            orderDate: train.orderDate,
+                                            score: train.score,
+                                            examDate: examClass.examDate
+                                        });
+                                    }
                                 });
                             pChildArray.push(pChild);
                         });

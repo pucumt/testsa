@@ -163,11 +163,11 @@ AdminEnrollTrain.preSave = function(id, callback) {
     });
 };
 
-AdminEnrollTrain.rebate = function(id, price, comment) {
+AdminEnrollTrain.rebate = function(id, price, materialPrice, comment) {
     return adminEnrollTrainModel.update({
         _id: id
     }, {
-        $inc: { rebatePrice: price, totalPrice: -price },
+        $inc: { rebatePrice: price + materialPrice, realMaterialPrice: -materialPrice, totalPrice: -price },
         comment: comment
     }).exec();
 };

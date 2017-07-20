@@ -49,7 +49,7 @@ function searchOrder(p) {
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
                     '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' +
-                    trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' +
+                    trainOrder.realMaterialPrice + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' +
                     getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
                 $selectBody.append($tr);
@@ -112,10 +112,21 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
+
+    if (entity.payWay == 6) {
+        //在线
+        $('#myModal #btnOnlineRebate').show();
+    } else {
+        //线下
+        $('#myModal #btnOnlineRebate').hide();
+    }
+
     $('#myModalLabel').text("退费");
     $('#myModal #totalPrice').val(entity.totalPrice);
+    $('#myModal #realMaterialPrice').val(entity.realMaterialPrice);
     $('#myModal #rebatePrice').val(entity.rebatePrice);
-    $('#myModal #price').val("");
+    $('#myModal #price').val(entity.totalPrice);
+    $('#myModal #materialPrice').val(entity.realMaterialPrice);
     $('#myModal #comment').val(entity.comment);
     $('#myModal #Id').val(entity._id);
     if (entity.attributeId) {
@@ -135,32 +146,33 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
     }
 });
 
-$("#btnSave").on("click", function(e) {
+$("#myModal #btnOnlineRebate").on("click", function(e) {
+    //退款//在线
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/adminEnrollTrain/rebate",
+        var postURI = "/admin/adminEnrollTrain/onlineRebate",
             postObj = {
                 Id: $('#myModal #Id').val(),
                 originalPrice: $('#myModal #totalPrice').val(),
                 price: $('#myModal #price').val(),
+                materialPrice: $('#myModal #materialPrice').val(),
                 comment: $('#myModal #comment').val()
             };
         selfAjax("post", postURI, postObj, function(data) {
-            showAlert("退费成功！");
-            $('#myModal').modal('hide');
-            var name = $('#' + data._id + ' td:first-child');
-            var col2 = name.next().text("已退款");
-            var price = col2.next().next().next().next().next().text(data.totalPrice);
-            var material = price.next().text(data.realMaterialPrice);
-            material.next().text(data.rebatePrice);
-            var $lastDiv = $('#' + data._id + ' td:last-child div');
-            $lastDiv.data("obj", data);
+            if (data.sucess) {
+                showAlert("退费成功！");
+                $('#confirmModal .modal-footer .btn-default').off("click").on("click", function(e) {
+                    location.href = "/admin/trainOrderList/id/" + $('#myModal #Id').val();
+                });
+                return;
+            }
+            showAlert("退费失败！");
         });
     }
 });
 
-$("#btnOnlineRebate").on("click", function(e) {
-    //TBD
+$("#myModal #btnOfflineRebate").off("click").on("click", function(e) {
+    //退款//现金
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/adminEnrollTrain/rebate",
@@ -168,13 +180,18 @@ $("#btnOnlineRebate").on("click", function(e) {
                 Id: $('#myModal #Id').val(),
                 originalPrice: $('#myModal #totalPrice').val(),
                 price: $('#myModal #price').val(),
+                materialPrice: $('#myModal #materialPrice').val(),
                 comment: $('#myModal #comment').val()
             };
         selfAjax("post", postURI, postObj, function(data) {
-            showAlert("退费成功！");
-            $('#myModal').modal('hide');
-            var page = parseInt($("#selectModal #page").val());
-            searchOrder(page);
+            if (data.sucess) {
+                showAlert("退费成功！");
+                $('#confirmModal .modal-footer .btn-default').off("click").on("click", function(e) {
+                    location.href = "/admin/trainOrderList/id/" + $('#myModal #Id').val();
+                });
+                return;
+            }
+            showAlert("退费失败！");
         });
     }
 });

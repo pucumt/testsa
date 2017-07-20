@@ -7,11 +7,13 @@ var rebateEnrollTrainSchema = new mongoose.Schema({
     trainOrderId: ObjectId,
     originalPrice: Number, //原来价格
     originalMaterialPrice: Number, //原来教材费价格
-    rebatePrice: Number, //退费
+    rebateTotalPrice: Number, //总退费
+    rebatePrice: Number, //培训费退费
     rebateMaterialPrice: Number, //教材费退费
     isDeleted: Boolean,
     createDate: Date,
-    comment: String
+    comment: String,
+    rebateWay: { type: Number, default: 0 } //6在线 null/0 现金
 }, {
     collection: 'rebateEnrollTrains'
 });
