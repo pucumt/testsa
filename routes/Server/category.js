@@ -27,7 +27,8 @@ module.exports = function(app) {
     app.post('/admin/category/add', checkLogin);
     app.post('/admin/category/add', function(req, res) {
         var category = new Category({
-            name: req.body.name
+            name: req.body.name,
+            grade: req.body.grade
         });
 
         category.save(function(err, category) {
@@ -41,7 +42,8 @@ module.exports = function(app) {
     app.post('/admin/category/edit', checkLogin);
     app.post('/admin/category/edit', function(req, res) {
         var category = new Category({
-            name: req.body.name
+            name: req.body.name,
+            grade: req.body.grade
         });
 
         category.update(req.body.id, function(err, category) {

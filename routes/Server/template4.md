@@ -18,11 +18,11 @@ module.exports = function(app) {
             address: req.body.address
         });
 
-        #name#.save(function(err, #name#) {
-            if (err) {
-                #name# = {};
+        #name#.save().then(function(result){
+            if(result)
+            {
+                 res.jsonp(#name#);
             }
-            res.jsonp(#name#);
         });
     });
 
@@ -43,12 +43,8 @@ module.exports = function(app) {
 
     app.post('/admin/#name#/delete', checkLogin);
     app.post('/admin/#name#/delete', function(req, res) {
-        #Name#.delete(req.body.id, function(err, #name#) {
-            if (err) {
-                res.jsonp({ error: err });
-                return;
-            }
-            res.jsonp({ sucess: true });
+        #Name#.delete(req.body.id).then(function(result){
+           res.jsonp({ sucess: true });
         });
     });
 

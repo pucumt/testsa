@@ -25,6 +25,7 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     cancelDate: Date,
     comment: String,
     fromId: String, //调班从哪里调过来
+    baseId: ObjectId, //根订单（原始订单）
     yearId: String,
     yearName: String
 }, {

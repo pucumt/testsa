@@ -13,7 +13,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:50%;">课程难度</th>
+                <th style="width:200px">课程难度</th>
+                <th style="width:150px;">等级</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -22,6 +23,9 @@
             <tr id={{category._id}}>
                 <td>
                     {{ category.name }}
+                </td>
+                <td>
+                    {{ category.grade }}
                 </td>
                 <td>
                     <div data-obj={{ category|dump }} class="btn-group">
@@ -49,6 +53,10 @@
                     <div class="form-group">
                         <label for="name" class="control-label">课程难度:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="grade" class="control-label">等级:</label>
+                        <input type="text" maxlength="30" class="form-control" name="grade" id="grade" value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

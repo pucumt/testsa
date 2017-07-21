@@ -437,7 +437,7 @@ module.exports = function(app) {
                                         if (order) {
                                             var payParas = {
                                                 out_refund_no: rebateRecord._id,
-                                                out_trade_no: order._id,
+                                                out_trade_no: (order.baseId || order._id),
                                                 refund_fee: rebateRecord.rebateTotalPrice * 100,
                                                 total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0) + (order.rebatePrice || 0)) * 100
                                             };
@@ -492,7 +492,8 @@ module.exports = function(app) {
                                         fromId: req.body.oldOrderId,
                                         comment: req.body.comment,
                                         isPayed: true,
-                                        payWay: oldOrder.payWay
+                                        payWay: oldOrder.payWay,
+                                        baseId: (oldOrder.baseId || oldOrder._id)
                                     });
                                     return adminEnrollTrain.save();
                                 });

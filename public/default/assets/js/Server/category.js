@@ -2,6 +2,7 @@ var isNew = true;
 
 $(document).ready(function() {
     $("#left_btnCategory").addClass("active");
+
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 });
@@ -43,6 +44,7 @@ $("#btnAdd").on("click", function(e) {
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增类别");
     $('#name').val("");
+    $('#grade').val("0");
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -51,7 +53,8 @@ $("#btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/category/add",
             postObj = {
-                name: $('#name').val()
+                name: $('#name').val(),
+                grade: $('#grade').val()
             };
         if (!isNew) {
             postURI = "/admin/category/edit";
@@ -60,12 +63,13 @@ $("#btnSave").on("click", function(e) {
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
+                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.grade + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
                 $tr.find(".btn-group").data("obj", data);
                 $('#gridBody').append($tr);
             } else {
                 var name = $('#' + data._id + ' td:first-child');
                 name.text(data.name);
+                name.next().text(data.grade);
                 var $lastDiv = $('#' + data._id + ' td:last-child div');
                 $lastDiv.data("obj", data);
             }
@@ -82,6 +86,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改类别");
     $('#name').val(entity.name);
+    $('#grade').val(entity.grade);
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });

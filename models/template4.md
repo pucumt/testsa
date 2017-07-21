@@ -19,17 +19,10 @@ function #Name#(option) {
 module.exports = #Name#;
 
 //存储学区信息
-#Name#.prototype.save = function(callback) {
+#Name#.prototype.save = function() {
     var new#name# = new #name#Model(this.option);
 
-    new#name#.save(function(err, #name#) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, #name#);
-
-        //db.close();
-    });
+    return new#name#.save();
 };
 
 #Name#.prototype.update = function(id, callback) {
@@ -45,16 +38,9 @@ module.exports = #Name#;
 };
 
 //读取学区信息
-#Name#.get = function(id, callback) {
+#Name#.get = function(id) {
     //打开数据库
-    #name#Model.findOne({ _id: id, isDeleted: { $ne: true }}, function(err, #name#) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, #name#);
-
-        //db.close();
-    });
+    return #name#Model.findOne({ _id: id, isDeleted: { $ne: true }});
 };
 
 //一次获取20个学区信息
@@ -76,15 +62,27 @@ module.exports = #Name#;
 };
 
 //删除一个学区
-#Name#.delete = function(id, callback) {
-    #name#Model.update({
+#Name#.delete = function(id) {
+    return #name#Model.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, #name#) {
-        if (err) {
-            return callback(err);
-        }
-        callback(null, #name#);
-    });
+    }).exec();
+};
+
+#Name#.getFilter = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return #name#Model.findOne(filter);
+};
+
+#Name#.getFilters = function(filter) {
+    //打开数据库
+    filter.isDeleted = { $ne: true };
+    return #name#Model.find(filter);
+};
+
+#Name#.batchUpdate = function(filter, option) {
+    //打开数据库
+    return #name#nModel.update(filter, option, { multi: true }).exec();
 };

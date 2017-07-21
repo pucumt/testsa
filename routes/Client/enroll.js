@@ -22,6 +22,11 @@ var ExamClass = require('../../models/examClass.js'),
     checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function(app) {
+    function checkIsOriginalClass() {
+        //check is origianl class still needed
+        //TBD
+    };
+
     app.get('/enrollExam', function(req, res) {
         res.render('Client/enroll_exam.html', {
             title: '考试报名',
@@ -913,6 +918,58 @@ module.exports = function(app) {
                     res.jsonp({ error: "此订单不能调班！" });
                     return;
                 }
+            });
+        });
+    });
+
+    //原班升报课程报名-查询原班TBD
+    app.post('/enroll/originalOrders', checkJSONLogin);
+    app.post('/enroll/originalOrders', function(req, res) {
+        var currentUser = req.session.user;
+        ChangeEnd.get().then(function(changeEnd) {
+            StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
+                var parray = [];
+                students.forEach(function(student) {
+                    var filter = {
+                        studentId: student._id.toJSON(),
+                        isSucceed: 1,
+                        isDeleted: { $ne: true }
+                    };
+                    if (global.currentYear) {
+                        filter.yearId = global.currentYear._id.toJSON();
+                    }
+
+                    var p = AdminEnrollTrain.getFiltersWithClass(filter)
+                        .then(function(trains) {
+                            var orders = [];
+                            trains.forEach(function(train) {
+                                var newClass = train.trainClasss[0] || {};
+                                orders.push({
+                                    studentName: student.name,
+                                    _id: train._id,
+                                    isPayed: train.isPayed,
+                                    className: train.trainName,
+                                    totalPrice: train.totalPrice,
+                                    realMaterialPrice: train.realMaterialPrice,
+                                    orderDate: train.orderDate,
+                                    courseTime: newClass.courseTime,
+                                    courseStartDate: ((changeEnd && changeEnd.endDate) || newClass.courseStartDate)
+                                });
+                            });
+                            return orders;
+                        });
+                    parray.push(p);
+                });
+                Promise.all(parray).then(function(results) {
+                    var orders = [];
+                    results.forEach(function(trains) {
+                        if (trains) {
+                            orders = orders.concat(trains);
+                        }
+                    });
+                    res.jsonp(orders);
+                    return;
+                });
             });
         });
     });

@@ -4,6 +4,7 @@ var db = mongoose.connection;
 
 var categorySchema = new mongoose.Schema({
     name: String,
+    grade: { type: Number, default: 0 }, //基础班0 培优班5 通中预备10 通中15。可以下调
     isDeleted: Boolean
 }, {
     collection: 'categorys'
