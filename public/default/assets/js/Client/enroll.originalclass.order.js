@@ -1,23 +1,15 @@
 $(document).ready(function() {
     $("#btnPay").hide();
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        if ($("#originalOrder").val()) {
-            location.href = "/enroll/originalclass/" + $("#classId").val();
-        } else {
-            location.href = "/enroll/class/" + $("#classId").val();
-        }
+        location.href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
     });
     if ($("#notOriginal").val()) {
         showAlert("本课程是老班升报，您不符合要求，请等待后续课程！", "", function(e) {
-            location.href = "/enroll/originalclass/" + $("#classId").val();
+            location.href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
         });
     } else if ($("#disability").val()) {
         showAlert("本课程成绩要求" + $("#disability").val() + "分，根据您的考试成绩，建议报名其他课程或咨询前台！", "", function(e) {
-            if ($("#originalOrder").val()) {
-                location.href = "/enroll/originalclass/" + $("#classId").val();
-            } else {
-                location.href = "/enroll/class/" + $("#classId").val();
-            }
+            location.href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
         });
     } else {
         if ($("#isTimeDuplicated").val() == "true") {

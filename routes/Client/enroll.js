@@ -18,13 +18,21 @@ var ExamClass = require('../../models/examClass.js'),
     SchoolGradeRelation = require('../../models/schoolGradeRelation.js'),
     GradeSubjectRelation = require('../../models/gradeSubjectRelation.js'),
     GradeSubjectCategoryRelation = require('../../models/gradeSubjectCategoryRelation.js'),
+    EnrollProcessConfigure = require('../../models/enrollProcessConfigure.js'),
+    Year = require('../../models/year.js'),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function(app) {
-    function checkIsOriginalClass() {
+    function checkIsOriginalClass(req, res, next) {
         //check is origianl class still needed
-        //TBD
+        EnrollProcessConfigure.get().then(function(configure) {
+            if (configure.oldStudentStatus) {
+                next();
+                return;
+            };
+            res.jsonp({ error: "没到原班报名时间呢！" });
+        });
     };
 
     app.get('/enrollExam', function(req, res) {
@@ -50,17 +58,6 @@ module.exports = function(app) {
 
     app.get('/enrollClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
         res.render('Client/enroll_class.html', {
-            title: '课程报名',
-            user: req.session.user,
-            schoolId: req.params.schoolId,
-            gradeId: req.params.gradeId,
-            subjectId: req.params.subjectId,
-            categoryId: req.params.categoryId
-        });
-    });
-
-    app.get('/enrollOriginalClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
-        res.render('Client/enroll_originalclass.html', {
             title: '课程报名',
             user: req.session.user,
             schoolId: req.params.schoolId,
@@ -145,7 +142,8 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/enroll/originalclass', function(req, res) {
+    //TBD
+    app.post('/enroll/originalclass/switch', function(req, res) {
         //debugger;
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -174,6 +172,31 @@ module.exports = function(app) {
         });
     });
 
+    //原班对应新班
+    app.get('/enroll/originalclass/classes/:trainId/student/:studentId', function(req, res) {
+        res.render('Client/enroll_originalclass_classes.html', {
+            title: '课程报名',
+            user: req.session.user,
+            trainId: req.params.trainId,
+            studentId: req.params.studentId
+        });
+    });
+
+    //原班对应新班
+    app.post('/enroll/originalclass/classes', function(req, res) {
+        //debugger;
+        // number 类型
+        var filter = {};
+        if (req.body.fromClassId) {
+            filter.fromClassId = req.body.fromClassId;
+        }
+        TrainClass.getFilters(filter).then(function(classes) {
+            res.jsonp({
+                classs: classes
+            });
+        });
+    });
+
     app.get('/enroll/exam/:id', function(req, res) {
         ExamClass.get(req.params.id)
             .then(function(exam) {
@@ -197,13 +220,14 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/enroll/originalclass/:id', function(req, res) {
-        TrainClass.get(req.params.id).then(function(trainClass) {
+    app.get('/enroll/originalclass/id/:trainId/student/:studentId', function(req, res) {
+        TrainClass.get(req.params.trainId).then(function(trainClass) {
             var totalPrice = (trainClass.trainPrice + trainClass.materialPrice).toFixed(2);
             res.render('Client/enroll_originalclass_detail.html', {
                 title: '原班升报课程报名',
                 trainClass: trainClass,
-                totalPrice: totalPrice
+                totalPrice: totalPrice,
+                studentId: req.params.studentId
             });
         });
     });
@@ -499,6 +523,7 @@ module.exports = function(app) {
         });
     });
 
+    //原班报名订单确认
     app.get('/enroll/original/order', checkLogin);
     app.get('/enroll/original/order', function(req, res) {
         //req.query.classId studentId
@@ -710,6 +735,7 @@ module.exports = function(app) {
             });
     });
 
+    //原班报名支付
     app.post('/enroll/original/pay', checkJSONLogin);
     app.post('/enroll/original/pay', function(req, res) {
         AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
@@ -828,7 +854,7 @@ module.exports = function(app) {
             });
     });
 
-    ///change class
+    ///调班在报名完成后
     app.post('/enroll/changeClass', checkJSONLogin);
     app.post('/enroll/changeClass', function(req, res) {
         ChangeEnd.get().then(function(changeEnd) {
@@ -924,53 +950,58 @@ module.exports = function(app) {
 
     //原班升报课程报名-查询原班TBD
     app.post('/enroll/originalOrders', checkJSONLogin);
+    app.post('/enroll/originalOrders', checkIsOriginalClass);
     app.post('/enroll/originalOrders', function(req, res) {
         var currentUser = req.session.user;
-        ChangeEnd.get().then(function(changeEnd) {
-            StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
-                var parray = [];
-                students.forEach(function(student) {
-                    var filter = {
-                        studentId: student._id.toJSON(),
-                        isSucceed: 1,
-                        isDeleted: { $ne: true }
-                    };
-                    if (global.currentYear) {
-                        filter.yearId = global.currentYear._id.toJSON();
-                    }
+        Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
+            .then(function(year) {
+                if (year) {
+                    StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
+                        var parray = [];
+                        students.forEach(function(student) {
+                            var filter = {
+                                studentId: student._id.toJSON(),
+                                isSucceed: 1,
+                                isDeleted: { $ne: true },
+                                yearId: year._id.toJSON()
+                            };
 
-                    var p = AdminEnrollTrain.getFiltersWithClass(filter)
-                        .then(function(trains) {
-                            var orders = [];
-                            trains.forEach(function(train) {
-                                var newClass = train.trainClasss[0] || {};
-                                orders.push({
-                                    studentName: student.name,
-                                    _id: train._id,
-                                    isPayed: train.isPayed,
-                                    className: train.trainName,
-                                    totalPrice: train.totalPrice,
-                                    realMaterialPrice: train.realMaterialPrice,
-                                    orderDate: train.orderDate,
-                                    courseTime: newClass.courseTime,
-                                    courseStartDate: ((changeEnd && changeEnd.endDate) || newClass.courseStartDate)
+                            var p = AdminEnrollTrain.getFilters(filter)
+                                .then(function(trains) {
+                                    var orders = [];
+                                    trains.forEach(function(train) {
+                                        orders.push({
+                                            studentId: student._id,
+                                            studentName: train.studentName,
+                                            trainId: train.trainId,
+                                            trainName: train.trainName
+                                        });
+                                    });
+                                    return orders;
                                 });
-                            });
-                            return orders;
+                            parray.push(p);
                         });
-                    parray.push(p);
-                });
-                Promise.all(parray).then(function(results) {
-                    var orders = [];
-                    results.forEach(function(trains) {
-                        if (trains) {
-                            orders = orders.concat(trains);
-                        }
+                        Promise.all(parray).then(function(results) {
+                            var orders = [];
+                            results.forEach(function(trains) {
+                                if (trains) {
+                                    orders = orders.concat(trains);
+                                }
+                            });
+                            res.jsonp(orders);
+                            return;
+                        });
                     });
-                    res.jsonp(orders);
-                    return;
-                });
+                }
             });
-        });
+    });
+
+    //获取单个订单信息
+    app.post('/enroll/getStudent', checkJSONLogin);
+    app.post('/enroll/getStudent', function(req, res) {
+        StudentInfo.get(req.body.studentId)
+            .then(function(studentInfo) {
+                res.jsonp(studentInfo);
+            });
     });
 };

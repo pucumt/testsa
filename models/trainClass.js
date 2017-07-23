@@ -30,7 +30,7 @@ var trainClassSchema = new mongoose.Schema({
     classRoomName: String,
     schoolId: String,
     schoolArea: String,
-    isWeixin: { type: Number, default: 0 }, //0 new 1 publish 9 stop, 2 originalClass
+    isWeixin: { type: Number, default: 0 }, //0 new 1 publish 9 stop, 2 originalClass(now changed)
     isStop: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     exams: [{

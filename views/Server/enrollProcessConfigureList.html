@@ -1,0 +1,52 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-24">
+                    <div class="form-group">
+                        <label style="width: 100px" for="newStudentStatus" class="control-label">新生报名:</label>
+                        <input style="width: 100px" type="text" maxlength="30" readonly class="form-control" name="newStudentStatus" id="newStudentStatus">
+                        <button type="button" id="btnNewStudent" class="btn btn-primary panelButton">开启</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-horizontal">
+                <div class="col-md-24">
+                    <div class="form-group">
+                        <label style="width: 100px" for="oldStudentStatus" class="control-label">原班报名:</label>
+                        <input style="width: 100px" type="text" maxlength="30" readonly class="form-control" name="oldStudentStatus" id="oldStudentStatus">
+                        <button type="button" id="btnOldStudent" class="btn btn-primary panelButton">开启</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                出错了?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/Server/enrollProcessConfigure.js?v=1.0"></script>
+{% endblock %}

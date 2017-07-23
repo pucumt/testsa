@@ -81,7 +81,7 @@
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
-                确定要删除吗?
+                出错了?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>

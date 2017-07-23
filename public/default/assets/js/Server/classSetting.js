@@ -23,4 +23,7 @@ $(document).ready(function() {
         location.href = "/admin/examCategoryList";
     });
 
+    $("#left_btnEnrollProcess").on("click", function(e) {
+        location.href = "/admin/enrollProcess";
+    });
 });

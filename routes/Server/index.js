@@ -23,6 +23,7 @@
     examClass = require('./examClass.js'),
     examCategory = require('./examCategory.js'),
     examClassExamArea = require('./examClassExamArea.js'),
+    enrollProcessConfigure = require('./enrollProcessConfigure.js'),
 
     adminEnrollExam = require('./adminEnrollExam.js'),
     adminEnrollTrain = require('./adminEnrollTrain.js'),
@@ -78,6 +79,7 @@ module.exports = function(app) {
     examClass(app);
     examCategory(app);
     examClassExamArea(app);
+    enrollProcessConfigure(app);
 
     //enroll
     adminEnrollExam(app);

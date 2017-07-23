@@ -84,5 +84,5 @@ module.exports = #Name#;
 
 #Name#.batchUpdate = function(filter, option) {
     //打开数据库
-    return #name#nModel.update(filter, option, { multi: true }).exec();
+    return #name#Model.update(filter, option, { multi: true }).exec();
 };

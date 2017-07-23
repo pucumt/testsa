@@ -1,0 +1,16 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll">
+    <div class="pageTitle">
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>选择课程
+    </div>
+    <div class="row">
+        <ul class="exam-list clearfix list-unstyled">
+        </ul>
+    </div>
+</div>
+<input type="hidden" id="oldTrainId" value="{{ trainId }}" />
+<input type="hidden" id="studentId" value="{{ studentId }}" />
+<!--modal-->
+<script type="text/javascript" src="/default/assets/js/Client/enroll.originalclass.classes.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}
