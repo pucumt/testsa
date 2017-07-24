@@ -24,17 +24,6 @@ var ExamClass = require('../../models/examClass.js'),
     checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function(app) {
-    function checkIsOriginalClass(req, res, next) {
-        //check is origianl class still needed
-        EnrollProcessConfigure.get().then(function(configure) {
-            if (configure.oldStudentStatus) {
-                next();
-                return;
-            };
-            res.jsonp({ error: "没到原班报名时间呢！" });
-        });
-    };
-
     app.get('/enrollExam', function(req, res) {
         res.render('Client/enroll_exam.html', {
             title: '考试报名',
@@ -139,6 +128,15 @@ module.exports = function(app) {
             res.jsonp({
                 classs: classs
             });
+        });
+    });
+
+    //老生调班对应班级
+    app.get('/enroll/originalclass/switch/:orderId', function(req, res) {
+        res.render('Client/enroll_originalclass_switch.html', {
+            title: '课程报名',
+            user: req.session.user,
+            orderId: req.params.orderId
         });
     });
 
@@ -948,52 +946,57 @@ module.exports = function(app) {
         });
     });
 
-    //原班升报课程报名-查询原班TBD
+    //原班升报课程报名-查询原班
     app.post('/enroll/originalOrders', checkJSONLogin);
-    app.post('/enroll/originalOrders', checkIsOriginalClass);
     app.post('/enroll/originalOrders', function(req, res) {
-        var currentUser = req.session.user;
-        Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
-            .then(function(year) {
-                if (year) {
-                    StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
-                        var parray = [];
-                        students.forEach(function(student) {
-                            var filter = {
-                                studentId: student._id.toJSON(),
-                                isSucceed: 1,
-                                isDeleted: { $ne: true },
-                                yearId: year._id.toJSON()
-                            };
+        EnrollProcessConfigure.get().then(function(configure) {
+            if (configure && (!configure.oldStudentStatus)) {
+                res.jsonp({ error: "没到原班报名时间呢！" });
+            } else {
+                var currentUser = req.session.user;
+                Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
+                    .then(function(year) {
+                        if (year) {
+                            StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
+                                var parray = [];
+                                students.forEach(function(student) {
+                                    var filter = {
+                                        studentId: student._id.toJSON(),
+                                        isSucceed: 1,
+                                        isDeleted: { $ne: true },
+                                        yearId: year._id.toJSON()
+                                    };
 
-                            var p = AdminEnrollTrain.getFilters(filter)
-                                .then(function(trains) {
-                                    var orders = [];
-                                    trains.forEach(function(train) {
-                                        orders.push({
-                                            studentId: student._id,
-                                            studentName: train.studentName,
-                                            trainId: train.trainId,
-                                            trainName: train.trainName
+                                    var p = AdminEnrollTrain.getFilters(filter)
+                                        .then(function(trains) {
+                                            var orders = [];
+                                            trains.forEach(function(train) {
+                                                orders.push({
+                                                    studentId: student._id,
+                                                    studentName: train.studentName,
+                                                    trainId: train.trainId,
+                                                    trainName: train.trainName
+                                                });
+                                            });
+                                            return orders;
                                         });
-                                    });
-                                    return orders;
+                                    parray.push(p);
                                 });
-                            parray.push(p);
-                        });
-                        Promise.all(parray).then(function(results) {
-                            var orders = [];
-                            results.forEach(function(trains) {
-                                if (trains) {
-                                    orders = orders.concat(trains);
-                                }
+                                Promise.all(parray).then(function(results) {
+                                    var orders = [];
+                                    results.forEach(function(trains) {
+                                        if (trains) {
+                                            orders = orders.concat(trains);
+                                        }
+                                    });
+                                    res.jsonp({ orders: orders, isSwitch: configure.oldStudentSwitch });
+                                    return;
+                                });
                             });
-                            res.jsonp(orders);
-                            return;
-                        });
+                        }
                     });
-                }
-            });
+            }
+        });
     });
 
     //获取单个订单信息
@@ -1002,6 +1005,89 @@ module.exports = function(app) {
         StudentInfo.get(req.body.studentId)
             .then(function(studentInfo) {
                 res.jsonp(studentInfo);
+            });
+    });
+
+    app.post('/enroll/getSchoolsAndOrder', checkJSONLogin);
+    app.post('/enroll/getSchoolsAndOrder', function(req, res) {
+        AdminEnrollTrain.get({ _id: req.body.orderId })
+            .then(function(order) {
+                TrainClass.get(order.trainId)
+                    .then(function(trainClass) {
+                        var objReturn = {
+                            schoolId: trainClass.schoolId,
+                            subjectId: trainClass.subjectId,
+                            subjectName: trainClass.subjectName
+                        };
+                        var p1 = SchoolGradeRelation.getFilters({ gradeId: trainClass.gradeId })
+                            .then(function(relations) {
+                                var schoolIds = relations.map(function(relation) {
+                                    return relation.schoolId;
+                                });
+                                return SchoolArea.getFilters({ _id: { $in: schoolIds } })
+                                    .then(function(schools) {
+                                        objReturn.schools = schools;
+                                    });
+                            });
+                        var p2 = EnrollProcessConfigure.get()
+                            .then(function(configure) {
+                                var pGrade;
+                                if (configure.isGradeUpgrade) {
+                                    //getNextGrade
+                                    pGrade = Grade.get(trainClass.gradeId)
+                                        .then(function(curGrade) {
+                                            return Grade.getFilter({
+                                                sequence: curGrade.sequence + 1
+                                            }).then(function(nextGrade) {
+                                                objReturn.gradeId = nextGrade._id;
+                                                objReturn.gradeName = nextGrade.name;
+                                            });
+                                        }); //是否升年级
+                                } else {
+                                    //getCurrentGrade
+                                    objReturn.gradeId = trainClass.gradeId;
+                                    objReturn.gradeName = trainClass.gradeName;
+                                    pGrade = Promise.resolve();
+                                }
+                                return pGrade.then(function() {
+                                    //get grade now
+                                    return GradeSubjectCategoryRelation.getFilters({
+                                            gradeId: objReturn.gradeId,
+                                            subjectId: objReturn.subjectId
+                                        })
+                                        .then(function(gradeSubjectCategoryRelations) {
+                                            var categoryIds = gradeSubjectCategoryRelations.map(function(relation) {
+                                                    return relation.categoryId;
+                                                }),
+                                                curGradeId = order.superCategoryId || trainClass.categoryId;
+                                            return Category.getFilter({ _id: curGradeId })
+                                                .then(function(curCategory) {
+                                                    objReturn.categoryId = curCategory.categoryId;
+                                                    objReturn.categoryName = curCategory.categoryName;
+                                                    if (curCategory.sequence && curCategory.sequence > 0) {
+                                                        //need list
+                                                        return Category.getFilters({
+                                                                _id: { $in: categoryIds },
+                                                                sequence: { $gt: 0, $lte: curCategory.sequence }
+                                                            })
+                                                            .then(function(categories) {
+                                                                objReturn.categories = categories;
+                                                            });
+                                                    } else {
+                                                        objReturn.categories = [{
+                                                            _id: objReturn.categoryId,
+                                                            name: objReturn.categoryName
+                                                        }];
+                                                    }
+                                                });
+                                        })
+                                });
+                            });
+
+                        Promise.all([p1, p2]).then(function() {
+                            res.jsonp(objReturn);
+                        });
+                    });
             });
     });
 };

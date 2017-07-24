@@ -6,6 +6,7 @@ var enrollProcessConfigureSchema = new mongoose.Schema({
     newStudentStatus: { type: Boolean, default: false }, //新生报名接口状态
     oldStudentStatus: { type: Boolean, default: false }, //老生报名接口状态
     oldStudentSwitch: { type: Boolean, default: false }, //老生调班接口状态
+    isGradeUpgrade: { type: Boolean, default: false }, //老生年级是否调整
     isDeleted: { type: Boolean, default: false }
 }, {
     collection: 'enrollProcessConfigures'

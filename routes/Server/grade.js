@@ -15,7 +15,8 @@ module.exports = function(app) {
             res.render('Server/gradeList.html', {
                 title: '>年级设置',
                 user: req.session.admin,
-                grades: grades
+                grades: grades,
+                total: total
             });
         });
     });
@@ -24,7 +25,7 @@ module.exports = function(app) {
     app.post('/admin/grade/add', function(req, res) {
         var grade = new Grade({
             name: req.body.name,
-            address: req.body.address
+            sequence: req.body.sequence
         });
 
         grade.save(function(err, grade) {
@@ -39,7 +40,7 @@ module.exports = function(app) {
     app.post('/admin/grade/edit', function(req, res) {
         var grade = new Grade({
             name: req.body.name,
-            address: req.body.address
+            sequence: req.body.sequence
         });
 
         grade.update(req.body.id, function(err, grade) {

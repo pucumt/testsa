@@ -23,6 +23,22 @@ function loadData() {
                 $("#btnOldStudent").text("开启");
                 $("#oldStudentStatus").val("停止");
             }
+
+            if (data.oldStudentSwitch) {
+                $("#btnStudentSwitch").text("停止");
+                $("#oldStudentSwitch").val("开启");
+            } else {
+                $("#btnStudentSwitch").text("开启");
+                $("#oldStudentSwitch").val("停止");
+            }
+
+            if (data.isGradeUpgrade) {
+                $("#btnGradeUpgrade").text("停止");
+                $("#isGradeUpgrade").val("是");
+            } else {
+                $("#btnGradeUpgrade").text("开启");
+                $("#isGradeUpgrade").val("否");
+            }
         }
     });
 };
@@ -54,6 +70,38 @@ $("#btnOldStudent").on("click", function(e) {
             } else {
                 $("#btnOldStudent").text("开启");
                 $("#oldStudentStatus").val("停止");
+            }
+        }
+    });
+});
+
+$("#btnStudentSwitch").on("click", function(e) {
+    selfAjax("post", "/admin/enrollProcessConfigure/edit", {
+        status: "switch"
+    }, function(data) {
+        if (data) {
+            if (data.oldStudentSwitch) {
+                $("#btnStudentSwitch").text("停止");
+                $("#oldStudentSwitch").val("开启");
+            } else {
+                $("#btnStudentSwitch").text("开启");
+                $("#oldStudentSwitch").val("停止");
+            }
+        }
+    });
+});
+
+$("#btnGradeUpgrade").on("click", function(e) {
+    selfAjax("post", "/admin/enrollProcessConfigure/edit", {
+        status: "grade"
+    }, function(data) {
+        if (data) {
+            if (data.oldStudentSwitch) {
+                $("#btnGradeUpgrade").text("停止");
+                $("#isGradeUpgrade").val("是");
+            } else {
+                $("#btnGradeUpgrade").text("开启");
+                $("#isGradeUpgrade").val("否");
             }
         }
     });

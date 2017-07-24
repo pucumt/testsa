@@ -9,7 +9,9 @@ module.exports = function(app) {
             if (!configure) {
                 configure = new EnrollProcessConfigure({
                     newStudentStatus: false,
-                    oldStudentStatus: false
+                    oldStudentStatus: false,
+                    oldStudentSwitch: false,
+                    isGradeUpgrade: false
                 });
                 configure.save();
             }
@@ -39,6 +41,13 @@ module.exports = function(app) {
                 case "old":
                     option.oldStudentStatus = !configure.oldStudentStatus;
                     break;
+                case "switch":
+                    option.oldStudentSwitch = !configure.oldStudentSwitch;
+                    break;
+                case "grade":
+                    option.isGradeUpgrade = !configure.isGradeUpgrade;
+                    break;
+
             }
             EnrollProcessConfigure.batchUpdate({}, option).then(function() {
                 res.jsonp(option);

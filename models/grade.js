@@ -4,7 +4,7 @@ var db = mongoose.connection;
 
 var gradeSchema = new mongoose.Schema({
     name: String,
-    address: String,
+    sequence: { type: Number, default: 0 },
     isDeleted: Boolean
 }, {
     collection: 'grades'

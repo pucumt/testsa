@@ -14,6 +14,7 @@
         <thead>
             <tr>
                 <th style="width:50%;">年级</th>
+                <th style="width:150px;">顺序</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -22,6 +23,9 @@
             <tr id={{grade._id}}>
                 <td>
                     {{ grade.name }}
+                </td>
+                <td>
+                    {{ grade.sequence }}
                 </td>
                 <td>
                     <div data-obj={{ grade|dump }} class="btn-group">
@@ -34,6 +38,7 @@
             {% endfor %} {% endif %}
         </tbody>
     </table>
+    <input type="hidden" id="total" value="{{ total }}" />
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -49,6 +54,10 @@
                     <div class="form-group">
                         <label for="name" class="control-label">年级:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="sequence" class="control-label">顺序:</label>
+                        <input type="text" maxlength="30" class="form-control" name="sequence" id="sequence">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -79,5 +88,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/grade.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/grade.js?v=1.000"></script>
 {% endblock %}

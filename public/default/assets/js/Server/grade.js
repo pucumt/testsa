@@ -30,6 +30,17 @@ function addValidation(callback) {
                             message: '年级在3-30个字符之间'
                         }
                     }
+                },
+                'sequence': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '顺序不能为空'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
+                    }
                 }
             }
         });
@@ -43,6 +54,7 @@ $("#btnAdd").on("click", function(e) {
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增年级");
     $('#name').val("");
+    $('#sequence').val($("#total").val());
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });
 
@@ -51,7 +63,8 @@ $("#btnSave").on("click", function(e) {
     if (validator.isValid()) {
         var postURI = "/admin/grade/add",
             postObj = {
-                name: $('#name').val()
+                name: $('#name').val(),
+                sequence: $('#sequence').val()
             };
         if (!isNew) {
             postURI = "/admin/grade/edit";
@@ -59,16 +72,7 @@ $("#btnSave").on("click", function(e) {
         }
         $.post(postURI, postObj, function(data) {
             $('#myModal').modal('hide');
-            if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
-            } else {
-                var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
-            }
+            location.href = location.href;
         });
     }
 });
@@ -82,6 +86,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     //$('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改年级");
     $('#name').val(entity.name);
+    $('#sequence').val(entity.sequence);
     $('#id').val(entity._id);
     $('#myModal').modal({ backdrop: 'static', keyboard: false });
 });

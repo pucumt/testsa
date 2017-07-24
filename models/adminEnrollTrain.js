@@ -27,7 +27,9 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     fromId: String, //调班从哪里调过来
     baseId: ObjectId, //根订单（原始订单）
     yearId: String,
-    yearName: String
+    yearName: String,
+    superCategoryId: ObjectId, //提升难度
+    superCategoryName: String //提升难度
 }, {
     collection: 'adminEnrollTrains'
 });
