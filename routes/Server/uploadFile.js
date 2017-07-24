@@ -23,6 +23,7 @@ var xlsx = require("node-xlsx"),
     ClassAttribute = require('../../models/classAttribute.js'),
     RebateEnrollTrain = require('../../models/rebateEnrollTrain.js'),
     Coupon = require('../../models/coupon.js'),
+    CouponAssign = require('../../models/couponAssign.js'),
     Teacher = require('../../models/teacher.js'),
 
     checkLogin = auth.checkLogin,
@@ -1277,13 +1278,13 @@ module.exports = function(app) {
                 if (student) {
                     return Coupon.get(couponId)
                         .then(function(coupon) {
-                            return CouponAssign.get({ couponId: coupon.couponId, studentId: student.studentId })
+                            return CouponAssign.getFilter({ couponId: coupon._id, studentId: student._id })
                                 .then(function(couponAssign) {
                                     if (!couponAssign) {
                                         //assign student with coupon
                                         var couponAssign = new CouponAssign({
-                                            couponId: coupon.couponId,
-                                            couponName: coupon.couponName,
+                                            couponId: coupon._id,
+                                            couponName: coupon.name,
                                             gradeId: coupon.gradeId,
                                             gradeName: coupon.gradeName,
                                             subjectId: coupon.subjectId,
@@ -1291,8 +1292,8 @@ module.exports = function(app) {
                                             reducePrice: coupon.reducePrice,
                                             couponStartDate: coupon.couponStartDate,
                                             couponEndDate: coupon.couponEndDate,
-                                            studentId: student.studentId,
-                                            studentName: student.studentName
+                                            studentId: student._id,
+                                            studentName: student.name
                                         });
                                         return couponAssign.save();
                                     }
