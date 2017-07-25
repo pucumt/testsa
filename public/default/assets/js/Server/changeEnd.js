@@ -28,7 +28,7 @@ $("#btnSave").on("click", function(e) {
         postObj = {
             name: $.trim($('#changeEnd').val())
         };
-    $.post(postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function(data) {
         $('#myModal').modal('hide');
         if (data.sucess) {
             showAlert("更改成功！");

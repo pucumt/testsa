@@ -21,7 +21,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/examRoomList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examRoomList/search?" + pStr, filter, function(data) {
         if (data && data.examRooms.length > 0) {
             data.examRooms.forEach(function(examRoom) {
                 var $tr = $('<tr id=' + examRoom._id + '><td>' + examRoom.examName + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
@@ -61,7 +61,7 @@ function openExam(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
-    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
                 var $tr = $('<tr><td>' + examClass.name +
@@ -117,7 +117,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examRoom/delete", {
+        selfAjax("post", "/admin/examRoom/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

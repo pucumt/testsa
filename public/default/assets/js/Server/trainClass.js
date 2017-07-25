@@ -37,7 +37,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderSearchYearDropDown() {
-    $.post("/admin/year/all", function(data) {
+    selfAjax("post", "/admin/year/all", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
                 var select = "";
@@ -83,7 +83,7 @@ function searchClass(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function(data) {
         $mainSelectBody.empty();
         if (data && data.trainClasss.length > 0) {
             var d = $(document.createDocumentFragment());
@@ -259,7 +259,7 @@ function resetDropDown(objs) {
     $("#myModal .examList [name='minScore']").val(0);
     $("#myModal #classAttribute").append("<option value=''></option>");
 
-    $.get("/admin/trainClass/yeargradesubjectcategoryexamattribute", function(data) {
+    selfAjax("get", "/admin/trainClass/yeargradesubjectcategoryexamattribute", null, function(data) {
         if (data) {
             if (data.years && data.years.length > 0) {
                 data.years.forEach(function(year) {
@@ -384,7 +384,7 @@ $("#myModal #btnSave").on("click", function(e) {
             postURI = "/admin/trainClass/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             searchClass(page);
@@ -479,7 +479,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/trainClass/delete", {
+        selfAjax("post", "/admin/trainClass/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -495,7 +495,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/trainClass/publish", {
+        selfAjax("post", "/admin/trainClass/publish", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -510,7 +510,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/trainClass/originalclass", {
+        selfAjax("post", "/admin/trainClass/originalclass", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -525,7 +525,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/trainClass/unPublish", {
+        selfAjax("post", "/admin/trainClass/unPublish", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -540,7 +540,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnReset", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/trainClass/reset", {
+        selfAjax("post", "/admin/trainClass/reset", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -567,7 +567,7 @@ function searchRoom(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th style="width:50%">教室名称</th><th>校区</th></tr>');
-    $.post("/admin/classRoomList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/classRoomList/search?" + pStr, filter, function(data) {
         if (data && data.classRooms.length > 0) {
             data.classRooms.forEach(function(classRoom) {
                 var $tr = $('<tr><td>' + classRoom.name + '</td><td>' + classRoom.schoolArea + '</td></tr>');
@@ -610,7 +610,7 @@ function searchTeacher(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th style="width:50%">老师姓名</th></tr>');
-    $.post("/admin/teacher/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/teacher/search?" + pStr, filter, function(data) {
         if (data && data.teachers.length > 0) {
             data.teachers.forEach(function(teacher) {
                 var $tr = $('<tr><td>' + teacher.name + '</td></tr>');
@@ -692,7 +692,7 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
     if (trainIds.length > 0) {
         showComfirm("确定要发布吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
-            $.post("/admin/trainClass/publishAll", {
+            selfAjax("post", "/admin/trainClass/publishAll", {
                 ids: JSON.stringify(trainIds)
             }, function(data) {
                 if (data.sucess) {
@@ -712,7 +712,7 @@ $(".toolbar #btnStopAll").on("click", function(e) {
     if (trainIds.length > 0) {
         showComfirm("确定要停用吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
-            $.post("/admin/trainClass/unPublishAll", {
+            selfAjax("post", "/admin/trainClass/unPublishAll", {
                 ids: JSON.stringify(trainIds)
             }, function(data) {
                 if (data.sucess) {
@@ -732,7 +732,7 @@ $(".toolbar #btnDeleteAll").on("click", function(e) {
     if (trainIds.length > 0) {
         showComfirm("确定要删除吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
-            $.post("/admin/trainClass/deleteAll", {
+            selfAjax("post", "/admin/trainClass/deleteAll", {
                 ids: JSON.stringify(trainIds)
             }, function(data) {
                 if (data.sucess) {

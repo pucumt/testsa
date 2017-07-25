@@ -25,7 +25,7 @@ $("#btnPay").on("click", function(e) {
 
 $("#btnConfirmSave").on("click", function(e) {
     var id = $("#order").data("obj");
-    $.post("/admin/adminEnrollTrain/pay", {
+    selfAjax("post", "/admin/adminEnrollTrain/pay", {
         id: id,
         payWay: payWay
     }, function(data) {

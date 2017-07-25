@@ -20,7 +20,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/classAttributeList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/classAttributeList/search?" + pStr, filter, function(data) {
         if (data && data.classAttributes.length > 0) {
             data.classAttributes.forEach(function(classAttribute) {
                 var $tr = $('<tr id=' + classAttribute._id + '><td>' + classAttribute.name + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
@@ -101,7 +101,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/classAttribute/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
@@ -134,7 +134,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/classAttribute/delete", {
+        selfAjax("post", "/admin/classAttribute/delete", {
             id: entity._id
         }, function(data) {
             if (data.sucess) {

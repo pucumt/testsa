@@ -10,7 +10,7 @@ $("#btnSubmit").on("click", function(e) {
     showComfirm("真的要发布吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/batchTrainClasspublish", { id: $("#year").val() }, function(data) {
+        selfAjax("post", "/admin/batchTrainClasspublish", { id: $("#year").val() }, function(data) {
             if (data && data.sucess) {
                 showAlert("发布成功！", null, true);
             } else {
@@ -24,7 +24,7 @@ $("#btnStop").on("click", function(e) {
     showComfirm("真的要停用吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/batchTrainClassUnpublish", { id: $("#year").val() }, function(data) {
+        selfAjax("post", "/admin/batchTrainClassUnpublish", { id: $("#year").val() }, function(data) {
             if (data && data.sucess) {
                 showAlert("停用成功！", null, true);
             } else {
@@ -35,7 +35,7 @@ $("#btnStop").on("click", function(e) {
 });
 
 function renderDropDown() {
-    $.post("/admin/year/all", function(data) {
+    selfAjax("post", "/admin/year/all", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
                 $("#year").append("<option value='" + year._id + "'>" + year.name + "</option>");
@@ -46,7 +46,7 @@ function renderDropDown() {
 
 function renderSearchGradeDropDown() {
     $(".mainModal #searchGrade").append("<option value=''></option>");
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(grade) {
                 $(".mainModal #searchGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
@@ -58,7 +58,7 @@ function renderSearchGradeDropDown() {
 $("#btnBatchAdd").on("click", function(e) {
     showComfirm("真的要加100吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/batchAdd100", {
+        selfAjax("post", "/admin/batchAdd100", {
             id: $("#year").val(),
             gradeId: $(".mainModal #searchGrade").val()
         }, function(data) {
@@ -74,7 +74,7 @@ $("#btnBatchAdd").on("click", function(e) {
 $("#btnBatchMin").on("click", function(e) {
     showComfirm("真的要减100吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/batchMin100", {
+        selfAjax("post", "/admin/batchMin100", {
             id: $("#year").val(),
             gradeId: $(".mainModal #searchGrade").val()
         }, function(data) {

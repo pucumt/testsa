@@ -29,7 +29,9 @@ $(document).ready(function() {
 });
 
 function renderRandomCoupon() {
-    $.post("/coupon/isRandomCouponExist", { originalUrl: "/personalCenter" },
+    selfAjax("post", "/coupon/isRandomCouponExist", {
+            originalUrl: "/personalCenter"
+        },
         function(data) {
             if (data) {
                 if (data.notLogin) {

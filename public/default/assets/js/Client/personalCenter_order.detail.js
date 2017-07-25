@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 $("#pay-select .wechat").on("click", function(e) {
     $("#pay-select").hide();
-    $.get("/personalCenter/order/wechatpay/" + $("#orderId").val(), function(data) {
+    selfAjax("get", "/personalCenter/order/wechatpay/" + $("#orderId").val(), null, function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
@@ -44,7 +44,7 @@ $("#pay-select .wechat").on("click", function(e) {
 
 $("#pay-select .zhifubao").on("click", function(e) {
     $("#pay-select").hide();
-    $.get("/personalCenter/order/zhifubaopay/" + $("#orderId").val(), function(data) {
+    selfAjax("get", "/personalCenter/order/zhifubaopay/" + $("#orderId").val(), null, function(data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {

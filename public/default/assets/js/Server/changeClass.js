@@ -10,7 +10,7 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    $.post("/admin/year/all", function(data) {
+    selfAjax("post", "/admin/year/all", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(year) {
                 var select = "";
@@ -36,7 +36,7 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         if (data && data.adminEnrollTrains.length > 0) {
             var getButtons = function(isPayed, isSucceed) {
                 if (isPayed && isSucceed !== 9) { //isPayed &&

@@ -48,7 +48,7 @@ function searchExams(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function(data) {
         $mainSelectBody.empty();
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
@@ -164,7 +164,7 @@ function addValidation(callback) {
 function resetDropDown(objId) {
     $('#myModal').find("#examCategoryName option").remove();
     $("#myModal #examCategoryName").append("<option value=''></option>");
-    $.get("/admin/examCategory/getAllWithoutPage", function(data) {
+    selfAjax("get", "/admin/examCategory/getAllWithoutPage", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(examCategory) {
@@ -181,7 +181,7 @@ function resetDropDown(objId) {
 
 function resetCheckBox(subjects) {
     $('#myModal').find(".subject").empty();
-    $.get("/admin/subject/getAllWithoutPage", function(data) {
+    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(subject) {
@@ -200,7 +200,7 @@ function resetCheckBox(subjects) {
 
 function resetExamArea(examId) {
     $('#myModal').find(".examArea").empty();
-    $.post("/admin/examClassExamArea/withAllexamArea", { examId: examId }, function(data) {
+    selfAjax("post", "/admin/examClassExamArea/withAllexamArea", { examId: examId }, function(data) {
         if (data) {
             if (data && data.examAreas && data.examAreas.length > 0) {
                 var d = $(document.createDocumentFragment());
@@ -288,7 +288,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/examClass/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             var examDate = data.examDate && moment(data.examDate, "YYYY-M-D").format("YYYY-M-D");
             if (isNew) {
@@ -349,7 +349,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examClass/delete", {
+        selfAjax("post", "/admin/examClass/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -365,7 +365,7 @@ $("#gridBody").on("click", "td .btnScorePublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examClass/showScore", {
+        selfAjax("post", "/admin/examClass/showScore", {
             id: entity._id,
             isScorePublished: entity.isScorePublished
         }, function(data) {
@@ -388,7 +388,7 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examClass/publish", {
+        selfAjax("post", "/admin/examClass/publish", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -408,7 +408,7 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examClass/unPublish", {
+        selfAjax("post", "/admin/examClass/unPublish", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -439,7 +439,7 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
     if (examIds.length > 0) {
         showComfirm("确定要发布吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
-            $.post("/admin/examClass/publishAll", {
+            selfAjax("post", "/admin/examClass/publishAll", {
                 ids: JSON.stringify(examIds)
             }, function(data) {
                 if (data.sucess) {
@@ -459,7 +459,7 @@ $(".toolbar #btnStopAll").on("click", function(e) {
     if (examIds.length > 0) {
         showComfirm("确定要停用吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
-            $.post("/admin/examClass/unPublishAll", {
+            selfAjax("post", "/admin/examClass/unPublishAll", {
                 ids: JSON.stringify(examIds)
             }, function(data) {
                 if (data.sucess) {

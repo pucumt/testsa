@@ -107,7 +107,7 @@ $("#btnAddStudent").on("click", function(e) {
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             if (data && data.sucess) {
                 showAlert("添加成功");
             } else {
@@ -136,7 +136,7 @@ $("#btnEnroll").on("click", function(e) {
                     examCategoryId: $('#enrollInfo #examCategoryId').val(),
                     examCategoryName: $('#enrollInfo #examCategoryName').val()
                 };
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 if (data && data.sucess) {
                     showAlert("报名成功");
                 } else {
@@ -157,7 +157,7 @@ $("#btnEnroll").on("click", function(e) {
                     examCategoryName: $('#enrollInfo #examCategoryName').val(),
                     examClassExamAreaId: examArea
                 };
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 if (data && data.sucess) {
                     showAlert("报名成功");
                 } else {
@@ -187,7 +187,7 @@ $("#btnHideEnroll").on("click", function(e) {
                     examCategoryId: $('#enrollInfo #examCategoryId').val(),
                     examCategoryName: $('#enrollInfo #examCategoryName').val()
                 };
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 if (data && data.sucess) {
                     showAlert("报名成功");
                 } else {
@@ -208,7 +208,7 @@ $("#btnHideEnroll").on("click", function(e) {
                     examCategoryName: $('#enrollInfo #examCategoryName').val(),
                     examClassExamAreaId: examArea
                 };
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 if (data && data.sucess) {
                     showAlert("报名成功");
                 } else {
@@ -231,7 +231,7 @@ function openStudent(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
                 student.School = "";
@@ -264,7 +264,7 @@ function openExam(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
-    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
                 examClass.courseContent = "";
@@ -341,7 +341,7 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
 
 function resetDropDown() {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {
@@ -353,7 +353,7 @@ function resetDropDown() {
 };
 
 function renderExamAreas(examId) {
-    $.post("/admin/examClassExamArea/examAreas", { examId: examId }, function(data) {
+    selfAjax("post", "/admin/examClassExamArea/examAreas", { examId: examId }, function(data) {
         if (data) {
             var d = $(document.createDocumentFragment());
             if (data && data.length > 0) {

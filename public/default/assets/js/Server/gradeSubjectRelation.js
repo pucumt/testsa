@@ -57,7 +57,7 @@ function getSubjects() {
 
 $("#btnSave").on("click", function(e) {
     var result = getSubjects();
-    $.post("/admin/gradeSubjectRelation/save", {
+    selfAjax("post", "/admin/gradeSubjectRelation/save", {
         newSubjects: JSON.stringify(result.newSubjects),
         removeSubjects: JSON.stringify(result.removeSubjects),
         gradeId: $("#gradeId").val()

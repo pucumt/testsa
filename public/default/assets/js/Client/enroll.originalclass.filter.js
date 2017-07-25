@@ -64,5 +64,5 @@ $selectBody.on("click", "li #btnOriginal", function(e) {
 $selectBody.on("click", "li #btnChange", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parents("li").data("obj");
-    location.href = "/enroll/originalclass/switch/" + entity.trainId + "/student/" + entity.studentId;
+    location.href = "/enroll/originalclass/switch/" + entity.orderId;
 });

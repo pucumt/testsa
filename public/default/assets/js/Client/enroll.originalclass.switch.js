@@ -20,6 +20,10 @@ $(document).ready(function() {
             $(".enroll-filter").hide();
             $('.container.enroll').show();
         });
+
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+        location.href = "/enrolloriginalclass";
+    });
 });
 
 function renderfilter() {
@@ -45,11 +49,14 @@ function renderfilter() {
             } else {
                 $(".enroll-filter #drpSchool").val(data.schoolId);
             }
-
+            $("#studentId").val(data.studentId);
             if ($("#schoolId").val() != "") {
                 loadData();
                 $(".enroll-filter").hide();
                 $('.container.enroll').show();
+            } else {
+                $(".enroll-filter").show();
+                $('.container.enroll').hide();
             }
         }
     });
@@ -65,7 +72,7 @@ function loadData(p) {
             subjectId: $('.enroll-filter #drpSubject').val(),
             categoryId: $('.enroll-filter #drpCategory').val()
         };
-    $.post("/enroll/originalclass?" + pStr, filter, function(data) {
+    selfAjax("post", "/enroll/originalclass/switch?" + pStr, filter, function(data) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
             data.classs.forEach(function(trainclass) {
@@ -119,5 +126,5 @@ $("#btnMore").on("click", function(e) {
 $selectBody.on("click", "li", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    location.href = "/enroll/originalclass/" + entity._id;
+    location.href = location.href = "/enroll/originalclass/id/" + entity._id + "/student/" + $('#studentId').val() + "?orderId=" + $("#orderId").val();
 });

@@ -58,7 +58,7 @@ function getCategories() {
 
 $("#btnSave").on("click", function(e) {
     var result = getCategories();
-    $.post("/admin/gradeSubjectCategoryRelation/save", {
+    selfAjax("post", "/admin/gradeSubjectCategoryRelation/save", {
         newCategories: JSON.stringify(result.newCategories),
         removeCategories: JSON.stringify(result.removeCategories),
         gradeId: $("#gradeId").val(),

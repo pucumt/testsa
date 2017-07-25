@@ -25,7 +25,7 @@
     </form>
     <script>
         $("#button").on("click", function() {
-            $.post("/updateStudent", {
+            selfAjax("post", "/updateStudent", {
                 accountId: $("#count").val(),
                 studentId: $("#studentId").val()
             }, function(data) {
@@ -38,7 +38,7 @@
         });
 
         $("#btnRecover").on("click", function() {
-            $.post("/recoverStudent", {
+            selfAjax("post", "/recoverStudent", {
                 studentId: $("#studentId").val()
             }, function(data) {
                 if (data && data.sucess) {

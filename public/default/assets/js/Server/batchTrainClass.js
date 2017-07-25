@@ -30,7 +30,7 @@ $("#editfile #btnResult").on("click", function(e) {
     location.href = "/admin/batchAddStudentToTrainClassResult";
 });
 $("#editfile #btnClear").on("click", function(e) {
-    $.get("/admin/batchAddStudentToTrainClass/clearAll", function(data) {
+    selfAjax("get", "/admin/batchAddStudentToTrainClass/clearAll", null, function(data) {
         if (data && data.sucess) {
             showAlert("删除失败记录成功");
         }

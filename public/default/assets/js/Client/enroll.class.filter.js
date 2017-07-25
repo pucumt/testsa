@@ -41,8 +41,14 @@ $(document).ready(function() {
 var objFilters;
 
 function renderfilter() {
-    $.get("/enroll/schoolgradesubjectcategory", function(data) {
+    selfAjax("get", "/enroll/schoolgradesubjectcategory", null, function(data) {
         if (data) {
+            if (data.error) {
+                $selectBody.text(data.error);
+                $(".enroll .pageTitle .filter").css({ visibility: "hidden" });
+                $("#btnMore").hide();
+                return;
+            }
             objFilters = data;
             if (data.schools.length > 0) {
                 data.schools.forEach(function(school) {
@@ -136,7 +142,7 @@ function loadData(p) {
             subjectId: $('.enroll-filter #drpSubject').val(),
             categoryId: $('.enroll-filter #drpCategory').val()
         };
-    $.post("/enroll/class?" + pStr, filter, function(data) {
+    selfAjax("post", "/enroll/class?" + pStr, filter, function(data) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
             data.classs.forEach(function(trainclass) {

@@ -21,7 +21,7 @@ $(document).ready(function() {
 });
 
 function loadOrders() {
-    $.post("/personalCenter/exam/all", { originalUrl: "/personalCenter/exam" }, function(data) {
+    selfAjax("post", "/personalCenter/exam/all", { originalUrl: "/personalCenter/exam" }, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -76,7 +76,7 @@ function CancelOrder(e) {
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         curObj.attr("disabled", "disabled");
-        $.post("/cancel/exam", {
+        selfAjax("post", "/cancel/exam", {
             id: orderId,
             originalUrl: "/personalCenter/exam"
         }, function(data) {

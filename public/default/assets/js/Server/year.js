@@ -72,7 +72,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/year/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 // var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + (data.isCurrentYear ? "当前年度" : "") + "</td><td>" + data.sequence +
@@ -107,7 +107,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/year/delete", {
+        selfAjax("post", "/admin/year/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

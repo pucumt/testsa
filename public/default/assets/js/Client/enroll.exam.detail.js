@@ -8,7 +8,9 @@ $(document).ready(function() {
     });
 
     $("#btnEnroll").on("click", function(e) {
-        $.post("/enroll/students", { originalUrl: "/enroll/exam/" + $("#id").val() }, function(data) {
+        selfAjax("post", "/enroll/students", {
+            originalUrl: "/enroll/exam/" + $("#id").val()
+        }, function(data) {
             if (data) {
                 if (data.notLogin) {
                     location.href = "/login";
@@ -82,7 +84,7 @@ $(document).ready(function() {
                 postURI = "/studentInfo/edit";
                 postObj.id = editStudent._id;
             }
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 if (data && data.error) {
                     showAlert(data.error);
@@ -144,7 +146,7 @@ $(document).ready(function() {
             if (examClassExamAreaId) {
                 //multi areas
                 filter.examClassExamAreaId = examClassExamAreaId;
-                $.post("/enroll/exam/enroll2", filter, function(data) {
+                selfAjax("post", "/enroll/exam/enroll2", filter, function(data) {
                     if (data.sucess) {
                         $("#Enroll-select").hide();
                         showAlert("报名成功！", null, function() {
@@ -160,7 +162,7 @@ $(document).ready(function() {
                 });
             } else {
                 //one exam area
-                $.post("/enroll/exam/enroll", filter, function(data) {
+                selfAjax("post", "/enroll/exam/enroll", filter, function(data) {
                     if (data.sucess) {
                         $("#Enroll-select").hide();
                         showAlert("报名成功！", null, function() {
@@ -185,7 +187,7 @@ $(document).ready(function() {
 });
 
 function renderExamAreas() {
-    $.get("/enroll/exam/examClassExamAreas/" + $("#id").val(), function(data) {
+    selfAjax("get", "/enroll/exam/examClassExamAreas/" + $("#id").val(), null, function(data) {
         if (data && data.length > 0) {
             var d1 = $(document.createDocumentFragment()),
                 d2 = $(document.createDocumentFragment());
@@ -292,7 +294,7 @@ function renderNewStudent(student) {
 
 function resetDropDown(id, callback) {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/enroll/grade/all", function(data) {
+    selfAjax("get", "/enroll/grade/all", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {

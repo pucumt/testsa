@@ -47,7 +47,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/couponList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponList/search?" + pStr, filter, function(data) {
         if (data && data.coupons.length > 0) {
             data.coupons.forEach(function(coupon) {
                 var $tr = $('<tr id=' + coupon._id + '><td>' + coupon.name + '</td><td>' +
@@ -171,7 +171,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/coupon/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.categoryName + "</td><td>" +
@@ -224,7 +224,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/coupon/delete", {
+        selfAjax("post", "/admin/coupon/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -240,7 +240,7 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/coupon/publish", {
+        selfAjax("post", "/admin/coupon/publish", {
             id: entity._id
         }, function(data) {
             if (data.sucess) {
@@ -260,7 +260,7 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/coupon/unpublish", {
+        selfAjax("post", "/admin/coupon/unpublish", {
             id: entity._id
         }, function(data) {
             if (data.sucess) {
@@ -297,7 +297,7 @@ function resetDropDown(objs) {
     $("#myModal #examCategoryName").append("<option value=''></option>");
     $("#myModal #category").append('<option value="固定">固定</option><option value="随机">随机</option>');
 
-    $.get("/admin/trainClass/gradesubjectattribute", function(data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectattribute", null, function(data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function(grade) {

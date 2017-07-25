@@ -16,7 +16,7 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    $.post("/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
         $selectBody.empty();
         if (data && data.adminEnrollExams.length > 0) {
             var getButtons = function(isSucceed) {
@@ -63,7 +63,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     showComfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/adminEnrollExam/cancel", {
+        selfAjax("post", "/admin/adminEnrollExam/cancel", {
             id: entity._id,
             examId: entity.examId,
             examAreaId: entity.examAreaId

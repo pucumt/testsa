@@ -21,7 +21,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/examAreaList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examAreaList/search?" + pStr, filter, function(data) {
         if (data && data.examAreas.length > 0) {
             data.examAreas.forEach(function(examArea) {
                 var $tr = $('<tr id=' + examArea._id + '><td>' + examArea.name + '</td><td>' + examArea.address +
@@ -113,7 +113,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/examArea/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.address +
@@ -150,7 +150,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/examArea/delete", {
+        selfAjax("post", "/admin/examArea/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

@@ -8,7 +8,7 @@ $(document).ready(function() {
 //------------search funfunction
 function renderSearchGradeDropDown() {
     $(".mainModal #InfoSearch #searchGrade").append("<option value=''></option>");
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(grade) {
                 $(".mainModal #InfoSearch #searchGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");

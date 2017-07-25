@@ -17,7 +17,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/adminEnrollExam/searchCard?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/searchCard?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
             var d = $(document.createDocumentFragment());
             data.adminEnrollExams.forEach(function(examOrder) {
@@ -42,7 +42,7 @@ $(".mainModal #gridBody").on("click", "tr", function(e) {
     $('#myModal #myModalLabel').text("考试信息");
     $('#myModal #name').text(entity.examName);
     var filter = { id: entity._id };
-    $.post("/admin/adminEnrollExam/searchExam", filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/searchExam", filter, function(data) {
         if (data) {
             var examDate = data.examDate && moment(data.examDate).format("YYYY-M-D");
             $('#myModal #examDate').text(examDate);

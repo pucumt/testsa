@@ -12,7 +12,7 @@ $(document).ready(function() {
 });
 
 var render = function(_$schoolUl, _classRooms) {
-    $.get("/admin/classRoomList/withoutpage", function(classRooms) {
+    selfAjax("get", "/admin/classRoomList/withoutpage", null, function(classRooms) {
         var school = '',
             $roomUl;
         classRooms.forEach(function(room) {
@@ -60,7 +60,7 @@ $("#btnSave").on("click", function(e) {
         classRooms: JSON.stringify(classRooms)
     };
     //update entity
-    $.post("/admin/examRoom/edit", examRoom, function(examRoom) {
+    selfAjax("post", "/admin/examRoom/edit", examRoom, function(examRoom) {
         if (examRoom) {
             showAlert("保存成功！");
         }
@@ -89,7 +89,7 @@ $("#btnAssign").on("click", function(e) {
         classRooms: JSON.stringify(classRooms)
     };
     //update entity
-    $.post("/admin/examRoom/assign", examRoom, function(examRoom) {
+    selfAjax("post", "/admin/examRoom/assign", examRoom, function(examRoom) {
         if (examRoom) {
             if (examRoom.sucess) {
                 showAlert("分配成功！");

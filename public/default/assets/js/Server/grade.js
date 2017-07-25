@@ -70,7 +70,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/grade/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             location.href = location.href;
         });
@@ -96,7 +96,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/grade/delete", {
+        selfAjax("post", "/admin/grade/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

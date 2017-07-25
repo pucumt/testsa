@@ -21,7 +21,7 @@ function searchAdmins(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/adminList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminList/search?" + pStr, filter, function(data) {
         $mainSelectBody.empty();
         if (data && data.users.length > 0) {
             var d = $(document.createDocumentFragment());
@@ -119,7 +119,7 @@ function addUser() {
     if (!isNew) {
         postURI = "/admin/user/edit";
     }
-    $.post(postURI, {
+    selfAjax("post", postURI, {
         username: $('#user-name').val(),
         password: hex_md5($('#user-pwd').val()),
         schoolId: $('#myModal #school').val(),
@@ -134,7 +134,7 @@ function addUser() {
 
 function resetSchool(id) {
     $('#myModal').find("#school option").remove();
-    $.get("/admin/schoolArea/all", function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(school) {
                 var select = "";
@@ -176,7 +176,7 @@ $("#btnSave").on("click", function(e) {
 });
 
 $("#btnChangeRole").on("click", function(e) {
-    $.post("/admin/user/setRole", {
+    selfAjax("post", "/admin/user/setRole", {
         username: $('#user-name').val(),
         schoolId: $('#myModal #school').val(),
         schoolArea: $('#myModal #school').find("option:selected").text(),
@@ -208,7 +208,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/user/delete", {
+        selfAjax("post", "/admin/user/delete", {
             username: entity.name
         }, function(data) {
             $('#confirmModal').modal('hide');

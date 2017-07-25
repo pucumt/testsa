@@ -1,6 +1,10 @@
 $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/enroll/originalclass/classes/" + $(".exam-detail #fromClassId").val() + "/student/" + $(".exam-detail #studentId").val();
+        if ($("#orderId").val() != "") {
+            location.href = "/enroll/originalclass/switch/" + $("#orderId").val() + "?school=" + $(".exam-detail #schoolId").val() + "&category=" + $(".exam-detail #categoryId").val();
+        } else {
+            location.href = "/enroll/originalclass/classes/" + $(".exam-detail #fromClassId").val() + "/student/" + $(".exam-detail #studentId").val();
+        }
     });
 
     $("#btnEnroll").on("click", function(e) {
@@ -24,10 +28,10 @@ $(document).ready(function() {
 
     $("#Enroll-select #btnNext").on("click", function(e) {
         if ($("#Enroll-select .student .name").text() == "" || $("#Enroll-select #studentId").val() == "") {
-            $("#Enroll-student").show();
-            $("#Enroll-select").hide();
+            showAlert("出错了，请刷新重试！");
         } else {
-            location.href = "/enroll/original/order?classId=" + $("#id").val() + "&studentId=" + $("#Enroll-select #studentId").val();
+            location.href = "/enroll/original/order?classId=" + $("#id").val() + "&studentId=" +
+                $("#Enroll-select #studentId").val() + "&orderId=" + $("#orderId").val();
         }
     });
 

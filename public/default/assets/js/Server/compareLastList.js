@@ -12,7 +12,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderSearchSchoolDropDown() {
-    $.get("/admin/schoolArea/all", function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(school) {
                 $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
@@ -23,7 +23,7 @@ function renderSearchSchoolDropDown() {
 
 function renderSearchGradeDropDown() {
     $(".mainModal #InfoSearch #searchGrade").append("<option value=''></option>");
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(grade) {
                 $(".mainModal #InfoSearch #searchGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
@@ -34,7 +34,7 @@ function renderSearchGradeDropDown() {
 
 function renderSearchSubjectDropDown() {
     $(".mainModal #InfoSearch #searchSubject").append("<option value=''></option>");
-    $.get("/admin/subject/getAllWithoutPage", function(data) {
+    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(subject) {
                 $(".mainModal #InfoSearch #searchSubject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");

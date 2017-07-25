@@ -7,7 +7,7 @@ $(document).ready(function() {
         var validator = $('#resetForm').data('formValidation').validate();
         if (validator.isValid()) {
             $(".enroll #resetForm .btn").attr("disabled", "disabled");
-            $.post("/Teacher/personalCenter/resetPWD", {
+            selfAjax("post", "/Teacher/personalCenter/resetPWD", {
                 oldPassword: hex_md5($('#resetForm #oldPassword').val()),
                 password: hex_md5($('#resetForm #password').val()),
                 originalUrl: "/Teacher/personalCenter/resetPWD"

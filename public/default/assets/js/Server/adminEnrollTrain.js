@@ -158,7 +158,7 @@ $("#btnAddStudent").on("click", function(e) {
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             if (data && data.sucess) {
                 showAlert("添加成功");
             } else {
@@ -194,7 +194,7 @@ function enroll(enrollURI) {
                 comment: $('#enrollInfo #comment').val(),
                 couponId: couponId
             };
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             if (data && data.sucess) {
                 showAlert("报名成功");
                 $('#confirmModal .modal-footer .btn-default')
@@ -230,7 +230,7 @@ function openStudent(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(student) {
                 student.School = "";
@@ -272,7 +272,7 @@ function openTrain(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/难度</th><th width="180px">校区</th><th width="140px">培训费/教材费</th><th width="100px">报名情况</th></tr>');
-    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function(data) {
         if (data && data.trainClasss.length > 0) {
             data.trainClasss.forEach(function(trainClass) {
                 trainClass.courseContent = "";
@@ -384,7 +384,7 @@ $("#enrollInfo #discount").on("change blur", setPrice);
 
 function resetDropDown() {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {
@@ -415,7 +415,7 @@ function renderAttributeCoupon() {
             studentId: $("#enrollInfo #studentId").val(),
             attributeId: attributeid
         }
-        $.post("/admin/adminEnrollTrain/checkAttributs", filter, function(coupon) {
+        selfAjax("post", "/admin/adminEnrollTrain/checkAttributs", filter, function(coupon) {
             if (coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
                 var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + (coupon.couponName || coupon.name) + '</td><td>' + dateStr +
@@ -436,7 +436,7 @@ function searchCoupon(p) {
         },
         pStr = p ? "p=" + p : "";
     $couponSelectBody.empty();
-    $.post("/admin/couponAssignList/searchUseful?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponAssignList/searchUseful?" + pStr, filter, function(data) {
         if (data && data.couponAssigns.length > 0) {
             data.couponAssigns.forEach(function(coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
@@ -492,7 +492,7 @@ function renderGradeSubjectCategory(callback) {
     $('#selectModal #InfoSearch').find("#grade option").remove();
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
-    $.get("/admin/trainClass/gradesubjectcategory", function(data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategory", null, function(data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function(grade) {

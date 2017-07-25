@@ -21,7 +21,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/studentAccountList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentAccountList/search?" + pStr, filter, function(data) {
         $mainSelectBody.empty();
         if (data && data.studentAccounts.length > 0) {
             data.studentAccounts.forEach(function(studentAccount) {
@@ -91,7 +91,7 @@ $("#btnSave").on("click", function(e) {
                 name: $('#myModal #name').val(),
                 id: $('#myModal #id').val()
             };
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             if (data.error) {
                 showAlert(data.error);
             } else {
@@ -123,7 +123,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     showComfirm("真的要删除" + entity.name + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentAccount/delete", {
+        selfAjax("post", "/admin/studentAccount/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');
@@ -141,7 +141,7 @@ $("#gridBody").on("click", "td .btnReset", function(e) {
     showComfirm("真的要重置" + entity.name + "的密码吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentAccount/reset", {
+        selfAjax("post", "/admin/studentAccount/reset", {
             id: entity._id
         }, function(data) {
             var msg;
@@ -158,7 +158,7 @@ $("#gridBody").on("click", "td .btnReset", function(e) {
 $("#btnUpdateMobile").on("click", function(e) {
     showComfirm("真的要更新手机号吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentAccount/updateMobile",
+        selfAjax("post", "/admin/studentAccount/updateMobile", null,
             function(data) {
                 var msg;
                 if (data.sucess) {
@@ -173,7 +173,7 @@ $("#btnUpdateMobile").on("click", function(e) {
 $("#btnUpdateTrainOrder").on("click", function(e) {
     showComfirm("真的要给订单添加年度吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/adminEnrollTrain/addYearToOrder",
+        selfAjax("post", "/admin/adminEnrollTrain/addYearToOrder", null,
             function(data) {
                 var msg;
                 if (data.sucess) {
@@ -188,7 +188,7 @@ $("#btnUpdateTrainOrder").on("click", function(e) {
 $("#btnDuplicateAccount").on("click", function(e) {
     showComfirm("真的要整理账号吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentAccount/DuplicateAccount",
+        selfAjax("post", "/admin/studentAccount/DuplicateAccount", null,
             function(data) {
                 var msg;
                 if (data.sucess) {
@@ -203,7 +203,7 @@ $("#btnDuplicateAccount").on("click", function(e) {
 $("#btnDuplicateAccountOnly").on("click", function(e) {
     showComfirm("真的要删除同号码吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentAccount/OnlyDuplicateAccount",
+        selfAjax("post", "/admin/studentAccount/OnlyDuplicateAccount", null,
             function(data) {
                 var msg;
                 if (data.sucess) {

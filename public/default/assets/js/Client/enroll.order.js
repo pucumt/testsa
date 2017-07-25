@@ -27,7 +27,7 @@ function renderData() {
         studentId: $("#studentId").val(),
         originalUrl: "/enroll/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
     };
-    $.post("/studentInfo/coupon", filter, function(data) {
+    selfAjax("post", "/studentInfo/coupon", filter, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -91,7 +91,7 @@ function getOrderId(payWay, callback) {
         payWay: payWay
     };
     filter.originalUrl = "/enroll/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
-    $.post("/enroll/pay", filter, function(data) {
+    selfAjax("post", "/enroll/pay", filter, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -118,7 +118,7 @@ function getOrderId(payWay, callback) {
 
 $("#pay-select .wechat").on("click", function(e) {
     getOrderId("6", function(orderId) {
-        $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+        selfAjax("get", "/personalCenter/order/wechatpay/" + orderId, null, function(data) {
             $("#pay-select").hide();
             if (data.error) {
                 showAlert("生成付款码失败");
@@ -140,7 +140,7 @@ $("#pay-select .wechat").on("click", function(e) {
 
 $("#pay-select .zhifubao").on("click", function(e) {
     getOrderId("7", function(orderId) {
-        $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+        selfAjax("get", "/personalCenter/order/zhifubaopay/" + orderId, null, function(data) {
             $("#pay-select").hide();
             if (data.error) {
                 showAlert("生成付款码失败");

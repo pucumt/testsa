@@ -19,7 +19,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/couponAssignList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponAssignList/search?" + pStr, filter, function(data) {
         if (data && data.couponAssigns.length > 0) {
             data.couponAssigns.forEach(function(coupon) {
                 var $tr = $('<tr id=' + coupon._id + '><td>' + coupon.couponName + '</td><td>' +
@@ -57,7 +57,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/couponAssign/delete", {
+        selfAjax("post", "/admin/couponAssign/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

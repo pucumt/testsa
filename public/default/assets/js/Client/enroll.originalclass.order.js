@@ -1,7 +1,11 @@
 $(document).ready(function() {
     $("#btnPay").hide();
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
+        var href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
+        if ($("#orderId").val() != "") {
+            href += "?orderId=" + $("#orderId").val();
+        }
+        location.href = href;
     });
     if ($("#notOriginal").val()) {
         showAlert("本课程是老班升报，您不符合要求，请等待后续课程！", "", function(e) {
@@ -29,7 +33,7 @@ function renderData() {
         studentId: $("#studentId").val(),
         originalUrl: "/enroll/original/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
     };
-    $.post("/studentInfo/coupon", filter, function(data) {
+    selfAjax("post", "/studentInfo/coupon", filter, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -93,7 +97,7 @@ function getOrderId(payWay, callback) {
         payWay: payWay
     };
     filter.originalUrl = "/enroll/original/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
-    $.post("/enroll/original/pay", filter, function(data) {
+    selfAjax("post", "/enroll/original/pay", filter, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -120,7 +124,7 @@ function getOrderId(payWay, callback) {
 
 $("#pay-select .wechat").on("click", function(e) {
     getOrderId("6", function(orderId) {
-        $.get("/personalCenter/order/wechatpay/" + orderId, function(data) {
+        selfAjax("get", "/personalCenter/order/wechatpay/" + orderId, null, function(data) {
             $("#pay-select").hide();
             if (data.error) {
                 showAlert("生成付款码失败");
@@ -142,7 +146,7 @@ $("#pay-select .wechat").on("click", function(e) {
 
 $("#pay-select .zhifubao").on("click", function(e) {
     getOrderId("7", function(orderId) {
-        $.get("/personalCenter/order/zhifubaopay/" + orderId, function(data) {
+        selfAjax("get", "/personalCenter/order/zhifubaopay/" + orderId, null, function(data) {
             $("#pay-select").hide();
             if (data.error) {
                 showAlert("生成付款码失败");

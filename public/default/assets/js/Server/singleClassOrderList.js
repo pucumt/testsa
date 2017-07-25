@@ -19,7 +19,7 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    $.post("/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
         $selectBody.empty();
         if (data && data.adminEnrollTrains.length > 0) {
             data.adminEnrollTrains.forEach(function(trainOrder) {

@@ -21,7 +21,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/teacher/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/teacher/search?" + pStr, filter, function(data) {
         if (data && data.teachers.length > 0) {
             data.teachers.forEach(function(teacher) {
                 var $tr = $('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' + (teacher.engName || "") + '</td><td>' +
@@ -129,7 +129,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/teacher/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             search(page);
@@ -160,7 +160,7 @@ $("#gridBody").on("click", "td .btnReset", function(e) {
     showComfirm("真的要重置 (" + entity.name + ") 的密码吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/teacher/reset", {
+        selfAjax("post", "/admin/teacher/reset", {
             id: entity._id
         }, function(data) {
             var msg;
@@ -179,7 +179,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/teacher/delete", {
+        selfAjax("post", "/admin/teacher/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

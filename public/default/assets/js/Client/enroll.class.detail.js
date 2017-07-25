@@ -2,14 +2,16 @@ var newStudent = true,
     editStudent;
 $(document).ready(function() {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/enrollClass/schoolId/" + $(".exam-detail #schoolId").val() +
-            "/gradeId/" + $(".exam-detail #gradeId").val() +
-            "/subjectId/" + $(".exam-detail #subjectId").val() +
-            "/categoryId/" + $(".exam-detail #categoryId").val();
+        location.href = "/enrollClass?schoolId=" + $(".exam-detail #schoolId").val() +
+            "&gradeId=" + $(".exam-detail #gradeId").val() +
+            "&subjectId=" + $(".exam-detail #subjectId").val() +
+            "&categoryId=" + $(".exam-detail #categoryId").val();
     });
 
     $("#btnEnroll").on("click", function(e) {
-        $.post("/enroll/students", { originalUrl: "/enroll/class/" + $("#id").val() }, function(data) {
+        selfAjax("post", "/enroll/students", {
+            originalUrl: "/enroll/class/" + $("#id").val()
+        }, function(data) {
             if (data) {
                 if (data.notLogin) {
                     location.href = "/login";
@@ -83,7 +85,7 @@ $(document).ready(function() {
                 postURI = "/studentInfo/edit";
                 postObj.id = editStudent._id;
             }
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 if (data && data.error) {
                     showAlert(data.error);
@@ -240,7 +242,7 @@ function renderNewStudent(student) {
 
 function resetDropDown(id, callback) {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/enroll/grade/all", function(data) {
+    selfAjax("get", "/enroll/grade/all", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {

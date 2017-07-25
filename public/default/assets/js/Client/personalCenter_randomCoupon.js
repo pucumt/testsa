@@ -9,7 +9,7 @@ $(document).ready(function() {
 });
 
 function loadCoupons() {
-    $.post("/personalCenter/randomCoupon/all", {
+    selfAjax("post", "/personalCenter/randomCoupon/all", {
         originalUrl: "/personalCenter/randomCoupon"
     }, function(data) {
         if (data) {
@@ -44,7 +44,7 @@ $("#Enroll-student .randomCouponList .student-list").on("click", "li .take", fun
     var id = $(obj).parent().attr("id");
     $("#Enroll-student li .take").attr("disabled", "disabled");
     console.log("click");
-    $.post("/personalCenter/randomCoupon/get", {
+    selfAjax("post", "/personalCenter/randomCoupon/get", {
         originalUrl: "/personalCenter/randomCoupon",
         id: id
     }, function(data) {

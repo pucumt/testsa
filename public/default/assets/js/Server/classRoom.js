@@ -21,7 +21,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/classRoomList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/classRoomList/search?" + pStr, filter, function(data) {
         if (data && data.classRooms.length > 0) {
 
             data.classRooms.forEach(function(classRoom) {
@@ -92,7 +92,7 @@ function addValidation(callback) {
 
 function resetSchool(id) {
     $('#myModal').find("#school option").remove();
-    $.get("/admin/schoolArea/all", function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
         if (data && data.length > 0) {
             data.forEach(function(school) {
                 var select = "";
@@ -136,7 +136,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/classRoom/edit";
             postObj.id = $('#myModal #id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.sCount + "</td><td>" + data.schoolArea + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
@@ -175,7 +175,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/classRoom/delete", {
+        selfAjax("post", "/admin/classRoom/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

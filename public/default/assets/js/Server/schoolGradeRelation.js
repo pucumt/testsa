@@ -54,7 +54,7 @@ function getGrades() {
 
 $("#btnSave").on("click", function(e) {
     var result = getGrades();
-    $.post("/admin/schoolGradeRelation/save", {
+    selfAjax("post", "/admin/schoolGradeRelation/save", {
         newGrades: JSON.stringify(result.newGrades),
         removeGrades: JSON.stringify(result.removeGrades),
         schoolId: $("#schoolId").val()

@@ -42,7 +42,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/adminEnrollExam/searchCard?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/searchCard?" + pStr, filter, function(data) {
         if (data && data.adminEnrollExams.length > 0) {
             data.adminEnrollExams.forEach(function(examOrder) {
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName + '</td><td>' +
@@ -69,7 +69,7 @@ $("#editfile #btnResult").on("click", function(e) {
     location.href = "/admin/score";
 });
 $("#editfile #btnClear").on("click", function(e) {
-    $.get("/admin/score/clearAll", function(data) {
+    selfAjax("get", "/admin/score/clearAll", null, function(data) {
         if (data && data.sucess) {
             showAlert("删除记录成功");
         }
@@ -167,9 +167,9 @@ $("#editfile #btnExportReport").on("click", function(e) {
 $("#editfile #btnExportClass").on("click", function(e) {
     var validator = $('#editfile').data('formValidation').validate();
     if (validator.isValid()) {
-        $.post("/admin/export/classTemplate3", {
+        selfAjax("post", "/admin/export/classTemplate3", {
             examId: $("#editfile #examId").val()
-        }).then(function(data) {
+        }, function(data) {
             if (data && data.sucess) {
                 location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况3.xlsx");
             }
@@ -180,9 +180,9 @@ $("#editfile #btnExportClass").on("click", function(e) {
 $("#editfile #btnExportClass3").on("click", function(e) {
     // var validator = $('#editfile').data('formValidation').validate();
     // if (validator.isValid()) {
-    //     $.post("/admin/export/classTemplate3", {
+    //     selfAjax("post","/admin/export/classTemplate3", {
     //         examId: $("#editfile #examId").val()
-    //     }).then(function(data) {
+    //     },function(data) {
     //         if (data && data.sucess) {
     //             location.href = "/admin/export/scoreTemplate?name=" + encodeURI("报名情况3.xlsx");
     //         }
@@ -249,7 +249,7 @@ function openExam(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
-    $.post("/admin/examClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function(data) {
         if (data && data.examClasss.length > 0) {
             data.examClasss.forEach(function(examClass) {
                 var $tr = $('<tr><td>' + examClass.name +

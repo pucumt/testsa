@@ -34,7 +34,11 @@ module.exports = function(app) {
     app.get('/enrollClass', function(req, res) {
         res.render('Client/enroll_class.html', {
             title: '课程报名',
-            user: req.session.user
+            user: req.session.user,
+            schoolId: req.query.schoolId,
+            gradeId: req.query.gradeId,
+            subjectId: req.query.subjectId,
+            categoryId: req.query.categoryId
         });
     });
 
@@ -45,16 +49,16 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/enrollClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
-        res.render('Client/enroll_class.html', {
-            title: '课程报名',
-            user: req.session.user,
-            schoolId: req.params.schoolId,
-            gradeId: req.params.gradeId,
-            subjectId: req.params.subjectId,
-            categoryId: req.params.categoryId
-        });
-    });
+    // app.get('/enrollClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
+    //     res.render('Client/enroll_class.html', {
+    //         title: '课程报名',
+    //         user: req.session.user,
+    //         schoolId: req.params.schoolId,
+    //         gradeId: req.params.gradeId,
+    //         subjectId: req.params.subjectId,
+    //         categoryId: req.params.categoryId
+    //     });
+    // });
 
     app.get('/enroll/exam', function(req, res) {
         // number 类型
@@ -136,16 +140,21 @@ module.exports = function(app) {
         res.render('Client/enroll_originalclass_switch.html', {
             title: '课程报名',
             user: req.session.user,
-            orderId: req.params.orderId
+            orderId: req.params.orderId,
+            schoolId: req.query.school,
+            categoryId: req.query.category
         });
     });
 
-    //TBD
+    //老生调班功能
     app.post('/enroll/originalclass/switch', function(req, res) {
         //debugger;
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
-        var filter = { isWeixin: 2 };
+        var filter = {
+            isWeixin: 1,
+            yearId: global.currentYear._id.toJSON()
+        }; //依赖发布报班
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
         }
@@ -158,6 +167,7 @@ module.exports = function(app) {
         if (req.body.categoryId) {
             filter.categoryId = req.body.categoryId;
         }
+
         //查询并返回第 page 页的 14 篇文章
         TrainClass.getAllToOriginalEnroll(null, page, filter, function(err, classs, total) {
             if (err) {
@@ -184,7 +194,7 @@ module.exports = function(app) {
     app.post('/enroll/originalclass/classes', function(req, res) {
         //debugger;
         // number 类型
-        var filter = {};
+        var filter = {}; //isWeixin: 1
         if (req.body.fromClassId) {
             filter.fromClassId = req.body.fromClassId;
         }
@@ -212,8 +222,7 @@ module.exports = function(app) {
             res.render('Client/enroll_class_detail.html', {
                 title: '课程报名',
                 trainClass: trainClass,
-                totalPrice: totalPrice,
-                isTimeDuplicated: isTimeDuplicated
+                totalPrice: totalPrice
             });
         });
     });
@@ -225,7 +234,8 @@ module.exports = function(app) {
                 title: '原班升报课程报名',
                 trainClass: trainClass,
                 totalPrice: totalPrice,
-                studentId: req.params.studentId
+                studentId: req.params.studentId,
+                orderId: req.query.orderId
             });
         });
     });
@@ -348,62 +358,68 @@ module.exports = function(app) {
     });
 
     app.get('/enroll/schoolgradesubjectcategory', function(req, res) {
-        var objReturn = {};
-        var p0 = SchoolArea.getAllWithoutPage()
-            .then(function(schools) {
-                objReturn.schools = schools;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        var p1 = Grade.getAllWithoutPage()
-            .then(function(grades) {
-                objReturn.grades = grades;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        var p2 = Subject.getAllWithoutPage()
-            .then(function(subjects) {
-                objReturn.subjects = subjects;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        var p3 = Category.getAllWithoutPage()
-            .then(function(categorys) {
-                objReturn.categorys = categorys;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        var p4 = SchoolGradeRelation.getFilters({})
-            .then(function(schoolGradeRelations) {
-                objReturn.schoolGradeRelations = schoolGradeRelations;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        var p5 = GradeSubjectRelation.getFilters({})
-            .then(function(gradeSubjectRelations) {
-                objReturn.gradeSubjectRelations = gradeSubjectRelations;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        var p6 = GradeSubjectCategoryRelation.getFilters({})
-            .then(function(gradeSubjectCategoryRelations) {
-                objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
-        Promise.all([p0, p1, p2, p3, p4, p5, p6]).then(function() {
-                res.jsonp(objReturn);
-            })
-            .catch((err) => {
-                console.log('errored');
-            });
+        EnrollProcessConfigure.get().then(function(configure) {
+            if (configure && (!configure.newStudentStatus)) {
+                res.jsonp({ error: "没到报名时间呢！" });
+            } else {
+                var objReturn = {};
+                var p0 = SchoolArea.getAllWithoutPage()
+                    .then(function(schools) {
+                        objReturn.schools = schools;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                var p1 = Grade.getAllWithoutPage()
+                    .then(function(grades) {
+                        objReturn.grades = grades;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                var p2 = Subject.getAllWithoutPage()
+                    .then(function(subjects) {
+                        objReturn.subjects = subjects;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                var p3 = Category.getAllWithoutPage()
+                    .then(function(categorys) {
+                        objReturn.categorys = categorys;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                var p4 = SchoolGradeRelation.getFilters({})
+                    .then(function(schoolGradeRelations) {
+                        objReturn.schoolGradeRelations = schoolGradeRelations;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                var p5 = GradeSubjectRelation.getFilters({})
+                    .then(function(gradeSubjectRelations) {
+                        objReturn.gradeSubjectRelations = gradeSubjectRelations;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                var p6 = GradeSubjectCategoryRelation.getFilters({})
+                    .then(function(gradeSubjectCategoryRelations) {
+                        objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+                Promise.all([p0, p1, p2, p3, p4, p5, p6]).then(function() {
+                        res.jsonp(objReturn);
+                    })
+                    .catch((err) => {
+                        console.log('errored');
+                    });
+            }
+        });
     });
 
     app.get('/enroll/school', function(req, res) {
@@ -534,7 +550,6 @@ module.exports = function(app) {
                 .then(function(order) {
                     if (order) {
                         //有原班，可以继续报名
-
                         //get history orders to check the class time
                         AdminEnrollTrain.getFiltersWithClassFilters({
                             yearId: global.currentYear._id.toJSON(),
@@ -570,33 +585,39 @@ module.exports = function(app) {
                                     if (results.some(function(result) {
                                             return result;
                                         })) {
+                                        //达到分数，可以报名
                                         res.render('Client/enroll_originalclass_order.html', {
                                             title: '课程报名',
                                             trainClass: trainClass,
                                             classId: req.query.classId,
                                             studentId: req.query.studentId,
                                             originalOrder: 1,
-                                            isTimeDuplicated: isTimeDuplicated
+                                            isTimeDuplicated: isTimeDuplicated,
+                                            orderId: req.query.orderId
                                         });
                                     } else {
+                                        //未到分数线，不能报名
                                         res.render('Client/enroll_originalclass_order.html', {
                                             title: '课程报名',
                                             trainClass: trainClass,
                                             classId: req.query.classId,
                                             studentId: req.query.studentId,
                                             disability: minScore,
-                                            originalOrder: 1
+                                            originalOrder: 1,
+                                            orderId: req.query.orderId
                                         });
                                     }
                                 });
                             } else {
+                                //没有考试依赖，可以报名
                                 res.render('Client/enroll_originalclass_order.html', {
                                     title: '课程报名',
                                     trainClass: trainClass,
                                     classId: req.query.classId,
                                     studentId: req.query.studentId,
                                     originalOrder: 1,
-                                    isTimeDuplicated: isTimeDuplicated
+                                    isTimeDuplicated: isTimeDuplicated,
+                                    orderId: req.query.orderId
                                 });
                             }
                         });
@@ -608,7 +629,8 @@ module.exports = function(app) {
                             classId: req.query.classId,
                             studentId: req.query.studentId,
                             notOriginal: 1,
-                            originalOrder: 1
+                            originalOrder: 1,
+                            orderId: req.query.orderId
                         });
                     }
                 });
@@ -972,6 +994,7 @@ module.exports = function(app) {
                                             var orders = [];
                                             trains.forEach(function(train) {
                                                 orders.push({
+                                                    orderId: train._id,
                                                     studentId: student._id,
                                                     studentName: train.studentName,
                                                     trainId: train.trainId,
@@ -1017,7 +1040,8 @@ module.exports = function(app) {
                         var objReturn = {
                             schoolId: trainClass.schoolId,
                             subjectId: trainClass.subjectId,
-                            subjectName: trainClass.subjectName
+                            subjectName: trainClass.subjectName,
+                            studentId: order.studentId
                         };
                         var p1 = SchoolGradeRelation.getFilters({ gradeId: trainClass.gradeId })
                             .then(function(relations) {
@@ -1062,8 +1086,8 @@ module.exports = function(app) {
                                                 curGradeId = order.superCategoryId || trainClass.categoryId;
                                             return Category.getFilter({ _id: curGradeId })
                                                 .then(function(curCategory) {
-                                                    objReturn.categoryId = curCategory.categoryId;
-                                                    objReturn.categoryName = curCategory.categoryName;
+                                                    objReturn.categoryId = curCategory._id;
+                                                    objReturn.categoryName = curCategory.name;
                                                     if (curCategory.sequence && curCategory.sequence > 0) {
                                                         //need list
                                                         return Category.getFilters({

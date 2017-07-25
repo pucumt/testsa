@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderScore() {
-    $.post("/admin/adminEnrollExam/searchExamScore", { id: $("#id").val() }, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/searchExamScore", { id: $("#id").val() }, function(data) {
         if (data) {
             if ($("#fromPage").val() != "score") {
                 $("#btnReturn").attr("href", "/admin/studentDetail/" + data.studentId);

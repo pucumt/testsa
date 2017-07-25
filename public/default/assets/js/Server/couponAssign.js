@@ -9,7 +9,7 @@ $(document).ready(function() {
 
 function renderGrade() {
     $('#InfoSearch').find("#grade option").remove();
-    $.get("/admin/grade/getAll", function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {
@@ -32,9 +32,9 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/studentInfo/searchByGradeClass?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/searchByGradeClass?" + pStr, filter, function(data) {
         if (data && data.students.length > 0) {
-            $.post("/admin/couponAssignList/withoutpage/onlystudentId", { couponId: $('#id').val() }, function(assigns) {
+            selfAjax("post", "/admin/couponAssignList/withoutpage/onlystudentId", { couponId: $('#id').val() }, function(assigns) {
                 data.students.forEach(function(student) {
                     var id = (student.studentId || student._id),
                         name = (student.studentName || student.name),
@@ -95,7 +95,7 @@ $("#btnSave").on("click", function(e) {
         });
     });
 
-    $.post(postURI, {
+    selfAjax("post", postURI, {
         coupon: JSON.stringify(postCoupon),
         students: JSON.stringify(students)
     }, function(data) {
@@ -120,7 +120,7 @@ function openTrain(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/类型</th><th width="180px">培训费/教材费</th><th width="120px">报名情况</th></tr>');
-    $.post("/admin/trainClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function(data) {
         if (data && data.trainClasss.length > 0) {
             data.trainClasss.forEach(function(trainClass) {
                 var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,

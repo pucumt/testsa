@@ -22,7 +22,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    $.post("/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
         $mainSelectBody.empty();
         if (data && data.studentInfos.length > 0) {
             data.studentInfos.forEach(function(studentInfo) {
@@ -64,7 +64,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     showComfirm("真的要删除" + decodeURI(entity.name) + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/studentInfo/delete", {
+        selfAjax("post", "/admin/studentInfo/delete", {
             id: entity._id
         }, function(data) {
             if (data.sucess) {

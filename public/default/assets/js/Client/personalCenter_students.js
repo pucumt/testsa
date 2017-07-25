@@ -69,7 +69,7 @@ $(document).ready(function() {
                 postURI = "/studentInfo/edit";
                 postObj.id = editStudent._id;
             }
-            $.post(postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function(data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 if (data && data.error) {
                     showAlert(data.error);
@@ -93,7 +93,9 @@ $(document).ready(function() {
 });
 
 function loadStudents() {
-    $.post("/enroll/students", { originalUrl: "/personalCenter/students" }, function(data) {
+    selfAjax("post", "/enroll/students", {
+        originalUrl: "/personalCenter/students"
+    }, function(data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -169,7 +171,7 @@ function addValidation() {
 
 function resetDropDown(id, callback) {
     $('#studentInfo').find("#grade option").remove();
-    $.get("/enroll/grade/all", function(data) {
+    selfAjax("get", "/enroll/grade/all", null, function(data) {
         if (data) {
             if (data && data.length > 0) {
                 data.forEach(function(grade) {

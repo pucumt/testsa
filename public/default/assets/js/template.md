@@ -70,7 +70,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/#name#/edit";
             postObj.id = $('#id').val();
         }
-        $.post(postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function(data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id="+data._id+"><td>" + data.name + "</td><td>" + data.address + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
@@ -107,7 +107,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
-        $.post("/admin/#name#/delete", {
+        selfAjax("post", "/admin/#name#/delete", {
             id: entity._id
         }, function(data) {
             $('#confirmModal').modal('hide');

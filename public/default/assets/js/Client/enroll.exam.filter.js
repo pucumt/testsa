@@ -7,7 +7,7 @@ var $selectBody = $('.container.enroll .exam-list');
 
 function loadData(p) {
     var pStr = p ? "p=" + p : "";
-    $.get("/enroll/exam?" + pStr, function(data) {
+    selfAjax("get", "/enroll/exam?" + pStr, null, function(data) {
         if (data && data.examClasss.length > 0) {
             var d = $(document.createDocumentFragment());
             data.examClasss.forEach(function(examClass) {

@@ -9,7 +9,7 @@ $(document).ready(function() {
 });
 
 function loadCoupons() {
-    $.post("/personalCenter/coupon/all", {
+    selfAjax("post", "/personalCenter/coupon/all", {
         originalUrl: "/personalCenter/coupon"
     }, function(data) {
         if (data) {

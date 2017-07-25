@@ -24,7 +24,7 @@
     <script>
         $("#button").on("click", function() {
             for (var i = 0; i < parseInt($("#count").val()); i++) {
-                $.post("/dbPressure", {
+                selfAjax("post", "/dbPressure", {
                     counts: i
                 }, function(data) {
                     var iStr = $("#result").text() + ',' + data.counts;

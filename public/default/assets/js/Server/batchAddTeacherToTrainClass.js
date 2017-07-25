@@ -30,7 +30,7 @@ $("#editfile #btnResult").on("click", function(e) {
 });
 
 $("#editfile #btnClear").on("click", function(e) {
-    $.get("/admin/score/clearAll", function(data) {
+    selfAjax("get", "/admin/score/clearAll", null, function(data) {
         if (data && data.sucess) {
             showAlert("删除失败记录成功");
         }
