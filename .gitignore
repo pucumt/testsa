@@ -1,1 +1,8 @@
 /node_modules
+/dist/views
+/dist/settings.js
+/dist/models
+/dist/routes
+/dist/util
+/dist/public/default/assets/css
+/dist/public/default/assets/js
