@@ -93,3 +93,24 @@ GradeSubjectCategoryRelation.getFilters = function(filter) {
     filter.isDeleted = { $ne: true };
     return gradeSubjectCategoryRelationModel.find(filter);
 };
+
+GradeSubjectCategoryRelation.getFiltersWithCategory = function(gradeId, subjectId) {
+    //打开数据库
+    var filter = {
+        isDeleted: { $ne: true },
+        gradeId: mongoose.Types.ObjectId(gradeId),
+        subjectId: mongoose.Types.ObjectId(subjectId)
+    }
+
+    var query = gradeSubjectCategoryRelationModel.aggregate({
+            $match: filter
+        })
+        .lookup({
+            from: "categorys",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "categorys"
+        })
+        .project({ categorys: 1 });
+    return query.exec();
+};

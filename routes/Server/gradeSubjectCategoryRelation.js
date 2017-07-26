@@ -1,5 +1,6 @@
 var GradeSubjectCategoryRelation = require('../../models/gradeSubjectCategoryRelation.js'),
     Category = require('../../models/category.js'),
+    TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -60,5 +61,19 @@ module.exports = function(app) {
         Promise.all([p0, p1]).then(function() {
             res.jsonp(result);
         });
+    });
+
+    app.post('/admin/gradeSubjectCategoryRelation/filter', checkLogin);
+    app.post('/admin/gradeSubjectCategoryRelation/filter', function(req, res) {
+        TrainClass.get(req.body.trainId)
+            .then(function(trainClass) {
+                if (trainClass) {
+                    ///objectId to filter
+                    GradeSubjectCategoryRelation.getFiltersWithCategory(trainClass.gradeId, trainClass.subjectId)
+                        .then(function(relations) {
+                            res.jsonp(relations);
+                        });
+                }
+            });
     });
 }

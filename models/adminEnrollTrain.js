@@ -446,7 +446,6 @@ AdminEnrollTrain.getSchoolReportList = function(yearId, startDate, endDate) {
         .exec();
 };
 
-
 AdminEnrollTrain.getPayWayReportList = function(yearId, startDate, endDate, schoolId) {
     var aggQuery = adminEnrollTrainModel.aggregate({
             $match: {
@@ -498,7 +497,15 @@ AdminEnrollTrain.getCountOfStudentSubject = function(yearId, subjectId, studentI
         .exec();
 };
 
+AdminEnrollTrain.singleUpdate = function(filter, option) {
+    //打开数据库
+    return adminEnrollTrainModel.update(filter, option).exec();
+};
 
+AdminEnrollTrain.batchUpdate = function(filter, option) {
+    //打开数据库
+    return adminEnrollTrainModel.update(filter, option, { multi: true }).exec();
+};
 // return qry.out("temps").exec().then(function() {
 //         return mongoose.model('temp', new mongoose.Schema({
 //             studentId: String,

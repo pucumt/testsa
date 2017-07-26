@@ -105,6 +105,14 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/admin/upgradeList', checkLogin);
+    app.get('/admin/upgradeList', function(req, res) {
+        res.render('Server/upgradeList.html', {
+            title: '>学生课程难度提升',
+            user: req.session.admin
+        });
+    });
+
     app.get('/admin/adminEnrollTrain/orderlist/:id', checkLogin);
     app.get('/admin/adminEnrollTrain/orderlist/:id', function(req, res) {
         res.render('Server/singleClassOrderList.html', {
@@ -707,6 +715,23 @@ module.exports = function(app) {
                     res.jsonp({ sucess: true });
                 } else {
                     res.jsonp({ error: "修改支付方式失败" });
+                    return;
+                }
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/upgrade', checkLogin);
+    app.post('/admin/adminEnrollTrain/upgrade', function(req, res) {
+        // superCategoryId superCategoryName
+        AdminEnrollTrain.singleUpdate({ _id: req.body.id }, {
+                superCategoryId: req.body.categoryId,
+                superCategoryName: req.body.categoryName
+            })
+            .then(function(adminEnrollTrain) {
+                if (adminEnrollTrain && adminEnrollTrain.ok && adminEnrollTrain.nModified == 1) {
+                    res.jsonp({ sucess: true });
+                } else {
+                    res.jsonp({ error: "修改难度失败" });
                     return;
                 }
             });

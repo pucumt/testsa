@@ -19,4 +19,7 @@ $(document).ready(function() {
         location.href = "/admin/couponList";
     });
 
+    $("#left_btnUpgrade").on("click", function(e) {
+        location.href = "/admin/upgradeList";
+    });
 });
