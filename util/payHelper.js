@@ -65,8 +65,8 @@ var Pay = {
             method: 'POST'
         };
 
-        var reqPay = https.request(options, (resPay) => {
-            resPay.on('data', (d) => {
+        var reqPay = https.request(options, function(resPay) {
+            resPay.on('data', function(d) {
                 var body = d.toString(),
                     imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
 
@@ -76,7 +76,7 @@ var Pay = {
             });
         });
 
-        reqPay.on('error', (e) => {
+        reqPay.on('error', function(e) {
             console.error(e);
         });
         reqPay.write(data);
@@ -113,8 +113,8 @@ var Pay = {
             method: 'POST'
         };
 
-        var reqPay = https.request(options, (resPay) => {
-            resPay.on('data', (d) => {
+        var reqPay = https.request(options, function(resPay) {
+            resPay.on('data', function(d) {
                 var body = d.toString(),
                     imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
 
@@ -124,7 +124,7 @@ var Pay = {
             });
         });
 
-        reqPay.on('error', (e) => {
+        reqPay.on('error', function(e) {
             console.error(e);
         });
         reqPay.write(data);
