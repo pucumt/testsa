@@ -3,7 +3,7 @@
     <h1>
         {{ title }}>>{{ coupon.name }}
     </h1>
-    <input type="hidden" id="id" name="id" data-obj={{ coupon|dump }} value={{ coupon._id }} />
+    <input type="hidden" id="id" name="id" data-obj="{{ coupon|dump }}" value={{ coupon._id }} />
 </div>
 <div class="panel panel-default mainModal coupon">
     <div class="panel-body">

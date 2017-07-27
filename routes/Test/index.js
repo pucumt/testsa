@@ -55,11 +55,11 @@ module.exports = function(app) {
             method: 'POST'
         };
 
-        var reqPay = https.request(options, (resPay) => {
+        var reqPay = https.request(options, function(resPay) {
             console.log('statusCode:', resPay.statusCode);
             console.log('headers:', resPay.headers);
 
-            resPay.on('data', (d) => {
+            resPay.on('data', function(d) {
                 var body = d.toString(),
                     imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
 
@@ -70,7 +70,7 @@ module.exports = function(app) {
             });
         });
 
-        reqPay.on('error', (e) => {
+        reqPay.on('error', function(e) {
             console.error(e);
         });
         reqPay.write(data);

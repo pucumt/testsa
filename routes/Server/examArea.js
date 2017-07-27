@@ -86,7 +86,7 @@ module.exports = function(app) {
             .then(function(examAreas) {
                 res.jsonp(examAreas);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });

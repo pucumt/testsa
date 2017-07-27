@@ -27,7 +27,7 @@ var xlsx = require("node-xlsx"),
     Teacher = require('../../models/teacher.js'),
 
     checkLogin = auth.checkLogin,
-    serverPath = __dirname,
+    serverPath = path.join(__dirname, "../"),
     storage = multer.diskStorage({
         destination: function(req, file, cb) {
             cb(null, './public/uploads/');
@@ -344,7 +344,7 @@ module.exports = function(app) {
             .then(function(allFails) {
                 res.jsonp(allFails);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });
@@ -487,7 +487,7 @@ module.exports = function(app) {
             .then(function(scoreFails) {
                 res.jsonp(scoreFails);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });

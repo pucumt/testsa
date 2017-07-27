@@ -367,55 +367,55 @@ module.exports = function(app) {
                     .then(function(schools) {
                         objReturn.schools = schools;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 var p1 = Grade.getAllWithoutPage()
                     .then(function(grades) {
                         objReturn.grades = grades;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 var p2 = Subject.getAllWithoutPage()
                     .then(function(subjects) {
                         objReturn.subjects = subjects;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 var p3 = Category.getAllWithoutPage()
                     .then(function(categorys) {
                         objReturn.categorys = categorys;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 var p4 = SchoolGradeRelation.getFilters({})
                     .then(function(schoolGradeRelations) {
                         objReturn.schoolGradeRelations = schoolGradeRelations;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 var p5 = GradeSubjectRelation.getFilters({})
                     .then(function(gradeSubjectRelations) {
                         objReturn.gradeSubjectRelations = gradeSubjectRelations;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 var p6 = GradeSubjectCategoryRelation.getFilters({})
                     .then(function(gradeSubjectCategoryRelations) {
                         objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
                 Promise.all([p0, p1, p2, p3, p4, p5, p6]).then(function() {
                         res.jsonp(objReturn);
                     })
-                    .catch((err) => {
+                    .catch(function(err) {
                         console.log('errored');
                     });
             }
@@ -428,27 +428,27 @@ module.exports = function(app) {
             .then(function(schools) {
                 objReturn.schools = schools;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p1 = WeekType.getFilters({ isChecked: true })
             .then(function(weekTypes) {
                 objReturn.weekTypes = weekTypes;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p2 = TimeType.getFilters({ isChecked: true })
             .then(function(timeTypes) {
                 objReturn.timeTypes = timeTypes;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         Promise.all([p0, p1, p2]).then(function() {
                 res.jsonp(objReturn);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });
@@ -459,7 +459,7 @@ module.exports = function(app) {
                 res.jsonp(grades);
                 return;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });

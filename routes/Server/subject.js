@@ -69,7 +69,7 @@ module.exports = function(app) {
             .then(function(subjects) {
                 res.jsonp(subjects);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });

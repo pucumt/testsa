@@ -144,48 +144,48 @@ module.exports = function(app) {
             .then(function(years) {
                 objReturn.years = years;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p1 = Grade.getAllWithoutPage()
             .then(function(grades) {
                 objReturn.grades = grades;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p2 = Subject.getAllWithoutPage()
             .then(function(subjects) {
                 objReturn.subjects = subjects;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p3 = Category.getAllWithoutPage()
             .then(function(categorys) {
                 objReturn.categorys = categorys;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p4 = ExamClass.getAllWithoutPage()
             .then(function(exams) {
                 objReturn.exams = exams;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p5 = ClassAttribute.getAllWithoutPage()
             .then(function(attributes) {
                 objReturn.attributes = attributes;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         Promise.all([p0, p1, p2, p3, p4, p5]).then(function() {
                 res.jsonp(objReturn);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });
@@ -197,27 +197,27 @@ module.exports = function(app) {
             .then(function(grades) {
                 objReturn.grades = grades;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p2 = Subject.getAllWithoutPage()
             .then(function(subjects) {
                 objReturn.subjects = subjects;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p3 = Category.getAllWithoutPage()
             .then(function(categorys) {
                 objReturn.categorys = categorys;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         Promise.all([p1, p2, p3]).then(function() {
                 res.jsonp(objReturn);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });
@@ -229,27 +229,27 @@ module.exports = function(app) {
             .then(function(grades) {
                 objReturn.grades = grades;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p2 = Subject.getAllWithoutPage()
             .then(function(subjects) {
                 objReturn.subjects = subjects;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         var p5 = ClassAttribute.getAllWithoutPage()
             .then(function(attributes) {
                 objReturn.attributes = attributes;
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
         Promise.all([p1, p2, p5]).then(function() {
                 res.jsonp(objReturn);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });

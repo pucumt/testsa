@@ -28,7 +28,7 @@
                     {{ #name#.address }}
                 </td>
                 <td>
-                    <div data-obj={{ #name#|dump }} class="btn-group">
+                    <div data-obj="{{ #name#|dump }}" class="btn-group">
                         <a class="btn btn-default btnEdit">编辑</a>
                         <a class="btn btn-default btnDelete">删除</a>
                     </div>

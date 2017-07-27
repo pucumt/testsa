@@ -14,7 +14,7 @@ module.exports = function(app) {
                     res.jsonp({ examAreas: examAreas, examClassExamAreas: examClassExamAreas });
                 });
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });
@@ -26,7 +26,7 @@ module.exports = function(app) {
             }).then(function(examClassExamAreas) {
                 res.jsonp(examClassExamAreas);
             })
-            .catch((err) => {
+            .catch(function(err) {
                 console.log('errored');
             });
     });
