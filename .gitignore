@@ -6,3 +6,5 @@
 /dist/util
 /dist/public/default/assets/css
 /dist/public/default/assets/js
+/build
+/dist/public/rev-manifest.json
