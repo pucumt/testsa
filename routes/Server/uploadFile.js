@@ -1327,6 +1327,53 @@ module.exports = function(app) {
         });
     });
 
+    function couponDeleteStudent(score, couponId) {
+        return StudentInfo.getFilter({ name: score[0], mobile: score[1] })
+            .then(function(student) {
+                if (student) {
+                    return Coupon.get(couponId)
+                        .then(function(coupon) {
+                            if (coupon) {
+                                //remove coupon from student
+                                return CouponAssign.batchUpdate({
+                                    couponId: coupon._id,
+                                    studentId: student._id
+                                }, {
+                                    isDeleted: true
+                                });
+                            } else {
+                                //create new student and assign with coupon
+                                return failedScore(score[0], score[1], '', '没找到该优惠券');
+                            }
+                        });
+                } else {
+                    //create new student and assign with coupon
+                    return failedScore(score[0], score[1], '', '没找到该学生');
+                }
+            });
+    };
+
+    //if student in db, assign it. it not, created and assign
+    //批量删除学生的优惠券
+    app.post('/admin/coupon/batchDelete', upload.single('avatar'), function(req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+
+        var length = list[0].data.length,
+            pArray = [];
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break; //already done
+            }
+            pArray.push(couponDeleteStudent(list[0].data[i], req.body.couponId));
+        }
+
+        // res.redirect('/admin/score');
+        Promise.all(pArray).then(function() {
+            res.jsonp({ sucess: true });
+        });
+    });
+
     //  failedScore(score[0], score[1], score[2], examId, subject);
     function addClassRoom(score) {
         return SchoolArea.getFilter({ name: score[2].trim() })
