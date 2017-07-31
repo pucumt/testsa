@@ -4,6 +4,7 @@ var settings = require('../settings'),
 
 mongoose.Promise = global.Promise;
 mongoose.connect(uri);
+mongoose.uri = uri;
 
 mongoose.connection.on('connected', function() {
     console.log('Mongoose connected to ' + uri);
