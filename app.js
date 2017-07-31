@@ -12,6 +12,7 @@ var path = require('path'),
 
     routes = require('./routes/index.js'),
     settings = require('./settings'),
+    db = require('./models/db.js'),
 
     fs = require('fs'),
     accessLog = fs.createWriteStream('access.log', {
@@ -57,7 +58,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({
-        url: 'mongodb://bfb:bfb123@' + settings.host + ':' + settings.port + '/' + settings.db
+        url: db.uri
     })
 }));
 //app.use(flash());
