@@ -20,7 +20,7 @@ function loadData() {
                 if (data.orders.length > 0) {
                     renderOrders(data.orders, data.isSwitch);
                 } else {
-                    $selectBody.text("没有报我们课程");
+                    $selectBody.text("没有新课或没报我们课程");
                 }
             }
         });
