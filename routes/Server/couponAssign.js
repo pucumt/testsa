@@ -127,7 +127,9 @@ module.exports = function(app) {
         if (req.body.subjectId) {
             filter.subjectId = req.body.subjectId;
         }
-
+        if (req.body.name) {
+            filter.studentName = req.body.name;
+        }
         CouponAssign.getAll(null, page, filter, function(err, couponAssigns, total) {
             if (err) {
                 couponAssigns = [];
