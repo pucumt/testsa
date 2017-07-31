@@ -97,7 +97,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/score', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         for (var i = 1; i < length; i++) {
@@ -310,7 +310,7 @@ module.exports = function(app) {
     };
 
     app.post('/admin/batchTrainClass', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         var pArray = [];
@@ -455,7 +455,7 @@ module.exports = function(app) {
     };
 
     app.post('/admin/batchAddStudentToTrainClass', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         var promiseAdd = function(i) {
@@ -559,7 +559,7 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "成绩", data: data }]),
                 fileName = req.body.exam.substr(0, 19) + '_' + req.body.subject + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
             // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
         });
@@ -592,7 +592,7 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "成绩", data: data }]),
                 fileName = req.body.exam.substr(0, 19) + '_' + req.body.subject + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
             // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
         });
@@ -623,13 +623,13 @@ module.exports = function(app) {
     };
 
     app.post('/admin/export/reportTemplate', function(req, res) {
-        var outputPath = path.join(serverPath, "../../public/downloads/", req.body.examId + ".zip");
+        var outputPath = path.join(serverPath, "../public/downloads/", req.body.examId + ".zip");
         if (fs.existsSync(outputPath)) {
             fs.unlinkSync(outputPath);
         }
-        var disPath = path.join(serverPath, "../../public/downloads/", req.body.examId);
+        var disPath = path.join(serverPath, "../public/downloads/", req.body.examId);
         deleteFilesInFolder(disPath);
-        var src = path.join(serverPath, "../../public/downloads/reportTemplate_" + req.body.subject + ".doc");
+        var src = path.join(serverPath, "../public/downloads/reportTemplate_" + req.body.subject + ".doc");
         var copyFile = function() {
             var p = AdminEnrollExam.getFilters({ examId: req.body.examId, isSucceed: 1 })
                 .then(function(orders) {
@@ -721,7 +721,7 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                 fileName = '报名情况2' + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
             // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
         });
@@ -739,7 +739,7 @@ module.exports = function(app) {
                     });
                     var buffer = xlsx.build([{ name: "课程", data: data }]),
                         fileName = '课程报名情况' + '.xlsx';
-                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
                     res.jsonp({ sucess: true });
                 }
             });
@@ -813,7 +813,7 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                 fileName = '报名情况3' + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
             // res.redirect('/admin/export/scoreTemplate?name=' + encodeURI(fileName));
         });
@@ -885,7 +885,7 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                 fileName = '报名情况4' + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
         });
     });
@@ -958,7 +958,7 @@ module.exports = function(app) {
         p.then(function() {
             var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                 fileName = '报名情况5' + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
             res.jsonp({ sucess: true });
         });
     });
@@ -978,7 +978,7 @@ module.exports = function(app) {
 
                     var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                         fileName = '报名情况6' + '.xlsx';
-                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
                     res.jsonp({ sucess: true });
                 }
             });
@@ -1148,7 +1148,7 @@ module.exports = function(app) {
                 Promise.all(pArray).then(function() {
                     var buffer = xlsx.build([{ name: "报名情况", data: data }]),
                         fileName = '小升初3门报名情况' + '.xlsx';
-                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
                     res.jsonp({ sucess: true });
                 });
             });
@@ -1176,7 +1176,7 @@ module.exports = function(app) {
                 Promise.all(pArray).then(function() {
                     var buffer = xlsx.build([{ name: "退费情况", data: data }]),
                         fileName = '全部退费列表' + '.xlsx';
-                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
                     res.jsonp({ sucess: true });
                 });
             });
@@ -1213,7 +1213,7 @@ module.exports = function(app) {
                 Promise.all(pArray).then(function() {
                     var buffer = xlsx.build([{ name: "订单情况", data: data }]),
                         fileName = '已支付被取消订单' + '.xlsx';
-                    fs.writeFileSync(path.join(serverPath, "../../public/downloads/", fileName), buffer, 'binary');
+                    fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
                     res.jsonp({ sucess: true });
                 });
             });
@@ -1221,7 +1221,7 @@ module.exports = function(app) {
 
     //rawXLSX 点名列表
     app.post('/admin/export/rollCallList', function(req, res) {
-        var workbook = rawXLSX.readFile(path.join(serverPath, "../../public/downloads/", 'test.xlsx'));
+        var workbook = rawXLSX.readFile(path.join(serverPath, "../public/downloads/", 'test.xlsx'));
         var first_sheet_name = workbook.SheetNames[0];
         /* Get worksheet */
         var worksheet = workbook.Sheets[first_sheet_name];
@@ -1259,7 +1259,7 @@ module.exports = function(app) {
     //check is the student is exist in db
     //跟系统学生进行匹配
     app.post('/admin/checkstudent', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         for (var i = 1; i < length; i++) {
@@ -1309,7 +1309,7 @@ module.exports = function(app) {
     //if student in db, assign it. it not, created and assign
     //批量给系统学生分配优惠券
     app.post('/admin/coupon/batchAssign', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
 
         var length = list[0].data.length,
@@ -1356,7 +1356,7 @@ module.exports = function(app) {
     //if student in db, assign it. it not, created and assign
     //批量删除学生的优惠券
     app.post('/admin/coupon/batchDelete', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
 
         var length = list[0].data.length,
@@ -1399,7 +1399,7 @@ module.exports = function(app) {
 
     //批量添加教室
     app.post('/admin/batchAddClassRoom', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length,
             pArray = [];
@@ -1435,7 +1435,7 @@ module.exports = function(app) {
 
     //批量添加老师
     app.post('/admin/batchAddTeacher', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length,
             pArray = [];
@@ -1494,7 +1494,7 @@ module.exports = function(app) {
 
     //批量添加老师教室到课程
     app.post('/admin/batchAddTeacherToTrainClass', upload.single('avatar'), function(req, res, next) {
-        var list = xlsx.parse(path.join(serverPath, "../../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length;
         var pArray = [];
