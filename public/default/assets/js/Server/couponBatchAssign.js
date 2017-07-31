@@ -26,3 +26,24 @@ $("#InfoSearch #btnStudent").on("click", function(e) {
         });
     }
 });
+
+$("#InfoSearch #btnBatchDel").on("click", function(e) {
+    showComfirm("确定要删除吗？");
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        var file = document.getElementById('upfile').files;
+        if (file.length > 0) {
+            var formData = new FormData();
+            formData.append("avatar", file[0]);
+            formData.append("couponId", $('#id').val());
+            $.ajax({
+                type: "POST",
+                data: formData,
+                url: "/admin/coupon/batchDelete",
+                contentType: false,
+                processData: false,
+            }).then(function(data) {
+                location.href = "/admin/score";
+            });
+        }
+    });
+});

@@ -130,3 +130,7 @@ CouponAssign.use = function(id, orderId) {
         _id: id
     }, { isUsed: true, orderId: orderId }).exec();
 };
+
+CouponAssign.batchUpdate = function(filter, option) {
+    return couponAssignModel.update(filter, option, { multi: true }).exec();
+};
