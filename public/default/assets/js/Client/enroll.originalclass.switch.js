@@ -46,8 +46,10 @@ function renderfilter() {
             $(".enroll-filter #drpSubject").append("<option value='" + data.subjectId + "'>" + data.subjectName + "</option>");
             if ($("#schoolId").val() != "") {
                 $(".enroll-filter #drpSchool").val($("#schoolId").val());
+                $(".enroll-filter #drpCategory").val($("#categoryId").val());
             } else {
                 $(".enroll-filter #drpSchool").val(data.schoolId);
+                $(".enroll-filter #drpCategory").val(data.categoryId);
             }
             $("#studentId").val(data.studentId);
             if ($("#schoolId").val() != "") {

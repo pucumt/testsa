@@ -630,16 +630,92 @@ module.exports = function(app) {
                             }
                         });
                     } else {
-                        //没有原班，不能报名
-                        res.render('Client/enroll_originalclass_order.html', {
-                            title: '课程报名',
-                            trainClass: trainClass,
-                            classId: req.query.classId,
-                            studentId: req.query.studentId,
-                            notOriginal: 1,
-                            originalOrder: 1,
-                            orderId: req.query.orderId
-                        });
+                        //没有原班
+                        if (req.query.orderId) {
+                            //调班报名
+                            //get history orders to check the class time
+                            AdminEnrollTrain.getFiltersWithClassFilters({
+                                yearId: global.currentYear._id.toJSON(),
+                                studentId: req.query.studentId,
+                                isSucceed: 1
+                            }, {
+                                "trainClasss.courseTime": trainClass.courseTime
+                            }).then(function(existOrders) {
+                                var isTimeDuplicated = null;
+                                if (existOrders && existOrders.length > 0) {
+                                    isTimeDuplicated = true;
+                                }
+
+                                if (trainClass.exams && trainClass.exams.length > 0) {
+                                    var pArray = [],
+                                        minScore;
+                                    trainClass.exams.forEach(function(exam) {
+                                        minScore = exam.minScore;
+                                        var p = AdminEnrollExam.getFilter({ examId: exam.examId, studentId: req.query.studentId, isSucceed: 1 })
+                                            .then(function(examOrder) {
+                                                if (examOrder) {
+                                                    var subjectScore = examOrder.scores.filter(function(score) {
+                                                        return score.subjectId == trainClass.subjectId;
+                                                    })[0];
+                                                    if (subjectScore.score >= exam.minScore) {
+                                                        return true;
+                                                    }
+                                                }
+                                            });
+                                        pArray.push(p);
+                                    });
+                                    Promise.all(pArray).then(function(results) {
+                                        if (results.some(function(result) {
+                                                return result;
+                                            })) {
+                                            //达到分数，可以报名
+                                            res.render('Client/enroll_originalclass_order.html', {
+                                                title: '课程报名',
+                                                trainClass: trainClass,
+                                                classId: req.query.classId,
+                                                studentId: req.query.studentId,
+                                                originalOrder: 1,
+                                                isTimeDuplicated: isTimeDuplicated,
+                                                orderId: req.query.orderId
+                                            });
+                                        } else {
+                                            //未到分数线，不能报名
+                                            res.render('Client/enroll_originalclass_order.html', {
+                                                title: '课程报名',
+                                                trainClass: trainClass,
+                                                classId: req.query.classId,
+                                                studentId: req.query.studentId,
+                                                disability: minScore,
+                                                originalOrder: 1,
+                                                orderId: req.query.orderId
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    //没有考试依赖，可以报名
+                                    res.render('Client/enroll_originalclass_order.html', {
+                                        title: '课程报名',
+                                        trainClass: trainClass,
+                                        classId: req.query.classId,
+                                        studentId: req.query.studentId,
+                                        originalOrder: 1,
+                                        isTimeDuplicated: isTimeDuplicated,
+                                        orderId: req.query.orderId
+                                    });
+                                }
+                            });
+                        } else {
+                            //不能报名
+                            res.render('Client/enroll_originalclass_order.html', {
+                                title: '课程报名',
+                                trainClass: trainClass,
+                                classId: req.query.classId,
+                                studentId: req.query.studentId,
+                                notOriginal: 1,
+                                originalOrder: 1,
+                                orderId: req.query.orderId
+                            });
+                        }
                     }
                 });
         });

@@ -9,11 +9,19 @@ $(document).ready(function() {
     });
     if ($("#notOriginal").val()) {
         showAlert("本课程是老班升报，您不符合要求，请等待后续课程！", "", function(e) {
-            location.href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
+            var href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
+            if ($("#orderId").val() != "") {
+                href += "?orderId=" + $("#orderId").val();
+            }
+            location.href = href;
         });
     } else if ($("#disability").val()) {
         showAlert("本课程成绩要求" + $("#disability").val() + "分，根据您的考试成绩，建议报名其他课程或咨询前台！", "", function(e) {
-            location.href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
+            var href = "/enroll/originalclass/id/" + $("#classId").val() + "/student/" + $("#studentId").val();
+            if ($("#orderId").val() != "") {
+                href += "?orderId=" + $("#orderId").val();
+            }
+            location.href = href;
         });
     } else {
         if ($("#isTimeDuplicated").val() == "true") {
@@ -31,7 +39,7 @@ function renderData() {
     var filter = {
         classId: $("#classId").val(),
         studentId: $("#studentId").val(),
-        originalUrl: "/enroll/original/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val()
+        originalUrl: "/enroll/original/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val() + "&orderId=" + $("#orderId").val()
     };
     selfAjax("post", "/studentInfo/coupon", filter, function(data) {
         if (data) {
@@ -96,7 +104,7 @@ function getOrderId(payWay, callback) {
         coupon: $('.enroll .exam-detail .coupon #coupon').val(),
         payWay: payWay
     };
-    filter.originalUrl = "/enroll/original/order?classId=" + filter.classId + "&studentId=" + filter.studentId;
+    filter.originalUrl = "/enroll/original/order?classId=" + filter.classId + "&studentId=" + filter.studentId + "&orderId=" + $("#orderId").val();
     selfAjax("post", "/enroll/original/pay", filter, function(data) {
         if (data) {
             if (data.notLogin) {
