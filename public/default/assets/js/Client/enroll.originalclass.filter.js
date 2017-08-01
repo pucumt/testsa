@@ -1,5 +1,9 @@
 $(document).ready(function() {
     loadData();
+
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+        location.href = "/personalcenter";
+    });
 });
 
 var $selectBody = $('.container.enroll .exam-list');

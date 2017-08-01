@@ -17,6 +17,9 @@ $(document).ready(function() {
     $(".enroll.personalCenter .randomCoupon").on("click", function(e) {
         location.href = "/personalCenter/randomCoupon";
     });
+    $(".enroll.personalCenter .originalClass").on("click", function(e) {
+        location.href = "/enrolloriginalclass";
+    });
     $("#btnExit").on("click", function(e) {
         location.href = "/personalCenter/exit";
         // var keys = "";
@@ -40,6 +43,22 @@ function renderRandomCoupon() {
                 }
                 if (data.sucess) {
                     $(".enroll.personalCenter .randomCoupon").show();
+                    return;
+                }
+            }
+        });
+
+    selfAjax("post", "/enroll/isOriginalClassBegin", {
+            originalUrl: "/personalCenter"
+        },
+        function(data) {
+            if (data) {
+                if (data.notLogin) {
+                    location.href = "/login";
+                    return;
+                }
+                if (data.sucess) {
+                    $(".enroll.personalCenter .originalClass").show();
                     return;
                 }
             }

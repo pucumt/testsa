@@ -315,7 +315,8 @@ footer,
 .enroll.personalCenter .coupon,
 .enroll.personalCenter .order,
 .enroll.personalCenter .exam,
-.enroll.personalCenter .randomCoupon {
+.enroll.personalCenter .randomCoupon,
+.enroll.personalCenter .originalClass {
     margin: 10px -15px;
     padding: 8px 15px;
     border-top: 1px solid #ccc;
@@ -334,7 +335,7 @@ footer,
     border-radius: 0;
 }
 
-.enroll.personalCenter .exam,
+.enroll.personalCenter .originalClass,
 .enroll.personalCenter .randomCoupon {
     margin-bottom: 0;
 }

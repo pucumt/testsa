@@ -57,24 +57,26 @@ $(document).ready(function() {
                 showAlert("您调的班级跟原班级是同一个!");
                 return;
             }
-            $("#btnChangeClass").attr("disabled", "disabled");
-            selfAjax("post", "/enroll/changeClass", {
-                orderId: $("#orderId").val(),
-                trainId: $(".orderList .changeClass .trainclass #newClassId").val(),
-                originalUrl: "/personalCenter/changeClass/id/" + $("#orderId").val()
-            }, function(data) {
-                $("#btnChangeClass").removeAttr("disabled");
-                if (data) {
-                    if (data.notLogin) {
-                        location.href = "/login";
-                        return;
+            showConfirm("确定要调班吗？", null, function() {
+                $("#btnChangeClass").attr("disabled", "disabled");
+                selfAjax("post", "/enroll/changeClass", {
+                    orderId: $("#orderId").val(),
+                    trainId: $(".orderList .changeClass .trainclass #newClassId").val(),
+                    originalUrl: "/personalCenter/changeClass/id/" + $("#orderId").val()
+                }, function(data) {
+                    $("#btnChangeClass").removeAttr("disabled");
+                    if (data) {
+                        if (data.notLogin) {
+                            location.href = "/login";
+                            return;
+                        }
+                        if (data.error) {
+                            showAlert(data.error);
+                            return;
+                        }
+                        location.href = "/personalCenter/order";
                     }
-                    if (data.error) {
-                        showAlert(data.error);
-                        return;
-                    }
-                    location.href = "/personalCenter/order";
-                }
+                });
             });
         }
     });

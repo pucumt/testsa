@@ -1114,4 +1114,15 @@ module.exports = function(app) {
                     });
             });
     });
+
+    app.post('/enroll/isOriginalClassBegin', checkJSONLogin);
+    app.post('/enroll/isOriginalClassBegin', function(req, res) {
+        EnrollProcessConfigure.get().then(function(configure) {
+            if (configure && (configure.oldStudentStatus || configure.oldStudentSwitch)) {
+                res.jsonp({ sucess: true });
+                return;
+            }
+            res.jsonp({ error: "没到原班报名时间呢！" });
+        });
+    });
 };
