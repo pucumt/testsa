@@ -220,7 +220,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    showComfirm("确定要删除吗？");
+    showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -236,7 +236,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnPublish", function(e) {
-    showComfirm("确定要发布吗？");
+    showConfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -256,7 +256,7 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnUnPublish", function(e) {
-    showComfirm("确定要停用吗？");
+    showConfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {

@@ -18,7 +18,7 @@ $("#btnPay").on("click", function(e) {
         case "2":
         case "8":
         case "9":
-            showComfirm("确定已收订单" + id + "的款项吗？");
+            showConfirm("确定已收订单" + id + "的款项吗？");
             break;
     }
 });

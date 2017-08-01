@@ -92,7 +92,7 @@ $("#mainModal .paging .nextpage").on("click", function(e) {
 $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("确定要取消点名 (" + entity.className + ") 吗？");
+    showConfirm("确定要取消点名 (" + entity.className + ") 吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminRollCallClassList/cancel", {
@@ -110,7 +110,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 $("#gridBody").on("click", "td .btnRecover", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("确定要恢复点名 (" + entity.className + ") 吗？");
+    showConfirm("确定要恢复点名 (" + entity.className + ") 吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminRollCallClassList/recover", {

@@ -157,7 +157,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 $("#gridBody").on("click", "td .btnReset", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("真的要重置 (" + entity.name + ") 的密码吗？");
+    showConfirm("真的要重置 (" + entity.name + ") 的密码吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/teacher/reset", {
@@ -175,7 +175,7 @@ $("#gridBody").on("click", "td .btnReset", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    showComfirm("确定要删除吗？");
+    showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {

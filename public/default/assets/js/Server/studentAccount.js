@@ -120,7 +120,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("真的要删除" + entity.name + "吗？");
+    showConfirm("真的要删除" + entity.name + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentAccount/delete", {
@@ -138,7 +138,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 $("#gridBody").on("click", "td .btnReset", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("真的要重置" + entity.name + "的密码吗？");
+    showConfirm("真的要重置" + entity.name + "的密码吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentAccount/reset", {
@@ -156,7 +156,7 @@ $("#gridBody").on("click", "td .btnReset", function(e) {
 });
 
 $("#btnUpdateMobile").on("click", function(e) {
-    showComfirm("真的要更新手机号吗？");
+    showConfirm("真的要更新手机号吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentAccount/updateMobile", null,
             function(data) {
@@ -171,7 +171,7 @@ $("#btnUpdateMobile").on("click", function(e) {
 });
 
 $("#btnUpdateTrainOrder").on("click", function(e) {
-    showComfirm("真的要给订单添加年度吗？");
+    showConfirm("真的要给订单添加年度吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminEnrollTrain/addYearToOrder", null,
             function(data) {
@@ -186,7 +186,7 @@ $("#btnUpdateTrainOrder").on("click", function(e) {
 });
 
 $("#btnDuplicateAccount").on("click", function(e) {
-    showComfirm("真的要整理账号吗？");
+    showConfirm("真的要整理账号吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentAccount/DuplicateAccount", null,
             function(data) {
@@ -201,7 +201,7 @@ $("#btnDuplicateAccount").on("click", function(e) {
 });
 
 $("#btnDuplicateAccountOnly").on("click", function(e) {
-    showComfirm("真的要删除同号码吗？");
+    showConfirm("真的要删除同号码吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentAccount/OnlyDuplicateAccount", null,
             function(data) {

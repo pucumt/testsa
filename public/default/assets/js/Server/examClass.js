@@ -345,7 +345,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    showComfirm("确定要删除吗？");
+    showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -361,7 +361,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnScorePublish", function(e) {
-    showComfirm("确定要显示成绩吗？");
+    showConfirm("确定要显示成绩吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -384,7 +384,7 @@ $("#gridBody").on("click", "td .btnScorePublish", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnPublish", function(e) {
-    showComfirm("确定要发布吗？");
+    showConfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -404,7 +404,7 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnUnPublish", function(e) {
-    showComfirm("确定要停用吗？");
+    showConfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -437,7 +437,7 @@ function getAllCheckedExams() {
 $(".toolbar #btnPublishAll").on("click", function(e) {
     var examIds = getAllCheckedExams();
     if (examIds.length > 0) {
-        showComfirm("确定要发布吗?");
+        showConfirm("确定要发布吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/examClass/publishAll", {
                 ids: JSON.stringify(examIds)
@@ -457,7 +457,7 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
 $(".toolbar #btnStopAll").on("click", function(e) {
     var examIds = getAllCheckedExams();
     if (examIds.length > 0) {
-        showComfirm("确定要停用吗?");
+        showConfirm("确定要停用吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/examClass/unPublishAll", {
                 ids: JSON.stringify(examIds)

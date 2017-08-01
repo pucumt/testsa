@@ -475,7 +475,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
-    showComfirm("确定要删除吗？");
+    showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -491,7 +491,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
-    showComfirm("确定要发布吗？");
+    showConfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -506,7 +506,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
-    showComfirm("确定要设为原班原报吗？");
+    showConfirm("确定要设为原班原报吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -521,7 +521,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
-    showComfirm("确定要停用吗？");
+    showConfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -536,7 +536,7 @@ $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
 });
 
 $(".content.mainModal #gridBody").on("click", "td .btnReset", function(e) {
-    showComfirm("确定要重新计算吗？");
+    showConfirm("确定要重新计算吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -690,7 +690,7 @@ function getAllCheckedExams() {
 $(".toolbar #btnPublishAll").on("click", function(e) {
     var trainIds = getAllCheckedExams();
     if (trainIds.length > 0) {
-        showComfirm("确定要发布吗?");
+        showConfirm("确定要发布吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/trainClass/publishAll", {
                 ids: JSON.stringify(trainIds)
@@ -710,7 +710,7 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
 $(".toolbar #btnStopAll").on("click", function(e) {
     var trainIds = getAllCheckedExams();
     if (trainIds.length > 0) {
-        showComfirm("确定要停用吗?");
+        showConfirm("确定要停用吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/trainClass/unPublishAll", {
                 ids: JSON.stringify(trainIds)
@@ -730,7 +730,7 @@ $(".toolbar #btnStopAll").on("click", function(e) {
 $(".toolbar #btnDeleteAll").on("click", function(e) {
     var trainIds = getAllCheckedExams();
     if (trainIds.length > 0) {
-        showComfirm("确定要删除吗?");
+        showConfirm("确定要删除吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/trainClass/deleteAll", {
                 ids: JSON.stringify(trainIds)

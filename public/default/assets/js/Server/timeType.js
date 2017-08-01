@@ -127,7 +127,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 });
 
 $("#gridBody").on("click", "td .btnDelete", function(e) {
-    showComfirm("确定要删除吗？");
+    showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function(e) {
@@ -146,7 +146,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 $("#btnStart").on("click", function(e) {
     var trainIds = getAllCheckedIds($(".mainModal #gridBody [name='timeTypeId']"));
     if (trainIds.length > 0) {
-        showComfirm("确定要启用吗?");
+        showConfirm("确定要启用吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/timeType/startAll", {
                 ids: JSON.stringify(trainIds)
@@ -166,7 +166,7 @@ $("#btnStart").on("click", function(e) {
 $("#btnStop").on("click", function(e) {
     var trainIds = getAllCheckedIds($(".mainModal #gridBody [name='timeTypeId']"));
     if (trainIds.length > 0) {
-        showComfirm("确定要停用吗?");
+        showConfirm("确定要停用吗?");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             selfAjax("post", "/admin/timeType/stopAll", {
                 ids: JSON.stringify(trainIds)

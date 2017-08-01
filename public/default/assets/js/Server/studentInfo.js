@@ -61,7 +61,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
 $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("真的要删除" + decodeURI(entity.name) + "吗？");
+    showConfirm("真的要删除" + decodeURI(entity.name) + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentInfo/delete", {

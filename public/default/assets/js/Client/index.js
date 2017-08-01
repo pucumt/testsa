@@ -13,7 +13,7 @@ window.showAlert = function(msg, title, callback) {
     };
 };
 
-window.showComfirm = function(msg, title, hidecallback) {
+window.showConfirm = function(msg, title, hidecallback) {
     $('#confirmModal').show();
     $('#confirmModal #confirmModalLabel').text(title || "确认");
     $('#confirmModal .modal-body').text(msg);

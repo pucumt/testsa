@@ -82,7 +82,7 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
 $("#gridBody").on("click", "td .btnDelete", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("确定要取消订单" + entity._id + "吗？");
+    showConfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminEnrollTrain/cancel", {
@@ -101,7 +101,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 $("#gridBody").on("click", "td .btnPreSave", function(e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    showComfirm("确定要预存订单" + entity._id + "吗？");
+    showConfirm("确定要预存订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminEnrollTrain/preSave", {

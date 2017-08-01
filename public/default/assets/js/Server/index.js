@@ -69,7 +69,7 @@ window.showAlert = function(msg, title, isModal) {
     $('#confirmModal #btnConfirmSave').hide();
 };
 
-window.showComfirm = function(msg, title, isModal) {
+window.showConfirm = function(msg, title, isModal) {
     if (!isModal) {
         $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
     }

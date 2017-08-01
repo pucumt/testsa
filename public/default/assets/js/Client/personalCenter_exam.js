@@ -70,7 +70,7 @@ function CancelOrder(e) {
         $li = curObj.parents("li"),
         orderId = $li.attr("orderId");
     $("#bgBack").show();
-    showComfirm("确定要取消测试" + orderId + "吗？", null, function() {
+    showConfirm("确定要取消测试" + orderId + "吗？", null, function() {
         $("#bgBack").hide();
     });
 

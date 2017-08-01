@@ -89,7 +89,7 @@ function addValidation() {
 $("#studentInfo #btnSave").on("click", function(e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        showComfirm("真的要保存" + $('#studentInfo #studentName').val() + "吗？");
+        showConfirm("真的要保存" + $('#studentInfo #studentName').val() + "吗？");
         $("#btnConfirmSave").off("click").on("click", function(e) {
             var postURI = "/admin/studentInfo/edit",
                 postObj = {
@@ -118,7 +118,7 @@ $("#studentInfo #btnSave").on("click", function(e) {
 });
 
 $("#studentInfo #btnDelete").on("click", function(e) {
-    showComfirm("真的要删除" + $('#studentInfo #studentName').val() + "吗？");
+    showConfirm("真的要删除" + $('#studentInfo #studentName').val() + "吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/studentInfo/delete", {
             id: $('#id').val()
@@ -198,7 +198,7 @@ $('.content .examModal table tbody').on("click", "td #btnDelete", function(e) {
     var obj = e.currentTarget;
     $(obj).attr("disabled", "disabled");
     var entity = $(obj).parents("tr").data("obj");
-    showComfirm("确定要取消订单" + entity._id + "吗？");
+    showConfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminEnrollExam/cancel", {
@@ -222,7 +222,7 @@ $('.content .examModal table tbody').on("click", "td #btnChange", function(e) {
     var obj = e.currentTarget;
     $(obj).attr("disabled", "disabled");
     var entity = $(obj).parents("tr").data("obj");
-    showComfirm("确定要更新订单" + entity._id + "吗？");
+    showConfirm("确定要更新订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/adminEnrollExam/changeStudent", {

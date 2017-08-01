@@ -7,7 +7,7 @@ $(document).ready(function() {
 });
 //------------search funfunction
 $("#btnSubmit").on("click", function(e) {
-    showComfirm("真的要发布吗？");
+    showConfirm("真的要发布吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/batchTrainClasspublish", { id: $("#year").val() }, function(data) {
@@ -21,7 +21,7 @@ $("#btnSubmit").on("click", function(e) {
 });
 
 $("#btnStop").on("click", function(e) {
-    showComfirm("真的要停用吗？");
+    showConfirm("真的要停用吗？");
 
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/batchTrainClassUnpublish", { id: $("#year").val() }, function(data) {
@@ -56,7 +56,7 @@ function renderSearchGradeDropDown() {
 };
 
 $("#btnBatchAdd").on("click", function(e) {
-    showComfirm("真的要加100吗？");
+    showConfirm("真的要加100吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/batchAdd100", {
             id: $("#year").val(),
@@ -72,7 +72,7 @@ $("#btnBatchAdd").on("click", function(e) {
 });
 
 $("#btnBatchMin").on("click", function(e) {
-    showComfirm("真的要减100吗？");
+    showConfirm("真的要减100吗？");
     $("#btnConfirmSave").off("click").on("click", function(e) {
         selfAjax("post", "/admin/batchMin100", {
             id: $("#year").val(),
