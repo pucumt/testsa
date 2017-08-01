@@ -57,7 +57,8 @@ $(document).ready(function() {
                 showAlert("您调的班级跟原班级是同一个!");
                 return;
             }
-            showConfirm("确定要调班吗？", null, function() {
+            showConfirm("确定要调班吗？");
+            $('#confirmModal #btnConfirmSave').on("click", function() {
                 $("#btnChangeClass").attr("disabled", "disabled");
                 selfAjax("post", "/enroll/changeClass", {
                     orderId: $("#orderId").val(),
