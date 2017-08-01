@@ -105,7 +105,7 @@ module.exports = function(app) {
             totalClassCount: req.body.totalClassCount, //共多少课时
             trainPrice: req.body.trainPrice,
             materialPrice: req.body.materialPrice,
-            teacherId: req.body.teacherId,
+            teacherId: (req.body.teacherId || null),
             teacherName: req.body.teacherName,
             attributeId: req.body.attributeId,
             attributeName: req.body.attributeName,
@@ -123,6 +123,8 @@ module.exports = function(app) {
         trainClass.update(req.body.id)
             .then(function() {
                 res.jsonp(trainClass);
+            }).catch(function(err) {
+                console.log(err);
             });
     });
 

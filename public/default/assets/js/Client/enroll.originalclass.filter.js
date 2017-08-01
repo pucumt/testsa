@@ -22,7 +22,7 @@ function loadData() {
                 }
 
                 if (data.orders.length > 0) {
-                    renderOrders(data.orders, data.isSwitch);
+                    renderOrders(data.orders, data.config);
                 } else {
                     $selectBody.text("没有报我们课程");
                 }
@@ -30,23 +30,26 @@ function loadData() {
         });
 };
 
-function renderOrders(data, isSwitch) {
+function renderOrders(data, config) {
     var d = $(document.createDocumentFragment());
     data.forEach(function(order) {
-        d.append(generateLi(order, isSwitch));
+        d.append(generateLi(order, config));
     });
     $selectBody.append(d);
 };
 
-function getButtons(isSwitch) {
-    var strButtons = '<button type="button" id="btnOriginal" class="btn btn-primary btn-xs">原班报名</button>';
-    if (isSwitch) {
+function getButtons(config) {
+    var strButtons = '';
+    if (config.oldStudentStatus) {
+        strButtons = '<button type="button" id="btnOriginal" class="btn btn-primary btn-xs">原班报名</button>';
+    }
+    if (config.oldStudentSwitch) {
         strButtons += '<button type="button" id="btnChange" class="btn btn-primary btn-xs">调班报名</button>';
     }
     return strButtons;
 };
 
-function generateLi(order, isSwitch) {
+function generateLi(order, config) {
     var $li = $('<li class="exam-card card" ></li>'),
         $goodContainer = $('<div id=' + order.trainId + ' class="exam link"></div>'),
         $infoContainer = $('<div class="exam-info"></div>');
@@ -55,7 +58,7 @@ function generateLi(order, isSwitch) {
     $goodContainer.append($infoContainer);
     $infoContainer.append($('<div><h3>学员：' + order.studentName + '</h3></div>'));
     $infoContainer.append($('<div><h3>' + order.trainName + '</h3></div>'));
-    $infoContainer.append($('<div class="enroll-info">' + getButtons(isSwitch) + '</div>'));
+    $infoContainer.append($('<div class="enroll-info">' + getButtons(config) + '</div>'));
     return $li;
 };
 

@@ -26,4 +26,8 @@ $(document).ready(function() {
     $("#left_btnEnrollProcess").on("click", function(e) {
         location.href = "/admin/enrollProcess";
     });
+
+    $("#left_btnChangeEnd").on("click", function(e) {
+        location.href = "/admin/changeEnd";
+    });
 });

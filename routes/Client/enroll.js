@@ -126,7 +126,10 @@ module.exports = function(app) {
             filter.categoryId = req.body.categoryId;
         }
         if (req.body.timespan) {
-            filter.courseTime = req.body.timespan;
+            var reg = new RegExp(req.body.timespan, 'i')
+            filter.courseTime = {
+                $regex: reg
+            };
         }
         TrainClass.filtersToEnroll(filter).then(function(classs) {
             res.jsonp({
@@ -422,13 +425,18 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/enroll/school', function(req, res) {
+    app.post('/enroll/changeclass/school', function(req, res) {
         var objReturn = {};
-        var p0 = SchoolArea.getAllWithoutPage()
-            .then(function(schools) {
-                objReturn.schools = schools;
-            })
-            .catch(function(err) {
+        var p0 = SchoolGradeRelation.getFilters({ gradeId: req.body.gradeId })
+            .then(function(relations) {
+                var schoolIds = relations.map(function(relation) {
+                    return relation.schoolId;
+                });
+                return SchoolArea.getFilters({ _id: { $in: schoolIds } })
+                    .then(function(schools) {
+                        objReturn.schools = schools;
+                    });
+            }).catch(function(err) {
                 console.log('errored');
             });
         var p1 = WeekType.getFilters({ isChecked: true })
@@ -972,11 +980,9 @@ module.exports = function(app) {
     app.post('/enroll/originalOrders', checkJSONLogin);
     app.post('/enroll/originalOrders', function(req, res) {
         EnrollProcessConfigure.get().then(function(configure) {
-            if (configure && (!configure.oldStudentStatus)) {
-                res.jsonp({ error: "没到原班报名时间呢！" });
-            } else {
+            if (configure && (configure.oldStudentStatus || configure.oldStudentSwitch)) {
                 var currentUser = req.session.user;
-                Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
+                return Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
                     .then(function(year) {
                         if (year) {
                             StudentInfo.getFilters({ accountId: currentUser._id }).then(function(students) {
@@ -1012,13 +1018,14 @@ module.exports = function(app) {
                                             orders = orders.concat(trains);
                                         }
                                     });
-                                    res.jsonp({ orders: orders, isSwitch: configure.oldStudentSwitch });
+                                    res.jsonp({ orders: orders, config: configure });
                                     return;
                                 });
                             });
                         }
                     });
             }
+            res.jsonp({ error: "没到原班报名时间呢！" });
         });
     });
 
@@ -1083,16 +1090,16 @@ module.exports = function(app) {
                                             var categoryIds = gradeSubjectCategoryRelations.map(function(relation) {
                                                     return relation.categoryId;
                                                 }),
-                                                curGradeId = order.superCategoryId || trainClass.categoryId;
-                                            return Category.getFilter({ _id: curGradeId })
+                                                curCategoryId = order.superCategoryId || trainClass.categoryId;
+                                            return Category.getFilter({ _id: curCategoryId })
                                                 .then(function(curCategory) {
                                                     objReturn.categoryId = curCategory._id;
                                                     objReturn.categoryName = curCategory.name;
-                                                    if (curCategory.sequence && curCategory.sequence > 0) {
+                                                    if (curCategory.grade && curCategory.grade > 0) {
                                                         //need list
                                                         return Category.getFilters({
                                                                 _id: { $in: categoryIds },
-                                                                sequence: { $gt: 0, $lte: curCategory.sequence }
+                                                                grade: { $gt: 0, $lte: curCategory.grade }
                                                             })
                                                             .then(function(categories) {
                                                                 objReturn.categories = categories;

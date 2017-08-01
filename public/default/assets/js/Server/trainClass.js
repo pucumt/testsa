@@ -33,6 +33,12 @@ $(document).ready(function() {
     $("#btnBatchAddTeacher").on("click", function(e) {
         location.href = "/admin/batchAddTeacherToTrainClass";
     });
+
+    $("#selectAll").on("change", function(e) {
+        $("input[type=checkbox][name=trainId]").each(function() {
+            this.checked = e.currentTarget.checked;
+        });
+    });
 });
 
 //------------search funfunction

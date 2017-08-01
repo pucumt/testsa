@@ -35,8 +35,4 @@ $(document).ready(function() {
     $("#left_btnTimeType").on("click", function(e) {
         location.href = "/admin/timeType";
     });
-
-    $("#left_btnChangeEnd").on("click", function(e) {
-        location.href = "/admin/changeEnd";
-    });
 });

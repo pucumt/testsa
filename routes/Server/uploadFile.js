@@ -176,7 +176,7 @@ module.exports = function(app) {
                                     if (trainClass) {
                                         option.fromClassId = trainClass._id;
                                         option.fromClassName = trainClass.name;
-                                        option.isWeixin = 2;
+                                        // option.isWeixin = 2; no need to change original isWeixin
                                     } else if (data[16] && data[16].trim() != "") {
                                         failedAddStudentToClass("", "", data[0].trim(), "没找到原班");
                                         return;

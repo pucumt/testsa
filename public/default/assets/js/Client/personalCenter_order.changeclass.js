@@ -86,7 +86,9 @@ $(document).ready(function() {
 });
 
 function renderfilter() {
-    selfAjax("get", "/enroll/school", null, function(data) {
+    selfAjax("post", "/enroll/changeclass/school", {
+        gradeId: $("#gradeId").val()
+    }, function(data) {
         if (data) {
             if (data.schools.length > 0) {
                 data.schools.forEach(function(school) {
@@ -117,7 +119,7 @@ function loadData() {
         gradeId: $("#gradeId").val(),
         subjectId: $("#subjectId").val(),
         categoryId: $("#categoryId").val(),
-        timespan: $("#drpDateSpan").val() + $("#drpTimeSpan").val()
+        timespan: $("#drpDateSpan").val() // + $("#drpTimeSpan").val()
     }, function(data) {
         if (data) {
             if (data.classs.length > 0) {
