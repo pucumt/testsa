@@ -440,7 +440,7 @@ module.exports = function(app) {
                             //保存退款记录
                             if (rebateRecord) {
                                 //线上退款
-                                AdminEnrollTrain.get(req.body.id)
+                                AdminEnrollTrain.get(req.body.Id)
                                     .then(function(order) {
                                         if (order) {
                                             var payParas = {
