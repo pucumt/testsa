@@ -101,6 +101,21 @@ function addValidation(callback) {
                             message: '填写的不是数字',
                         }
                     }
+                },
+                'materialPrice': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '教材费不能为空'
+                        },
+                        stringLength: {
+                            max: 10,
+                            message: '教材费金额不能超过10个字符'
+                        },
+                        numeric: {
+                            message: '填写的不是数字',
+                        }
+                    }
                 }
             }
         });
