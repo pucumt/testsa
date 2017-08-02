@@ -24,7 +24,7 @@ module.exports = function(app) {
     app.get('/admin/enrollProcess', checkLogin);
     app.get('/admin/enrollProcess', function(req, res) {
         res.render('Server/enrollProcessConfigureList.html', {
-            title: '>校区列表',
+            title: '>报名过程控制',
             user: req.session.admin
         });
     });

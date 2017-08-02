@@ -3,6 +3,7 @@ var TrainClass = require('../../models/trainClass.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     AbsentStudents = require('../../models/absentStudents.js'),
     AbsentClass = require('../../models/absentClass.js'),
+    RollCallConfigure = require('../../models/rollCallConfigure.js'),
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
@@ -27,11 +28,14 @@ module.exports = function(app) {
 
     app.post('/Teacher/rollCall/classes', function(req, res) {
         //debugger;
-        TrainClass.getFilters({
-            teacherId: req.session.teacher._id
-        }).then(function(classs) {
-            res.jsonp({
-                classs: classs
+        RollCallConfigure.get().then(function(configure) {
+            TrainClass.getFilters({
+                teacherId: req.session.teacher._id,
+                yearId: configure.yearId
+            }).then(function(classs) {
+                res.jsonp({
+                    classs: classs
+                });
             });
         });
     });

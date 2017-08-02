@@ -24,6 +24,7 @@
     examCategory = require('./examCategory.js'),
     examClassExamArea = require('./examClassExamArea.js'),
     enrollProcessConfigure = require('./enrollProcessConfigure.js'),
+    rollCallConfigure = require('./rollCallConfigure.js'),
 
     adminEnrollExam = require('./adminEnrollExam.js'),
     adminEnrollTrain = require('./adminEnrollTrain.js'),
@@ -80,6 +81,7 @@ module.exports = function(app) {
     examCategory(app);
     examClassExamArea(app);
     enrollProcessConfigure(app);
+    rollCallConfigure(app);
 
     //enroll
     adminEnrollExam(app);

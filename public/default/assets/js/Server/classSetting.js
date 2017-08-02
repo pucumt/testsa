@@ -30,4 +30,8 @@ $(document).ready(function() {
     $("#left_btnChangeEnd").on("click", function(e) {
         location.href = "/admin/changeEnd";
     });
+
+    $("#left_btnRollCallProcess").on("click", function(e) {
+        location.href = "/admin/rollCallConfigureList";
+    });
 });
