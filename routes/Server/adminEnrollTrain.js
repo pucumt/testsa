@@ -450,6 +450,7 @@ module.exports = function(app) {
                                                 total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0) + (order.rebatePrice || 0)) * 100
                                             };
                                             payHelper.jsRebate(payParas, res);
+                                            res.jsonp({ sucess: true });
                                             return;
                                         }
                                         res.jsonp({ error: "没找到原订单" });
