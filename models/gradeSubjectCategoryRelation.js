@@ -114,3 +114,9 @@ GradeSubjectCategoryRelation.getFiltersWithCategory = function(gradeId, subjectI
         .project({ categorys: 1 });
     return query.exec();
 };
+
+GradeSubjectCategoryRelation.deleteAll = function(filter) {
+    return gradeSubjectCategoryRelationModel.update(filter, {
+        isDeleted: true
+    }, { multi: true }).exec();
+};
