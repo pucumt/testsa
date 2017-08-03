@@ -204,7 +204,7 @@ module.exports = function(app) {
                         body: order.trainName,
                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
                         openId: openId,
-                        time_expire: moment().add(10, 'minute').format("YYYYMMDDHHmmss")
+                        time_expire: moment().add(20, 'minute').format("YYYYMMDDHHmmss")
                     };
                     //time_expire is new function, maybe there is something wrong
                     payHelper.jsPay(payParas, res);
