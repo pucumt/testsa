@@ -473,5 +473,9 @@ footer,
 }
 
 .rebate-notify {
+    font-size: 12px;
+}
+
+.personalCenter .orderList .rebate-notify {
     font-size: 13px;
 }
