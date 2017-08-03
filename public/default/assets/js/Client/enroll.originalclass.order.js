@@ -92,8 +92,10 @@ function setPrice() {
 };
 
 $("#btnPay").on("click", function(e) {
-    $("#bgBack").show();
-    $("#pay-select").show();
+    showAlert("如果退费将要收取6‰的手续费！", null, function() {
+        $("#bgBack").show();
+        $("#pay-select").show();
+    });
 });
 
 function getOrderId(payWay, callback) {
