@@ -8,11 +8,9 @@ $(document).ready(function() {
     });
 
     $("#btnPay").on("click", function(e) {
-        showAlert("如果退费将要收取6‰的手续费！", null, function() {
-            $("#btnPay").attr("disabled", "disabled");
-            $("#bgBack").show();
-            $("#pay-select").show();
-        });
+        $("#btnPay").attr("disabled", "disabled");
+        $("#bgBack").show();
+        $("#pay-select").show();
     });
 
     if ($("#payway").val() == "7") {
