@@ -202,4 +202,15 @@ module.exports = function(app) {
             }
         });
     });
+
+    app.post('/admin/coupon/batchDeleteGtIds', checkLogin);
+    app.post('/admin/coupon/batchDeleteGtIds', function(req, res) {
+        CouponAssign.batchUpdate({
+                couponId: req.body.couponId,
+                _id: { $gt: req.body.id }
+            }, { isDeleted: true })
+            .then(function() {
+                res.jsonp({ sucess: true });
+            });
+    });
 }

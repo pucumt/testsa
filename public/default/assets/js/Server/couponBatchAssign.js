@@ -47,3 +47,19 @@ $("#InfoSearch #btnBatchDel").on("click", function(e) {
         }
     });
 });
+
+$("#InfoSearch #btnDelgtId").on("click", function(e) {
+    if ($("#gtId").val() == "") {
+        showAlert("gtId不能为空！");
+        return;
+    }
+    showConfirm("确定要删除吗？");
+    $("#btnConfirmSave").off("click").on("click", function(e) {
+        selfAjax("post", "/admin/coupon/batchDeleteGtIds", {
+            id: $("#gtId").val(),
+            couponId: $('#id').val()
+        }, function(data) {
+            showAlert("删除成功！");
+        });
+    });
+});

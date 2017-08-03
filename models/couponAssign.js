@@ -17,6 +17,7 @@ var couponAssignSchema = new mongoose.Schema({
     isDeleted: { type: Boolean, default: false },
     isUsed: { type: Boolean, default: false },
     isExpired: { type: Boolean, default: false }, //useless now
+    createdDate: { type: Date, default: Date.now },
     orderId: String //just used in train class now
 }, {
     collection: 'couponAssigns'
