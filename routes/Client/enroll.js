@@ -197,7 +197,7 @@ module.exports = function(app) {
     app.post('/enroll/originalclass/classes', function(req, res) {
         //debugger;
         // number 类型
-        var filter = {}; //isWeixin: 1
+        var filter = { isWeixin: 1 }; //isWeixin: 1
         if (req.body.fromClassId) {
             filter.fromClassId = req.body.fromClassId;
         }
