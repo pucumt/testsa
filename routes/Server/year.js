@@ -82,11 +82,14 @@ module.exports = function(app) {
                     year = {};
                 }
                 if (req.body.iscurrent) {
-                    global.currentYear = {
-                        _id: req.body.id,
-                        name: req.body.name,
-                        sequence: req.body.sequence
-                    };
+                    return Year.getFilter({
+                        _id: req.body.id
+                    }).then(function(currentYear) {
+                        global.currentYear = currentYear;
+
+                        res.jsonp(currentYear);
+                        return;
+                    });
                 }
                 res.jsonp(year);
             });
