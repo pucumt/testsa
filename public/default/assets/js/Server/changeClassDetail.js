@@ -277,7 +277,7 @@ function renderGradeSubjectCategory(callback) {
     $('#selectModal #InfoSearch').find("#grade option").remove();
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
-    selfAjax("get", "/admin/trainClass/gradesubjectcategory", {}, function(data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategoryyear", {}, function(data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function(grade) {

@@ -2,6 +2,10 @@ var isNew = true;
 
 $(document).ready(function() {
     $("#left_btnAdminEnrollTrain").addClass("active");
+
+    $("#selectModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
+    $("#selectModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
     addValidation();
     resetDropDown();
 });
@@ -266,7 +270,8 @@ function openTrain(p) {
             name: $("#selectModal #InfoSearch #trainName").val(),
             grade: $("#selectModal #InfoSearch #grade").val(),
             subject: $("#selectModal #InfoSearch #subject").val(),
-            category: $("#selectModal #InfoSearch #category").val()
+            category: $("#selectModal #InfoSearch #category").val(),
+            yearId: $("#selectModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
@@ -311,7 +316,7 @@ function openTrain(p) {
 var openEntity = "student";
 $("#panel_btnStudent").on("click", function(e) {
     openEntity = "student";
-    $('#selectModal .modal-dialog').removeClass("modal-lg");
+    $('#selectModal .modal-dialog').removeClass("modal-max");
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
         '<label for="studentName" class="control-label">姓名:</label>' +
@@ -324,16 +329,17 @@ $("#panel_btnStudent").on("click", function(e) {
 
 $("#panel_btnTrain").on("click", function(e) {
     openEntity = "train";
-    $('#selectModal .modal-dialog').addClass("modal-lg");
+    $('#selectModal .modal-dialog').addClass("modal-max");
     $selectSearch.empty();
-    $selectSearch.append('<div class="row form-horizontal examSearchInfo"><div class="col-md-20"><div class="form-group">' +
+    $selectSearch.append('<div class="row form-horizontal examSearchInfo"><div class="col-md-22" style="padding-right: 0;"><div class="form-group">' +
         '<label for="trainName" class="control-label">名称:</label>' +
         '<input type="text" maxlength="30" class="form-control" name="trainName" id="trainName"></div>' +
         '<div class="form-group"><label for="grade" class="control-label">年级:</label><select name="grade" id="grade" class="form-control"></select></div>' +
-        '<div class="form-group"><label for="subject" class="control-label">科目:</label><select name="subject" id="subject" class="form-control"></select></div>' +
-        '<div class="form-group"><label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div></div>' +
-        '<div class="col-md-4"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
-    renderGradeSubjectCategory(openTrain);
+        '<div class="form-group" style="width:190px;"><label for="subject" class="control-label">科目:</label><select name="subject" id="subject" class="form-control"></select></div>' +
+        '<div class="form-group"><label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div>' +
+        '<div class="form-group"><label for="searchYear" class="control-label">年度:</label><select name="searchYear" id="searchYear" class="form-control"></select></div></div>' +
+        '<div class="col-md-2" style="padding-left: 0;"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
+    renderGradeSubjectCategoryYear(openTrain);
 });
 
 $("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
@@ -488,11 +494,12 @@ function checkCoupons(func) {
     $(":input[name='coupon']").each(func);
 };
 
-function renderGradeSubjectCategory(callback) {
+function renderGradeSubjectCategoryYear(callback) {
     $('#selectModal #InfoSearch').find("#grade option").remove();
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
-    selfAjax("get", "/admin/trainClass/gradesubjectcategory", null, function(data) {
+    $('#selectModal #InfoSearch').find("#searchYear option").remove();
+    selfAjax("get", "/admin/trainClass/gradesubjectcategoryyear", null, function(data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function(grade) {
@@ -507,6 +514,16 @@ function renderGradeSubjectCategory(callback) {
             if (data.categorys && data.categorys.length > 0) {
                 data.categorys.forEach(function(category) {
                     $("#selectModal #InfoSearch #category").append("<option value='" + category._id + "'>" + category.name + "</option>");
+                });
+            }
+
+            if (data.years && data.years.length > 0) {
+                data.years.forEach(function(year) {
+                    var select = "";
+                    if (year.isCurrentYear) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
                 });
             }
             callback();

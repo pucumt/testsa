@@ -4,6 +4,12 @@
     border-radius: 0 !important;
 }
 
+@media (min-width: 1024px) {
+    .modal-max {
+        width: 1000px;
+    }
+}
+
 body {
     background-color: #fff;
     height: 100%;
@@ -214,6 +220,14 @@ body {
 #selectModal .modal-body table tbody tr:hover {
     cursor: pointer;
     background-color: #d6dbe0;
+}
+
+#selectModal .modal-body .panel.panel-default {
+    margin-bottom: 0;
+}
+
+#selectModal .modal-body .table.table-striped {
+    margin-bottom: 0;
 }
 
 #InfoSearch .form-group label {

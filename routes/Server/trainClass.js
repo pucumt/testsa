@@ -192,8 +192,8 @@ module.exports = function(app) {
             });
     });
 
-    app.get('/admin/trainClass/gradesubjectcategory', checkLogin);
-    app.get('/admin/trainClass/gradesubjectcategory', function(req, res) {
+    app.get('/admin/trainClass/gradesubjectcategoryyear', checkLogin);
+    app.get('/admin/trainClass/gradesubjectcategoryyear', function(req, res) {
         var objReturn = {};
         var p1 = Grade.getAllWithoutPage()
             .then(function(grades) {
@@ -216,7 +216,14 @@ module.exports = function(app) {
             .catch(function(err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p3]).then(function() {
+        var p4 = Year.getFilters({})
+            .then(function(years) {
+                objReturn.years = years;
+            })
+            .catch(function(err) {
+                console.log('errored');
+            });
+        Promise.all([p1, p2, p3, p4]).then(function() {
                 res.jsonp(objReturn);
             })
             .catch(function(err) {
