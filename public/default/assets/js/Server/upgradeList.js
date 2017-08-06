@@ -81,6 +81,7 @@ function refreshPage() {
 };
 
 $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
+    $('#myModal').find("#category option").remove();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     selfAjax("post", "/admin/gradeSubjectCategoryRelation/filter", {
