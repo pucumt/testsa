@@ -379,7 +379,7 @@ module.exports = function (app) {
                 TrainClass.cancel(req.body.trainId)
                     .then(function (trainClass) {
                         if (trainClass && trainClass.ok && trainClass.nModified == 1) {
-                            AdminEnrollTrain.cancel(req.body.id, function (err, adminEnrollTrain) {
+                            AdminEnrollTrain.cancel(req.body.id, req.session.admin._id, function (err, adminEnrollTrain) {
                                 if (err) {
                                     res.jsonp({
                                         error: err

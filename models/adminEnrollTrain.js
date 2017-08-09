@@ -197,11 +197,27 @@ AdminEnrollTrain.getByStudentAndClass = function (studentId, trainId) {
     });
 };
 
-AdminEnrollTrain.cancel = function (id, callback) {
+// cancelled function, now disposed
+// AdminEnrollTrain.cancel = function (id, callback) {
+//     adminEnrollTrainModel.update({
+//         _id: id
+//     }, {
+//         isSucceed: 9,
+//         cancelDate: new Date()
+//     }).exec(function (err, adminEnrollTrain) {
+//         if (err) {
+//             return callback(err);
+//         }
+//         callback(null, adminEnrollTrain);
+//     });
+// };
+
+AdminEnrollTrain.cancel = function (id, cancelledBy, callback) {
     adminEnrollTrainModel.update({
         _id: id
     }, {
         isSucceed: 9,
+        cancelledBy: cancelledBy,
         cancelDate: new Date()
     }).exec(function (err, adminEnrollTrain) {
         if (err) {
