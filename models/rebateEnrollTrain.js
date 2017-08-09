@@ -13,7 +13,11 @@ var rebateEnrollTrainSchema = new mongoose.Schema({
     isDeleted: Boolean,
     createDate: Date,
     comment: String,
-    rebateWay: { type: Number, default: 0 } //6在线 null/0 现金
+    createdBy: String,
+    rebateWay: {
+        type: Number,
+        default: 0
+    } //6在线 null/0 现金
 }, {
     collection: 'rebateEnrollTrains'
 });
@@ -27,16 +31,16 @@ function RebateEnrollTrain(option) {
 module.exports = RebateEnrollTrain;
 
 //存储学区信息
-RebateEnrollTrain.prototype.save = function() {
+RebateEnrollTrain.prototype.save = function () {
     this.option.createDate = new Date();
     var newrebateEnrollTrain = new rebateEnrollTrainModel(this.option);
     return newrebateEnrollTrain.save();
 };
 
-RebateEnrollTrain.prototype.update = function(id, callback) {
+RebateEnrollTrain.prototype.update = function (id, callback) {
     rebateEnrollTrainModel.update({
         _id: id
-    }, this.option).exec(function(err, rebateEnrollTrain) {
+    }, this.option).exec(function (err, rebateEnrollTrain) {
         if (err) {
             return callback(err);
         }
@@ -46,9 +50,14 @@ RebateEnrollTrain.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-RebateEnrollTrain.get = function(id, callback) {
+RebateEnrollTrain.get = function (id, callback) {
     //打开数据库
-    rebateEnrollTrainModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, rebateEnrollTrain) {
+    rebateEnrollTrainModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, rebateEnrollTrain) {
         if (err) {
             return callback(err);
         }
@@ -59,30 +68,36 @@ RebateEnrollTrain.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-RebateEnrollTrain.getAll = function(id, page, filter, callback) {
+RebateEnrollTrain.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = rebateEnrollTrainModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, rebateEnrollTrains) {
+            .exec(function (err, rebateEnrollTrains) {
                 callback(null, rebateEnrollTrains, count);
             });
     });
 };
 
 //删除一个学区
-RebateEnrollTrain.delete = function(id, callback) {
+RebateEnrollTrain.delete = function (id, callback) {
     rebateEnrollTrainModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, rebateEnrollTrain) {
+    }).exec(function (err, rebateEnrollTrain) {
         if (err) {
             return callback(err);
         }
@@ -90,17 +105,23 @@ RebateEnrollTrain.delete = function(id, callback) {
     });
 };
 
-RebateEnrollTrain.getFilters = function(filter) {
+RebateEnrollTrain.getFilters = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return rebateEnrollTrainModel.find(filter)
         .exec();
 };
 
-RebateEnrollTrain.changeTrainId = function(order) {
+RebateEnrollTrain.changeTrainId = function (order) {
     return rebateEnrollTrainModel.update({
         _id: order._id
     }, {
@@ -108,12 +129,17 @@ RebateEnrollTrain.changeTrainId = function(order) {
     }).exec();
 };
 
-RebateEnrollTrain.getRebateReportList = function(yearId, startDate, endDate, schoolId) {
+RebateEnrollTrain.getRebateReportList = function (yearId, startDate, endDate, schoolId) {
     ///TBD
     return rebateEnrollTrainModel.aggregate({
             $match: {
-                isDeleted: { $ne: true },
-                createDate: { $gte: (new Date(startDate)), $lte: (new Date(endDate)) }
+                isDeleted: {
+                    $ne: true
+                },
+                createDate: {
+                    $gte: (new Date(startDate)),
+                    $lte: (new Date(endDate))
+                }
             }
         })
         .lookup({
@@ -136,8 +162,12 @@ RebateEnrollTrain.getRebateReportList = function(yearId, startDate, endDate, sch
     }
     return aggQuery.group({
             _id: "$payWay",
-            trainPrice: { $sum: "$totalPrice" },
-            materialPrice: { $sum: "$realMaterialPrice" }
+            trainPrice: {
+                $sum: "$totalPrice"
+            },
+            materialPrice: {
+                $sum: "$realMaterialPrice"
+            }
         })
         .exec();
 };
