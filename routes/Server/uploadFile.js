@@ -427,6 +427,8 @@ module.exports = function (app) {
                     option.trainName = existTrainClass.name;
                     option.yearId = existTrainClass.yearId;
                     option.yearName = existTrainClass.yearName;
+                    option.schoolId = existTrainClass.schoolId;
+                    option.schoolArea = existTrainClass.schoolArea;
                     return StudentInfo.getFilter({
                             name: data[1].trim(),
                             mobile: data[2]

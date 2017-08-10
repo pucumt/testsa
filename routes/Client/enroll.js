@@ -831,7 +831,9 @@ module.exports = function (app) {
                                             isSucceed: 1,
                                             payWay: req.body.payWay,
                                             yearId: trainClass.yearId,
-                                            yearName: trainClass.yearName
+                                            yearName: trainClass.yearName,
+                                            schoolId: trainClass.schoolId,
+                                            schoolArea: trainClass.schoolArea
                                         });
                                         adminEnrollTrain.save()
                                             .then(function (enrollExam) {
@@ -961,7 +963,9 @@ module.exports = function (app) {
                                             isSucceed: 1,
                                             payWay: req.body.payWay,
                                             yearId: trainClass.yearId,
-                                            yearName: trainClass.yearName
+                                            yearName: trainClass.yearName,
+                                            schoolId: trainClass.schoolId,
+                                            schoolArea: trainClass.schoolArea
                                         });
                                         adminEnrollTrain.save()
                                             .then(function (enrollExam) {
@@ -1087,7 +1091,9 @@ module.exports = function (app) {
                                                             isPayed: true,
                                                             payWay: oldOrder.payWay,
                                                             yearId: global.currentYear._id,
-                                                            yearName: global.currentYear.name
+                                                            yearName: global.currentYear.name,
+                                                            schoolId: trainClass.schoolId,
+                                                            schoolArea: trainClass.schoolArea
                                                         });
                                                         adminEnrollTrain.save().then(function (newOrder) {
                                                             //cancel of old class

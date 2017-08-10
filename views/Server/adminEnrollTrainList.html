@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -71,7 +72,8 @@
                             <div class="btn-group">
                                 <input type="hidden" class="form-control" name="studentId" id="studentId">
                                 <input type="text" maxlength="30" readonly class="form-control" name="studentName" id="studentName">
-                                <button type="button" id="panel_btnStudent" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button type="button" id="panel_btnStudent" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
                                 <span class="caret"></span>
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
@@ -103,7 +105,10 @@
                             <div class="btn-group">
                                 <input type="hidden" class="form-control" name="trainId" id="trainId">
                                 <input type="text" maxlength="30" readonly class="form-control" name="trainName" id="trainName">
-                                <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <input type="hidden" class="form-control" name="schoolId" id="schoolId">
+                                <input type="hidden" class="form-control" name="schoolArea" id="schoolArea">
+                                <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
                                 <span class="caret"></span>
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
@@ -258,6 +263,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/adminEnrollTrain.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminEnrollTrain.js?v=1.001"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

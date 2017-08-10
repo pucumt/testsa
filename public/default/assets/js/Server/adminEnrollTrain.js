@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnAdminEnrollTrain").addClass("active");
 
     $("#selectModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
@@ -149,7 +149,7 @@ function addValidation(callback) {
     });
 };
 
-$("#btnAddStudent").on("click", function(e) {
+$("#btnAddStudent").on("click", function (e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/studentAccount/newStudent",
@@ -162,7 +162,7 @@ $("#btnAddStudent").on("click", function(e) {
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             if (data && data.sucess) {
                 showAlert("添加成功");
             } else {
@@ -176,7 +176,7 @@ function enroll(enrollURI) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
         var couponId;
-        checkCoupons(function(index) {
+        checkCoupons(function (index) {
             if (this.checked) {
                 couponId = $(this).data("obj")._id;
             }
@@ -196,14 +196,16 @@ function enroll(enrollURI) {
                 attributeId: $('#enrollInfo #attributeId').val(),
                 attributeName: $('#enrollInfo #attributeName').val(),
                 comment: $('#enrollInfo #comment').val(),
+                schoolId: $('#enrollInfo #schoolId').val(),
+                schoolArea: $('#enrollInfo #schoolArea').val(),
                 couponId: couponId
             };
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             if (data && data.sucess) {
                 showAlert("报名成功");
                 $('#confirmModal .modal-footer .btn-default')
                     .off("click")
-                    .on("click", function() {
+                    .on("click", function () {
                         location.href = "/admin/payList/" + data.orderId;
                     });
             } else {
@@ -213,10 +215,10 @@ function enroll(enrollURI) {
     }
 };
 
-$("#btnEnroll").on("click", function(e) {
+$("#btnEnroll").on("click", function (e) {
     enroll("/admin/adminEnrollTrain/enroll");
 });
-$("#btnEnrollCheck").on("click", function(e) {
+$("#btnEnrollCheck").on("click", function (e) {
     enroll("/admin/adminEnrollTrain/enrollwithcheck");
 });
 
@@ -234,9 +236,9 @@ function openStudent(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function (data) {
         if (data && data.studentInfos.length > 0) {
-            data.studentInfos.forEach(function(student) {
+            data.studentInfos.forEach(function (student) {
                 student.School = "";
                 student.className = "";
                 var sex = student.sex ? "女" : "男";
@@ -245,7 +247,7 @@ function openStudent(p) {
                 $tr.data("obj", student);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
                 $('#enrollInfo #studentId').val(entity._id); //
                 $('#enrollInfo #mobile').val(entity.mobile); //
@@ -260,7 +262,10 @@ function openStudent(p) {
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
         setPaging("#selectModal", data);
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $('#selectModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     });
 };
 
@@ -277,9 +282,9 @@ function openTrain(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/难度</th><th width="180px">校区</th><th width="140px">培训费/教材费</th><th width="100px">报名情况</th></tr>');
-    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function (data) {
         if (data && data.trainClasss.length > 0) {
-            data.trainClasss.forEach(function(trainClass) {
+            data.trainClasss.forEach(function (trainClass) {
                 trainClass.courseContent = "";
                 var grade = trainClass.gradeName + "/" + trainClass.subjectName + "/" + trainClass.categoryName,
                     price = trainClass.trainPrice + "/" + trainClass.materialPrice,
@@ -291,7 +296,7 @@ function openTrain(p) {
                 $tr.data("obj", trainClass);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('#enrollInfo #trainName').val(entity.name); //
                 $('#enrollInfo #trainId').val(entity._id); //
                 $('#enrollInfo #trainPrice').val(entity.trainPrice); //
@@ -301,6 +306,8 @@ function openTrain(p) {
                 $('#enrollInfo #attributeName').val(entity.attributeName); //
                 $('#selectModal').modal('hide');
                 $('#enrollInfo #trainId').data("obj", entity);
+                $('#enrollInfo #schoolId').val(entity.schoolId); //
+                $('#enrollInfo #schoolArea').val(entity.schoolArea); //
                 setPrice();
                 renderCoupon();
                 renderAttributeCoupon();
@@ -309,12 +316,15 @@ function openTrain(p) {
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
         setPaging("#selectModal", data);
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $('#selectModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     });
 };
 
 var openEntity = "student";
-$("#panel_btnStudent").on("click", function(e) {
+$("#panel_btnStudent").on("click", function (e) {
     openEntity = "student";
     $('#selectModal .modal-dialog').removeClass("modal-lg");
     $selectSearch.empty();
@@ -327,7 +337,7 @@ $("#panel_btnStudent").on("click", function(e) {
     openStudent();
 });
 
-$("#panel_btnTrain").on("click", function(e) {
+$("#panel_btnTrain").on("click", function (e) {
     openEntity = "train";
     $('#selectModal .modal-dialog').addClass("modal-lg");
     $selectSearch.empty();
@@ -342,7 +352,7 @@ $("#panel_btnTrain").on("click", function(e) {
     renderGradeSubjectCategoryYear(openTrain);
 });
 
-$("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
+$("#selectModal #InfoSearch").on("click", "#btnSearch", function (e) {
     if (openEntity == "student") {
         openStudent();
     } else if (openEntity == "train") {
@@ -350,7 +360,7 @@ $("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
     }
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     if (openEntity == "student") {
         openStudent(page);
@@ -359,7 +369,7 @@ $("#selectModal .paging .prepage").on("click", function(e) {
     }
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     if (openEntity == "student") {
         openStudent(page);
@@ -372,7 +382,7 @@ function setPrice() {
     var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()) || 0,
         discount = parseFloat($("#enrollInfo #discount").val()),
         reducePrice = 0;
-    checkCoupons(function(index) {
+    checkCoupons(function (index) {
         if (this.checked) {
             var $this = $(this);
             reducePrice = $this.data("obj").reducePrice;
@@ -390,10 +400,10 @@ $("#enrollInfo #discount").on("change blur", setPrice);
 
 function resetDropDown() {
     $('#studentInfo').find("#grade option").remove();
-    selfAjax("get", "/admin/grade/getAll", null, function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function (data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(grade) {
+                data.forEach(function (grade) {
                     $("#studentInfo #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
                 });
             }
@@ -421,7 +431,7 @@ function renderAttributeCoupon() {
             studentId: $("#enrollInfo #studentId").val(),
             attributeId: attributeid
         }
-        selfAjax("post", "/admin/adminEnrollTrain/checkAttributs", filter, function(coupon) {
+        selfAjax("post", "/admin/adminEnrollTrain/checkAttributs", filter, function (coupon) {
             if (coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
                 var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + (coupon.couponName || coupon.name) + '</td><td>' + dateStr +
@@ -442,9 +452,9 @@ function searchCoupon(p) {
         },
         pStr = p ? "p=" + p : "";
     $couponSelectBody.empty();
-    selfAjax("post", "/admin/couponAssignList/searchUseful?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponAssignList/searchUseful?" + pStr, filter, function (data) {
         if (data && data.couponAssigns.length > 0) {
-            data.couponAssigns.forEach(function(coupon) {
+            data.couponAssigns.forEach(function (coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
                 var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + coupon.couponName + '</td><td>' + dateStr +
                     '</td><td>' + coupon.reducePrice + '</td></tr>');
@@ -459,31 +469,31 @@ function searchCoupon(p) {
 };
 
 function setPaingNextPre(modal, searchFuc) {
-    $(modal + " .paging .prepage").off("click").on("click", function(e) {
+    $(modal + " .paging .prepage").off("click").on("click", function (e) {
         var page = parseInt($(modal + " #page").val()) - 1;
         searchFuc(page);
     });
 
-    $(modal + " .paging .nextpage").off("click").on("click", function(e) {
+    $(modal + " .paging .nextpage").off("click").on("click", function (e) {
         var page = parseInt($(modal + " #page").val()) + 1;
         searchFuc(page);
     });
 };
 
-$("#enrollInfo table #gridBody").on("change", "tr td input", function() {
+$("#enrollInfo table #gridBody").on("change", "tr td input", function () {
     setPrice();
 });
 
-$("#enrollInfo #onsale").on("change", function(e) {
+$("#enrollInfo #onsale").on("change", function (e) {
     if ($("#enrollInfo #onsale").val() == 0) {
-        checkCoupons(function(index) {
+        checkCoupons(function (index) {
             if (this.checked) {
                 this.checked = false;
             }
             $(this).attr("disabled", "disabled");
         });
     } else {
-        checkCoupons(function(index) {
+        checkCoupons(function (index) {
             $(this).removeAttr("disabled");
         });
     }
@@ -499,20 +509,20 @@ function renderGradeSubjectCategoryYear(callback) {
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
     // $('#selectModal #InfoSearch').find("#searchYear option").remove();
-    selfAjax("get", "/admin/trainClass/gradesubjectcategoryyear", null, function(data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategoryyear", null, function (data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
-                data.grades.forEach(function(grade) {
+                data.grades.forEach(function (grade) {
                     $("#selectModal #InfoSearch #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
                 });
             }
             if (data.subjects && data.subjects.length > 0) {
-                data.subjects.forEach(function(subject) {
+                data.subjects.forEach(function (subject) {
                     $("#selectModal #InfoSearch #subject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
                 });
             }
             if (data.categorys && data.categorys.length > 0) {
-                data.categorys.forEach(function(category) {
+                data.categorys.forEach(function (category) {
                     $("#selectModal #InfoSearch #category").append("<option value='" + category._id + "'>" + category.name + "</option>");
                 });
             }

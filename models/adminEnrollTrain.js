@@ -61,7 +61,9 @@ var adminEnrollTrainSchema = new mongoose.Schema({
     yearId: String,
     yearName: String,
     superCategoryId: ObjectId, //提升难度
-    superCategoryName: String //提升难度
+    superCategoryName: String, //提升难度
+    schoolId: String,
+    schoolArea: String
 }, {
     collection: 'adminEnrollTrains'
 });

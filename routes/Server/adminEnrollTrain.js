@@ -52,10 +52,7 @@ module.exports = function (app) {
             };
         }
         if (req.body.className) {
-            var reg = new RegExp(req.body.className, 'i')
-            filter.trainName = {
-                $regex: reg
-            };
+            filter.trainName = req.body.className;
         }
         if (req.body.trainId) {
             filter.trainId = req.body.trainId;
@@ -258,7 +255,9 @@ module.exports = function (app) {
                                 realMaterialPrice: req.body.realMaterialPrice,
                                 isSucceed: 1,
                                 comment: req.body.comment,
-                                createdBy: req.session.admin._id
+                                createdBy: req.session.admin._id,
+                                schoolId: req.body.schoolId,
+                                schoolArea: req.body.schoolArea
                             });
                             adminEnrollTrain.save()
                                 .then(function (enrollExam) {
@@ -571,7 +570,9 @@ module.exports = function (app) {
                                         isPayed: true,
                                         payWay: oldOrder.payWay,
                                         createdBy: req.session.admin._id,
-                                        baseId: (oldOrder.baseId || oldOrder._id)
+                                        baseId: (oldOrder.baseId || oldOrder._id),
+                                        schoolId: req.body.schoolId,
+                                        schoolArea: req.body.schoolArea
                                     });
                                     return adminEnrollTrain.save();
                                 });
