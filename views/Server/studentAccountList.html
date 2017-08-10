@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock
+%} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -21,6 +22,7 @@
                     <button type="button" id="btnDuplicateAccount" style="display: none" class="btn btn-primary panelButton">账号整理</button>
                     <button type="button" id="btnDuplicateAccountOnly" style="display: none" class="btn btn-primary panelButton">删除同号码</button>
                     <button type="button" id="btnNoPayWay" style="display: none" class="btn btn-primary panelButton">整理订单无支付方式</button>
+                    <button type="button" id="btnAddSchoolToOrder" style="display: none" class="btn btn-primary panelButton">订单添加校区</button>
                 </div>
             </div>
         </form>
@@ -99,5 +101,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/studentAccount.js?v=1.003"></script>
+<script type="text/javascript" src="/default/assets/js/Server/studentAccount.js?v=1.004"></script>
 {% endblock %}

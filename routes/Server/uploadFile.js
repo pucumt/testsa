@@ -1165,6 +1165,42 @@ module.exports = function (app) {
             });
     });
 
+    //给订单添加校区
+    app.post('/admin/adminEnrollTrain/addSchoolToOrder', checkLogin);
+    app.post('/admin/adminEnrollTrain/addSchoolToOrder', function (req, res) {
+        AdminEnrollTrain.getSpecialFilters({})
+            .then(function (orders) {
+                if (orders && orders.length > 0) {
+                    var pArray = [];
+                    orders.forEach(function (order) {
+                        var p = TrainClass.get(order.trainId)
+                            .then(function (trainClass) {
+                                if (trainClass) {
+                                    //updateyear also could update other attributes
+                                    return AdminEnrollTrain.updateyear(order._id, {
+                                        schoolId: trainClass.schoolId,
+                                        schoolArea: trainClass.schoolArea
+                                    });
+                                } else {
+                                    failedAddStudentToClass(order.trainId, "", "", "没找到课程");
+                                }
+                            });
+                        pArray.push(p);
+                    });
+                    Promise.all(pArray)
+                        .then(function () {
+                            res.jsonp({
+                                sucess: true
+                            });
+                        });
+                } else {
+                    res.jsonp({
+                        error: "没找到任何订单"
+                    });
+                }
+            });
+    });
+
     //重复账号合并
     app.post('/admin/studentAccount/DuplicateAccount', checkLogin);
     app.post('/admin/studentAccount/DuplicateAccount', function (req, res) {
