@@ -290,7 +290,8 @@ module.exports = function (app) {
                                                                 studentId: req.body.studentId,
                                                                 studentName: req.body.studentName,
                                                                 isUsed: true,
-                                                                orderId: enrollExam._id
+                                                                orderId: enrollExam._id,
+                                                                createdBy: req.session.admin._id
                                                             });
                                                             couponAssign.save().then(function (couponAssign) {
                                                                 res.jsonp({
