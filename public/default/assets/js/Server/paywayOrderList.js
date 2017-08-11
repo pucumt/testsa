@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
@@ -10,9 +10,9 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", {}, function(data) {
+    selfAjax("post", "/admin/year/all", {}, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(year) {
+            data.forEach(function (year) {
                 var select = "";
                 if (year.isCurrentYear) {
                     select = "selected";
@@ -42,14 +42,14 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function (data) {
         $selectBody.empty();
         if (data && data.adminEnrollTrains.length > 0) {
 
-            data.adminEnrollTrains.forEach(function(trainOrder) {
+            data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
-                    getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
+                    trainOrder.studentName + '</td><td>' + trainOrder.trainName +
+                    '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' + trainOrder.realMaterialPrice + '</td><td>' +
                     (trainOrder.isPayed ? "是" : "否") + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') +
                     '</td><td><div class="btn-group">' + getButtons(trainOrder.payWay) + '</div></td></tr>');
@@ -63,16 +63,16 @@ function searchOrder(p) {
     });
 };
 
-$("#InfoSearch #btnSearch").on("click", function(e) {
+$("#InfoSearch #btnSearch").on("click", function (e) {
     searchOrder();
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     searchOrder(page);
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     searchOrder(page);
 });
@@ -82,25 +82,28 @@ function refreshPage() {
     searchOrder(page);
 };
 
-$(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $('#myModal #payWay').val(entity.payWay); //
     $('#myModal #id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#myModal #btnSave").on("click", function(e) {
+$("#myModal #btnSave").on("click", function (e) {
     var postURI = "/admin/adminEnrollTrain/changePayway",
         postObj = {
             payWay: $.trim($('#myModal #payWay').val()),
             id: $('#id').val()
         };
-    selfAjax("post", postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function (data) {
         $('#myModal').modal('hide');
         if (data && data.sucess) {
             showAlert("修改成功！");
-            $('#confirmModal .modal-footer .btn-default').on("click", function(e) {
+            $('#confirmModal .modal-footer .btn-default').on("click", function (e) {
                 refreshPage();
             });
         } else {

@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnRebate").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
     renderSearchYearDropDown(); //search orders after get years
@@ -10,9 +10,9 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", {}, function(data) {
+    selfAjax("post", "/admin/year/all", {}, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(year) {
+            data.forEach(function (year) {
                 var select = "";
                 if (year.isCurrentYear) {
                     select = "selected";
@@ -36,18 +36,18 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function (data) {
         if (data && data.adminEnrollTrains.length > 0) {
-            var getButtons = function(isPayed, isSucceed) {
+            var getButtons = function (isPayed, isSucceed) {
                 if (isPayed) { //isPayed &&
                     return '<a class="btn btn-default btnRebate">退费</a>';
                 }
                 return '';
             };
-            data.adminEnrollTrains.forEach(function(trainOrder) {
+            data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
+                    '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' +
                     trainOrder.realMaterialPrice + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' +
                     getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
@@ -61,16 +61,16 @@ function searchOrder(p) {
     });
 };
 
-$("#InfoSearch #btnSearch").on("click", function(e) {
+$("#InfoSearch #btnSearch").on("click", function (e) {
     searchOrder();
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     searchOrder(page);
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     searchOrder(page);
 });
@@ -83,7 +83,7 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
             // List of fields and their validation rules
             fields: {
@@ -122,7 +122,7 @@ function addValidation(callback) {
     }, 0);
 };
 
-$("#gridBody").on("click", "td .btnRebate", function(e) {
+$("#gridBody").on("click", "td .btnRebate", function (e) {
     destroy();
     addValidation();
     var obj = e.currentTarget;
@@ -148,20 +148,26 @@ $("#gridBody").on("click", "td .btnRebate", function(e) {
         selfAjax("post", "/admin/adminEnrollTrain/isAttributCouponUsed", {
             studentId: entity.studentId,
             attributeId: entity.attributeId
-        }, function(data) {
+        }, function (data) {
             if (data) {
                 if ((!entity.comment) || entity.comment.indexOf("优惠券") < 0) {
                     $('#myModal #comment').val((entity.comment ? entity.comment + ";" : "") + "订单使用优惠券：" + data);
                 }
             }
-            $('#myModal').modal({ backdrop: 'static', keyboard: false });
+            $('#myModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         });
     } else {
-        $('#myModal').modal({ backdrop: 'static', keyboard: false });
+        $('#myModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     }
 });
 
-$("#myModal #btnOnlineRebate").on("click", function(e) {
+$("#myModal #btnOnlineRebate").on("click", function (e) {
     //退款//在线
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
@@ -173,10 +179,10 @@ $("#myModal #btnOnlineRebate").on("click", function(e) {
                 materialPrice: $('#myModal #materialPrice').val(),
                 comment: $('#myModal #comment').val()
             };
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             if (data.sucess) {
                 showAlert("退费成功！");
-                $('#confirmModal .modal-footer .btn-default').off("click").on("click", function(e) {
+                $('#confirmModal .modal-footer .btn-default').off("click").on("click", function (e) {
                     location.href = "/admin/trainOrderList/id/" + $('#myModal #Id').val();
                 });
                 return;
@@ -186,7 +192,7 @@ $("#myModal #btnOnlineRebate").on("click", function(e) {
     }
 });
 
-$("#myModal #btnOfflineRebate").off("click").on("click", function(e) {
+$("#myModal #btnOfflineRebate").off("click").on("click", function (e) {
     //退款//现金
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
@@ -198,10 +204,10 @@ $("#myModal #btnOfflineRebate").off("click").on("click", function(e) {
                 materialPrice: $('#myModal #materialPrice').val(),
                 comment: $('#myModal #comment').val()
             };
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             if (data.sucess) {
                 showAlert("退费成功！");
-                $('#confirmModal .modal-footer .btn-default').off("click").on("click", function(e) {
+                $('#confirmModal .modal-footer .btn-default').off("click").on("click", function (e) {
                     location.href = "/admin/trainOrderList/id/" + $('#myModal #Id').val();
                 });
                 return;

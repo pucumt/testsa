@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnChangeClass").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
     renderSearchYearDropDown(); //search orders after get years
@@ -10,9 +10,9 @@ $(document).ready(function() {
 });
 
 function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", null, function(data) {
+    selfAjax("post", "/admin/year/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(year) {
+            data.forEach(function (year) {
                 var select = "";
                 if (year.isCurrentYear) {
                     select = "selected";
@@ -36,19 +36,19 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function (data) {
         if (data && data.adminEnrollTrains.length > 0) {
-            var getButtons = function(isPayed, isSucceed) {
+            var getButtons = function (isPayed, isSucceed) {
                 if (isPayed && isSucceed !== 9) { //isPayed &&
                     return '<a class="btn btn-default btnChange">调班</a>';
                 }
                 return '';
             };
             var d = $(document.createDocumentFragment());
-            data.adminEnrollTrains.forEach(function(trainOrder) {
+            data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
                     getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
+                    '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
                     trainOrder.totalPrice + '</td><td>' +
                     trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
@@ -62,21 +62,21 @@ function searchOrder(p) {
     });
 };
 
-$("#InfoSearch #btnSearch").on("click", function(e) {
+$("#InfoSearch #btnSearch").on("click", function (e) {
     searchOrder();
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     searchOrder(page);
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     searchOrder(page);
 });
 
-$("#gridBody").on("click", "td .btnChange", function(e) {
+$("#gridBody").on("click", "td .btnChange", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     location.href = "/admin/changeClassDetail/" + entity._id;

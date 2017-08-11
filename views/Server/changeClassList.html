@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -41,12 +42,13 @@
                 <th style="width:70px;">状态</th>
                 <th style="width:80px;">学生</th>
                 <th>课程</th>
+                <th style="width:160px;">校区</th>
                 <th style="width:70px;">培训费</th>
                 <th style="width:70px;">教材费</th>
                 <th style="width:100px;">实收培训费</th>
                 <th style="width:70px;">教材费</th>
-                <th style="width:100px;">已退金额</th>
-                <th style="width:120px;">操作</th>
+                <th style="width:80px;">已退金额</th>
+                <th style="width:100px;">操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -112,5 +114,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/changeClass.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/changeClass.js?v=1.003"></script>
 {% endblock %}
