@@ -277,7 +277,7 @@ $("#selectModal .paging .nextpage").on("click", function (e) {
 
 function setPrice() {
     var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
-        discount = parseFloat($("#enrollInfo #discount").val()),
+        discount = (parseFloat($("#enrollInfo #discount").val()) || 100),
         realPrice = (trainPrice * discount / 100).toFixed(2);
 
     $("#enrollInfo #totalPrice").val(realPrice);

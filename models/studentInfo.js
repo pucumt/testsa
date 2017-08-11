@@ -12,10 +12,16 @@ var studentInfoSchema = new mongoose.Schema({
     sex: Boolean, //0 男 1 女
     isDeleted: Boolean,
     accountId: String,
-    discount: Number, //原始购买打折(特价课程除外)
+    discount: {
+        type: Number,
+        default: 100
+    }, //原始购买打折(特价课程除外)
     gradeId: String,
     gradeName: String,
-    createDate: { type: Date, default: Date.now },
+    createDate: {
+        type: Date,
+        default: Date.now
+    },
     createdBy: String,
     DeleteDate: Date
 }, {
@@ -31,17 +37,17 @@ function StudentInfo(option) {
 module.exports = StudentInfo;
 
 //存储学区信息
-StudentInfo.prototype.save = function() {
+StudentInfo.prototype.save = function () {
     this.option.isDeleted = false;
     var newstudentInfo = new studentInfoModel(this.option);
 
     return newstudentInfo.save();
 };
 
-StudentInfo.prototype.update = function(id, callback) {
+StudentInfo.prototype.update = function (id, callback) {
     studentInfoModel.update({
         _id: id
-    }, this.option).exec(function(err, studentInfo) {
+    }, this.option).exec(function (err, studentInfo) {
         if (err) {
             return callback(err);
         }
@@ -51,54 +57,71 @@ StudentInfo.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-StudentInfo.get = function(id) {
+StudentInfo.get = function (id) {
     //打开数据库
-    return studentInfoModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return studentInfoModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-StudentInfo.getAll = function(id, page, filter, callback) {
+StudentInfo.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = studentInfoModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, studentInfos) {
+            .exec(function (err, studentInfos) {
                 callback(null, studentInfos, count);
             });
     });
 };
 
-StudentInfo.getAllOfStudent = function(id, page, filter, callback) {
+StudentInfo.getAllOfStudent = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = studentInfoModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
             // .select({ 'name': 1 })
-            .exec(function(err, studentInfos) {
+            .exec(function (err, studentInfos) {
                 callback(null, studentInfos, count);
             });
     });
 };
 
 //删除一个学区
-StudentInfo.delete = function(id, callback) {
+StudentInfo.delete = function (id, callback) {
     studentInfoModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, studentInfo) {
+    }).exec(function (err, studentInfo) {
         if (err) {
             return callback(err);
         }
@@ -107,22 +130,26 @@ StudentInfo.delete = function(id, callback) {
 };
 
 //读取学区信息
-StudentInfo.getFilter = function(filter) {
+StudentInfo.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return studentInfoModel.findOne(filter);
 };
 
-StudentInfo.getFilters = function(filter) {
+StudentInfo.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return studentInfoModel.find(filter);
 };
 
-StudentInfo.deleteFilter = function(filter, callback) {
+StudentInfo.deleteFilter = function (filter, callback) {
     studentInfoModel.update(filter, {
         isDeleted: true
-    }).exec(function(err, studentInfo) {
+    }).exec(function (err, studentInfo) {
         if (err) {
             return callback(err);
         }
@@ -130,21 +157,33 @@ StudentInfo.deleteFilter = function(filter, callback) {
     });
 };
 
-StudentInfo.getAllDuplicated = function() {
-    return studentInfoModel.aggregate({ $match: { isDeleted: { $ne: true } } })
+StudentInfo.getAllDuplicated = function () {
+    return studentInfoModel.aggregate({
+            $match: {
+                isDeleted: {
+                    $ne: true
+                }
+            }
+        })
         .group({
             _id: {
                 name: "$name",
                 mobile: "$mobile",
             },
-            count: { $sum: 1 }
+            count: {
+                $sum: 1
+            }
         })
-        .match({ count: { $gt: 1 } })
+        .match({
+            count: {
+                $gt: 1
+            }
+        })
         .exec();
 
 };
 
-StudentInfo.deleteUser = function(id) {
+StudentInfo.deleteUser = function (id) {
     return studentInfoModel.update({
         _id: id
     }, {
@@ -153,7 +192,9 @@ StudentInfo.deleteUser = function(id) {
 };
 
 
-StudentInfo.updateUserInfo = function(filter, option) {
+StudentInfo.updateUserInfo = function (filter, option) {
     //打开数据库
-    return studentInfoModel.update(filter, option, { multi: true }).exec();
+    return studentInfoModel.update(filter, option, {
+        multi: true
+    }).exec();
 };
