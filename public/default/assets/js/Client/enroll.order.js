@@ -35,7 +35,7 @@ function renderData() {
             }
 
             var couponList = [];
-            if (data.student && data.student.discount) {
+            if (data.student && data.student.discount && data.student.discount != 100) {
                 couponList.push({ id: 0, name: (data.student.discount / 100) + "折", entity: data.student });
             }
             if (data.assigns && data.assigns.length > 0) {
