@@ -329,6 +329,7 @@ TrainClass.getAllToOriginalEnroll = function (id, page, filter, callback) {
             }
         };
     }
+    filter.$where = "this.enrollCount < this.totalStudentCount";
     var query = trainClassModel.count(filter);
     query.exec(function (err, count) {
         query.find()
