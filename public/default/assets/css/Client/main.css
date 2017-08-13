@@ -225,6 +225,9 @@ footer,
 
 #Enroll-select.changeClass {
     padding: 0;
+    bottom: initial;
+    position: relative;
+    display: block;
 }
 
 #confirmModal {
