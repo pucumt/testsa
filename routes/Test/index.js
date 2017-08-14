@@ -4,7 +4,7 @@ var https = require('https'),
 
 function toxml(nodes) {
     var xmlContent = "<xml>";
-    nodes.forEach(function(node) {
+    nodes.forEach(function (node) {
         xmlContent = xmlContent + "<" + node.key + "><![CDATA[" + node.value + "]]></" + node.key + ">"
     });
     xmlContent = xmlContent + "</xml>";
@@ -19,34 +19,61 @@ function mysubstr(body, sstart, sstop) {
 
     return resultBody;
 };
-module.exports = function(app) {
-    app.get('/test', function(req, res) {
-        res.render('Test/index.html', {
+module.exports = function (app) {
+    app.get('/test', function (req, res) {
+        res.render('Test/irecorder.html', {
             title: '测试支付'
         });
     });
 
-    app.post('/test', function(req, res) {
+    app.post('/test', function (req, res) {
         var paras = [],
             strPay = "service=pay.weixin.native&mch_id=101560037142&out_trade_no=" + req.body.orderId +
             "&body=" + req.body.body1 + "&total_fee=" + req.body.orderAmount + "&mch_create_ip=127.0.0.1&notify_url=http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp" +
             "&nonce_str=testnonce&key=e6371d360d79eb9fa4c25c7f91d2bc6b";
         strPay = "body=1&mch_create_ip=127.0.0.1&mch_id=101560037142&nonce_str=51cps&notify_url=http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp&out_trade_no=201744227240&service=pay.weixin.native&total_fee=1&key=e6371d360d79eb9fa4c25c7f91d2bc6b";
 
-        paras.push({ key: 'body', value: '1' });
-        paras.push({ key: 'mch_create_ip', value: '127.0.0.1' });
-        paras.push({ key: 'mch_id', value: '101560037142' });
-        paras.push({ key: 'nonce_str', value: '51cps' });
-        paras.push({ key: 'notify_url', value: 'http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp' });
-        paras.push({ key: 'out_trade_no', value: '201744227240' });
-        paras.push({ key: 'service', value: 'pay.weixin.native' });
-        paras.push({ key: 'total_fee', value: '1' });
+        paras.push({
+            key: 'body',
+            value: '1'
+        });
+        paras.push({
+            key: 'mch_create_ip',
+            value: '127.0.0.1'
+        });
+        paras.push({
+            key: 'mch_id',
+            value: '101560037142'
+        });
+        paras.push({
+            key: 'nonce_str',
+            value: '51cps'
+        });
+        paras.push({
+            key: 'notify_url',
+            value: 'http://zhangwei.dev.swiftpass.cn/demo/TenpayResult.asp'
+        });
+        paras.push({
+            key: 'out_trade_no',
+            value: '201744227240'
+        });
+        paras.push({
+            key: 'service',
+            value: 'pay.weixin.native'
+        });
+        paras.push({
+            key: 'total_fee',
+            value: '1'
+        });
         // paras.push({ key: 'key', value: '9d101c97133837e13dde2d32a5054abb' });
 
         var md5 = crypto.createHash('md5'),
             sign = md5.update(strPay).digest('hex').toUpperCase();
 
-        paras.push({ key: 'sign', value: sign });
+        paras.push({
+            key: 'sign',
+            value: sign
+        });
         var data = toxml(paras);
         var options = {
             hostname: 'pay.swiftpass.cn',
@@ -55,11 +82,11 @@ module.exports = function(app) {
             method: 'POST'
         };
 
-        var reqPay = https.request(options, function(resPay) {
+        var reqPay = https.request(options, function (resPay) {
             console.log('statusCode:', resPay.statusCode);
             console.log('headers:', resPay.headers);
 
-            resPay.on('data', function(d) {
+            resPay.on('data', function (d) {
                 var body = d.toString(),
                     imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
 
@@ -70,7 +97,7 @@ module.exports = function(app) {
             });
         });
 
-        reqPay.on('error', function(e) {
+        reqPay.on('error', function (e) {
             console.error(e);
         });
         reqPay.write(data);

@@ -3,22 +3,22 @@ var client = require('./Client/index.js'),
     updateStudentAccount = require('./Test/updateStudentAccount.js'),
     server = require('./Server/index.js'),
     teacher = require('./Teacher/index.js'),
-    // test = require('./Test/index.js'),
+    test = require('./Test/index.js'),
     generator = require('./Test/generator.js');
 // dbPressure = require('./Test/dbPressure.js'),
 // openIdGeter = require('./Test/openIdGeter');
 
-module.exports = function(app) {
+module.exports = function (app) {
     client(app);
     server(app);
     teacher(app);
-    //test(app);
+    test(app);
     generator(app);
     // dbPressure(app);
     // openIdGeter(app);
     updateStudentAccount(app);
 
-    app.use(function(req, res) {
+    app.use(function (req, res) {
         res.render("404.html");
     });
 };
