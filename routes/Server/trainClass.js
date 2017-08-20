@@ -10,9 +10,9 @@ var TrainClass = require('../../models/trainClass.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/trainClassList', checkLogin);
-    app.get('/admin/trainClassList', function(req, res) {
+    app.get('/admin/trainClassList', function (req, res) {
         res.render('Server/trainClassList.html', {
             title: '>课程设置',
             user: req.session.admin
@@ -20,7 +20,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/batchTrainClass', checkLogin);
-    app.get('/admin/batchTrainClass', function(req, res) {
+    app.get('/admin/batchTrainClass', function (req, res) {
         res.render('Server/batchTrainClass.html', {
             title: '>课程批量上传',
             user: req.session.admin
@@ -28,7 +28,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/batchTrainClasspublish', checkLogin);
-    app.get('/admin/batchTrainClasspublish', function(req, res) {
+    app.get('/admin/batchTrainClasspublish', function (req, res) {
         res.render('Server/batchTrainClassPublish.html', {
             title: '>课程批量发布',
             user: req.session.admin
@@ -36,7 +36,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/batchAddStudentToTrainClass', checkLogin);
-    app.get('/admin/batchAddStudentToTrainClass', function(req, res) {
+    app.get('/admin/batchAddStudentToTrainClass', function (req, res) {
         res.render('Server/batchAddStudentToTrainClass.html', {
             title: '>批量添加学生到课程',
             user: req.session.admin
@@ -44,7 +44,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/batchAddTeacherToTrainClass', checkLogin);
-    app.get('/admin/batchAddTeacherToTrainClass', function(req, res) {
+    app.get('/admin/batchAddTeacherToTrainClass', function (req, res) {
         res.render('Server/batchAddTeacherToTrainClass.html', {
             title: '>批量添加老师教室到课程',
             user: req.session.admin
@@ -52,7 +52,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/trainClass/add', checkLogin);
-    app.post('/admin/trainClass/add', function(req, res) {
+    app.post('/admin/trainClass/add', function (req, res) {
         var trainClass = new TrainClass({
             name: req.body.name,
             yearId: req.body.yearId,
@@ -84,13 +84,13 @@ module.exports = function(app) {
             exams: JSON.parse(req.body.exams)
         });
 
-        trainClass.save().then(function(tclass) {
+        trainClass.save().then(function (tclass) {
             res.jsonp(tclass);
         });
     });
 
     app.post('/admin/trainClass/edit', checkLogin);
-    app.post('/admin/trainClass/edit', function(req, res) {
+    app.post('/admin/trainClass/edit', function (req, res) {
         var trainClass = new TrainClass({
             name: req.body.name,
             yearId: req.body.yearId,
@@ -121,228 +121,273 @@ module.exports = function(app) {
         });
 
         trainClass.update(req.body.id)
-            .then(function() {
+            .then(function () {
                 res.jsonp(trainClass);
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.log(err);
             });
     });
 
     app.post('/admin/trainClass/delete', checkLogin);
-    app.post('/admin/trainClass/delete', function(req, res) {
-        TrainClass.delete(req.body.id, function(err, trainClass) {
+    app.post('/admin/trainClass/delete', function (req, res) {
+        TrainClass.delete(req.body.id, function (err, trainClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', checkLogin);
-    app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', function(req, res) {
+    app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', function (req, res) {
         var objReturn = {};
         var p0 = Year.getAllWithoutPage()
-            .then(function(years) {
+            .then(function (years) {
                 objReturn.years = years;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p1 = Grade.getAllWithoutPage()
-            .then(function(grades) {
+            .then(function (grades) {
                 objReturn.grades = grades;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p2 = Subject.getAllWithoutPage()
-            .then(function(subjects) {
+            .then(function (subjects) {
                 objReturn.subjects = subjects;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p3 = Category.getAllWithoutPage()
-            .then(function(categorys) {
+            .then(function (categorys) {
                 objReturn.categorys = categorys;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p4 = ExamClass.getAllWithoutPage()
-            .then(function(exams) {
+            .then(function (exams) {
                 objReturn.exams = exams;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p5 = ClassAttribute.getAllWithoutPage()
-            .then(function(attributes) {
+            .then(function (attributes) {
                 objReturn.attributes = attributes;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p0, p1, p2, p3, p4, p5]).then(function() {
+        Promise.all([p0, p1, p2, p3, p4, p5]).then(function () {
                 res.jsonp(objReturn);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
     });
 
     app.get('/admin/trainClass/gradesubjectcategoryyear', checkLogin);
-    app.get('/admin/trainClass/gradesubjectcategoryyear', function(req, res) {
+    app.get('/admin/trainClass/gradesubjectcategoryyear', function (req, res) {
         var objReturn = {};
         var p1 = Grade.getAllWithoutPage()
-            .then(function(grades) {
+            .then(function (grades) {
                 objReturn.grades = grades;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p2 = Subject.getAllWithoutPage()
-            .then(function(subjects) {
+            .then(function (subjects) {
                 objReturn.subjects = subjects;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p3 = Category.getAllWithoutPage()
-            .then(function(categorys) {
+            .then(function (categorys) {
                 objReturn.categorys = categorys;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p4 = Year.getFilters({})
-            .then(function(years) {
+            .then(function (years) {
                 objReturn.years = years;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p3, p4]).then(function() {
+        Promise.all([p1, p2, p3, p4]).then(function () {
                 res.jsonp(objReturn);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
     });
 
     app.get('/admin/trainClass/gradesubjectattribute', checkLogin);
-    app.get('/admin/trainClass/gradesubjectattribute', function(req, res) {
+    app.get('/admin/trainClass/gradesubjectattribute', function (req, res) {
         var objReturn = {};
         var p1 = Grade.getAllWithoutPage()
-            .then(function(grades) {
+            .then(function (grades) {
                 objReturn.grades = grades;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p2 = Subject.getAllWithoutPage()
-            .then(function(subjects) {
+            .then(function (subjects) {
                 objReturn.subjects = subjects;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
         var p5 = ClassAttribute.getAllWithoutPage()
-            .then(function(attributes) {
+            .then(function (attributes) {
                 objReturn.attributes = attributes;
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p5]).then(function() {
+        Promise.all([p1, p2, p5]).then(function () {
                 res.jsonp(objReturn);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
     });
 
     app.post('/admin/trainClass/publish', checkLogin);
-    app.post('/admin/trainClass/publish', function(req, res) {
-        TrainClass.publish(req.body.id, function(err, trainClass) {
+    app.post('/admin/trainClass/publish', function (req, res) {
+        TrainClass.publish(req.body.id, function (err, trainClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/trainClass/publishAll', checkLogin);
-    app.post('/admin/trainClass/publishAll', function(req, res) {
-        TrainClass.publishAll(JSON.parse(req.body.ids), function(err, trainClass) {
+    app.post('/admin/trainClass/publishAll', function (req, res) {
+        TrainClass.publishAll(JSON.parse(req.body.ids), function (err, trainClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/trainClass/unPublish', checkLogin);
-    app.post('/admin/trainClass/unPublish', function(req, res) {
-        TrainClass.unPublish(req.body.id, function(err, trainClass) {
+    app.post('/admin/trainClass/unPublish', function (req, res) {
+        TrainClass.unPublish(req.body.id, function (err, trainClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/trainClass/originalclass', checkLogin);
-    app.post('/admin/trainClass/originalclass', function(req, res) {
-        TrainClass.setToOriginal(req.body.id, function(err, trainClass) {
+    app.post('/admin/trainClass/originalclass', function (req, res) {
+        TrainClass.setToOriginal(req.body.id, function (err, trainClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/trainClass/reset', checkLogin);
-    app.post('/admin/trainClass/reset', function(req, res) {
+    app.post('/admin/trainClass/reset', function (req, res) {
         AdminEnrollTrain.getFilters({
             isSucceed: 1,
             trainId: req.body.id
-        }).then(function(orders) {
+        }).then(function (orders) {
             var trainClass = new TrainClass({
                 enrollCount: orders.length
             });
-            trainClass.update(req.body.id).then(function() {
-                res.jsonp({ sucess: true });
+            trainClass.update(req.body.id).then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
         });
     });
 
+    app.post('/admin/trainClass/updateOrder', checkLogin);
+    app.post('/admin/trainClass/updateOrder', function (req, res) {
+        TrainClass.get(req.body.id)
+            .then(function (trainClass) {
+                AdminEnrollTrain.batchUpdate({
+                    isSucceed: 1,
+                    trainId: req.body.id
+                }, {
+                    trainName: trainClass.name
+                }).then(function () {
+                    res.jsonp({
+                        sucess: true
+                    });
+                });
+            });
+    });
+
     app.post('/admin/trainClass/unPublishAll', checkLogin);
-    app.post('/admin/trainClass/unPublishAll', function(req, res) {
-        TrainClass.unPublishAll(JSON.parse(req.body.ids), function(err, trainClass) {
+    app.post('/admin/trainClass/unPublishAll', function (req, res) {
+        TrainClass.unPublishAll(JSON.parse(req.body.ids), function (err, trainClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/trainClass/deleteAll', checkLogin);
-    app.post('/admin/trainClass/deleteAll', function(req, res) {
+    app.post('/admin/trainClass/deleteAll', function (req, res) {
         TrainClass.deleteAll(JSON.parse(req.body.ids))
-            .then(function() {
-                res.jsonp({ sucess: true });
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
     app.post('/admin/trainClass/search', checkLogin);
-    app.post('/admin/trainClass/search', function(req, res) {
+    app.post('/admin/trainClass/search', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
@@ -376,7 +421,7 @@ module.exports = function(app) {
             }
         }
 
-        TrainClass.getAll(null, page, filter, function(err, trainClasss, total) {
+        TrainClass.getAll(null, page, filter, function (err, trainClasss, total) {
             if (err) {
                 trainClasss = [];
             }
@@ -391,57 +436,71 @@ module.exports = function(app) {
     });
 
     app.post('/admin/batchTrainClasspublish', checkLogin);
-    app.post('/admin/batchTrainClasspublish', function(req, res) {
+    app.post('/admin/batchTrainClasspublish', function (req, res) {
         TrainClass.publishWithYear(req.body.id)
-            .then(function() {
-                res.jsonp({ sucess: true });
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
     app.post('/admin/batchTrainClassUnpublish', checkLogin);
-    app.post('/admin/batchTrainClassUnpublish', function(req, res) {
+    app.post('/admin/batchTrainClassUnpublish', function (req, res) {
         TrainClass.unpublishWithYear(req.body.id)
-            .then(function() {
-                res.jsonp({ sucess: true });
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
     app.post('/admin/batchAdd100', checkLogin);
-    app.post('/admin/batchAdd100', function(req, res) {
+    app.post('/admin/batchAdd100', function (req, res) {
         var filter = {
             yearId: req.body.id
         };
         if (req.body.gradeId) {
-            filter.gradeId = { $ne: req.body.gradeId };
+            filter.gradeId = {
+                $ne: req.body.gradeId
+            };
         }
         TrainClass.add100(filter)
-            .then(function() {
-                res.jsonp({ sucess: true });
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
     app.post('/admin/batchMin100', checkLogin);
-    app.post('/admin/batchMin100', function(req, res) {
+    app.post('/admin/batchMin100', function (req, res) {
         var filter = {
             yearId: req.body.id
         };
         if (req.body.gradeId) {
-            filter.gradeId = { $ne: req.body.gradeId };
+            filter.gradeId = {
+                $ne: req.body.gradeId
+            };
         }
         TrainClass.min100(filter)
-            .then(function() {
-                res.jsonp({ sucess: true });
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
     app.post('/admin/adminEnrollTrain/getTrain', checkLogin);
-    app.post('/admin/adminEnrollTrain/getTrain', function(req, res) {
+    app.post('/admin/adminEnrollTrain/getTrain', function (req, res) {
         TrainClass.get(req.body.id)
-            .then(function(trainClass) {
+            .then(function (trainClass) {
                 if (trainClass) {
                     res.jsonp(trainClass);
                 } else {
-                    res.jsonp({ error: "没找到订单" });
+                    res.jsonp({
+                        error: "没找到订单"
+                    });
                     return;
                 }
             });
