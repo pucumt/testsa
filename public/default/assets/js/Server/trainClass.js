@@ -1,7 +1,7 @@
 var isNew = true,
     fullExams;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnTrainClass").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -18,24 +18,24 @@ $(document).ready(function() {
         dateFormat: "yy-mm-dd"
     });
     renderSearchYearDropDown(); //search class after get years
-    $("#btnBatchAdd").on("click", function(e) {
+    $("#btnBatchAdd").on("click", function (e) {
         location.href = "/admin/batchTrainClass";
     });
 
-    $("#btnBatchPublish").on("click", function(e) {
+    $("#btnBatchPublish").on("click", function (e) {
         location.href = "/admin/batchTrainClasspublish";
     });
 
-    $("#btnBatchAddStudent").on("click", function(e) {
+    $("#btnBatchAddStudent").on("click", function (e) {
         location.href = "/admin/batchAddStudentToTrainClass";
     });
 
-    $("#btnBatchAddTeacher").on("click", function(e) {
+    $("#btnBatchAddTeacher").on("click", function (e) {
         location.href = "/admin/batchAddTeacherToTrainClass";
     });
 
-    $("#selectAll").on("change", function(e) {
-        $("input[type=checkbox][name=trainId]").each(function() {
+    $("#selectAll").on("change", function (e) {
+        $("input[type=checkbox][name=trainId]").each(function () {
             this.checked = e.currentTarget.checked;
         });
     });
@@ -43,9 +43,9 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", null, function(data) {
+    selfAjax("post", "/admin/year/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(year) {
+            data.forEach(function (year) {
                 var select = "";
                 if (year.isCurrentYear) {
                     select = "selected";
@@ -58,16 +58,18 @@ function renderSearchYearDropDown() {
 };
 
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function(isWeixin) {
-    var buttons = '<a class="btn btn-default btnReset hidden">重算</a><a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">原班</a>';
+var getButtons = function (isWeixin) {
+    var buttons = '<a class="btn btn-default btnReset hidden">重算</a><a class="btn btn-default btnEdit">编辑</a> \
+    <a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnUpgrade">原班</a>';
     if (isWeixin == 1) {
         buttons += '<a class="btn btn-default btnUnPublish">停用</a>';
     } else {
         buttons += '<a class="btn btn-default btnPublish">发布</a>';
     }
+    buttons += '<a class="btn btn-default btnUpdateOrder hidden">更新订单</a>';
     return buttons;
 };
-var getClassStatus = function(isWeixin) {
+var getClassStatus = function (isWeixin) {
     if (isWeixin == 1) {
         return "发布";
     } else if (isWeixin == 2) {
@@ -89,11 +91,11 @@ function searchClass(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function (data) {
         $mainSelectBody.empty();
         if (data && data.trainClasss.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.trainClasss.forEach(function(trainClass) {
+            data.trainClasss.forEach(function (trainClass) {
                 var trObject = $('<tr id=' + trainClass._id + '><td><span><input type="checkbox" name="trainId" value=' + trainClass._id + ' /></span>' + trainClass.name + '</td><td>' +
                     getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.trainPrice + '</td><td>' + trainClass.materialPrice +
                     '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
@@ -109,16 +111,16 @@ function searchClass(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     searchClass();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     searchClass(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     searchClass(page);
 });
@@ -134,7 +136,7 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         var validator = $('#myModal').data('formValidation');
         if (!validator) {
             $('#myModal').formValidation({
@@ -265,10 +267,10 @@ function resetDropDown(objs) {
     $("#myModal .examList [name='minScore']").val(0);
     $("#myModal #classAttribute").append("<option value=''></option>");
 
-    selfAjax("get", "/admin/trainClass/yeargradesubjectcategoryexamattribute", null, function(data) {
+    selfAjax("get", "/admin/trainClass/yeargradesubjectcategoryexamattribute", null, function (data) {
         if (data) {
             if (data.years && data.years.length > 0) {
-                data.years.forEach(function(year) {
+                data.years.forEach(function (year) {
                     var select = "";
                     if (objs && year._id == objs.yearid) {
                         select = "selected";
@@ -277,7 +279,7 @@ function resetDropDown(objs) {
                 });
             }
             if (data.grades && data.grades.length > 0) {
-                data.grades.forEach(function(grade) {
+                data.grades.forEach(function (grade) {
                     var select = "";
                     if (objs && grade._id == objs.gradeid) {
                         select = "selected";
@@ -286,7 +288,7 @@ function resetDropDown(objs) {
                 });
             }
             if (data.subjects && data.subjects.length > 0) {
-                data.subjects.forEach(function(subject) {
+                data.subjects.forEach(function (subject) {
                     var select = "";
                     if (objs && subject._id == objs.subjectid) {
                         select = "selected";
@@ -295,7 +297,7 @@ function resetDropDown(objs) {
                 });
             }
             if (data.categorys && data.categorys.length > 0) {
-                data.categorys.forEach(function(category) {
+                data.categorys.forEach(function (category) {
                     var select = "";
                     if (objs && category._id == objs.categoryid) {
                         select = "selected";
@@ -304,7 +306,7 @@ function resetDropDown(objs) {
                 });
             }
             if (data.attributes && data.attributes.length > 0) {
-                data.attributes.forEach(function(attribute) {
+                data.attributes.forEach(function (attribute) {
                     var select = "";
                     if (objs && attribute._id == objs.attributeid) {
                         select = "selected";
@@ -343,7 +345,7 @@ function renderExams(id) {
     var d = $(document.createDocumentFragment());
     if (fullExams && fullExams.length > 0) {
         d.append("<option value=''></option>");
-        fullExams.forEach(function(exam) {
+        fullExams.forEach(function (exam) {
             var select = "";
             if (id && exam._id == id) {
                 select = "selected";
@@ -354,7 +356,7 @@ function renderExams(id) {
     return d;
 };
 
-$("#myModal #btnSave").on("click", function(e) {
+$("#myModal #btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/trainClass/add",
@@ -390,7 +392,7 @@ $("#myModal #btnSave").on("click", function(e) {
             postURI = "/admin/trainClass/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             searchClass(page);
@@ -400,7 +402,7 @@ $("#myModal #btnSave").on("click", function(e) {
 
 function getAllExams() {
     var returnObjecgs = [];
-    $("#myModal .examList [name='examName']").each(function(index) {
+    $("#myModal .examList [name='examName']").each(function (index) {
         if ($(this).val() != "") {
             returnObjecgs.push({
                 examId: $(this).val(),
@@ -414,7 +416,7 @@ function getAllExams() {
 //------------end
 
 //------------main form events
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -438,10 +440,13 @@ $("#btnAdd").on("click", function(e) {
     // $('#minScore').val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -477,17 +482,20 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function(e) {
     });
     $('#myModal #id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/trainClass/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
@@ -496,14 +504,14 @@ $(".content.mainModal #gridBody").on("click", "td .btnDelete", function(e) {
     });
 });
 
-$(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnPublish", function (e) {
     showConfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/trainClass/publish", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             searchClass(page);
@@ -511,14 +519,14 @@ $(".content.mainModal #gridBody").on("click", "td .btnPublish", function(e) {
     });
 });
 
-$(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function (e) {
     showConfirm("确定要设为原班原报吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/trainClass/originalclass", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             searchClass(page);
@@ -526,14 +534,14 @@ $(".content.mainModal #gridBody").on("click", "td .btnUpgrade", function(e) {
     });
 });
 
-$(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function (e) {
     showConfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/trainClass/unPublish", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             searchClass(page);
@@ -541,14 +549,31 @@ $(".content.mainModal #gridBody").on("click", "td .btnUnPublish", function(e) {
     });
 });
 
-$(".content.mainModal #gridBody").on("click", "td .btnReset", function(e) {
+$(".content.mainModal #gridBody").on("click", "td .btnReset", function (e) {
     showConfirm("确定要重新计算吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/trainClass/reset", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                var page = parseInt($("#mainModal #page").val());
+                searchClass(page);
+            }
+        });
+    });
+});
+
+$(".content.mainModal #gridBody").on("click", "td .btnUpdateOrder", function (e) {
+    showConfirm("确定要更新订单吗？");
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    $("#btnConfirmSave").off("click").on("click", function (e) {
+        selfAjax("post", "/admin/trainClass/updateOrder", {
+            id: entity._id
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 var page = parseInt($("#mainModal #page").val());
@@ -573,14 +598,14 @@ function searchRoom(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th style="width:50%">教室名称</th><th>校区</th></tr>');
-    selfAjax("post", "/admin/classRoomList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/classRoomList/search?" + pStr, filter, function (data) {
         if (data && data.classRooms.length > 0) {
-            data.classRooms.forEach(function(classRoom) {
+            data.classRooms.forEach(function (classRoom) {
                 var $tr = $('<tr><td>' + classRoom.name + '</td><td>' + classRoom.schoolArea + '</td></tr>');
                 $tr.data("obj", classRoom);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('#myModal #classRoom').val(entity.name); //
                 $('#myModal #classRoomid').val(entity._id); //
                 $('#myModal #school').val(entity.schoolArea); //
@@ -595,7 +620,7 @@ function searchRoom(p) {
 };
 
 var openEntity = "classRoom";
-$("#modal_btnClassRoom").on("click", function(e) {
+$("#modal_btnClassRoom").on("click", function (e) {
     openEntity = "classRoom";
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
@@ -604,7 +629,10 @@ $("#modal_btnClassRoom").on("click", function(e) {
         '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     searchRoom();
     $("#selectModal .modal-body").height($(window).height() - 189);
-    $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+    $('#selectModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
 function searchTeacher(p) {
@@ -616,14 +644,14 @@ function searchTeacher(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th style="width:50%">老师姓名</th></tr>');
-    selfAjax("post", "/admin/teacher/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/teacher/search?" + pStr, filter, function (data) {
         if (data && data.teachers.length > 0) {
-            data.teachers.forEach(function(teacher) {
+            data.teachers.forEach(function (teacher) {
                 var $tr = $('<tr><td>' + teacher.name + '</td></tr>');
                 $tr.data("obj", teacher);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('#teacher').val(entity.name); //
                 $('#teacherid').val(entity._id); //
                 $('#selectModal').modal('hide');
@@ -635,7 +663,7 @@ function searchTeacher(p) {
     });
 };
 
-$("#modal_btnTeacher").on("click", function(e) {
+$("#modal_btnTeacher").on("click", function (e) {
     openEntity = "teacher";
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
@@ -644,11 +672,14 @@ $("#modal_btnTeacher").on("click", function(e) {
         '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     searchTeacher();
     $("#selectModal .modal-body").height($(window).height() - 189);
-    $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+    $('#selectModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     if (openEntity == "classRoom") {
         searchRoom(page);
@@ -657,7 +688,7 @@ $("#selectModal .paging .prepage").on("click", function(e) {
     }
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     if (openEntity == "classRoom") {
         searchRoom(page);
@@ -666,7 +697,7 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
     }
 });
 
-$("#selectModal #InfoSearch").on("click", " #btnSearch", function(e) {
+$("#selectModal #InfoSearch").on("click", " #btnSearch", function (e) {
     if (openEntity == "classRoom") {
         searchRoom();
     } else if (openEntity == "teacher") {
@@ -674,7 +705,7 @@ $("#selectModal #InfoSearch").on("click", " #btnSearch", function(e) {
     }
 });
 
-$("#myModal #btnNewExam").on("click", function(e) {
+$("#myModal #btnNewExam").on("click", function (e) {
     var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><select name="examName" class="form-control"></select></div></div><div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div></div>');
     source.find("[name='examName']").append(renderExams());
     $("#myModal .examList .extraExams").append(source);
@@ -685,7 +716,7 @@ $("#myModal #btnNewExam").on("click", function(e) {
 function getAllCheckedExams() {
     var trainIds = [];
     $(".mainModal #gridBody [name='trainId']")
-        .each(function(index) {
+        .each(function (index) {
             if (this.checked) {
                 trainIds.push($(this).val());
             }
@@ -693,17 +724,17 @@ function getAllCheckedExams() {
     return trainIds;
 };
 
-$(".toolbar #btnPublishAll").on("click", function(e) {
+$(".toolbar #btnPublishAll").on("click", function (e) {
     var trainIds = getAllCheckedExams();
     if (trainIds.length > 0) {
         showConfirm("确定要发布吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/trainClass/publishAll", {
                 ids: JSON.stringify(trainIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("发布成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchClass(page);
                     });
@@ -713,17 +744,17 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
     }
 });
 
-$(".toolbar #btnStopAll").on("click", function(e) {
+$(".toolbar #btnStopAll").on("click", function (e) {
     var trainIds = getAllCheckedExams();
     if (trainIds.length > 0) {
         showConfirm("确定要停用吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/trainClass/unPublishAll", {
                 ids: JSON.stringify(trainIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("停用成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchClass(page);
                     });
@@ -733,17 +764,17 @@ $(".toolbar #btnStopAll").on("click", function(e) {
     }
 });
 
-$(".toolbar #btnDeleteAll").on("click", function(e) {
+$(".toolbar #btnDeleteAll").on("click", function (e) {
     var trainIds = getAllCheckedExams();
     if (trainIds.length > 0) {
         showConfirm("确定要删除吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/trainClass/deleteAll", {
                 ids: JSON.stringify(trainIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("删除成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchClass(page);
                     });
