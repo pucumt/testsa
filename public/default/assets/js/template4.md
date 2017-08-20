@@ -2,8 +2,11 @@ var isNew = true;
 
 $(document).ready(function() {
     $("#btnAdmin").addClass("active");
+
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    search();
 });
 
 //------------search funfunction
@@ -93,7 +96,7 @@ $("#btnAdd").on("click", function(e) {
     isNew = true;
     destroy();
     addValidation();
-    $('#name').removeAttr("disabled");
+    // $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增校区");
     $('#name').val("");
     $('#address').val("");
@@ -114,19 +117,11 @@ $("#btnSave").on("click", function(e) {
             postObj.id = $('#id').val();
         }
         selfAjax("post", postURI, postObj, function(data) {
-            $('#myModal').modal('hide');
-            if (isNew) {
-                var $tr = $("<tr id="+data._id+"><td>" + data.name + "</td><td>" + data.address + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
+            if (data.error) {
+                showAlert(data.error);
+                return;
             }
-            else{
-                var name = $('#'+data._id+' td:first-child');
-                name.text(data.name);
-                name.next().text(data.address);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
-            }
+            location.reload();
         });
     }
 });
@@ -137,7 +132,7 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#name').attr("disabled", "disabled");
+    // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改校区");
     $('#name').val(entity.name);
     $('#address').val(entity.address);
@@ -153,10 +148,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
         selfAjax("post", "/admin/#name#/delete", {
             id: entity._id
         }, function(data) {
-            $('#confirmModal').modal('hide');
-            if (data.sucess) {
-                $(obj).parents()[2].remove();
-            }
+           location.reload();
         });
     });
 });

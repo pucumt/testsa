@@ -4,8 +4,17 @@ var db = mongoose.connection;
 
 var #name#Schema = new mongoose.Schema({
     name: String,
-    address: String,
-    isDeleted: { type: Boolean, default: false }
+    createdBy: String,
+    createdDate: {
+        type: Date,
+        default: Date.now
+    },
+    deletedBy: String,
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    deletedDate: Date
 }, {
     collection: '#name#s'
 });
@@ -25,16 +34,10 @@ module.exports = #Name#;
     return new#name#.save();
 };
 
-#Name#.prototype.update = function(id, callback) {
-    #name#Model.update({
+#Name#.prototype.update = function(id) {
+    return #name#Model.update({
         _id: id
-    }, this.option).exec(function(err, #name#) {
-        if (err) {
-            return callback(err);
-        }
-        this.option._id = id;
-        callback(null, this.option);
-    }.bind(this));
+    }, this.option).exec();
 };
 
 //读取学区信息
@@ -62,11 +65,13 @@ module.exports = #Name#;
 };
 
 //删除一个学区
-#Name#.delete = function(id) {
+#Name#.delete = function(id, user) {
     return #name#Model.update({
         _id: id
     }, {
-        isDeleted: true
+        isDeleted: true,
+        deletedBy: user,
+        deletedDate: new Date()
     }).exec();
 };
 

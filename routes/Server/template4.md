@@ -15,7 +15,8 @@ module.exports = function(app) {
     app.post('/admin/#name#/add', function(req, res) {
         var #name# = new #Name#({
             name: req.body.name,
-            address: req.body.address
+            address: req.body.address,
+            createdBy: req.session.admin._id
         });
 
         #name#.save().then(function(result){
@@ -33,17 +34,17 @@ module.exports = function(app) {
             address: req.body.address
         });
 
-        #name#.update(req.body.id, function(err, #name#) {
-            if (err) {
-                #name# = {};
-            }
-            res.jsonp(#name#);
-        });
+        #name#.update(req.body.id)
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
+            });
     });
 
     app.post('/admin/#name#/delete', checkLogin);
     app.post('/admin/#name#/delete', function(req, res) {
-        #Name#.delete(req.body.id).then(function(result){
+        #Name#.delete(req.body.id, req.session.admin._id).then(function(result){
            res.jsonp({ sucess: true });
         });
     });

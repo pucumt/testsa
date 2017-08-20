@@ -1,8 +1,8 @@
 {
-  "name": "BFBWX",
+  "name": "bfbwx",
   "version": "1.0.0",
   "private": true,
-  "description": "BFBWX website",
+  "description": "bfbwx website",
   "repository": {
     "type": "git",
     "url": "https://github.com/pucumt/BFBWX.git"

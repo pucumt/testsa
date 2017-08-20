@@ -40,12 +40,15 @@
 
     absentStudents = require('./absentStudents.js'),
 
+    book = require('./book.js'),
+    lession = require('./lession.js'),
+
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin', checkLogin)
-    app.get('/admin', function(req, res) {
+    app.get('/admin', function (req, res) {
         res.render('Server/adminEnrollTrainList.html', {
             title: '主页',
             user: req.session.admin
@@ -100,4 +103,8 @@ module.exports = function(app) {
     session(app);
 
     absentStudents(app);
+
+    // book
+    book(app);
+    lession(app);
 };

@@ -1,29 +1,31 @@
-$(document).ready(function() {
-    $("#header_btnEnroll").on("click", function(e) {
+$(document).ready(function () {
+    $("#header_btnEnroll").on("click", function (e) {
         location.href = "/admin/adminEnrollTrainList";
     });
-    $("#header_btnClass").on("click", function(e) {
+    $("#header_btnClass").on("click", function (e) {
         location.href = "/admin/trainClassList";
     });
-    $("#header_btnStudent").on("click", function(e) {
+    $("#header_btnStudent").on("click", function (e) {
         location.href = "/admin/studentAccountList";
     });
-    $("#header_btnFinancial").on("click", function(e) {
+    $("#header_btnFinancial").on("click", function (e) {
         location.href = "/admin/schoolReportList";
     });
-    $("#header_btnBasic").on("click", function(e) {
+    $("#header_btnBasic").on("click", function (e) {
         location.href = "/admin/schoolAreaList";
     });
-    $("#header_btnEnrollExam").on("click", function(e) {
+    $("#header_btnEnrollExam").on("click", function (e) {
         location.href = "/admin/adminEnrollExamList";
     });
-    $("#header_btnRollCall").on("click", function(e) {
+    $("#header_btnRollCall").on("click", function (e) {
         location.href = "/admin/adminRollCallList";
     });
-
+    $("#header_btnBook").on("click", function (e) {
+        location.href = "/admin/adminBookList";
+    });
 });
 
-window.getTrainOrderStatus = function(isSucceed) {
+window.getTrainOrderStatus = function (isSucceed) {
     switch (isSucceed) {
         case 1:
             return "已报名"
@@ -37,7 +39,7 @@ window.getTrainOrderStatus = function(isSucceed) {
     }
 };
 
-window.getPayway = function(way) {
+window.getPayway = function (way) {
     switch (way) {
         case 0:
             return "现金";
@@ -57,9 +59,12 @@ window.getPayway = function(way) {
     return "";
 };
 
-window.showAlert = function(msg, title, isModal) {
+window.showAlert = function (msg, title, isModal) {
     if (!isModal) {
-        $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+        $('#confirmModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     }
 
     $('#confirmModal #confirmModalLabel').text(title || "提示");
@@ -69,9 +74,12 @@ window.showAlert = function(msg, title, isModal) {
     $('#confirmModal #btnConfirmSave').hide();
 };
 
-window.showConfirm = function(msg, title, isModal) {
+window.showConfirm = function (msg, title, isModal) {
     if (!isModal) {
-        $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+        $('#confirmModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     }
     $('#confirmModal #confirmModalLabel').text(title || "确认");
     $('#confirmModal .modal-body').text(msg);
@@ -80,37 +88,40 @@ window.showConfirm = function(msg, title, isModal) {
     $('#confirmModal #btnConfirmSave').show();
 };
 
-window.setSelectEvent = function($selectBody, callback) {
-    $selectBody.off("click").on("click", "tr", function(e) {
+window.setSelectEvent = function ($selectBody, callback) {
+    $selectBody.off("click").on("click", "tr", function (e) {
         var obj = e.currentTarget;
         var entity = $(obj).data("obj");
         callback(entity);
     });
 };
 
-window.selfAjax = function(method, url, filter, callback) {
+window.selfAjax = function (method, url, filter, callback) {
     loading();
     $[method](
         url,
         filter,
-        function(data) {
+        function (data) {
             callback(data);
             hideLoading();
         }
     );
 };
 
-window.loading = function() {
-    $("#loadingIndicator").modal({ backdrop: 'static', keyboard: false });
+window.loading = function () {
+    $("#loadingIndicator").modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 };
 
-window.hideLoading = function() {
+window.hideLoading = function () {
     $("#loadingIndicator").modal('hide');
 };
 
-window.getAllCheckedIds = function(objs) {
+window.getAllCheckedIds = function (objs) {
     var trainIds = [];
-    objs.each(function(index) {
+    objs.each(function (index) {
         if (this.checked) {
             trainIds.push($(this).val());
         }
