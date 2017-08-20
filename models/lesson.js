@@ -3,7 +3,7 @@ var mongoose = require('./db');
 var db = mongoose.connection,
     ObjectId = mongoose.Schema.Types.ObjectId;
 
-var lessionSchema = new mongoose.Schema({
+var lessonSchema = new mongoose.Schema({
     name: String,
     bookId: ObjectId,
     bookName: String, //TBD
@@ -23,34 +23,34 @@ var lessionSchema = new mongoose.Schema({
         default: 0
     }
 }, {
-    collection: 'lessions'
+    collection: 'lessons'
 });
 
-var lessionModel = mongoose.model('lession', lessionSchema);
+var lessonModel = mongoose.model('lesson', lessonSchema);
 
-function Lession(option) {
+function Lesson(option) {
     this.option = option;
 };
 
-module.exports = Lession;
+module.exports = Lesson;
 
 //存储学区信息
-Lession.prototype.save = function () {
-    var newlession = new lessionModel(this.option);
+Lesson.prototype.save = function () {
+    var newlesson = new lessonModel(this.option);
 
-    return newlession.save();
+    return newlesson.save();
 };
 
-Lession.prototype.update = function (id) {
-    return lessionModel.update({
+Lesson.prototype.update = function (id) {
+    return lessonModel.update({
         _id: id
     }, this.option).exec();
 };
 
 //读取学区信息
-Lession.get = function (id) {
+Lesson.get = function (id) {
     //打开数据库
-    return lessionModel.findOne({
+    return lessonModel.findOne({
         _id: id,
         isDeleted: {
             $ne: true
@@ -59,7 +59,7 @@ Lession.get = function (id) {
 };
 
 //一次获取20个学区信息
-Lession.getAll = function (id, page, filter, callback) {
+Lesson.getAll = function (id, page, filter, callback) {
     if (filter) {
         filter.isDeleted = {
             $ne: true
@@ -71,20 +71,20 @@ Lession.getAll = function (id, page, filter, callback) {
             }
         };
     }
-    var query = lessionModel.count(filter);
+    var query = lessonModel.count(filter);
     query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function (err, lessions) {
-                callback(null, lessions, count);
+            .exec(function (err, lessons) {
+                callback(null, lessons, count);
             });
     });
 };
 
 //删除一个学区
-Lession.delete = function (id, user) {
-    return lessionModel.update({
+Lesson.delete = function (id, user) {
+    return lessonModel.update({
         _id: id
     }, {
         isDeleted: true,
@@ -93,25 +93,25 @@ Lession.delete = function (id, user) {
     }).exec();
 };
 
-Lession.getFilter = function (filter) {
+Lesson.getFilter = function (filter) {
     //打开数据库
     filter.isDeleted = {
         $ne: true
     };
-    return lessionModel.findOne(filter);
+    return lessonModel.findOne(filter);
 };
 
-Lession.getFilters = function (filter) {
+Lesson.getFilters = function (filter) {
     //打开数据库
     filter.isDeleted = {
         $ne: true
     };
-    return lessionModel.find(filter);
+    return lessonModel.find(filter);
 };
 
-Lession.batchUpdate = function (filter, option) {
+Lesson.batchUpdate = function (filter, option) {
     //打开数据库
-    return lessionModel.update(filter, option, {
+    return lessonModel.update(filter, option, {
         multi: true
     }).exec();
 };

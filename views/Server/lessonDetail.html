@@ -2,48 +2,62 @@
 {% block main %}
 <div class="title">
     <h1>
-        >{{ book.name }}{{ title }}
-        <input type="hidden" name="bookId" id="bookId" value="{{ book._id }}">
+        >{{ lesson.name }}{{ title }}
+        <input type="hidden" name="lessonId" id="lessonId" value="{{ lesson._id }}">
     </h1>
 </div>
-<div class="panel panel-default mainModal">
+<div class="panel panel-default mainModal content">
+    <div class="panel-heading">课文</div>
     <div class="panel-body">
-        <form id="InfoSearch">
-            <div class="row form-horizontal">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="Name" class="control-label">课文:</label>
-                        <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
-                </div>
-            </div>
-        </form>
+        <div class="toolbar-list">
+            <button id="btnSaveContent" class="btn btn-default btn-sm">保存</button>
+        </div>
+        <div class="content mainModal">
+            <textarea maxlength="1000" rows="5" class="form-control" name="content" id="content"></textarea>
+        </div>
     </div>
 </div>
-<div class="toolbar">
-    <div class="toolbar-list">
-        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+<div class="panel panel-default mainModal word">
+    <div class="panel-heading">单词</div>
+    <div class="panel-body">
+        <div class="toolbar-list">
+            <button id="btnAddWord" class="btn btn-default btn-sm">新增</button>
+        </div>
+        <div class="content mainModal">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>单词</th>
+                        <th style="width:150px;">操作</th>
+                        <th>单词</th>
+                        <th style="width:150px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="gridBody">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-<div class="content mainModal">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th style="width:30%;">课文</th>
-                <th style="width:50%;">顺序</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody id="gridBody">
-        </tbody>
-    </table>
-</div>
-<div id="mainModal">
-    <input type="hidden" id="total" value="0" />
-    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
+<div class="panel panel-default mainModal sentence">
+    <div class="panel-heading">句子</div>
+    <div class="panel-body">
+        <div class="toolbar-list">
+            <button id="btnAddSentence" class="btn btn-default btn-sm">新增</button>
+        </div>
+        <div class="content mainModal">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>句子</th>
+                        <th style="width:150px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="gridBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -59,10 +73,6 @@
                     <div class="form-group">
                         <label for="name" class="control-label">名称:</label>
                         <input type="text" maxlength="30" class="form-control" required name="name" id="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence" value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -93,5 +103,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/lession.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/lessonDetail.js?v=1.0"></script>
 {% endblock %}

@@ -1,6 +1,7 @@
-var Lession = require('../../models/lession.js'),
+var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     auth = require("./auth"),
+    LessonWord = require('../../models/lessonWord.js'),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
@@ -9,7 +10,7 @@ module.exports = function (app) {
         Book.get(req.params.id)
             .then(function (book) {
                 if (book) {
-                    res.render('Server/lessionList.html', {
+                    res.render('Server/lessonList.html', {
                         title: '>课文列表',
                         user: req.session.admin,
                         book: book
@@ -19,15 +20,15 @@ module.exports = function (app) {
                 res.render("404.html");
             });
     });
-    app.get('/admin/lession/:id', checkLogin);
-    app.get('/admin/lession/:id', function (req, res) {
-        Lession.get(req.params.id)
-            .then(function (lession) {
-                if (lession) {
-                    res.render('Server/lessionDetail.html', {
+    app.get('/admin/lesson/:id', checkLogin);
+    app.get('/admin/lesson/:id', function (req, res) {
+        Lesson.get(req.params.id)
+            .then(function (lesson) {
+                if (lesson) {
+                    res.render('Server/lessonDetail.html', {
                         title: '>课文内容',
                         user: req.session.admin,
-                        lession: lession
+                        lesson: lesson
                     });
                 }
             }).catch(function () {
@@ -35,30 +36,30 @@ module.exports = function (app) {
             });
     });
 
-    app.post('/admin/lession/add', checkLogin);
-    app.post('/admin/lession/add', function (req, res) {
-        var lession = new Lession({
+    app.post('/admin/lesson/add', checkLogin);
+    app.post('/admin/lesson/add', function (req, res) {
+        var lesson = new Lesson({
             bookId: req.body.bookId,
             name: req.body.name,
             sequence: req.body.sequence,
             createdBy: req.session.admin._id
         });
 
-        lession.save().then(function (result) {
+        lesson.save().then(function (result) {
             if (result) {
-                res.jsonp(lession);
+                res.jsonp(lesson);
             }
         });
     });
 
-    app.post('/admin/lession/edit', checkLogin);
-    app.post('/admin/lession/edit', function (req, res) {
-        var lession = new Lession({
+    app.post('/admin/lesson/edit', checkLogin);
+    app.post('/admin/lesson/edit', function (req, res) {
+        var lesson = new Lesson({
             name: req.body.name,
             sequence: req.body.sequence
         });
 
-        lession.update(req.body.id)
+        lesson.update(req.body.id)
             .then(function () {
                 res.jsonp({
                     sucess: true
@@ -66,17 +67,17 @@ module.exports = function (app) {
             });
     });
 
-    app.post('/admin/lession/delete', checkLogin);
-    app.post('/admin/lession/delete', function (req, res) {
-        Lession.delete(req.body.id, req.session.admin._id).then(function (result) {
+    app.post('/admin/lesson/delete', checkLogin);
+    app.post('/admin/lesson/delete', function (req, res) {
+        Lesson.delete(req.body.id, req.session.admin._id).then(function (result) {
             res.jsonp({
                 sucess: true
             });
         });
     });
 
-    app.post('/admin/lessionList/search', checkLogin);
-    app.post('/admin/lessionList/search', function (req, res) {
+    app.post('/admin/lessonList/search', checkLogin);
+    app.post('/admin/lessonList/search', function (req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -93,16 +94,16 @@ module.exports = function (app) {
             };
         }
 
-        Lession.getAll(null, page, filter, function (err, lessions, total) {
+        Lesson.getAll(null, page, filter, function (err, lessons, total) {
             if (err) {
-                lessions = [];
+                lessons = [];
             }
             res.jsonp({
-                lessions: lessions,
+                lessons: lessons,
                 total: total,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + lessions.length) == total
+                isLastPage: ((page - 1) * 14 + lessons.length) == total
             });
         });
     });

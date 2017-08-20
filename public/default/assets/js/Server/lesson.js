@@ -23,12 +23,12 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/lessionList/search?" + pStr, filter, function (data) {
-        if (data && data.lessions.length > 0) {
-            data.lessions.forEach(function (lession) {
-                var $tr = $('<tr id=' + lession._id + '><td class="lessionName">' + lession.name + '</td><td>' +
-                    lession.sequence + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
-                $tr.find(".btn-group").data("obj", lession);
+    selfAjax("post", "/admin/lessonList/search?" + pStr, filter, function (data) {
+        if (data && data.lessons.length > 0) {
+            data.lessons.forEach(function (lesson) {
+                var $tr = $('<tr id=' + lesson._id + '><td class="lessonName">' + lesson.name + '</td><td>' +
+                    lesson.sequence + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                $tr.find(".btn-group").data("obj", lesson);
                 $mainSelectBody.append($tr);
             });
         }
@@ -108,14 +108,14 @@ $("#btnAdd").on("click", function (e) {
 $("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
-        var postURI = "/admin/lession/add",
+        var postURI = "/admin/lesson/add",
             postObj = {
                 name: $.trim($('#name').val()),
                 sequence: $.trim($('#sequence').val()),
                 bookId: $("#bookId").val()
             };
         if (!isNew) {
-            postURI = "/admin/lession/edit";
+            postURI = "/admin/lesson/edit";
             postObj.id = $('#id').val();
         }
         selfAjax("post", postURI, postObj, function (data) {
@@ -150,7 +150,7 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $("#btnConfirmSave").off("click").on("click", function (e) {
-        selfAjax("post", "/admin/lession/delete", {
+        selfAjax("post", "/admin/lesson/delete", {
             id: entity._id
         }, function (data) {
             location.reload();
@@ -159,8 +159,8 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
 });
 
 
-$("#gridBody").on("click", "td.lessionName", function (e) {
+$("#gridBody").on("click", "td.lessonName", function (e) {
     var obj = e.currentTarget;
     var id = $(obj).parent().attr("id");
-    location.assign("/admin/lession/" + id);
+    location.assign("/admin/lesson/" + id);
 });

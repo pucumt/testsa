@@ -41,7 +41,10 @@
     absentStudents = require('./absentStudents.js'),
 
     book = require('./book.js'),
-    lession = require('./lession.js'),
+    lesson = require('./lesson.js'),
+    lessonWord = require('./lessonWord.js'),
+    lessonContent = require('./lessonContent.js'),
+    lessonSentence = require('./lessonSentence.js'),
 
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -106,5 +109,8 @@ module.exports = function (app) {
 
     // book
     book(app);
-    lession(app);
+    lesson(app);
+    lessonWord(app);
+    lessonContent(app);
+    lessonSentence(app);
 };
