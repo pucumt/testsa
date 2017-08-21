@@ -5,9 +5,10 @@ var home = require('./home.js'),
     order = require('./order.js'),
     person = require('./person.js'),
     coupon = require('./coupon.js'),
+    book = require('./book.js'),
     reg = require('./reg.js');
 
-module.exports = function(app) {
+module.exports = function (app) {
     // home(app);
     enroll(app);
     login(app);
@@ -16,4 +17,5 @@ module.exports = function(app) {
     person(app);
     order(app);
     coupon(app);
+    book(app);
 };

@@ -72,7 +72,8 @@ var trainClassSchema = new mongoose.Schema({
     },
     fromClassId: String, //原班Id
     fromClassName: String,
-    protectedDate: Date //原班原报保护期
+    protectedDate: Date, //原班原报保护期
+    bookId: ObjectId
 }, {
     collection: 'trainClasss'
 });

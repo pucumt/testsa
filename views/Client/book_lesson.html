@@ -1,0 +1,35 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll">
+    <div class="pageTitle" style="padding-right: 15px; padding-left:60px;">
+        选择课程<span class="pull-right filter" style="font-size: 12px;">筛选<span class="glyphicon glyphicon-filter"></span></span>
+    </div>
+    <div class="row">
+        <ul class="exam-list clearfix list-unstyled">
+        </ul>
+        <div class="more" style="text-align: center; margin-bottom: 15px;">
+            <button id="btnMore" class="btn btn-default" type="submit">加载更多</button>
+        </div>
+        <input type="hidden" id="page" value="0" />
+    </div>
+</div>
+<input type="hidden" id="studentId" value="{{ studentId }}" />
+<input type="hidden" id="bookId" value="{{ bookId }}" />
+<!--modal-->
+<div class="container enroll-filter hidden">
+    <div class="row text-center">
+        <label style="margin-top: 15px;">选择课文</label><span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label for="name" class="control-label">课文:</label>
+            <input type="text" name="name" id="name" class="form-control">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <input class="btn btn-large btn-primary btn-search" type="submit" value="开始搜索" />
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/default/assets/js/Client/book.lesson.js?v=1.0"></script>
+{% endblock %}
