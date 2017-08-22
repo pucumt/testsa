@@ -482,3 +482,7 @@ footer,
 .personalCenter .orderList .rebate-notify {
     font-size: 13px;
 }
+
+.lesson .lesson-title {
+    padding: 10px 15px;
+}

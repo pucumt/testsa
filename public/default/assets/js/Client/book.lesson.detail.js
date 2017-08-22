@@ -1,59 +1,67 @@
 $(document).ready(function () {
-    loadData();
+    loadWord();
+    loadSentence();
+    loadContent();
 });
 
-var $selectBody = $('.container.enroll .exam-list');
+var $wordBody = $('.panel-group.wordlist');
+var $sentenceBody = $('.panel-group.sentencelist');
+var $contentBody = $('.panel-group.content');
 
-function loadData(p) {
-    var pStr = p ? "p=" + p : "",
-        filter = {
-            bookId: $('#bookId').val(),
-            name: $('.enroll-filter #name').val()
-        };
-    selfAjax("post", "/book/lessons?" + pStr, filter, function (data) {
-        if (data && data.lessons.length > 0) {
+function loadWord() {
+    var filter = {
+        lessonId: $('#lessonId').val()
+    };
+    selfAjax("post", "/book/lesson/search/word", filter, function (data) {
+        if (data && data.words.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.lessons.forEach(function (lesson) {
-                d.append(generateLi(lesson));
+            data.words.forEach(function (word) {
+                d.append(generatePanel(word, "accordion", "headingOne"));
             });
-            $selectBody.append(d);
-            $("#btnMore").show();
-        } else {
-            if (!p) {
-                $selectBody.text("即将上线");
-                $("#btnMore").hide();
-                return;
-            }
-        }
-        if (data.isLastPage) {
-            //已经全部加载
-            $("#btnMore").text("已经到最后了");
-            $("#btnMore").attr("disabled", "disabled");
-        }
-        if (p) {
-            $("#page").val(p);
+            $wordBody.append(d);
         }
     });
 };
 
-function generateLi(lesson) {
-    var $li = $('<li class="exam-card card" ></li>'),
-        $goodContainer = $('<div id=' + lesson._id + ' class="exam link"></div>'),
-        $infoContainer = $('<div class="exam-info"></div>');
-    $li.data("obj", lesson);
-    $li.append($goodContainer);
-    $goodContainer.append($infoContainer);
-    $infoContainer.append($('<div><h3>' + lesson.name + '</h3></div>'));
-    return $li;
+function loadSentence() {
+    var filter = {
+        lessonId: $('#lessonId').val()
+    };
+    selfAjax("post", "/book/lesson/search/sentence", filter, function (data) {
+        if (data && data.sentences.length > 0) {
+            var d = $(document.createDocumentFragment());
+            data.sentences.forEach(function (sentence) {
+                d.append(generatePanel(sentence, "accordion2", "headingTwo"));
+            });
+            $sentenceBody.append(d);
+        }
+    });
 };
 
-$("#btnMore").on("click", function (e) {
-    var page = parseInt($("#page").val()) + 1;
-    loadData(page);
-});
+function loadContent() {
+    var filter = {
+        lessonId: $('#lessonId').val()
+    };
+    selfAjax("post", "/book/lesson/search/content", filter, function (data) {
+        if (data && data.content) {
+            var d = $(document.createDocumentFragment());
+            d.append(generatePanel(data.content, "accordion3", "headingThree"));
+            $contentBody.append(d);
+        }
+    });
+};
 
-$selectBody.on("click", "li", function (e) {
-    var obj = e.currentTarget;
-    var entity = $(obj).data("obj");
-    location.href = "/book/lesson/" + entity._id + "?studentId=" + $("#studentId").val();
-});
+function generatePanel(word, id, head) {
+    return $('<div class="panel panel-default">\
+                <div class="panel-heading" role="tab" id="' + head + '">\
+                    <h4 class="panel-title">\
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#' + id + '" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">' + word.name + '</a>\
+                    </h4>\
+                </div>\
+                <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="' + head + '">\
+                    <div class="panel-body">\
+               ' + word.name + '\
+                    </div>\
+                </div>\
+            </div>');
+};

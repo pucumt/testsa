@@ -1,6 +1,9 @@
 var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     StudentInfo = require('../../models/studentInfo.js'),
+    LessonWord = require('../../models/lessonWord.js'),
+    LessonSentence = require('../../models/lessonSentence.js'),
+    LessonContent = require('../../models/lessonContent.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -50,6 +53,42 @@ module.exports = function (app) {
                     name: lesson.name,
                     lessonId: req.params.id,
                     studentId: req.query.studentId
+                });
+            });
+    });
+
+    app.post('/book/lesson/search/word', checkLogin);
+    app.post('/book/lesson/search/word', function (req, res) {
+        LessonWord.getFilters({
+                lessonId: req.body.lessonId
+            })
+            .then(function (words) {
+                res.jsonp({
+                    words: words
+                });
+            });
+    });
+
+    app.post('/book/lesson/search/sentence', checkLogin);
+    app.post('/book/lesson/search/sentence', function (req, res) {
+        LessonSentence.getFilters({
+                lessonId: req.body.lessonId
+            })
+            .then(function (sentences) {
+                res.jsonp({
+                    sentences: sentences
+                });
+            });
+    });
+
+    app.post('/book/lesson/search/content', checkLogin);
+    app.post('/book/lesson/search/content', function (req, res) {
+        LessonContent.getFilter({
+                lessonId: req.body.lessonId
+            })
+            .then(function (content) {
+                res.jsonp({
+                    content: content
                 });
             });
     });
