@@ -25,6 +25,7 @@ var xlsx = require("node-xlsx"),
     Coupon = require('../../models/coupon.js'),
     CouponAssign = require('../../models/couponAssign.js'),
     Teacher = require('../../models/teacher.js'),
+    OrderFromBank = require('../../models/orderFromBank.js'),
 
     checkLogin = auth.checkLogin,
     serverPath = path.join(__dirname, "../"),
@@ -118,6 +119,45 @@ module.exports = function (app) {
                 break;
             }
             updateScore(list[0].data[i], req.body.examId, req.body.subject);
+        }
+        // res.redirect('/admin/score');
+        res.jsonp({});
+    });
+
+    function addBankOrder(score) {
+        OrderFromBank.getFilter({
+                orderId: score[8].substr(1)
+            })
+            .then(function (existOrder) {
+                if (!existOrder) {
+                    var newOrder = new OrderFromBank({
+                        orderDate: score[0].substr(1),
+                        orderId: score[8].substr(1),
+                        machine: score[5].substr(1), // qr or online
+                        payType: score[10].substr(1), // zhifubao or weixin
+                        trainPrice: score[14].substr(1)
+                    });
+                    newOrder.save()
+                        .then(function (order) {
+                            return;
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                }
+            });
+    };
+
+    //提交银行数据
+    app.post('/admin/uploadBank', upload.single('avatar'), function (req, res, next) {
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
+        //list[0].data[0] [0] [1] [2]
+        var length = list[0].data.length;
+        for (var i = 1; i < length; i++) {
+            if (!list[0].data[i][0]) {
+                break;
+            }
+            addBankOrder(list[0].data[i]);
         }
         // res.redirect('/admin/score');
         res.jsonp({});
