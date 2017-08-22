@@ -22,9 +22,21 @@ var path = require('path'),
         flags: 'a'
     }),
 
-    app = express();
+    app = express(),
+    http = require('http'),
+    https = require('https'),
+    privateKey = fs.readFileSync(path.join(__dirname, "server-key.pem"), 'utf8'),
+    certificate = fs.readFileSync(path.join(__dirname, "server-cert.crt"), 'utf8'),
+    credentials = {
+        key: privateKey,
+        cert: certificate
+    },
+    httpServer = http.createServer(app),
+    httpsServer = https.createServer(credentials, app),
+    PORT = 2369,
+    SSLPORT = 2370;
 
-app.set('port', process.env.PORT || 2369);
+// app.set('port', process.env.PORT || 2369);
 app.set('views', path.join(__dirname, 'views'));
 nunjucks.configure('views', {
     autoescape: true,
@@ -66,17 +78,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 routes(app);
 //error log in the file
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     var meta = '[' + new Date() + '] ' + req.url + '\n';
     errorLog.write(meta + err.stack + '\n');
     next();
 });
 
-app.listen(app.get('port'), function() {
-    console.log('Express server listening on port ' + app.get('port'));
+// app.listen(app.get('port'), function () {
+//     console.log('Express server listening on port ' + app.get('port'));
+// });
+
+httpServer.listen(PORT, function () {
+    console.log('HTTP Server is running on: http://localhost:%s', PORT);
+});
+httpsServer.listen(SSLPORT, function () {
+    console.log('HTTPS Server is running on: https://localhost:%s', SSLPORT);
 });
 
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function (err) {
     //打印出错误
     console.log(err);
     //打印出错误的调用栈方便调试
