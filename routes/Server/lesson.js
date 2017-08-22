@@ -1,7 +1,6 @@
 var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     auth = require("./auth"),
-    LessonWord = require('../../models/lessonWord.js'),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {

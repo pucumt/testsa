@@ -1,8 +1,6 @@
 var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     StudentInfo = require('../../models/studentInfo.js'),
-    LessonWord = require('../../models/lessonWord.js'),
-    LessonSentence = require('../../models/lessonSentence.js'),
     LessonContent = require('../../models/lessonContent.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
@@ -59,8 +57,9 @@ module.exports = function (app) {
 
     app.post('/book/lesson/search/word', checkLogin);
     app.post('/book/lesson/search/word', function (req, res) {
-        LessonWord.getFilters({
-                lessonId: req.body.lessonId
+        LessonContent.getFilters({
+                lessonId: req.body.lessonId,
+                contentType: 1
             })
             .then(function (words) {
                 res.jsonp({
@@ -71,8 +70,9 @@ module.exports = function (app) {
 
     app.post('/book/lesson/search/sentence', checkLogin);
     app.post('/book/lesson/search/sentence', function (req, res) {
-        LessonSentence.getFilters({
-                lessonId: req.body.lessonId
+        LessonContent.getFilters({
+                lessonId: req.body.lessonId,
+                contentType: 2
             })
             .then(function (sentences) {
                 res.jsonp({
@@ -84,7 +84,8 @@ module.exports = function (app) {
     app.post('/book/lesson/search/content', checkLogin);
     app.post('/book/lesson/search/content', function (req, res) {
         LessonContent.getFilter({
-                lessonId: req.body.lessonId
+                lessonId: req.body.lessonId,
+                contentType: 0
             })
             .then(function (content) {
                 res.jsonp({

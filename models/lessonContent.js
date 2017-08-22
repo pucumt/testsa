@@ -6,6 +6,7 @@ var db = mongoose.connection,
 var lessonContentSchema = new mongoose.Schema({
     name: String,
     lessonId: ObjectId,
+    contentType: Number, //0 content 1 word 2 sentence
     createdBy: String,
     createdDate: {
         type: Date,

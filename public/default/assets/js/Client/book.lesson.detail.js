@@ -18,7 +18,7 @@ var recorder = new _17kouyu.IRecorder({
 });
 var lastRecordId;
 
-function startRecord() {
+function startRecord(word, score) {
     recorder.record({
         duration: 3000, //录音时长，单位ms
         serverParams: { //录音评分参数，具体取决于服务类型
@@ -36,12 +36,12 @@ function startRecord() {
         onStart: function () { //录音开始的回调
         },
         onStop: function () { //到达指定时间，录音自动停止的回调
-            getScore(lastRecordId);
+            getScore(lastRecordId, score);
         }
     });
 };
 
-function getScore(lastRecordId) {
+function getScore(lastRecordId, score) {
     recorder.getScores({
         recordId: lastRecordId, //指定的录音ID
         success: function (data) { //评分获得后回调。这里可能是评分成功，或者评分出错
@@ -49,7 +49,7 @@ function getScore(lastRecordId) {
             //如果没有 result字段，则表明评分超时；如果 result字段中含有
             //err 或者 error字段，则评分出错。具体出错原因为result.errID
             if (data[lastRecordId]) {
-                document.getElementById("score").innerText = data[lastRecordId].result.overall;
+                score.text(data[lastRecordId].result.overall);
             }
         }
     });
@@ -122,7 +122,7 @@ function loadContent() {
 };
 
 function generatePanel(word, id, head) {
-    return $('<div class="panel panel-default">\
+    var panel = $('<div class="panel panel-default">\
                 <div class="panel-heading" role="tab" id="' + head + '">\
                     <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#' + id + '" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
                         ' + word.name + '\
@@ -134,21 +134,28 @@ function generatePanel(word, id, head) {
                <div><button id="btnPlay" class="btn btn-danger" type="button">播放</button>\
                <button id="btnRecord" class="btn btn-danger" type="button">录音</button>\
                <button id="btnScore" class="btn btn-danger" type="button">试听</button>\
+               <audio controls style="vertical-align: middle; width:50px; height:34px;">\
+                <source src="horse.mp3" type="audio/mpeg">\
+                您的浏览器不支持 audio 元素。\
+                </audio>\
                </div>\
                     </div>\
                 </div>\
             </div>');
+    panel.data("obj", word);
+    return panel;
 };
 
 $wordBody.on("click", ".panel .panel-body #btnPlay", function (e) {
-    // var obj = e.currentTarget;
+    var obj = e.currentTarget;
+
     // var entity = $(obj).data("obj");
-    showAlert("play");
+    showAlert("play", $(obj).next());
 });
 $wordBody.on("click", ".panel .panel-body #btnRecord", function (e) {
-    // var obj = e.currentTarget;
-    // var entity = $(obj).data("obj");
-    showAlert("record");
+    var obj = e.currentTarget;
+    var word = $(obj).parents(".panel").data("obj");
+    startRecord(word.name, $(obj).next());
 });
 $wordBody.on("click", ".panel .panel-body #btnScore", function (e) {
     // var obj = e.currentTarget;
