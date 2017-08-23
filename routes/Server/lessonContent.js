@@ -30,7 +30,7 @@ module.exports = function (app) {
 
                     lessonContent.save().then(function (result) {
                         if (result) {
-                            res.jsonp(lessonContent);
+                            res.jsonp(result);
                         }
                     });
                 }
@@ -61,7 +61,7 @@ module.exports = function (app) {
 
         lessonWord.save().then(function (result) {
             if (result) {
-                res.jsonp(lessonWord);
+                res.jsonp(result);
             }
         });
     });
@@ -114,7 +114,7 @@ module.exports = function (app) {
 
         lessonSentence.save().then(function (result) {
             if (result) {
-                res.jsonp(lessonSentence);
+                res.jsonp(result);
             }
         });
     });

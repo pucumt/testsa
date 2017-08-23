@@ -22,7 +22,7 @@ module.exports = function(app) {
         #name#.save().then(function(result){
             if(result)
             {
-                 res.jsonp(#name#);
+                 res.jsonp(result);
             }
         });
     });

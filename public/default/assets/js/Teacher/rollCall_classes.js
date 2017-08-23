@@ -1,14 +1,15 @@
-$(document).ready(function() {
+$(document).ready(function () {
     loadData();
+    $(".pageTitle").text("选课程查作业");
 });
 
 var $selectBody = $('.container.enroll .exam-list');
 
 function loadData() {
-    selfAjax("post", "/Teacher/rollCall/classes", {}).then(function(data) {
+    selfAjax("post", "/Teacher/rollCall/classes", {}).then(function (data) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.classs.forEach(function(trainclass) {
+            data.classs.forEach(function (trainclass) {
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);
@@ -32,8 +33,12 @@ function generateLi(trainclass) {
     return $li;
 };
 
-$selectBody.on("click", "li", function(e) {
+$selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    location.href = "/Teacher/rollCall/students/" + entity._id;
+    if ($("#type").val() == "r") {
+        location.href = "/Teacher/rollCall/students/" + entity._id;
+    } else if ($("#type").val() == "h") {
+        location.href = "/Teacher/homework/students/" + entity._id;
+    }
 });

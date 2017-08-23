@@ -23,7 +23,7 @@ function startRecord(word, score) {
         duration: 3000, //录音时长，单位ms
         serverParams: { //录音评分参数，具体取决于服务类型
             coreType: "word.eval",
-            refText: "best",
+            refText: word,
             rank: 100,
             userId: "guest"
         },
@@ -49,7 +49,11 @@ function getScore(lastRecordId, score) {
             //如果没有 result字段，则表明评分超时；如果 result字段中含有
             //err 或者 error字段，则评分出错。具体出错原因为result.errID
             if (data[lastRecordId]) {
-                score.text(data[lastRecordId].result.overall);
+                var scoreStr = data[lastRecordId].result.overall;
+                score.text(scoreStr);
+                //update the score in db TBD
+                var wordId = score.parents(".panel").data("obj")._id;
+                setWordScore(wordId, scoreStr);
             }
         }
     });
@@ -72,79 +76,85 @@ $(document).ready(function () {
 var $wordBody = $('.panel-group.wordlist');
 
 function loadWord() {
-    $wordBody.append('<div class="lesson-title">单词</div>');
-    var filter = {
-        lessonId: $('#lessonId').val()
-    };
-    selfAjax("post", "/book/lesson/search/word", filter, function (data) {
-        if (data && data.words.length > 0) {
-            var d = $(document.createDocumentFragment());
-            data.words.forEach(function (word) {
-                d.append(generatePanel(word, "accordion", "headingOne"));
-            });
-            $wordBody.append(d);
-        }
-
-        loadSentence();
-    });
-};
-
-function loadSentence() {
 
     var filter = {
-        lessonId: $('#lessonId').val()
-    };
-    selfAjax("post", "/book/lesson/search/sentence", filter, function (data) {
-        $wordBody.append('<div class="lesson-title">句子</div>');
-        if (data && data.sentences.length > 0) {
-            var d = $(document.createDocumentFragment());
-            data.sentences.forEach(function (sentence) {
-                d.append(generatePanel(sentence, "accordion", "headingOne"));
-            });
-            $wordBody.append(d);
-        }
-        loadContent();
-    });
-};
-
-function loadContent() {
-    var filter = {
-        lessonId: $('#lessonId').val()
+        lessonId: $('#lessonId').val(),
+        studentId: $("#studentId").val()
     };
     selfAjax("post", "/book/lesson/search/content", filter, function (data) {
-        $wordBody.append('<div class="lesson-title">课文</div>');
-        if (data && data.content) {
+        if (data && data.contents.length > 0) {
+            var words = data.contents.filter(function (content) {
+                return content.contentType == 1;
+            });
+            $wordBody.append('<div class="lesson-title">单词</div>');
             var d = $(document.createDocumentFragment());
-            d.append(generatePanel(data.content, "accordion", "headingOne"));
+            words.forEach(function (word) {
+                var scores = data.scores.filter(function (score) {
+                    return score.contentId == word._id;
+                });
+                d.append(generatePanel(word, scores[0]));
+            });
+            $wordBody.append(d);
+
+            var sentences = data.contents.filter(function (content) {
+                return content.contentType == 2;
+            });
+            $wordBody.append('<div class="lesson-title">句子</div>');
+            var d = $(document.createDocumentFragment());
+            sentences.forEach(function (word) {
+                var scores = data.scores.filter(function (score) {
+                    return score.contentId == word._id;
+                });
+                d.append(generatePanel(word, scores[0]));
+            });
+            $wordBody.append(d);
+
+            var contents = data.contents.filter(function (content) {
+                return content.contentType == 0;
+            });
+            $wordBody.append('<div class="lesson-title">课文</div>');
+            var d = $(document.createDocumentFragment());
+            contents.forEach(function (word) {
+                var scores = data.scores.filter(function (score) {
+                    return score.contentId == word._id;
+                });
+                d.append(generatePanel(word, scores[0]));
+            });
             $wordBody.append(d);
         }
     });
 };
 
-function generatePanel(word, id, head) {
+function generatePanel(word, score) {
     var panel = $('<div class="panel panel-default">\
-                <div class="panel-heading" role="tab" id="' + head + '">\
-                    <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#' + id + '" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
+                <div class="panel-heading" role="tab" id="headingOne">\
+                    <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
                         ' + word.name + '\
                     </h4>\
                 </div>\
-                <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="' + head + '">\
+                <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\
                     <div class="panel-body">\
                <div>' + word.name + '</div>\
                <div><button id="btnPlay" class="btn btn-danger" type="button">播放</button>\
                <button id="btnRecord" class="btn btn-danger" type="button">录音</button>\
                <button id="btnScore" class="btn btn-danger" type="button">试听</button>\
-               <audio controls style="vertical-align: middle; width:50px; height:34px;">\
-                <source src="horse.mp3" type="audio/mpeg">\
-                您的浏览器不支持 audio 元素。\
-                </audio>\
                </div>\
                     </div>\
                 </div>\
             </div>');
     panel.data("obj", word);
+    if (score) {
+        panel.find("#btnScore").text(score.score);
+    }
     return panel;
 };
+
+{
+    /*<audio controls style="vertical-align: middle; width:50px; height:34px;">\
+                    <source src="horse.mp3" type="audio/mpeg">\
+                    您的浏览器不支持 audio 元素。\
+                    </audio>\*/
+}
 
 $wordBody.on("click", ".panel .panel-body #btnPlay", function (e) {
     var obj = e.currentTarget;
@@ -162,3 +172,15 @@ $wordBody.on("click", ".panel .panel-body #btnScore", function (e) {
     // var entity = $(obj).data("obj");
     showAlert("score");
 });
+
+function setWordScore(wordId, score) {
+    var filter = {
+        wordId: wordId,
+        score: score,
+        lessonId: $("#lessonId").val(),
+        studentId: $("#studentId").val()
+    };
+    selfAjax("post", "/book/lesson/score", filter, function (data) {
+        // set vidio url TBD
+    });
+};

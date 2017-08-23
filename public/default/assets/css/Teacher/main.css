@@ -291,7 +291,8 @@ footer,
 }
 
 .enroll.personalCenter .rollCall,
-.enroll.personalCenter .makeUp {
+.enroll.personalCenter .makeUp,
+.enroll.personalCenter .homework {
     margin: 10px -15px;
     padding: 8px 15px;
     border-top: 1px solid #ccc;

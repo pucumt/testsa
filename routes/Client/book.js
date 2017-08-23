@@ -2,6 +2,7 @@ var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     LessonContent = require('../../models/lessonContent.js'),
+    StudentLessonScore = require('../../models/studentLessonScore.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -55,42 +56,84 @@ module.exports = function (app) {
             });
     });
 
-    app.post('/book/lesson/search/word', checkLogin);
-    app.post('/book/lesson/search/word', function (req, res) {
-        LessonContent.getFilters({
-                lessonId: req.body.lessonId,
-                contentType: 1
-            })
-            .then(function (words) {
-                res.jsonp({
-                    words: words
-                });
-            });
-    });
-
-    app.post('/book/lesson/search/sentence', checkLogin);
-    app.post('/book/lesson/search/sentence', function (req, res) {
-        LessonContent.getFilters({
-                lessonId: req.body.lessonId,
-                contentType: 2
-            })
-            .then(function (sentences) {
-                res.jsonp({
-                    sentences: sentences
-                });
-            });
-    });
-
     app.post('/book/lesson/search/content', checkLogin);
     app.post('/book/lesson/search/content', function (req, res) {
-        LessonContent.getFilter({
-                lessonId: req.body.lessonId,
-                contentType: 0
+        LessonContent.getFilters({
+                lessonId: req.body.lessonId
             })
-            .then(function (content) {
-                res.jsonp({
-                    content: content
-                });
+            .then(function (contents) {
+                StudentLessonScore.getFilters({
+                        studentId: req.body.studentId,
+                        lessonId: req.body.lessonId
+                    })
+                    .then(function (scores) {
+                        res.jsonp({
+                            contents: contents,
+                            scores: scores
+                        });
+                    });
+            });
+    });
+
+    // app.post('/book/lesson/search/sentence', checkLogin);
+    // app.post('/book/lesson/search/sentence', function (req, res) {
+    //     LessonContent.getFilters({
+    //             lessonId: req.body.lessonId,
+    //             contentType: 2
+    //         })
+    //         .then(function (sentences) {
+    //             res.jsonp({
+    //                 sentences: sentences
+    //             });
+    //         });
+    // });
+
+    // app.post('/book/lesson/search/content', checkLogin);
+    // app.post('/book/lesson/search/content', function (req, res) {
+    //     LessonContent.getFilter({
+    //             lessonId: req.body.lessonId,
+    //             contentType: 0
+    //         })
+    //         .then(function (content) {
+    //             res.jsonp({
+    //                 content: content
+    //             });
+    //         });
+    // });
+
+    app.post('/book/lesson/score', checkLogin);
+    app.post('/book/lesson/score', function (req, res) {
+        StudentLessonScore.getFilter({
+                lessonId: req.body.lessonId,
+                studentId: req.body.studentId,
+                contentId: req.body.wordId
+            })
+            .then(function (score) {
+                if (score) {
+                    var newScore = new StudentLessonScore({
+                        score: req.body.score
+                    });
+                    newScore.update(score._id)
+                        .then(function () {
+                            res.jsonp({
+                                sucess: true
+                            });
+                        });
+                } else {
+                    var newScore = new StudentLessonScore({
+                        lessonId: req.body.lessonId,
+                        studentId: req.body.studentId,
+                        contentId: req.body.wordId,
+                        score: req.body.score,
+                        createdBy: req.session.admin._id
+                    });
+
+                    newScore.save().then(function (result) {
+                        if (result) {
+                            res.jsonp(result);
+                        }
+                    });
+                }
             });
     });
 }

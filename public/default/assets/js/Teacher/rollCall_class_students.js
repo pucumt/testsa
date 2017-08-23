@@ -1,14 +1,14 @@
-$(document).ready(function() {
+$(document).ready(function () {
     loadData();
 
-    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
-        location.href = "/Teacher/rollCallClasses";
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
+        location.href = "/Teacher/rollCallClasses?type=r";
     });
 
     function getAllCheckedStudents() {
         var studentIds = [];
         $(".exam-list li .chkStudent")
-            .each(function(index) {
+            .each(function (index) {
                 if (this.checked) {
                     studentIds.push($(this).val());
                 }
@@ -16,13 +16,13 @@ $(document).ready(function() {
         return studentIds;
     };
 
-    $("#btnAbsent").on("click", function(e) {
+    $("#btnAbsent").on("click", function (e) {
         selfAjax("post", "/Teacher/absent/students", {
                 originalUrl: "/Teacher/rollCall/students/" + $("#id").val(),
                 studentIds: JSON.stringify(getAllCheckedStudents()),
                 classId: $("#id").val()
             })
-            .then(function(data) {
+            .then(function (data) {
                 if (data && data.sucess) {
                     showAlert("保存成功！");
                 }
@@ -33,12 +33,14 @@ $(document).ready(function() {
 var $selectBody = $('.container.enroll .exam-list');
 
 function loadData() {
-    selfAjax("post", "/Teacher/rollCall/students", { id: $("#id").val() }).then(function(data) {
+    selfAjax("post", "/Teacher/rollCall/students", {
+        id: $("#id").val()
+    }).then(function (data) {
         if (data && data.students.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.students.sort(function(a, b) {
+            data.students.sort(function (a, b) {
                 return a.mobile.localeCompare(b.mobile);
-            }).forEach(function(student) {
+            }).forEach(function (student) {
                 d.append(generateLi(student, data.abStudents));
             });
             $selectBody.append(d);
@@ -54,7 +56,7 @@ function generateLi(student, abStudents) {
         $infoContainer = $('<div class="exam-info"></div>'),
         checkStr = "",
         bak = "";
-    if ((abStudents && abStudents.some(function(abStudent) {
+    if ((abStudents && abStudents.some(function (abStudent) {
             if (abStudent.studentId == student._id) {
                 if (abStudent.comment) {
                     if ($.trim(abStudent.comment) == "迟到") {

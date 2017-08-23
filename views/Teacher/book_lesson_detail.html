@@ -1,0 +1,17 @@
+﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="container enroll lesson">
+    <div class="pageTitle" style="">
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>{{ name }}
+    </div>
+    <div class="row">
+        <div id="iRecorder"></div>
+        <div class="panel-group wordlist" id="accordion" role="tablist" aria-multiselectable="true">
+        </div>
+    </div>
+</div>
+<input type="hidden" id="studentId" value="{{ studentId }}" />
+<input type="hidden" id="lessonId" value="{{ lessonId }}" />
+<input type="hidden" id="classId" value="{{ classId }}" />
+<input type="hidden" id="bookId" value="{{ bookId }}" />
+<script type="text/javascript" src="/default/assets/js/Teacher/book.lesson.detail.js?v=1.0"></script>
+{% endblock %}
