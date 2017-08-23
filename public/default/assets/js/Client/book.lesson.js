@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
+        location.href = "/personalCenter/order";
+    });
+
     $("#page").val(1);
     $(".enroll-filter .btn-search")
         .on("click", function (e) {

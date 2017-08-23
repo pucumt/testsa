@@ -51,7 +51,8 @@ module.exports = function (app) {
                     user: req.session.user,
                     name: lesson.name,
                     lessonId: req.params.id,
-                    studentId: req.query.studentId
+                    studentId: req.query.studentId,
+                    bookId: lesson.bookId
                 });
             });
     });
