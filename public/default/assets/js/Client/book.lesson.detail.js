@@ -1,73 +1,35 @@
-var recorder = new _17kouyu.IRecorder({
-    id: "iRecorder", //这里为HTML节点对应的id
+window.iPanel = new _17kouyu.IPanel({
+    mode: 2,
     appKey: "17KouyuTestAppKey",
     secretKey: "17KouyuTestSecretKey",
-    mode: 2,
-    onFlashLoad: function (code, message) {
-        //Flash加载完成的回调，其他所有与录音机的操作必须在这个回调之后进行。
-        //code值有：50000
+    //showFlash:false,
+    data: {
+        audioUrl: "static/mp3/en/Where are you from.mp3", //标准音频URL
+        //duration: 5000, //传入参数手动设置录音时长
+        serverParams: { // 录音服务参数
+            coreType: "sent.eval", // 选择内核sent.eval
+            refText: "Where are you from", // 参考文本
+            attachAudioUrl: 1, // 获取音频下载地址
+            userId: "guest" // 用户id
+        }
     },
-    onConnectorStatusChange: function (code, message) {
-        //连接器状态发生改变时回调
-        //code值有：50100, 50103, 50104, 50109
+    onBeforeRecord: function () { // 录音之前需要清除评分，可以在这里设置录音参数
+        $("#iPanel").find(".replay").text("");
+        $("#iPanel").find(".replay").append('<i class="fa bigger-160"></i>');
     },
-    onMicStatusChange: function (code, message) {
-        //麦克风状态发生改变时回调。第一次加载Flash时也会触发该回调
-        //code值有：50001, 50002, 50003
+    onScore: function (data) { // 评分成功需要显示评分结果
+        var resultObj = new _17kouyu.SentEval(data),
+            score = resultObj.getOverall();
+        $("#iPanel").find(".replay").text(score);
+        var content = $("#iPanel").parents(".panel").data("obj");
+        content.score = score;
+        setWordScore(content._id, score);
+    },
+    onScoreError: function (errorType) { //评分失败的显示 "TIMEOUT", "NO_DATA", ErrorID
+        var errorObj = _17kouyu.IStatusCode.get(errorType, "cn");
+        alert(errorObj.feedback);
     }
 });
-var lastRecordId;
-
-function startRecord(word, score) {
-    recorder.record({
-        duration: 3000, //录音时长，单位ms
-        serverParams: { //录音评分参数，具体取决于服务类型
-            coreType: "word.eval",
-            refText: word,
-            rank: 100,
-            userId: "guest"
-        },
-        onRecordIdGenerated: function (code, message) {
-            //服务器返回唯一的ID: message.recordId
-            if (message.recordId) {
-                lastRecordId = message.recordId;
-            }
-        },
-        onStart: function () { //录音开始的回调
-        },
-        onStop: function () { //到达指定时间，录音自动停止的回调
-            getScore(lastRecordId, score);
-        }
-    });
-};
-
-function getScore(lastRecordId, score) {
-    recorder.getScores({
-        recordId: lastRecordId, //指定的录音ID
-        success: function (data) { //评分获得后回调。这里可能是评分成功，或者评分出错
-            //详细评分结果在 data[lastRecordId].result
-            //如果没有 result字段，则表明评分超时；如果 result字段中含有
-            //err 或者 error字段，则评分出错。具体出错原因为result.errID
-            if (data[lastRecordId]) {
-                var scoreStr = data[lastRecordId].result.overall;
-                score.text(scoreStr);
-                //update the score in db TBD
-                var wordId = score.parents(".panel").data("obj")._id;
-                setWordScore(wordId, scoreStr);
-            }
-        }
-    });
-};
-
-function startReplay() {
-    recorder.startReplay({
-        recordId: lastRecordId,
-        onStart: function () { //回放开始的回调
-        },
-        onStop: function () { //回放自动停止的回调
-        }
-    });
-};
 
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
@@ -138,43 +100,50 @@ function generatePanel(word, score) {
                 </div>\
                 <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\
                     <div class="panel-body">\
-               <div>' + word.name + '</div>\
-               <div><button id="btnPlay" class="btn btn-danger" type="button">播放</button>\
-               <button id="btnRecord" class="btn btn-danger" type="button">录音</button>\
-               <button id="btnScore" class="btn btn-danger" type="button">试听</button>\
-               </div>\
+                        <div>' + word.name + '</div>\
+                        <div id="panelContainer">\
+                        </div>\
                     </div>\
                 </div>\
             </div>');
     panel.data("obj", word);
     if (score) {
-        panel.find("#btnScore").text(score.score);
+        word.score = score.score;
     }
     return panel;
 };
 
-{
-    /*<audio controls style="vertical-align: middle; width:50px; height:34px;">\
-                    <source src="horse.mp3" type="audio/mpeg">\
-                    您的浏览器不支持 audio 元素。\
-                    </audio>\*/
-}
+var coreType = function (content) {
+    switch (content.contentType) {
+        case 0:
+            return "para.eval";
+        case 1:
+            return "word.eval";
+        case 2:
+            return "sent.eval";
+    }
+};
 
-$wordBody.on("click", ".panel .panel-body #btnPlay", function (e) {
-    var obj = e.currentTarget;
+$wordBody.on('show.bs.collapse', function (e) {
+    $("#iPanel").removeClass("hidden");
 
-    // var entity = $(obj).data("obj");
-    showAlert("play", $(obj).next());
-});
-$wordBody.on("click", ".panel .panel-body #btnRecord", function (e) {
-    var obj = e.currentTarget;
-    var word = $(obj).parents(".panel").data("obj");
-    startRecord(word.name, $(obj).next());
-});
-$wordBody.on("click", ".panel .panel-body #btnScore", function (e) {
-    // var obj = e.currentTarget;
-    // var entity = $(obj).data("obj");
-    showAlert("score");
+    var obj = $(e.target),
+        content = obj.parent().data("obj");
+    obj.find("#panelContainer").append($("#iPanel"));
+    iPanel.setData({
+        audioUrl: "static/mp3/en/" + content._id + ".mp3",
+        serverParams: {
+            coreType: coreType(content),
+            refText: content.name,
+            userId: "guest"
+        }
+    });
+
+    if (content.score || content.score == 0) {
+        $("#iPanel").find(".replay").text(content.score);
+    } else {
+        $("#iPanel").find(".replay").append('<i class="fa bigger-160"></i>');
+    }
 });
 
 function setWordScore(wordId, score) {

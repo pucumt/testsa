@@ -1,0 +1,91 @@
+input,button,a,select,textarea{outline: 0 none !important;filter:chroma(color=#000000);}
+/* IPanel */
+.iPanel{ position:relative;}
+.iPanel .rateButton{ display:none;}
+.iPanel  .changeWordButton{}
+.iPanel .play{}
+.iPanel .playOff{}
+.iPanel .playOff  i:before{content: "\f04b";}
+.iPanel .playOn{}
+.iPanel .playOn  i:before{content: "\f04c";}
+.iPanel .record{}
+.iPanel .recordOff{}
+.iPanel .recordOff  i:before{content: "\f130";}
+.iPanel .recordOn{}
+.iPanel .recordOn  i:before{content: "\f04d";}
+.iPanel .replay{}
+.iPanel .replayDisabled{}
+.iPanel .replayDisabled{ cursor: not-allowed; opacity: .65; filter: alpha(opacity=65); background-image: linear-gradient(to bottom,#ccc 0,#ccc 100%)!important; background-color:#999999}
+.iPanel .replayDisabled:hover{background-image: linear-gradient(to bottom,#ccc 0,#ccc 100%)!important;}
+.iPanel .replayDisabled  i:before{content: "\f0e2";}
+.iPanel .replayOff{}
+.iPanel .replayOff  i:before{content: "\f0e2";}
+
+.iPanel .replayOn{}
+.iPanel .replayOn  i:before{content: "\f04c";}
+.iPanel .recordProgressBar{ width:166px; height:10px; border:1px solid #CDD8E3;background: #e9e9e9; margin-top:10px; font-size:1px; line-height:1px; display:none;}
+.iPanel .recordProgressBar .value{ background:#F2BB46; width:0; height:8px; font-size:1px; line-height:1px;}
+
+.iPanel .ratePopup{ width:240px; height:200px; position:absolute; left:10%; top:50px; background-color: #fff; border: 1px solid #ccc; border:1px solid rgba(0, 0, 0, 0.2); border-radius: 6px; -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5); background-clip: padding-box;outline: 0;z-index: 1999}
+.iPanel .ratePopup{ padding:20px 10px;}
+.iPanel .ratePopup label{ font-size:12px;}
+.iPanel .ratePopup p{ margin-top:0;}
+.iPanel .ratePopup .refText{ width:140px; height:16px;vertical-align:middle}
+.iPanel .ratePopup .email{ width:140px; height:25px; resize:none;vertical-align:middle}
+.iPanel .ratePopup .feedback{ width:140px; height:60px; resize:none;vertical-align:middle}
+.iPanel .ratePopup .buttonTableDiv{ text-align:center; padding-top:10px;}
+.iPanel .ratePopup .buttonTable{ width:80%; margin:0 auto; text-align:left;}
+.iPanel .ratePopup .submitButton{color: #FFF !important; border: 5px solid #FFF; cursor: pointer; background-color: #428BCA !important;border-color: #428BCA;}
+.iPanel .ratePopup .submitButton:hover {background-color: #1B6AAA !important; border-color: #1B6AAA !important;}
+.iPanel .ratePopup .cancelButton{color: #FFF !important; border: 5px solid #FFF; cursor: pointer; background-color: #ABBAC3 !important; border-color: #ABBAC3;}
+.iPanel .ratePopup .cancelButton:hover {background-color: #8B9AA3 !important; border-color: #8B9AA3 !important;}
+
+#playerUFO,
+#recorderUFO,
+#player{ position:absolute; left:0; top:0;}
+#recorder{ position:absolute; left:0; top:1px;}
+.iMediaDialogOverlay{ position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1002; background-color: #000; opacity: 0.5; filter: alpha(opacity=50);}
+.iMediaDialog{ width:467px; background:#fff;}
+.iMediaDialog{ position:absolute; z-index:1003; border:1px solid #ccc; height: auto; top: 41px;left: 50%;margin: 0 0 0 -12%;}
+.iMediaDialog button{ background:#428BCA !important; border-color: #428BCA;color: #FFF !important; width:50px; height:32px; line-height:32px; border:0; padding:0; margin:0; cursor:pointer;}
+.iMediaDialog .dialogTitle{ text-align:center; height:30px; line-height:30px; background-color: #F1F1F1;border-bottom: 1px solid #ccc;font-size: 16px;color: #478FCA !important;}
+.iMediaDialog .dialogCloseButton{ position:absolute; left:436px; top:-1px; width:30px; height:30px; display:block}
+.iMediaDialog .dialogCloseButton{border: none;background: transparent;opacity: 0.8;color: #D15B47;padding: 0;right: 8px !important;text-align: center;font-weight: bold;}
+.iMediaDialog .dialogCloseButton:hover{opacity: 1;text-decoration: none; padding: 0;}
+.iMediaDialog .dialogBody{ height:298px; text-align:center;}
+.iMediaDialog #player{}
+.iMediaDialog #recorder{}
+.iMediaDialog .dialogInfo{}
+.iMediaDialog .dialogInfo h5 { margin:0;}
+.iMediaDialog .dialogInfo{ width: 465px; padding:0 84px; margin:10px 0;}
+.iMediaDialog .dialogInfo ul{ margin:0; padding-left:20px;}
+.iMediaDialog .hidden { display: none;}
+.iMediaDialog .info { color: blue;}
+.iMediaDialog .success { color: green;}
+.iMediaDialog .error { color: red;}
+.iMediaDialog .dialogButton{ text-align:center; padding:0 0 20px;}
+.iMediaDialog .dialogButton .okButton{ margin:0 auto;}
+.iMediaDialog .dialogButton .okButton:hover{background-color: #1B6AAA !important; border-color: #428BCA;}
+
+.iMediaDialogSuccess{}
+.iMediaDialogSuccess #recorder{ left:50px; top:30px;}
+
+.iMediaDialogError{}
+.iMediaDialogError .dialogFlashError{ padding:0 10px;}
+.iMediaDialogError .dialogBody{ display:none;}
+
+.iMediaDialogClosed{ position:absolute; top:0px; width:1px; height:1px;}
+.iMediaDialogClosed .dialogTitle,
+.iMediaDialogClosed .dialogInfo,
+.iMediaDialogClosed .dialogButton{ display:none;}
+.iMediaDialogClosed .dialogBody{ height:1px;}
+/*.iMediaDialogClosed #recorder{ left:460px; top:100px;}*/
+.iMediaDialogClosed #recorder{left:160px\0; top:100px\0; *left:160px; *top:100px; _left:160px; _top:100px; left:160px\9\0; top:100px\9\0}
+
+@media (min-width:768px){
+/*.iMediaDialogClosed #recorder{ left:300px; top:88px;}*/
+.iMediaDialogClosed #recorder{ left:300px; top:0px;}
+}
+@media screen and (max-width:767px){
+.iMediaDialogClosed #recorder{ left:80px; top:200px;}
+}
