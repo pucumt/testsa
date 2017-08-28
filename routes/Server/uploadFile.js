@@ -28,7 +28,7 @@ var xlsx = require("node-xlsx"),
     OrderFromBank = require('../../models/orderFromBank.js'),
 
     checkLogin = auth.checkLogin,
-    serverPath = path.join(__dirname, "../"),
+    serverPath = path.join(process.cwd(), "../"),
     storage = multer.diskStorage({
         destination: function (req, file, cb) {
             cb(null, './public/uploads/');

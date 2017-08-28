@@ -3,6 +3,9 @@ var Lesson = require('../../models/lesson.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     LessonContent = require('../../models/lessonContent.js'),
     StudentLessonScore = require('../../models/studentLessonScore.js'),
+    fs = require('fs'),
+    path = require('path'),
+    request = require('request'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
@@ -110,9 +113,14 @@ module.exports = function (app) {
                 contentId: req.body.wordId
             })
             .then(function (score) {
+                //save score
                 if (score) {
+                    //save record
+                    saveRecord(req.body.studentId, req.body.recordId, score._id);
+
                     var newScore = new StudentLessonScore({
-                        score: req.body.score
+                        score: req.body.score,
+                        contentRecord: req.body.recordId
                     });
                     newScore.update(score._id)
                         .then(function () {
@@ -126,15 +134,24 @@ module.exports = function (app) {
                         studentId: req.body.studentId,
                         contentId: req.body.wordId,
                         score: req.body.score,
+                        contentRecord: req.body.recordId,
                         createdBy: req.session.admin._id
                     });
 
                     newScore.save().then(function (result) {
                         if (result) {
+                            //save record
+                            saveRecord(req.body.studentId, req.body.recordId, result._id);
+
                             res.jsonp(result);
                         }
                     });
                 }
             });
     });
+
+    function saveRecord(studentId, recordId, scoreId) {
+        request('https://records.17kouyu.com/' + recordId + '.mp3')
+            .pipe(fs.createWriteStream(path.join(process.cwd(), '/public/uploads/scores/' + studentId + '/' + scoreId + '.mp3')));
+    };
 }

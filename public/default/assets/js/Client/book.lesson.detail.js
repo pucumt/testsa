@@ -23,7 +23,8 @@ window.iPanel = new _17kouyu.IPanel({
         $("#iPanel").find(".replay").text(score);
         var content = $("#iPanel").parents(".panel").data("obj");
         content.score = score;
-        setWordScore(content._id, score);
+        setWordScore(content._id, score, data.recordId);
+        //http://records.17kouyu.com/59a3807ccd5d44b5760be251.mp3//data.recordId
     },
     onScoreError: function (errorType) { //评分失败的显示 "TIMEOUT", "NO_DATA", ErrorID
         var errorObj = _17kouyu.IStatusCode.get(errorType, "cn");
@@ -131,7 +132,7 @@ $wordBody.on('show.bs.collapse', function (e) {
         content = obj.parent().data("obj");
     obj.find("#panelContainer").append($("#iPanel"));
     iPanel.setData({
-        audioUrl: "static/mp3/en/" + content._id + ".mp3",
+        audioUrl: "https://localhost:2370/uploads/books/5998e8646872c7389c34de12/" + $('#lessonId').val() + "/" + content._id + ".mp3",
         serverParams: {
             coreType: coreType(content),
             refText: content.name,
@@ -146,10 +147,11 @@ $wordBody.on('show.bs.collapse', function (e) {
     }
 });
 
-function setWordScore(wordId, score) {
+function setWordScore(wordId, score, recordId) {
     var filter = {
         wordId: wordId,
         score: score,
+        recordId: recordId,
         lessonId: $("#lessonId").val(),
         studentId: $("#studentId").val()
     };
