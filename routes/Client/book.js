@@ -151,7 +151,22 @@ module.exports = function (app) {
     });
 
     function saveRecord(studentId, recordId, scoreId) {
-        request('https://records.17kouyu.com/' + recordId + '.mp3')
-            .pipe(fs.createWriteStream(path.join(process.cwd(), '/public/uploads/scores/' + studentId + '/' + scoreId + '.mp3')));
+        var folder = path.join(process.cwd(), '/public/uploads/scores/' + studentId + '/');
+        fs.stat(folder, function (err, stats) {
+            if (err) {
+                fs.mkdir(folder, function (err) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    request('https://records.17kouyu.com/' + recordId + '.mp3')
+                        .pipe(fs.createWriteStream(path.join(folder, scoreId + '.mp3')));
+                });
+            } else {
+                //存在
+                request('https://records.17kouyu.com/' + recordId + '.mp3')
+                    .pipe(fs.createWriteStream(path.join(folder, scoreId + '.mp3')));
+            }
+        });
     };
 }

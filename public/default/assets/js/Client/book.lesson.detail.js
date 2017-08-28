@@ -4,7 +4,7 @@ window.iPanel = new _17kouyu.IPanel({
     secretKey: "17KouyuTestSecretKey",
     //showFlash:false,
     data: {
-        audioUrl: "static/mp3/en/Where are you from.mp3", //标准音频URL
+        audioUrl: "", //标准音频URL
         //duration: 5000, //传入参数手动设置录音时长
         serverParams: { // 录音服务参数
             coreType: "sent.eval", // 选择内核sent.eval
@@ -43,7 +43,7 @@ $(document).ready(function () {
 var $wordBody = $('.panel-group.wordlist');
 
 function loadWord() {
-
+    //加载单词，句子，课文
     var filter = {
         lessonId: $('#lessonId').val(),
         studentId: $("#studentId").val()
@@ -116,11 +116,11 @@ function generatePanel(word, score) {
 
 var coreType = function (content) {
     switch (content.contentType) {
-        case 0:
+        case 0: //课文
             return "para.eval";
-        case 1:
+        case 1: //单词
             return "word.eval";
-        case 2:
+        case 2: //句子
             return "sent.eval";
     }
 };
@@ -142,12 +142,14 @@ $wordBody.on('show.bs.collapse', function (e) {
 
     if (content.score || content.score == 0) {
         $("#iPanel").find(".replay").text(content.score);
+        $("#iPanel").find(".replay").removeClass("replayDisabled").addClass("replayOff");
     } else {
         $("#iPanel").find(".replay").append('<i class="fa bigger-160"></i>');
     }
 });
 
 function setWordScore(wordId, score, recordId) {
+    //存储成绩和录音
     var filter = {
         wordId: wordId,
         score: score,
