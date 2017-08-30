@@ -444,3 +444,31 @@ footer,
 .enroll.makeup .enroll-submit.exam #btnAbsent {
     width: 50%;
 }
+
+.lesson .lesson-title {
+    padding: 10px 15px;
+}
+
+.iPanel .play.toReplay.score i:before {
+    content: attr(data-content);
+}
+
+.iPanel .play.toReplay i:before {
+    content: "\f0e2";
+}
+
+.iPanel .play.toReplay {
+    cursor: not-allowed;
+    opacity: .65;
+    background-image: linear-gradient(to bottom, #ccc 0, #ccc 100%)!important;
+}
+
+.iPanel .play.toReplay.score {
+    cursor: pointer;
+    opacity: 1;
+    background-image: linear-gradient(to bottom, #267eb8 0, #136194 100%)!important;
+}
+
+.iPanel .play.toReplay.process i:before {
+    content: "\f04c";
+}

@@ -1,6 +1,10 @@
 $(document).ready(function () {
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
+        location.href = "/Teacher/personalCenter";
+    });
+
     loadData();
-    $(".pageTitle").text("选课程查作业");
+    $(".pageTitle .title").text("选课程查作业");
 });
 
 var $selectBody = $('.container.enroll .exam-list');

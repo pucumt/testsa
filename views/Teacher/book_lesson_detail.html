@@ -1,10 +1,13 @@
-﻿{% extends "Client/partial/main-header.html" %} {% block main %}
+﻿{% extends "Teacher/partial/main-header.html" %} {% block main %}
 <div class="container enroll lesson">
     <div class="pageTitle" style="">
         <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>{{ name }}
     </div>
     <div class="row">
-        <div id="iRecorder"></div>
+        <div id="iPanel" class="iPanel hidden">
+            <button class="btn btn-app btn-primary btn-md play" audioIndex="0"><i class="fa bigger-160"></i></button>
+            <button class="btn btn-app btn-primary btn-md play toReplay" audioIndex="1"><i class="fa bigger-160"></i></button>
+        </div>
         <div class="panel-group wordlist" id="accordion" role="tablist" aria-multiselectable="true">
         </div>
     </div>
@@ -13,5 +16,6 @@
 <input type="hidden" id="lessonId" value="{{ lessonId }}" />
 <input type="hidden" id="classId" value="{{ classId }}" />
 <input type="hidden" id="bookId" value="{{ bookId }}" />
+<script type="text/javascript" src="https://sdk.17kouyu.com/jssdk/v3.0/iload.js"></script>
 <script type="text/javascript" src="/default/assets/js/Teacher/book.lesson.detail.js?v=1.0"></script>
 {% endblock %}

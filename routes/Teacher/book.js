@@ -2,6 +2,7 @@ var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     LessonContent = require('../../models/lessonContent.js'),
+    StudentLesson = require('../../models/studentLesson.js'),
     StudentLessonScore = require('../../models/studentLessonScore.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
@@ -42,6 +43,18 @@ module.exports = function (app) {
                 isLastPage: ((page - 1) * 14 + lessons.length) == total
             });
         });
+    });
+
+    app.post('/Teacher/book/allLessons', checkLogin);
+    app.post('/Teacher/book/allLessons', function (req, res) {
+        //debugger;
+        // number 类型
+        Lesson.getFilters({
+                bookId: req.body.bookId
+            })
+            .then(function (lessons) {
+                res.jsonp(lessons);
+            });
     });
 
     app.get('/Teacher/book/lesson/:id', checkLogin);

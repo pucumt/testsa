@@ -8,6 +8,7 @@ var studentLessonScoreSchema = new mongoose.Schema({
     lessonId: ObjectId,
     contentId: ObjectId,
     contentRecord: String, //录音链接？？
+    contentType: Number, //0 content 1 word 2 sentence
     score: Number,
     createdBy: String,
     createdDate: {
@@ -112,4 +113,21 @@ StudentLessonScore.batchUpdate = function (filter, option) {
     return studentLessonScoreModel.update(filter, option, {
         multi: true
     }).exec();
+};
+
+StudentLessonScore.getAverage = function (lessonId, studentId, contentType) {
+    //打开数据库
+    return studentLessonScoreModel.aggregate({
+            $match: {
+                lessonId: mongoose.Types.ObjectId(lessonId),
+                studentId: mongoose.Types.ObjectId(studentId),
+                contentType: parseInt(contentType)
+            }
+        })
+        .group({
+            _id: null,
+            score: {
+                $avg: "$score"
+            }
+        }).exec();
 };

@@ -2,6 +2,7 @@ var Lesson = require('../../models/lesson.js'),
     Book = require('../../models/book.js'),
     StudentInfo = require('../../models/studentInfo.js'),
     LessonContent = require('../../models/lessonContent.js'),
+    StudentLesson = require('../../models/studentLesson.js'),
     StudentLessonScore = require('../../models/studentLessonScore.js'),
     fs = require('fs'),
     path = require('path'),
@@ -79,35 +80,9 @@ module.exports = function (app) {
             });
     });
 
-    // app.post('/book/lesson/search/sentence', checkLogin);
-    // app.post('/book/lesson/search/sentence', function (req, res) {
-    //     LessonContent.getFilters({
-    //             lessonId: req.body.lessonId,
-    //             contentType: 2
-    //         })
-    //         .then(function (sentences) {
-    //             res.jsonp({
-    //                 sentences: sentences
-    //             });
-    //         });
-    // });
-
-    // app.post('/book/lesson/search/content', checkLogin);
-    // app.post('/book/lesson/search/content', function (req, res) {
-    //     LessonContent.getFilter({
-    //             lessonId: req.body.lessonId,
-    //             contentType: 0
-    //         })
-    //         .then(function (content) {
-    //             res.jsonp({
-    //                 content: content
-    //             });
-    //         });
-    // });
-
-    app.post('/book/lesson/score', checkLogin);
-    app.post('/book/lesson/score', function (req, res) {
-        StudentLessonScore.getFilter({
+    // 保存成绩
+    function saveScore(req) {
+        return StudentLessonScore.getFilter({
                 lessonId: req.body.lessonId,
                 studentId: req.body.studentId,
                 contentId: req.body.wordId
@@ -122,31 +97,112 @@ module.exports = function (app) {
                         score: req.body.score,
                         contentRecord: req.body.recordId
                     });
-                    newScore.update(score._id)
-                        .then(function () {
-                            res.jsonp({
-                                sucess: true
-                            });
-                        });
+                    return newScore.update(score._id);
                 } else {
                     var newScore = new StudentLessonScore({
                         lessonId: req.body.lessonId,
                         studentId: req.body.studentId,
                         contentId: req.body.wordId,
+                        contentType: req.body.contentType,
                         score: req.body.score,
                         contentRecord: req.body.recordId,
                         createdBy: req.session.admin._id
                     });
 
-                    newScore.save().then(function (result) {
+                    return newScore.save().then(function (result) {
                         if (result) {
                             //save record
                             saveRecord(req.body.studentId, req.body.recordId, result._id);
-
-                            res.jsonp(result);
                         }
+                        return result;
                     });
                 }
+            });
+    };
+
+    function getContentOption(req, scoreResult, isExist) {
+        return getAvg(req)
+            .then(function (avg) {
+                switch (req.body.contentType) {
+                    case "0":
+                        return {
+                            paragraphAve: req.body.score
+                        };
+                    case "1":
+                        var option = {
+                            wordAve: avg
+                        }
+                        if (scoreResult._id) {
+                            //new;
+                            if (isExist) {
+                                option.$inc = {
+                                    wordProcess: 1
+                                };
+                            } else {
+                                option.wordProcess = 1;
+                            }
+                        }
+                        return option;
+                    case "2":
+                        var option = {
+                            sentAve: avg
+                        }
+                        if (scoreResult._id) {
+                            //new;
+                            if (isExist) {
+                                option.$inc = {
+                                    sentProcess: 1
+                                };
+                            } else {
+                                option.sentProcess = 1;
+                            }
+                        }
+                        return option;
+                }
+            });
+
+    };
+
+    function getAvg(req) {
+        if (req.body.contentType == "0") {
+            return Promise.resolve();
+        }
+        return StudentLessonScore.getAverage(req.body.lessonId, req.body.studentId, req.body.contentType)
+            .then(function (result) {
+                return (result && result[0] && result[0].score) || req.body.score;
+            });
+    };
+
+    app.post('/book/lesson/score', checkLogin);
+    app.post('/book/lesson/score', function (req, res) {
+        StudentLesson.getFilter({
+                lessonId: req.body.lessonId,
+                studentId: req.body.studentId
+            })
+            .then(function (studentLesson) {
+                saveScore(req)
+                    .then(function (scoreResult) {
+                        //contentType
+                        return getContentOption(req, scoreResult, studentLesson)
+                            .then(function (option) {
+                                if (studentLesson) {
+                                    //关系已经存在
+                                    var newRelation = new StudentLesson(option);
+                                    return newRelation.update(studentLesson._id);
+                                } else {
+                                    //关系未存在
+                                    option.studentId = req.body.studentId;
+                                    option.lessonId = req.body.lessonId;
+                                    var newRelation = new StudentLesson(option);
+                                    return newRelation.save();
+                                }
+                            });
+                    })
+                    .then(function () {
+                        res.jsonp({
+                            sucess: true
+                        });
+                    });
             });
     });
 

@@ -4,6 +4,7 @@ var TrainClass = require('../../models/trainClass.js'),
     AbsentStudents = require('../../models/absentStudents.js'),
     AbsentClass = require('../../models/absentClass.js'),
     RollCallConfigure = require('../../models/rollCallConfigure.js'),
+    StudentLesson = require('../../models/studentLesson.js'),
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
@@ -85,6 +86,41 @@ module.exports = function (app) {
                             students: students,
                             abStudents: abStudents
                         });
+                    });
+                });
+            });
+    });
+
+    app.post('/Teacher/rollCall/studentsWithScore', function (req, res) {
+        AdminEnrollTrain.getFilters({
+                trainId: req.body.id,
+                isSucceed: 1
+            })
+            .then(function (orders) {
+                var students = [],
+                    pArray = [];
+                orders.forEach(function (order) {
+                    var p = StudentInfo.get(order.studentId)
+                        .then(function (student) {
+                            var tmpStudent = student.toJSON();
+                            students.push(tmpStudent);
+                            return StudentLesson.getFilter({
+                                    lessonId: req.body.lesson,
+                                    studentId: order.studentId
+                                })
+                                .then(function (stuLesson) {
+                                    if (stuLesson) {
+                                        tmpStudent.stuLesson = stuLesson.toJSON();
+                                    }
+                                });
+                        });
+                    pArray.push(p);
+                });
+
+                Promise.all(pArray).then(function () {
+                    //students
+                    res.jsonp({
+                        students: students
                     });
                 });
             });

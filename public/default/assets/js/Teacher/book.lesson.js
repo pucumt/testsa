@@ -35,30 +35,31 @@ function loadData(p) {
             bookId: $('#bookId').val(),
             name: $('.enroll-filter #name').val()
         };
-    selfAjax("post", "/Teacher/book/lessons?" + pStr, filter, function (data) {
-        if (data && data.lessons.length > 0) {
-            var d = $(document.createDocumentFragment());
-            data.lessons.forEach(function (lesson) {
-                d.append(generateLi(lesson));
-            });
-            $selectBody.append(d);
-            $("#btnMore").show();
-        } else {
-            if (!p) {
-                $selectBody.text("即将上线");
-                $("#btnMore").hide();
-                return;
+    selfAjax("post", "/Teacher/book/lessons?" + pStr, filter)
+        .then(function (data) {
+            if (data && data.lessons.length > 0) {
+                var d = $(document.createDocumentFragment());
+                data.lessons.forEach(function (lesson) {
+                    d.append(generateLi(lesson));
+                });
+                $selectBody.append(d);
+                $("#btnMore").show();
+            } else {
+                if (!p) {
+                    $selectBody.text("即将上线");
+                    $("#btnMore").hide();
+                    return;
+                }
             }
-        }
-        if (data.isLastPage) {
-            //已经全部加载
-            $("#btnMore").text("已经到最后了");
-            $("#btnMore").attr("disabled", "disabled");
-        }
-        if (p) {
-            $("#page").val(p);
-        }
-    });
+            if (data.isLastPage) {
+                //已经全部加载
+                $("#btnMore").text("已经到最后了");
+                $("#btnMore").attr("disabled", "disabled");
+            }
+            if (p) {
+                $("#page").val(p);
+            }
+        });
 };
 
 function generateLi(lesson) {

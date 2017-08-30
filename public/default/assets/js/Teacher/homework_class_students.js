@@ -1,16 +1,49 @@
 $(document).ready(function () {
-    loadData();
-
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/Teacher/rollCallClasses?type=h";
     });
+    $(".enroll-filter .btn-search")
+        .on("click", function (e) {
+            $('.enroll .exam-list').empty();
+            loadData();
+            $('.enroll-filter').addClass("hidden");
+            $('.container.enroll').show();
+        });
+    $(".enroll .pageTitle .filter")
+        .on("click", function (e) {
+            $('.enroll-filter').removeClass("hidden");
+            $('.container.enroll').hide();
+        });
+
+    $(".enroll-filter .glyphicon-remove-circle")
+        .on("click", function (e) {
+            $('.enroll-filter').addClass("hidden");
+            $('.container.enroll').show();
+        });
+
+    loadFilter();
 });
+
+function loadFilter() {
+    selfAjax("post", "/Teacher/book/allLessons", {
+        bookId: $("#bookId").val()
+    }).then(function (data) {
+        if (data) {
+            if (data.length > 0) {
+                data.forEach(function (lesson) {
+                    $(".enroll-filter #name").append("<option value='" + lesson._id + "'>" + lesson.name + "</option>");
+                });
+            }
+        }
+    });
+};
 
 var $selectBody = $('.container.enroll .exam-list');
 
 function loadData() {
-    selfAjax("post", "/Teacher/rollCall/students", {
-        id: $("#id").val()
+    selfAjax("post", "/Teacher/rollCall/studentsWithScore", {
+        id: $("#id").val(),
+        lesson: $("#name").val()
     }).then(function (data) {
         if (data && data.students.length > 0) {
             var d = $(document.createDocumentFragment());
@@ -34,7 +67,12 @@ function generateLi(student) {
     $li.append($goodContainer);
     $goodContainer.append($infoContainer);
 
-    $infoContainer.append($('<div class="checkbox"><label>' + student.name + '(' + student.mobile + ')' + '</label></div>'));
+    $infoContainer.append($('<div class=""><strong>' + student.name + '(' + student.mobile + ')' + '</strong></div>'));
+    if (student.stuLesson) {
+        var stuLesson = student.stuLesson;
+        $infoContainer.append($('<div style="">单词:' + stuLesson.wordAve + '(' + stuLesson.wordProcess +
+            ')&nbsp;句子:' + stuLesson.sentAve + '(' + stuLesson.sentProcess + ')&nbsp;课文:' + stuLesson.paragraphAve + '</div>'));
+    }
     return $li;
 };
 
