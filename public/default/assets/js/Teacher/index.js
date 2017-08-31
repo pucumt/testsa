@@ -46,7 +46,9 @@ window.selfAjax = function (method, url, filter) {
                 url,
                 filter
             ).then(function (data) {
-                hideLoading();
+                setTimeout(function () {
+                    hideLoading();
+                }, 0);
                 return data;
             });
         });
