@@ -5,6 +5,7 @@ var TrainClass = require('../../models/trainClass.js'),
     AbsentClass = require('../../models/absentClass.js'),
     RollCallConfigure = require('../../models/rollCallConfigure.js'),
     StudentLesson = require('../../models/studentLesson.js'),
+    LessonContent = require('../../models/lessonContent.js'),
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
@@ -99,30 +100,49 @@ module.exports = function (app) {
             .then(function (orders) {
                 var students = [],
                     pArray = [];
-                orders.forEach(function (order) {
-                    var p = StudentInfo.get(order.studentId)
-                        .then(function (student) {
-                            var tmpStudent = student.toJSON();
-                            students.push(tmpStudent);
-                            return StudentLesson.getFilter({
-                                    lessonId: req.body.lesson,
-                                    studentId: order.studentId
-                                })
-                                .then(function (stuLesson) {
-                                    if (stuLesson) {
-                                        tmpStudent.stuLesson = stuLesson.toJSON();
-                                    }
+                LessonContent.getCount(req.body.lesson)
+                    .then(function (countResult) {
+                        //总数 countResult
+                        var lessonCount = {};
+                        if (countResult && countResult.length > 0) {
+                            countResult.forEach(function (result) {
+                                switch (result._id) {
+                                    case 1:
+                                        lessonCount.wordCount = result.count;
+                                        break;
+                                    case 2:
+                                        lessonCount.sentCount = result.count;
+                                        break;
+                                }
+                            });
+                        }
+                        orders.forEach(function (order) {
+                            var p = StudentInfo.get(order.studentId)
+                                .then(function (student) {
+                                    var tmpStudent = student.toJSON();
+                                    students.push(tmpStudent);
+                                    return StudentLesson.getFilter({
+                                            lessonId: req.body.lesson,
+                                            studentId: order.studentId
+                                        })
+                                        .then(function (stuLesson) {
+                                            if (stuLesson) {
+                                                tmpStudent.stuLesson = stuLesson.toJSON();
+                                                tmpStudent.wordCount = lessonCount.wordCount;
+                                                tmpStudent.sentCount = lessonCount.sentCount;
+                                            }
+                                        });
                                 });
+                            pArray.push(p);
                         });
-                    pArray.push(p);
-                });
 
-                Promise.all(pArray).then(function () {
-                    //students
-                    res.jsonp({
-                        students: students
+                        Promise.all(pArray).then(function () {
+                            //students
+                            res.jsonp({
+                                students: students
+                            });
+                        });
                     });
-                });
             });
     });
 
@@ -283,7 +303,8 @@ module.exports = function (app) {
                     title: '查作业',
                     user: req.session.teacher,
                     id: req.params.id,
-                    bookId: trainClass.bookId
+                    bookId: trainClass.bookId,
+                    lessonId: req.query.lessonId
                 });
             });
 

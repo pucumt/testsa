@@ -21,6 +21,10 @@ $(document).ready(function () {
             $('.container.enroll').show();
         });
 
+    if ($("#lessonId").val()) {
+        $('.enroll-filter').addClass("hidden");
+        $('.container.enroll').show();
+    }
     loadFilter();
 });
 
@@ -31,9 +35,17 @@ function loadFilter() {
         if (data) {
             if (data.length > 0) {
                 data.forEach(function (lesson) {
-                    $(".enroll-filter #name").append("<option value='" + lesson._id + "'>" + lesson.name + "</option>");
+                    var checked = "";
+                    if ($("#lessonId").val() && $("#lessonId").val() == lesson._id) {
+                        checked = "checked";
+                    }
+                    $(".enroll-filter #name").append("<option " + checked + " value='" + lesson._id + "'>" + lesson.name + "</option>");
                 });
             }
+        }
+
+        if ($("#lessonId").val()) {
+            loadData();
         }
     });
 };
@@ -70,8 +82,9 @@ function generateLi(student) {
     $infoContainer.append($('<div class=""><strong>' + student.name + '(' + student.mobile + ')' + '</strong></div>'));
     if (student.stuLesson) {
         var stuLesson = student.stuLesson;
-        $infoContainer.append($('<div style="">单词:' + stuLesson.wordAve + '(' + stuLesson.wordProcess +
-            ')&nbsp;句子:' + stuLesson.sentAve + '(' + stuLesson.sentProcess + ')&nbsp;课文:' + stuLesson.paragraphAve + '</div>'));
+        $infoContainer.append($('<div style="">单词:{0}({1}/{2})&nbsp;句子:{3}({4}/{5})&nbsp;课文:{6}</div>'
+            .format(stuLesson.wordAve, stuLesson.wordProcess, student.wordCount, stuLesson.sentAve,
+                stuLesson.sentProcess, student.sentCount, stuLesson.paragraphAve)));
     }
     return $li;
 };
@@ -79,5 +92,6 @@ function generateLi(student) {
 $selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    location.href = "/Teacher/book/" + $("#bookId").val() + "?classId=" + $("#id").val() + "&studentId=" + entity._id;
+    location.href = "/Teacher/book/lesson/" + $("#name").val() + "?classId=" + $("#id").val() + "&studentId=" + entity._id;
+    //location.href = "/Teacher/book/" + $("#bookId").val() + "?classId=" + $("#id").val() + "&studentId=" + entity._id;
 });

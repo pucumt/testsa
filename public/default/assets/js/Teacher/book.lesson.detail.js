@@ -37,7 +37,8 @@ window.iPanel = new _17kouyu.IPanel({
 
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
-        location.href = "/Teacher/book/" + $("#bookId").val() + "?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val();
+        location.href = "/Teacher/homework/students/" + $("#classId").val() + "?lessonId=" + $('#lessonId').val();
+        //location.href = "/Teacher/book/" + $("#bookId").val() + "?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val();
     });
     loadWord();
 });

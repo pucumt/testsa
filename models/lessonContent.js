@@ -111,3 +111,21 @@ LessonContent.batchUpdate = function (filter, option) {
         multi: true
     }).exec();
 };
+
+LessonContent.getCount = function (lessonId) {
+    //打开数据库
+    return lessonContentModel.aggregate({
+            $match: {
+                lessonId: mongoose.Types.ObjectId(lessonId),
+                isDeleted: {
+                    $ne: true
+                }
+            }
+        })
+        .group({
+            _id: "$contentType",
+            count: {
+                $sum: 1
+            }
+        }).exec();
+};
