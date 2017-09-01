@@ -119,7 +119,7 @@ function addValidation(callback) {
                         stringLength: {
                             min: 1,
                             max: 30,
-                            message: '名称在1-30个字符之间'
+                            message: '名称在1-100个字符之间'
                         }
                     }
                 }
