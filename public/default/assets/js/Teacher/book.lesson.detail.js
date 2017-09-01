@@ -83,14 +83,13 @@ function loadWord() {
                 var contents = data.contents.filter(function (content) {
                     return content.contentType == 0;
                 });
-                $wordBody.append('<div class="lesson-title">课文</div>');
+                // $wordBody.append('<div class="lesson-title">课文</div>');
                 var d = $(document.createDocumentFragment());
-                contents.forEach(function (word) {
-                    var scores = data.scores.filter(function (score) {
-                        return score.contentId == word._id;
-                    });
-                    d.append(generatePanel(word, scores[0]));
+                word = contents[0];
+                var scores = data.scores.filter(function (score) {
+                    return score.contentId == word._id;
                 });
+                d.append(generateContentPanel(word, scores[0]));
                 $wordBody.append(d);
             }
         });
@@ -100,12 +99,33 @@ function generatePanel(word, score) {
     var panel = $('<div class="panel panel-default">\
                 <div class="panel-heading" role="tab" id="headingOne">\
                     <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
-                        ' + word.name + '\
+                        ' + word.name + '&nbsp;<span class="score">(' + (score.score || '') + ')</span>\
                     </h4>\
                 </div>\
                 <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\
                     <div class="panel-body">\
-                        <div>' + word.name + '</div>\
+                        <div id="panelContainer">\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>');
+    panel.data("obj", word);
+    if (score) {
+        word.score = score.score;
+        word.scoreId = score._id;
+    }
+    return panel;
+};
+
+function generateContentPanel(word, score) {
+    var panel = $('<div class="panel panel-default">\
+                <div class="panel-heading" role="tab" id="headingOne">\
+                    <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
+                    课文&nbsp;<span class="score">(' + (score.score || '') + ')</span>\
+                    </h4>\
+                </div>\
+                <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\
+                    <div class="panel-body">\
                         <div id="panelContainer">\
                         </div>\
                     </div>\

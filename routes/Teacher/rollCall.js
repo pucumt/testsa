@@ -304,6 +304,8 @@ module.exports = function (app) {
                     user: req.session.teacher,
                     id: req.params.id,
                     bookId: trainClass.bookId,
+                    minLesson: trainClass.minLesson,
+                    maxLesson: trainClass.maxLesson,
                     lessonId: req.query.lessonId
                 });
             });

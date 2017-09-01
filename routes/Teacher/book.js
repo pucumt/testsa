@@ -49,9 +49,16 @@ module.exports = function (app) {
     app.post('/Teacher/book/allLessons', function (req, res) {
         //debugger;
         // number 类型
-        Lesson.getFilters({
-                bookId: req.body.bookId
-            })
+        var filter = {
+            bookId: req.body.bookId
+        };
+        if (req.body.minLesson) {
+            filter.sequence = {
+                $lte: req.body.maxLesson,
+                $gte: req.body.minLesson
+            };
+        }
+        Lesson.getFilters(filter)
             .then(function (lessons) {
                 res.jsonp(lessons);
             });

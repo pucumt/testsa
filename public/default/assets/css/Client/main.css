@@ -487,6 +487,11 @@ footer,
     padding: 10px 15px;
 }
 
+.lesson .panel-title .score {
+    font-size: 14px;
+    color: #286090;
+}
+
 .iPanel .play.toReplay.score i:before {
     content: attr(data-content);
 }

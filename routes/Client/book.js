@@ -18,7 +18,9 @@ module.exports = function (app) {
             title: '课文列表',
             user: req.session.user,
             bookId: req.params.id,
-            studentId: req.query.studentId
+            studentId: req.query.studentId,
+            minLesson: req.query.minLesson,
+            maxLesson: req.query.maxLesson
         });
     });
 
@@ -33,6 +35,12 @@ module.exports = function (app) {
             var reg = new RegExp(req.body.name, 'i')
             filter.name = {
                 $regex: reg
+            };
+        }
+        if (req.body.minLesson) {
+            filter.sequence = {
+                $lte: req.body.maxLesson,
+                $gte: req.body.minLesson
             };
         }
         Lesson.getAll(null, page, filter, function (err, lessons, total) {
@@ -56,7 +64,9 @@ module.exports = function (app) {
                     name: lesson.name,
                     lessonId: req.params.id,
                     studentId: req.query.studentId,
-                    bookId: lesson.bookId
+                    bookId: lesson.bookId,
+                    minLesson: req.query.minLesson,
+                    maxLesson: req.query.maxLesson
                 });
             });
     });

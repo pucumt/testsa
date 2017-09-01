@@ -49,6 +49,8 @@ module.exports = function (app) {
                                     orderDate: train.orderDate,
                                     courseTime: newClass.courseTime,
                                     bookId: newClass.bookId,
+                                    minLesson: newClass.minLesson,
+                                    maxLesson: newClass.maxLesson,
                                     courseStartDate: ((changeEnd && changeEnd.endDate) || newClass.courseStartDate)
                                 });
                             });

@@ -30,7 +30,9 @@ $(document).ready(function () {
 
 function loadFilter() {
     selfAjax("post", "/Teacher/book/allLessons", {
-        bookId: $("#bookId").val()
+        bookId: $("#bookId").val(),
+        minLesson: $("#minLesson").val(),
+        maxLesson: $("#maxLesson").val()
     }).then(function (data) {
         if (data) {
             if (data.length > 0) {

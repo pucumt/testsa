@@ -32,7 +32,9 @@ function loadData(p) {
     var pStr = p ? "p=" + p : "",
         filter = {
             bookId: $('#bookId').val(),
-            name: $('.enroll-filter #name').val()
+            name: $('.enroll-filter #name').val(),
+            minLesson: $("#minLesson").val(),
+            maxLesson: $("#maxLesson").val()
         };
     selfAjax("post", "/book/lessons?" + pStr, filter, function (data) {
         if (data && data.lessons.length > 0) {
@@ -79,5 +81,6 @@ $("#btnMore").on("click", function (e) {
 $selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    location.href = "/book/lesson/" + entity._id + "?studentId=" + $("#studentId").val();
+    location.href = "/book/lesson/{0}?studentId={1}&minLesson={2}&maxLesson={3}"
+        .format(entity._id, $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
 });
