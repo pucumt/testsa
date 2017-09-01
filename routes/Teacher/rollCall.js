@@ -308,6 +308,7 @@ module.exports = function (app) {
                     maxLesson: trainClass.maxLesson,
                     lessonId: req.query.lessonId
                 });
+
             });
 
     });

@@ -52,6 +52,25 @@ function loadFilter() {
     });
 };
 
+function setSums(student, avgObject) {
+    if (student.stuLesson) {
+        stuLesson = student.stuLesson;
+        if (stuLesson.wordAve) {
+            avgObject.wordCount++;
+            avgObject.wordSum += stuLesson.wordAve;
+        }
+
+        if (stuLesson.sentAve) {
+            avgObject.sentCount++;
+            avgObject.sentSum += stuLesson.sentAve;
+        }
+
+        if (stuLesson.paragraphAve) {
+            avgObject.paraCount++;
+            avgObject.paraSum += stuLesson.paragraphAve;
+        }
+    }
+};
 var $selectBody = $('.container.enroll .exam-list');
 
 function loadData() {
@@ -60,13 +79,31 @@ function loadData() {
         lesson: $("#name").val()
     }).then(function (data) {
         if (data && data.students.length > 0) {
+            var avgObject = {
+                wordCount: 0,
+                wordSum: 0,
+                sentCount: 0,
+                sentSum: 0,
+                paraCount: 0,
+                paraSum: 0
+            };
             var d = $(document.createDocumentFragment());
             data.students.sort(function (a, b) {
                 return a.mobile.localeCompare(b.mobile);
             }).forEach(function (student) {
+                setSums(student, avgObject); //计算总数为了平均值
+
                 d.append(generateLi(student));
             });
             $selectBody.append(d);
+
+            //设置平均值
+            $(".exam-list").before("<div class='avg'>平均&nbsp;单词:{0}&nbsp;句子:{1}&nbsp;课文:{2}</div>"
+                .format(
+                    avgObject.wordCount && (avgObject.wordSum / avgObject.wordCount).toFixed(1),
+                    avgObject.sentCount && (avgObject.sentSum / avgObject.sentCount).toFixed(1),
+                    avgObject.paraCount && (avgObject.paraSum / avgObject.paraCount).toFixed(1)
+                ));
         } else {
             $selectBody.text("没有学生！");
         }
@@ -94,6 +131,7 @@ function generateLi(student) {
 $selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    location.href = "/Teacher/book/lesson/" + $("#name").val() + "?classId=" + $("#id").val() + "&studentId=" + entity._id;
-    //location.href = "/Teacher/book/" + $("#bookId").val() + "?classId=" + $("#id").val() + "&studentId=" + entity._id;
+    if (entity.stuLesson) {
+        location.href = "/Teacher/book/lesson/" + $("#name").val() + "?classId=" + $("#id").val() + "&studentId=" + entity._id;
+    }
 });

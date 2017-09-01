@@ -445,6 +445,10 @@ footer,
     width: 50%;
 }
 
+.enroll.rollCall .row.content .avg {
+    padding-left: 20px;
+}
+
 .lesson .lesson-title {
     padding: 10px 15px;
 }
