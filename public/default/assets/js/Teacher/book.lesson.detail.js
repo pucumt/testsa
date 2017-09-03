@@ -157,9 +157,9 @@ $wordBody.on('show.bs.collapse', function (e) {
     var obj = $(e.target),
         content = obj.parent().data("obj");
     obj.find("#panelContainer").append($("#iPanel"));
-    audioUrl[0] = "https://localhost:2370/uploads/books/" + $("#bookId").val() + "/" + $('#lessonId').val() + "/" + content._id + ".mp3";
+    audioUrl[0] = "../../../uploads/books/" + $("#bookId").val() + "/" + $('#lessonId').val() + "/" + content._id + ".mp3";
     if (content.scoreId) {
-        audioUrl[1] = "https://localhost:2370/uploads/scores/" + $("#studentId").val() + "/" + content.scoreId + ".mp3";
+        audioUrl[1] = "../../../uploads/scores/" + $("#studentId").val() + "/" + content.scoreId + ".mp3";
     } else {
         audioUrl[1] = undefined;
     }
