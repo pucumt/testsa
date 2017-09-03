@@ -26,7 +26,10 @@ var xlsx = require("node-xlsx"),
     CouponAssign = require('../../models/couponAssign.js'),
     Teacher = require('../../models/teacher.js'),
     OrderFromBank = require('../../models/orderFromBank.js'),
+    Lesson = require('../../models/lesson.js'),
+    LessonContent = require('../../models/lessonContent.js'),
 
+    util = require('util'),
     checkLogin = auth.checkLogin,
     serverPath = path.join(__dirname, "../"),
     storage = multer.diskStorage({
@@ -1794,6 +1797,76 @@ module.exports = function (app) {
             res.jsonp({
                 sucess: true
             });
+        });
+    });
+
+    function getTextByContentType(contentType, number) {
+        switch (contentType) {
+            case "0":
+                return "课文";
+            case "1":
+                return util.format("第%d个单词", number);
+            case "2":
+                return util.format("第%d个句子", number);
+        }
+    };
+
+    function validateFolder(folder) {
+        if (!fs.existsSync(folder)) {
+            // 不存在
+            fs.mkdirSync(folder);
+        }
+    };
+
+    function copyAudio(bookId, lessonId, contentId, audioPath) {
+        var bookFolder = path.join(serverPath, "../public/uploads/books", bookId),
+            lessonFolder = path.join(bookFolder, lessonId),
+            newPath = path.join(lessonFolder, contentId + ".mp3");
+
+        validateFolder(bookFolder);
+        validateFolder(lessonFolder);
+        // cut the audio
+        fs.renameSync(audioPath, newPath);
+    };
+
+    //添加音频到系统
+    app.post('/admin/audio', upload.single('audio'), function (req, res, next) {
+        var contentType = req.body.contentType,
+            number = parseInt(req.body.number) + 1,
+            lessonId = req.body.lessonId,
+            uploadFile = path.join(serverPath, "../public/uploads/", req.file.filename);
+
+        LessonContent.getContentOfSequence({
+            lessonId: lessonId,
+            contentType: contentType
+        }, parseInt(req.body.number)).then(function (content) {
+            if (content && content.length > 0) {
+                //找到了就要查找书名并拷贝音频
+                Lesson.get(lessonId)
+                    .then(function (lessonObject) {
+                        if (lessonObject) {
+                            //找到书名拷贝音频
+                            copyAudio(lessonObject.bookId.toJSON(), lessonId, content[0]._id.toJSON(), uploadFile);
+                            res.jsonp({
+                                sucess: true
+                            });
+                        } else {
+                            //没找到书名
+                            res.jsonp({
+                                error: "沒有找到该书！"
+                            });
+                        }
+                    }).catch(function () {
+                        res.jsonp({
+                            error: "拷贝音频出错！"
+                        });
+                    });
+
+            } else {
+                res.jsonp({
+                    error: "沒有找到" + getTextByContentType(contentType, number)
+                });
+            }
         });
     });
 }

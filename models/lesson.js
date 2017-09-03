@@ -74,6 +74,10 @@ Lesson.getAll = function (id, page, filter, callback) {
     var query = lessonModel.count(filter);
     query.exec(function (err, count) {
         query.find()
+            .sort({
+                sequence: 1,
+                _id: 1
+            })
             .skip((page - 1) * 14)
             .limit(14)
             .exec(function (err, lessons) {
@@ -106,7 +110,11 @@ Lesson.getFilters = function (filter) {
     filter.isDeleted = {
         $ne: true
     };
-    return lessonModel.find(filter);
+    return lessonModel.find(filter)
+        .sort({
+            sequence: 1,
+            _id: 1
+        });
 };
 
 Lesson.batchUpdate = function (filter, option) {

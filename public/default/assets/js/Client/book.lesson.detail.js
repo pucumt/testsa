@@ -177,6 +177,7 @@ $wordBody.on('show.bs.collapse', function (e) {
     }
     iPanel.setData({
         audioUrl: audioUrl[0],
+        duration: content.duration || 0,
         serverParams: {
             coreType: coreType(content),
             refText: content.name,

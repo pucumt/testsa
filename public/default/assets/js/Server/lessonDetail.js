@@ -10,6 +10,69 @@ $(document).ready(function () {
     searchWord();
     searchSentence();
     searchContent();
+
+    $("#btnUploadContent").on("click", function (e) {
+        $("#uploadModal #contentType").val(0);
+        $("#uploadModal").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    });
+
+    $("#btnUploadWord").on("click", function (e) {
+        $("#uploadModal #contentType").val(1);
+        $("#uploadModal").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    });
+
+    $("#btnUploadSentence").on("click", function (e) {
+        $("#uploadModal #contentType").val(2);
+        $("#uploadModal").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    });
+
+    $("#uploadModal #btnUpload").on("click", function (e) {
+        if ($("#uploadModal #contentType").val() == 0) {
+            //check if save the content first
+
+        }
+        var files = document.getElementById('upfileAudio').files;
+        if (files.length > 0) {
+            postAudio(files, 0);
+        }
+    });
+
+    function postAudio(files, i) {
+        if (files.length == i) {
+            //location.href = "/admin/score";
+            showAlert("上传成功！");
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append("audio", files[i]);
+        formData.append("contentType", $("#uploadModal #contentType").val());
+        formData.append("lessonId", $("#lessonId").val());
+        formData.append("number", i);
+        $.ajax({
+            type: "POST",
+            data: formData,
+            url: "/admin/audio",
+            contentType: false,
+            processData: false,
+        }).then(function (data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
+            }
+
+            postAudio(files, i + 1);
+        });
+    };
 });
 
 //------------search funfunction
@@ -75,19 +138,21 @@ function searchContent() {
     selfAjax("post", "/admin/lessonList/search/content", filter, function (data) {
         if (data && data.content) {
             $(".mainModal.content #content").val(data.content.name);
+            $(".mainModal.content #duration").val(data.content.duration);
         }
     });
 };
 //------------end
 
 $("#btnSaveContent").on("click", function (e) {
-    if ($.trim($(".mainModal.content #content").val()) == "") {
-        showAlert("课文内容不能为空！");
+    if ($.trim($(".mainModal.content #content").val()) == "" || $.trim($(".mainModal.content #duration").val()) == "") {
+        showAlert("课文内容和时间不能为空！");
         return;
     }
 
     selfAjax("post", "/admin/lessonContent/save", {
         content: $.trim($('.mainModal.content #content').val()),
+        duration: $.trim($('.mainModal.content #duration').val()),
         lessonId: $("#lessonId").val()
     }, function (data) {
         if (data.error) {
@@ -137,6 +202,7 @@ $("#btnAddWord").on("click", function (e) {
     // $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增单词");
     $('#name').val("");
+    $('#name').attr("rows", 5);
     $('#myModal').modal({
         backdrop: 'static',
         keyboard: false
@@ -176,6 +242,7 @@ $(".mainModal.word #gridBody").on("click", "td .btnEdit", function (e) {
     // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改单词");
     $('#name').val(entity.name);
+    $('#name').attr("rows", 1);
     $('#id').val(entity._id);
     $('#myModal').modal({
         backdrop: 'static',
@@ -205,6 +272,7 @@ $("#btnAddSentence").on("click", function (e) {
     // $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增句子");
     $('#name').val("");
+    $('#name').attr("rows", 5);
     $('#myModal').modal({
         backdrop: 'static',
         keyboard: false
@@ -222,6 +290,7 @@ $(".mainModal.sentence #gridBody").on("click", "td .btnEdit", function (e) {
     // $('#name').attr("disabled", "disabled");
     $('#myModalLabel').text("修改单词");
     $('#name').val(entity.name);
+    $('#name').attr("rows", 1);
     $('#id').val(entity._id);
     $('#myModal').modal({
         backdrop: 'static',

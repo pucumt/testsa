@@ -12,7 +12,8 @@ module.exports = function (app) {
             .then(function (content) {
                 if (content) {
                     var lessonContent = new LessonContent({
-                        name: req.body.content
+                        name: req.body.content,
+                        duration: req.body.duration
                     });
                     lessonContent.update(content._id)
                         .then(function () {
@@ -25,6 +26,7 @@ module.exports = function (app) {
                         contentType: 0,
                         name: req.body.content,
                         lessonId: req.body.lessonId,
+                        duration: req.body.duration,
                         createdBy: req.session.admin._id
                     });
 
@@ -50,20 +52,38 @@ module.exports = function (app) {
             });
     });
 
-    app.post('/admin/lessonWord/add', checkLogin);
-    app.post('/admin/lessonWord/add', function (req, res) {
-        var lessonWord = new LessonContent({
-            name: req.body.name,
+    function getNewWord(req, name) {
+        return {
+            name: name,
             lessonId: req.body.lessonId,
             createdBy: req.session.admin._id,
-            contentType: 1,
-        });
+            contentType: 1
+        };
+    };
 
-        lessonWord.save().then(function (result) {
-            if (result) {
-                res.jsonp(result);
-            }
-        });
+    app.post('/admin/lessonWord/add', checkLogin);
+    app.post('/admin/lessonWord/add', function (req, res) {
+        var names = req.body.name.split("\n");
+        if (names.length > 0) {
+            var pArray = [];
+            names.forEach(function (name) {
+                if (name != "") {
+                    pArray.push(getNewWord(req, name));
+                }
+            });
+
+            LessonContent.insertMany(pArray)
+                .then(function () {
+                    res.jsonp({
+                        sucess: true
+                    });
+                });
+        } else {
+            //不做处理
+            res.jsonp({
+                sucess: true
+            });
+        }
     });
 
     app.post('/admin/lessonWord/edit', checkLogin);
@@ -103,20 +123,38 @@ module.exports = function (app) {
             });
     });
 
-    app.post('/admin/lessonSentence/add', checkLogin);
-    app.post('/admin/lessonSentence/add', function (req, res) {
-        var lessonSentence = new LessonContent({
-            name: req.body.name,
+    function getNewSentence(req, name) {
+        return {
+            name: name,
             lessonId: req.body.lessonId,
             createdBy: req.session.admin._id,
             contentType: 2
-        });
+        };
+    };
 
-        lessonSentence.save().then(function (result) {
-            if (result) {
-                res.jsonp(result);
-            }
-        });
+    app.post('/admin/lessonSentence/add', checkLogin);
+    app.post('/admin/lessonSentence/add', function (req, res) {
+        var names = req.body.name.split("\n");
+        if (names.length > 0) {
+            var pArray = [];
+            names.forEach(function (name) {
+                if (name != "") {
+                    pArray.push(getNewSentence(req, name));
+                }
+            });
+
+            LessonContent.insertMany(pArray)
+                .then(function () {
+                    res.jsonp({
+                        sucess: true
+                    });
+                });
+        } else {
+            //不做处理
+            res.jsonp({
+                sucess: true
+            });
+        }
     });
 
     app.post('/admin/lessonSentence/edit', checkLogin);

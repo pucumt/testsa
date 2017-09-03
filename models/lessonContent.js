@@ -17,7 +17,13 @@ var lessonContentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    deletedDate: Date
+    deletedDate: Date,
+    sequence: {
+        type: Number,
+        default: 0
+    },
+    duration: Number // 课文需要设置时间段
+
 }, {
     collection: 'lessonContents'
 });
@@ -43,6 +49,9 @@ LessonContent.prototype.update = function (id) {
     }, this.option).exec();
 };
 
+LessonContent.insertMany = function (docs) {
+    return lessonContentModel.insertMany(docs);
+};
 //读取学区信息
 LessonContent.get = function (id) {
     //打开数据库
@@ -70,6 +79,10 @@ LessonContent.getAll = function (id, page, filter, callback) {
     var query = lessonContentModel.count(filter);
     query.exec(function (err, count) {
         query.find()
+            .sort({
+                sequence: 1,
+                _id: 1
+            })
             .skip((page - 1) * 14)
             .limit(14)
             .exec(function (err, lessonContents) {
@@ -102,7 +115,11 @@ LessonContent.getFilters = function (filter) {
     filter.isDeleted = {
         $ne: true
     };
-    return lessonContentModel.find(filter);
+    return lessonContentModel.find(filter)
+        .sort({
+            sequence: 1,
+            _id: 1
+        });
 };
 
 LessonContent.batchUpdate = function (filter, option) {
@@ -128,4 +145,19 @@ LessonContent.getCount = function (lessonId) {
                 $sum: 1
             }
         }).exec();
+};
+
+LessonContent.getContentOfSequence = function (filter, skipCount) {
+    //打开数据库
+    filter.isDeleted = {
+        $ne: true
+    };
+    return lessonContentModel.find(filter)
+        .sort({
+            sequence: 1,
+            _id: 1
+        })
+        .skip(skipCount)
+        .limit(1)
+        .exec();
 };

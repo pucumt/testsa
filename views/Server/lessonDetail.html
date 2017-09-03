@@ -11,9 +11,16 @@
     <div class="panel-body">
         <div class="toolbar-list">
             <button id="btnSaveContent" class="btn btn-default btn-sm">保存</button>
+            <button id="btnUploadContent" class="btn btn-default btn-sm">上传原声</button>
         </div>
         <div class="content mainModal">
             <textarea maxlength="1000" rows="5" class="form-control" name="content" id="content"></textarea>
+            <div class="form-inline" style="margin-top:10px;">
+                <div class="form-group">
+                    <label for="duration" class="control-label">时间长度:</label>
+                    <input type="text" maxlength="100" class="form-control" required name="duration" id="duration">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -22,6 +29,7 @@
     <div class="panel-body">
         <div class="toolbar-list">
             <button id="btnAddWord" class="btn btn-default btn-sm">新增</button>
+            <button id="btnUploadWord" class="btn btn-default btn-sm">上传原声</button>
         </div>
         <div class="content mainModal">
             <table class="table table-striped">
@@ -44,6 +52,7 @@
     <div class="panel-body">
         <div class="toolbar-list">
             <button id="btnAddSentence" class="btn btn-default btn-sm">新增</button>
+            <button id="btnUploadSentence" class="btn btn-default btn-sm">上传原声</button>
         </div>
         <div class="content mainModal">
             <table class="table table-striped">
@@ -72,7 +81,7 @@
                 <form>
                     <div class="form-group">
                         <label for="name" class="control-label">名称:</label>
-                        <input type="text" maxlength="100" class="form-control" required name="name" id="name">
+                        <textarea maxlength="1000" rows="5" class="form-control" name="name" id="name"></textarea>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -80,6 +89,36 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="uploadModalLabel">上传原声</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div>
+                            <label for="name" class="control-label">原声音频:</label>
+                        </div>
+                        <div>
+                            <input name="report" id='upfileAudio' style="display:inline-block;" accept="audio/*" multiple="multiple" type='file' />
+                        </div>
+                        <div style="margin-top:10px;">
+                            <button type="button" id="btnUpload" style="" class="btn btn-primary">上传</button>
+                        </div>
+                    </div>
+                    <input type="hidden" class="form-control" name="contentType" id="contentType">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
