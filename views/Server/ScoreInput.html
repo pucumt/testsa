@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock
+%} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -14,7 +15,8 @@
                         <div class="btn-group">
                             <input type="hidden" class="form-control" name="examId" id="examId">
                             <input type="text" readonly class="form-control" name="examName" id="examName">
-                            <button type="button" id="panel_btnExam" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button" id="panel_btnExam" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
                                 <span class="caret"></span>
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
@@ -42,7 +44,8 @@
                     <div class="form-group">
                         <label for="avatar" class="control-label">成绩录入</label>
                         <div style="padding-top: 0;">
-                            <input name="avatar" id='upfile' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" type='file' />
+                            <input name="avatar" id='upfile' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                type='file' />
                             <button type="button" id="btnScore" class="btn btn-primary">提交成绩</button>
                             <button type="button" id="btnExportScore" class="btn btn-primary">导出成绩模板</button>
                             <button type="button" id="btnExportSchool" class="btn btn-primary">导出带学校模板</button>
@@ -73,8 +76,21 @@
                     <div class="form-group">
                         <label for="avatar" class="control-label">学生校对</label>
                         <div style="padding-top: 0;">
-                            <input name="avatar" id='upfileStudent' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" type='file' />
+                            <input name="avatar" id='upfileStudent' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                type='file' />
                             <button type="button" id="btnCheckStudent" class="btn btn-primary">提交学生</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="downloadPic" class="control-label">新概念报名照片</label>
+                        <div style="padding-top: 0;">
+                            <input name="downloadPic" id='downloadPic' style="display:inline-block;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                type='file' />
+                            <button type="button" id="btnStartDownload" class="btn btn-primary">开始</button>
                         </div>
                     </div>
                 </div>
