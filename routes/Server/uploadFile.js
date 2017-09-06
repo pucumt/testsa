@@ -28,6 +28,7 @@ var xlsx = require("node-xlsx"),
     OrderFromBank = require('../../models/orderFromBank.js'),
     Lesson = require('../../models/lesson.js'),
     LessonContent = require('../../models/lessonContent.js'),
+    Book = require('../../models/book.js'),
 
     util = require('util'),
     request = require('request'),
@@ -1745,7 +1746,8 @@ module.exports = function (app) {
                 var pRoom;
                 if (data[9] && data[9].trim() != "") { //9 is classroom
                     pRoom = ClassRoom.getFilter({
-                        name: data[9].trim()
+                        name: data[9].trim(),
+                        schoolArea: data[2].trim()
                     });
                 } else {
                     pRoom = Promise.resolve();
@@ -1757,7 +1759,7 @@ module.exports = function (app) {
                     }
 
                     var pTeacher;
-                    if (data[6]) { //6 is mobile
+                    if (data[6]) { //6 is mobile, because the the mobile is unique
                         pTeacher = Teacher.getFilter({
                             mobile: data[6]
                         });
@@ -1768,9 +1770,24 @@ module.exports = function (app) {
                         if (teacher) {
                             option.teacherId = teacher._id;
                             option.teacherName = teacher.name;
-
-                            var newTrainClass = new TrainClass(option);
-                            return newTrainClass.update(existTrainClass._id);
+                            // 批量添加课文
+                            var pBook;
+                            if (data[10] && data[10].trim() != "") { // 10 is book name
+                                pBook = Book.getFilter({
+                                    name: data[10].trim()
+                                });
+                            } else {
+                                pBook = Promise.resolve();
+                            }
+                            return pBook.then(function (book) {
+                                if (book) {
+                                    option.bookId = book._id;
+                                    option.minLesson = data[11].trim();
+                                    option.maxLesson = data[12].trim();
+                                }
+                                var newTrainClass = new TrainClass(option);
+                                return newTrainClass.update(existTrainClass._id);
+                            });
                         } else {
                             return failedScore(data[0].trim(), data[2].trim(), data[8].trim(), "没找到老师");
                         }
@@ -1782,7 +1799,7 @@ module.exports = function (app) {
         });
     };
 
-    //批量添加老师教室到课程
+    //批量添加 “老师/教室/课文” 到课程
     app.post('/admin/batchAddTeacherToTrainClass', upload.single('avatar'), function (req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
