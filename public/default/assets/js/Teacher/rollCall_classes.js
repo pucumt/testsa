@@ -43,6 +43,9 @@ $selectBody.on("click", "li", function (e) {
     if ($("#type").val() == "r") {
         location.href = "/Teacher/rollCall/students/" + entity._id;
     } else if ($("#type").val() == "h") {
-        location.href = "/Teacher/homework/students/" + entity._id;
+        if (entity.bookId) {
+            // only redirect for class with book
+            location.href = "/Teacher/homework/students/" + entity._id;
+        }
     }
 });
