@@ -70,28 +70,32 @@ function loadWord() {
             var words = data.contents.filter(function (content) {
                 return content.contentType == 1;
             });
-            $wordBody.append('<div class="lesson-title">单词</div>');
-            var d = $(document.createDocumentFragment());
-            words.forEach(function (word) {
-                var scores = data.scores.filter(function (score) {
-                    return score.contentId == word._id;
+            if (words.length > 0) {
+                $wordBody.append('<div class="lesson-title">单词</div>');
+                var d = $(document.createDocumentFragment());
+                words.forEach(function (word) {
+                    var scores = data.scores.filter(function (score) {
+                        return score.contentId == word._id;
+                    });
+                    d.append(generatePanel(word, scores[0]));
                 });
-                d.append(generatePanel(word, scores[0]));
-            });
-            $wordBody.append(d);
+                $wordBody.append(d);
+            }
 
             var sentences = data.contents.filter(function (content) {
                 return content.contentType == 2;
             });
-            $wordBody.append('<div class="lesson-title">句子</div>');
-            var d = $(document.createDocumentFragment());
-            sentences.forEach(function (word) {
-                var scores = data.scores.filter(function (score) {
-                    return score.contentId == word._id;
+            if (sentences.length > 0) {
+                $wordBody.append('<div class="lesson-title">句子</div>');
+                var d = $(document.createDocumentFragment());
+                sentences.forEach(function (word) {
+                    var scores = data.scores.filter(function (score) {
+                        return score.contentId == word._id;
+                    });
+                    d.append(generatePanel(word, scores[0]));
                 });
-                d.append(generatePanel(word, scores[0]));
-            });
-            $wordBody.append(d);
+                $wordBody.append(d);
+            }
 
             var contents = data.contents.filter(function (content) {
                 return content.contentType == 0;
@@ -99,11 +103,13 @@ function loadWord() {
             // $wordBody.append('<div class="lesson-title">课文</div>');
             var d = $(document.createDocumentFragment());
             word = contents[0];
-            var scores = data.scores.filter(function (score) {
-                return score.contentId == word._id;
-            });
-            d.append(generateContentPanel(word, scores[0]));
-            $wordBody.append(d);
+            if (word) {
+                var scores = data.scores.filter(function (score) {
+                    return score.contentId == word._id;
+                });
+                d.append(generateContentPanel(word, scores[0]));
+                $wordBody.append(d);
+            }
         }
     });
 };
