@@ -1782,8 +1782,8 @@ module.exports = function (app) {
                             return pBook.then(function (book) {
                                 if (book) {
                                     option.bookId = book._id;
-                                    option.minLesson = data[11].trim();
-                                    option.maxLesson = data[12].trim();
+                                    option.minLesson = data[11];
+                                    option.maxLesson = data[12];
                                 }
                                 var newTrainClass = new TrainClass(option);
                                 return newTrainClass.update(existTrainClass._id);
