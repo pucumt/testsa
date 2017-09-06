@@ -1897,14 +1897,18 @@ module.exports = function (app) {
         var strArr = data[2].split(";"),
             name = strArr[0].split(":")[1],
             mobile = strArr[4].split(":")[1],
-            url = strArr[3].substr(5);
-
-        var x = request(url)
-            .pipe(fs.createWriteStream(path.join(uploadFolder, 'pics', name + mobile + '.jpg')))
-            .on("close", function () {
-                downloadPicture(list, i + 1, uploadFolder);
-            });
-    }
+            url = strArr[3].substr(5),
+            newFile = path.join(uploadFolder, 'pics', name + mobile + '.jpg');
+        if (!fs.existsSync(newFile)) {
+            var x = request(url)
+                .pipe(fs.createWriteStream(newFile))
+                .on("close", function () {
+                    downloadPicture(list, i + 1, uploadFolder);
+                });
+        } else {
+            downloadPicture(list, i + 1, uploadFolder);
+        }
+    };
 
     // 下载新概念报名照片到本地
     app.post('/admin/downloadPic', upload.single('avatar'), function (req, res, next) {
