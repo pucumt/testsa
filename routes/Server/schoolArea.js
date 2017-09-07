@@ -2,13 +2,14 @@ var SchoolArea = require('../../models/schoolArea.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/schoolAreaList', checkLogin);
-    app.get('/admin/schoolAreaList', function(req, res) {
+    app.get('/admin/schoolAreaList', auth.checkSecure);
+    app.get('/admin/schoolAreaList', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        SchoolArea.getAll(null, page, {}, function(err, schoolAreas, total) {
+        SchoolArea.getAll(null, page, {}, function (err, schoolAreas, total) {
             if (err) {
                 schoolAreas = [];
             }
@@ -21,14 +22,14 @@ module.exports = function(app) {
     });
 
     app.post('/admin/schoolArea/add', checkLogin);
-    app.post('/admin/schoolArea/add', function(req, res) {
+    app.post('/admin/schoolArea/add', function (req, res) {
         var schoolArea = new SchoolArea({
             name: req.body.name,
             address: req.body.address,
             sequence: req.body.sequence
         });
 
-        schoolArea.save(function(err, schoolArea) {
+        schoolArea.save(function (err, schoolArea) {
             if (err) {
                 user = {};
             }
@@ -37,14 +38,14 @@ module.exports = function(app) {
     });
 
     app.post('/admin/schoolArea/edit', checkLogin);
-    app.post('/admin/schoolArea/edit', function(req, res) {
+    app.post('/admin/schoolArea/edit', function (req, res) {
         var schoolArea = new SchoolArea({
             name: req.body.name,
             address: req.body.address,
             sequence: req.body.sequence
         });
 
-        schoolArea.update(req.body.id, function(err, schoolArea) {
+        schoolArea.update(req.body.id, function (err, schoolArea) {
             if (err) {
                 schoolArea = {};
             }
@@ -53,22 +54,26 @@ module.exports = function(app) {
     });
 
     app.post('/admin/schoolArea/delete', checkLogin);
-    app.post('/admin/schoolArea/delete', function(req, res) {
-        SchoolArea.delete(req.body.id, function(err, schoolArea) {
+    app.post('/admin/schoolArea/delete', function (req, res) {
+        SchoolArea.delete(req.body.id, function (err, schoolArea) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.get('/admin/schoolArea/all', checkLogin);
-    app.get('/admin/schoolArea/all', function(req, res) {
+    app.get('/admin/schoolArea/all', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        SchoolArea.getAll(null, page, {}, function(err, schoolAreas, total) {
+        SchoolArea.getAll(null, page, {}, function (err, schoolAreas, total) {
             if (err) {
                 schoolAreas = [];
             }
@@ -77,8 +82,8 @@ module.exports = function(app) {
     });
 
     app.get('/admin/schoolArea/settings/:id', checkLogin);
-    app.get('/admin/schoolArea/settings/:id', function(req, res) {
-        SchoolArea.get(req.params.id).then(function(school) {
+    app.get('/admin/schoolArea/settings/:id', function (req, res) {
+        SchoolArea.get(req.params.id).then(function (school) {
             if (school) {
                 res.render('Server/schoolGradeRelationList.html', {
                     title: '>' + school.name + '>校区年级',

@@ -4,6 +4,7 @@ var Book = require('../../models/book.js'),
 
 module.exports = function (app) {
     app.get('/admin/adminBookList', checkLogin);
+    app.get('/admin/adminBookList', auth.checkSecure);
     app.get('/admin/adminBookList', function (req, res) {
         res.render('Server/bookList.html', {
             title: '>课本列表',

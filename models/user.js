@@ -8,7 +8,7 @@ var userSchema = new mongoose.Schema({
     password: String,
     email: String,
     mobile: String,
-    role: Number, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser
+    role: Number, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 team leader
     isDeleted: Boolean,
     schoolId: ObjectId,
     schoolArea: String
@@ -25,11 +25,11 @@ function User(option) {
 module.exports = User;
 
 //存储用户信息
-User.prototype.save = function(callback) {
+User.prototype.save = function (callback) {
     //打开数据库
     var newUser = new userModel(this.option);
 
-    newUser.save(function(err, user) {
+    newUser.save(function (err, user) {
         if (err) {
             return callback(err);
         }
@@ -39,10 +39,10 @@ User.prototype.save = function(callback) {
     });
 };
 
-User.prototype.update = function(callback) {
+User.prototype.update = function (callback) {
     userModel.update({
         name: this.option.name
-    }, this.option).exec(function(err, user) {
+    }, this.option).exec(function (err, user) {
         if (err) {
             return callback(err);
         }
@@ -51,9 +51,14 @@ User.prototype.update = function(callback) {
 };
 
 //读取用户信息
-User.get = function(name, callback) {
+User.get = function (name, callback) {
     //打开数据库
-    userModel.findOne({ name: name, isDeleted: { $ne: true } }, function(err, user) {
+    userModel.findOne({
+        name: name,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, user) {
         if (err) {
             return callback(err);
         }
@@ -64,28 +69,34 @@ User.get = function(name, callback) {
 };
 
 //一次获取所有用户信息
-User.getAll = function(name, page, filter, callback) {
+User.getAll = function (name, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = userModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
-            .exec(function(err, users) {
+            .exec(function (err, users) {
                 callback(null, users, count);
             });
     });
 };
 
 //删除一个用户
-User.delete = function(name, callback) {
+User.delete = function (name, callback) {
     userModel.update({
         name: name
     }, {
         isDeleted: true
-    }).exec(function(err, user) {
+    }).exec(function (err, user) {
         if (err) {
             return callback(err);
         }

@@ -6,9 +6,10 @@ var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/schoolReportList', checkLogin);
-    app.get('/admin/schoolReportList', function(req, res) {
+    app.get('/admin/schoolReportList', auth.checkSecure);
+    app.get('/admin/schoolReportList', function (req, res) {
         res.render('Server/schoolReportList.html', {
             title: '>校区金额报表',
             user: req.session.admin
@@ -16,7 +17,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/payWayReportList', checkLogin);
-    app.get('/admin/payWayReportList', function(req, res) {
+    app.get('/admin/payWayReportList', function (req, res) {
         res.render('Server/payWayReportList.html', {
             title: '>支付方式报表',
             user: req.session.admin
@@ -24,7 +25,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/rebateReportList', checkLogin);
-    app.get('/admin/rebateReportList', function(req, res) {
+    app.get('/admin/rebateReportList', function (req, res) {
         res.render('Server/rebateReportList.html', {
             title: '>退费报表',
             user: req.session.admin
@@ -32,7 +33,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/peopleCountList', checkLogin);
-    app.get('/admin/peopleCountList', function(req, res) {
+    app.get('/admin/peopleCountList', function (req, res) {
         res.render('Server/peopleCountList.html', {
             title: '>人数统计',
             user: req.session.admin
@@ -40,7 +41,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/gradeMOneList', checkLogin);
-    app.get('/admin/gradeMOneList', function(req, res) {
+    app.get('/admin/gradeMOneList', function (req, res) {
         res.render('Server/gradeMOneList.html', {
             title: '>小升初报名情况',
             user: req.session.admin
@@ -48,7 +49,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/compareLastList', checkLogin);
-    app.get('/admin/compareLastList', function(req, res) {
+    app.get('/admin/compareLastList', function (req, res) {
         res.render('Server/compareLastList.html', {
             title: '>留存报表',
             user: req.session.admin
@@ -56,11 +57,11 @@ module.exports = function(app) {
     });
 
     app.post('/admin/schoolReportList/search', checkLogin);
-    app.post('/admin/schoolReportList/search', function(req, res) {
+    app.post('/admin/schoolReportList/search', function (req, res) {
         var list = [];
         AdminEnrollTrain.getSchoolReportList(global.currentYear._id, req.body.startDate, req.body.endDate)
-            .then(function(orders) {
-                orders.forEach(function(order) {
+            .then(function (orders) {
+                orders.forEach(function (order) {
                     list.push({
                         _id: order._id.schoolId,
                         name: order._id.schoolArea,
@@ -69,14 +70,14 @@ module.exports = function(app) {
                         totalPrice: (order.trainPrice + order.materialPrice).toFixed(2)
                     });
                 });
-                res.json(list.sort(function(a, b) {
+                res.json(list.sort(function (a, b) {
                     return a.name < b.name;
                 }));
             });
     });
 
     app.post('/admin/payWayReportList/search', checkLogin);
-    app.post('/admin/payWayReportList/search', function(req, res) {
+    app.post('/admin/payWayReportList/search', function (req, res) {
         var list = [];
 
         function getPayWay(way) {
@@ -98,8 +99,8 @@ module.exports = function(app) {
             }
         }
         AdminEnrollTrain.getPayWayReportList(global.currentYear._id, req.body.startDate, req.body.endDate, req.body.schoolId)
-            .then(function(orders) {
-                orders.forEach(function(order) {
+            .then(function (orders) {
+                orders.forEach(function (order) {
                     list.push({
                         name: getPayWay(order._id),
                         trainPrice: order.trainPrice.toFixed(2),
@@ -107,32 +108,41 @@ module.exports = function(app) {
                         totalPrice: (order.trainPrice + order.materialPrice).toFixed(2)
                     });
                 });
-                res.json(list.sort(function(a, b) {
+                res.json(list.sort(function (a, b) {
                     return a.name < b.name;
                 }));
             });
     });
 
     app.post('/admin/rebateReportList/search', checkLogin);
-    app.post('/admin/rebateReportList/search', function(req, res) {
+    app.post('/admin/rebateReportList/search', function (req, res) {
         var list = [];
-        Subject.getFilters({}).then(function(subjects) {
+        Subject.getFilters({}).then(function (subjects) {
             var pArray = [];
-            subjects.forEach(function(subject) {
-                var p = TrainClass.getFilters({ schoolId: req.body.schoolId, subjectId: subject._id })
-                    .then(function(trainClasses) {
+            subjects.forEach(function (subject) {
+                var p = TrainClass.getFilters({
+                        schoolId: req.body.schoolId,
+                        subjectId: subject._id
+                    })
+                    .then(function (trainClasses) {
                         if (trainClasses && trainClasses.length > 0) {
-                            var classIds = trainClasses.map(function(singleClass) {
+                            var classIds = trainClasses.map(function (singleClass) {
                                 return singleClass._id;
                             });
                             return AdminEnrollTrain.getFilters({
-                                trainId: { $in: classIds },
-                                orderDate: { $lte: req.body.endDate },
-                                orderDate: { $gte: req.body.startDate },
+                                trainId: {
+                                    $in: classIds
+                                },
+                                orderDate: {
+                                    $lte: req.body.endDate
+                                },
+                                orderDate: {
+                                    $gte: req.body.startDate
+                                },
                                 isPayed: true
-                            }).then(function(orders) {
+                            }).then(function (orders) {
                                 var rebatePrice = 0;
-                                orders.forEach(function(order) {
+                                orders.forEach(function (order) {
                                     rebatePrice = rebatePrice + order.rebatePrice;
                                 });
 
@@ -143,26 +153,32 @@ module.exports = function(app) {
                                 });
                             });
                         } else {
-                            list.push({ _id: subject._id, name: subject.name, rebatePrice: 0 });
+                            list.push({
+                                _id: subject._id,
+                                name: subject.name,
+                                rebatePrice: 0
+                            });
                         }
                     });
                 pArray.push(p);
             });
-            Promise.all(pArray).then(function() {
+            Promise.all(pArray).then(function () {
                 res.json(list);
             });
         });
     });
 
     app.post('/admin/peopleCountList/search', checkLogin);
-    app.post('/admin/peopleCountList/search', function(req, res) {
+    app.post('/admin/peopleCountList/search', function (req, res) {
         var list = [],
             filter = {
                 schoolId: req.body.schoolId,
                 yearId: global.currentYear._id
             };
         if (req.body.gradeId && req.body.gradeId != '[""]') {
-            filter.gradeId = { $in: JSON.parse(req.body.gradeId) };
+            filter.gradeId = {
+                $in: JSON.parse(req.body.gradeId)
+            };
         }
 
         if (req.body.subjectId) {
@@ -173,10 +189,10 @@ module.exports = function(app) {
             filter.categoryId = req.body.categoryId;
         }
         TrainClass.getFilters(filter)
-            .then(function(trainClasses) {
+            .then(function (trainClasses) {
                 if (trainClasses && trainClasses.length > 0) {
                     var totalEnrollCount = 0;
-                    trainClasses.forEach(function(trainClass) {
+                    trainClasses.forEach(function (trainClass) {
                         totalEnrollCount += trainClass.enrollCount;
                         list.push({
                             _id: trainClass._id,
@@ -197,9 +213,11 @@ module.exports = function(app) {
     });
 
     app.post('/admin/compareLastList/search', checkLogin);
-    app.post('/admin/compareLastList/search', function(req, res) {
-        Year.getFilter({ sequence: (global.currentYear.sequence - 1) })
-            .then(function(year) {
+    app.post('/admin/compareLastList/search', function (req, res) {
+        Year.getFilter({
+                sequence: (global.currentYear.sequence - 1)
+            })
+            .then(function (year) {
                 if (year) {
                     var list = [],
                         filter = {
@@ -221,22 +239,22 @@ module.exports = function(app) {
                         };
                     }
                     TrainClass.getFilters(filter)
-                        .then(function(trainClasses) {
+                        .then(function (trainClasses) {
                             var pArray = [];
                             if (trainClasses && trainClasses.length > 0) {
-                                trainClasses.forEach(function(trainClass) {
+                                trainClasses.forEach(function (trainClass) {
                                     var p = AdminEnrollTrain.getFilters({
                                             trainId: trainClass._id,
                                             isSucceed: 1
                                         })
-                                        .then(function(orders) {
+                                        .then(function (orders) {
                                             if (orders && orders.length > 0) {
-                                                var studentIds = orders.map(function(order) {
+                                                var studentIds = orders.map(function (order) {
                                                     return order.studentId;
                                                 });
 
                                                 return AdminEnrollTrain.getCountOfStudentSubject(global.currentYear._id, trainClass.subjectId, studentIds)
-                                                    .then(function(result) {
+                                                    .then(function (result) {
                                                         var count = (result[0] && result[0].count) || 0;
                                                         list.push({
                                                             _id: trainClass._id,
@@ -263,7 +281,7 @@ module.exports = function(app) {
                                     pArray.push(p);
                                 });
                             }
-                            Promise.all(pArray).then(function() {
+                            Promise.all(pArray).then(function () {
                                 res.json(list);
                             });
                         });
@@ -272,7 +290,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/enrollAggregateList', checkLogin);
-    app.get('/admin/enrollAggregateList', function(req, res) {
+    app.get('/admin/enrollAggregateList', function (req, res) {
         res.render('Server/enrollAggregateList.html', {
             title: '>报名情况统计',
             user: req.session.admin
@@ -280,7 +298,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/otherReportList', checkLogin);
-    app.get('/admin/otherReportList', function(req, res) {
+    app.get('/admin/otherReportList', function (req, res) {
         res.render('Server/otherReportList.html', {
             title: '>其他报表情况',
             user: req.session.admin
@@ -288,15 +306,30 @@ module.exports = function(app) {
     });
 
     app.post('/admin/enrollAggregateList/search', checkLogin);
-    app.post('/admin/enrollAggregateList/search', function(req, res) {
+    app.post('/admin/enrollAggregateList/search', function (req, res) {
         var list = [];
         AdminEnrollTrain.getOrderCount(global.currentYear._id, req.body.gradeId, req.body.schoolId)
-            .then(function(result) {
-                list.push({ name: "总订单", value: result.totalCount || 0 });
-                list.push({ name: "下单总人数", value: result.peopleCount || 0 });
-                list.push({ name: "连报2门", value: result.twoOrderCount || 0 });
-                list.push({ name: "连报3门", value: result.threeOrderCount || 0 });
-                list.push({ name: "连报4门及以上", value: result.fourOrMoreCount || 0 });
+            .then(function (result) {
+                list.push({
+                    name: "总订单",
+                    value: result.totalCount || 0
+                });
+                list.push({
+                    name: "下单总人数",
+                    value: result.peopleCount || 0
+                });
+                list.push({
+                    name: "连报2门",
+                    value: result.twoOrderCount || 0
+                });
+                list.push({
+                    name: "连报3门",
+                    value: result.threeOrderCount || 0
+                });
+                list.push({
+                    name: "连报4门及以上",
+                    value: result.fourOrMoreCount || 0
+                });
 
                 res.json(list);
             });
