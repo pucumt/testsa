@@ -116,7 +116,7 @@ module.exports = function (app) {
                         contentType: req.body.contentType,
                         score: req.body.score,
                         contentRecord: req.body.recordId,
-                        createdBy: req.session.admin._id
+                        createdBy: req.session.user._id
                     });
 
                     return newScore.save().then(function (result) {
