@@ -43,7 +43,10 @@ var xlsx = require("node-xlsx"),
         }
     }),
     upload = multer({
-        storage: storage
+        storage: storage,
+        limits: {
+            fieldSize: 3072
+        }
     });
 
 module.exports = function (app) {
