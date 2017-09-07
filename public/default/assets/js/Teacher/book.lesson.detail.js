@@ -104,8 +104,10 @@ function loadWord() {
 function generatePanel(word, score) {
     var panel = $('<div class="panel panel-default">\
                 <div class="panel-heading" role="tab" id="headingOne">\
-                    <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
+                    <h4 class="panel-title collapsed" role="button" >\
+                        <a role="button" style="display:block" data-toggle="collapse" data-parent="#accordion" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
                         ' + word.name + '&nbsp;<span class="score">' + (score && score.score && '({0})'.format(score.score) || '') + '</span>\
+                        </a>\
                     </h4>\
                 </div>\
                 <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\
