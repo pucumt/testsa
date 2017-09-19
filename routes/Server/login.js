@@ -1,5 +1,5 @@
 var crypto = require('crypto'),
-    User = require('../../models/user.js'),
+    User = require('../../models/mysql/user.js'),
     auth = require("./auth"),
     checkNotLogin = auth.checkNotLogin;
 
@@ -18,32 +18,46 @@ module.exports = function (app) {
         var md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         //检查用户是否存在
-        User.get(req.body.name, function (err, user) {
-            if (!user) {
-                return res.redirect('/admin/login'); //用户不存在则跳转到登录页
-            }
-
-            //检查密码是否一致
-            if (user.password != password) {
-                return res.redirect('/admin/login'); //密码错误则跳转到登录页
-            }
-
-            //用户名密码都匹配后，将用户信息存入 session
-            switch (user.role) {
-                case 10:
-                    req.session.adminRollCall = user;
-                    res.redirect('/admin/adminRollCallList'); //登陆成功后跳转到主页
-                    break;
-                case 7:
-                    req.session.admin = user;
-                    res.redirect('/admin/adminBookList'); //登陆成功后跳转到主页
-                    break
-                default:
-                    req.session.admin = user;
-                    res.redirect('/admin/adminEnrollTrainList'); //登陆成功后跳转到主页
-
-            }
+        User.sync({
+            force: true
         });
+        // User.create({
+        //     name: 'bfbadmin',
+        //     password: password,
+        //     role: 0,
+        //     isDeleted: false
+        // });
+
+        User.get(req.body.name)
+            .then(function (user) {
+                if (!user) {
+                    return res.redirect('/admin/login'); //用户不存在则跳转到登录页
+                }
+
+                //检查密码是否一致
+                if (user.password != password) {
+                    return res.redirect('/admin/login'); //密码错误则跳转到登录页
+                }
+
+                //用户名密码都匹配后，将用户信息存入 session
+                switch (user.role) {
+                    case 10:
+                        req.session.adminRollCall = user;
+                        res.redirect('/admin/adminRollCallList'); //登陆成功后跳转到主页
+                        break;
+                    case 7:
+                        req.session.admin = user;
+                        res.redirect('/admin/adminBookList'); //登陆成功后跳转到主页
+                        break
+                    default:
+                        req.session.admin = user;
+                        res.redirect('/admin/adminEnrollTrainList'); //登陆成功后跳转到主页
+
+                }
+            })
+            .catch(function (err) {
+                //error to handle
+            });
     });
 }
 

@@ -3,12 +3,11 @@
     // Use hover for the description of the existing attributes
     // For further information visit https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-        {
+    "configurations": [{
             "name": "Launch Program",
             "type": "node2",
             "request": "launch",
-            "program": "${workspaceRoot}\\app.js",
+            "program": "${workspaceRoot}\\init-db.js",
             "cwd": "${workspaceRoot}"
         },
         {
