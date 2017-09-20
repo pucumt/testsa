@@ -1,9 +1,9 @@
-const db = require('../../db');
+const db = require('../../db'),
+    config = require('../../settings');
 
 const User = db.defineModel('users', {
     name: {
-        type: db.STRING(20),
-        unique: true
+        type: db.STRING(20)
     },
     password: db.STRING(50),
     email: {
@@ -34,10 +34,25 @@ const User = db.defineModel('users', {
 module.exports = User;
 
 //读取用户信息
-User.get = function (name) {
+User.getFilter = function (filter) {
+    filter.isDeleted = false;
     return User.findOne({
-        'where': {
-            'name': name
-        }
+        'where': filter
+    });
+};
+
+User.getFilters = function (filter) {
+    filter.isDeleted = false;
+    return User.findAll({
+        'where': filter
+    });
+};
+
+User.getFiltersWithPage = function (page, filter) {
+    filter.isDeleted = false;
+    return User.findAndCountAll({
+        'where': filter,
+        offset: config.pageSize * (page - 1),
+        limit: config.pageSize
     });
 };

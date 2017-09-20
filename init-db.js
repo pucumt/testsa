@@ -1,6 +1,7 @@
 const model = require('./model.js'),
     mongoUser = require('./models/user.js'),
-    mongoGrade = require('./models/grade.js');
+    mongoGrade = require('./models/grade.js'),
+    mongoSchoolArea = require('./models/schoolArea.js');
 
 process.on('uncaughtException', function (err) {
     //打印出错误
@@ -34,6 +35,18 @@ model.sync().then(function () {
         return Promise.all(tmpArray);
     });
     pArray.push(pGrade);
+
+    // SchoolArea
+    // var pSchoolArea = mongoSchoolArea.rawAll().then(function (schoolAreas) {
+    //     var tmpArray = [];
+    //     schoolAreas.forEach(function (obj) {
+    //         var newObj = obj.toJSON();
+    //         newObj._id = newObj._id.toJSON();
+    //         tmpArray.push(model.schoolArea.create(newObj));
+    //     });
+    //     return Promise.all(tmpArray);
+    // });
+    // pArray.push(pSchoolArea);
 
     Promise.all(pArray).then(function () {
         console.log('init db ok.');

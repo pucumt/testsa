@@ -7,7 +7,8 @@ const config = require('./settings');
 console.log('init sequelize...');
 
 function generateId() {
-    return uuid.v1().replace(/-/g, "");
+    var strArr = Sequelize.Utils.toDefaultValue(Sequelize.UUIDV1()).split("-");
+    return `${strArr[4]}${strArr[3]}${strArr[2]}${strArr[1]}${strArr[0]}`;
 }
 
 var sequelize = new Sequelize(config.db, config.username, config.password, {
@@ -42,14 +43,17 @@ function defineModel(name, attributes) {
     };
     attrs.createdDate = {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: false
     };
     attrs.updatedDate = {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: false
     };
     attrs.version = {
         type: Sequelize.BIGINT,
+        defaultValue: 0,
         allowNull: false
     };
 
@@ -61,15 +65,9 @@ function defineModel(name, attributes) {
                 let now = Date.now();
                 if (obj.isNewRecord) {
                     console.log('will create entity...' + obj);
-                    if (!obj._id) {
-                        obj._id = generateId();
-                    }
-                    obj.createdDate = now;
-                    obj.updatedDate = now;
-                    obj.version = 0;
+                    obj._id = generateId();
                 } else {
                     console.log('will update entity...');
-                    obj.updatedDate = now;
                     obj.version++;
                 }
             }

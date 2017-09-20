@@ -1,9 +1,13 @@
 const db = require('../../db'),
     config = require('../../settings');
 
-const Grade = db.defineModel('grades', {
+const SchoolArea = db.defineModel('schoolAreas', {
     name: {
         type: db.STRING(20)
+    },
+    address: {
+        type: db.STRING(100),
+        defaultValue: ""
     },
     sequence: {
         type: db.INTEGER,
@@ -14,25 +18,25 @@ const Grade = db.defineModel('grades', {
         defaultValue: false
     }
 });
-module.exports = Grade;
+module.exports = SchoolArea;
 
-Grade.getFilter = function (filter) {
+SchoolArea.getFilter = function (filter) {
     filter.isDeleted = false;
-    return Grade.findOne({
+    return SchoolArea.findOne({
         'where': filter
     });
 };
 
-Grade.getFilters = function (filter) {
+SchoolArea.getFilters = function (filter) {
     filter.isDeleted = false;
-    return Grade.findAll({
+    return SchoolArea.findAll({
         'where': filter
     });
 };
 
-Grade.getFiltersWithPage = function (page, filter) {
+SchoolArea.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return Grade.findAndCountAll({
+    return SchoolArea.findAndCountAll({
         'where': filter,
         offset: config.pageSize * (page - 1),
         limit: config.pageSize

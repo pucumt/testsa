@@ -19,7 +19,9 @@ module.exports = function (app) {
         var md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         //检查用户是否存在
-        User.get(req.body.name)
+        User.getFilter({
+                name: req.body.name
+            })
             .then(function (user) {
                 if (!user) {
                     return res.redirect('/admin/login'); //用户不存在则跳转到登录页
