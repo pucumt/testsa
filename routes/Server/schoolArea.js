@@ -64,7 +64,7 @@ module.exports = function (app) {
     app.get('/admin/schoolArea/all', checkLogin);
     app.get('/admin/schoolArea/all', function (req, res) {
         SchoolArea.getFilters({}).then(function (schoolAreas) {
-            res.jsonp(grades);
+            res.jsonp(schoolAreas);
         });
     });
 

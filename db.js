@@ -7,7 +7,7 @@ const config = require('./settings');
 console.log('init sequelize...');
 
 function generateId() {
-    var strArr = Sequelize.Utils.toDefaultValue(Sequelize.UUIDV1()).split("-");
+    var strArr = uuid.v1().split("-");
     return `${strArr[4]}${strArr[3]}${strArr[2]}${strArr[1]}${strArr[0]}`;
 }
 
@@ -65,7 +65,9 @@ function defineModel(name, attributes) {
                 let now = Date.now();
                 if (obj.isNewRecord) {
                     console.log('will create entity...' + obj);
-                    obj._id = generateId();
+                    if (!obj._id) {
+                        obj._id = generateId();
+                    }
                 } else {
                     console.log('will update entity...');
                     obj.version++;

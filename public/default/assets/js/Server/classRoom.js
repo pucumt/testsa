@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnClassroom").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
+var getButtons = function () {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
@@ -21,10 +21,10 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/classRoomList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/classRoomList/search?" + pStr, filter, function (data) {
         if (data && data.classRooms.length > 0) {
 
-            data.classRooms.forEach(function(classRoom) {
+            data.classRooms.forEach(function (classRoom) {
                 var $tr = $('<tr id=' + classRoom._id + '><td>' + classRoom.name + '</td><td>' +
                     classRoom.sCount + '</td><td>' + classRoom.schoolArea + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", classRoom);
@@ -37,16 +37,16 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     search(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     search(page);
 });
@@ -60,7 +60,7 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
             // List of fields and their validation rules
             fields: {
@@ -92,9 +92,9 @@ function addValidation(callback) {
 
 function resetSchool(id) {
     $('#myModal').find("#school option").remove();
-    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(school) {
+            data.forEach(function (school) {
                 var select = "";
                 if (school._id == id) {
                     select = "selected";
@@ -105,7 +105,7 @@ function resetSchool(id) {
     });
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -113,16 +113,19 @@ $("#btnAdd").on("click", function(e) {
     $('#myModal #name').removeAttr("disabled");
     $('#myModalLabel').text("新增教室");
     $('#myModal #name').val("");
-    $('#myModal #sCount').val("");
+    $('#myModal #sCount').val("0");
     $('#myModal #school').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnBatchAdd").on("click", function(e) {
+$("#btnBatchAdd").on("click", function (e) {
     location.href = "/admin/batchAddClassRoom";
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/classRoom/add",
@@ -136,7 +139,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/classRoom/edit";
             postObj.id = $('#myModal #id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.sCount + "</td><td>" + data.schoolArea + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
@@ -154,7 +157,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -167,17 +170,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModal #school').val(entity.schoolArea);
     resetSchool(entity.schoolId);
     $('#myModal #id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/classRoom/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();

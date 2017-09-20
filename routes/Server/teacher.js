@@ -1,15 +1,16 @@
-var Teacher = require('../../models/teacher.js'),
+var model = require("../../model.js"),
+    Teacher = model.teacher,
     auth = require("./auth"),
     crypto = require('crypto'),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/teacherList', checkLogin);
-    app.get('/admin/teacherList', function(req, res) {
+    app.get('/admin/teacherList', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 14 篇文章
-        Teacher.getAll(null, page, {}, function(err, teachers, total) {
+        Teacher.getAll(null, page, {}, function (err, teachers, total) {
             if (err) {
                 teachers = [];
             }
@@ -26,7 +27,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/batchAddTeacher', checkLogin);
-    app.get('/admin/batchAddTeacher', function(req, res) {
+    app.get('/admin/batchAddTeacher', function (req, res) {
         res.render('Server/batchAddTeacher.html', {
             title: '>批量添加老师',
             user: req.session.admin
@@ -34,7 +35,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/teacher/add', checkLogin);
-    app.post('/admin/teacher/add', function(req, res) {
+    app.post('/admin/teacher/add', function (req, res) {
         var md5 = crypto.createHash('md5');
         var teacher = new Teacher({
             name: req.body.name,
@@ -44,13 +45,13 @@ module.exports = function(app) {
             password: md5.update("111111").digest('hex')
         });
 
-        teacher.save().then(function(teacher) {
+        teacher.save().then(function (teacher) {
             res.jsonp(teacher);
         });
     });
 
     app.post('/admin/teacher/edit', checkLogin);
-    app.post('/admin/teacher/edit', function(req, res) {
+    app.post('/admin/teacher/edit', function (req, res) {
         var teacher = new Teacher({
             name: req.body.name,
             engName: req.body.engName,
@@ -58,7 +59,7 @@ module.exports = function(app) {
             address: req.body.address
         });
 
-        teacher.update(req.body.id, function(err, teacher) {
+        teacher.update(req.body.id, function (err, teacher) {
             if (err) {
                 teacher = {};
             }
@@ -67,25 +68,29 @@ module.exports = function(app) {
     });
 
     app.post('/admin/teacher/delete', checkLogin);
-    app.post('/admin/teacher/delete', function(req, res) {
-        Teacher.delete(req.body.id, function(err, teacher) {
+    app.post('/admin/teacher/delete', function (req, res) {
+        Teacher.delete(req.body.id, function (err, teacher) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.get('/admin/teacher/withoutpage', checkLogin);
-    app.get('/admin/teacher/withoutpage', function(req, res) {
-        Teacher.getAllWithoutPage({}, function(err, teachers) {
+    app.get('/admin/teacher/withoutpage', function (req, res) {
+        Teacher.getAllWithoutPage({}, function (err, teachers) {
             res.jsonp(teachers);
         });
     });
 
     app.post('/admin/teacher/search', checkLogin);
-    app.post('/admin/teacher/search', function(req, res) {
+    app.post('/admin/teacher/search', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
@@ -97,7 +102,7 @@ module.exports = function(app) {
             };
         }
 
-        Teacher.getAll(null, page, filter, function(err, teachers, total) {
+        Teacher.getAll(null, page, filter, function (err, teachers, total) {
             if (err) {
                 teachers = [];
             }
@@ -112,16 +117,18 @@ module.exports = function(app) {
     });
 
     app.post('/admin/teacher/reset', checkLogin);
-    app.post('/admin/teacher/reset', function(req, res) {
+    app.post('/admin/teacher/reset', function (req, res) {
         var md5 = crypto.createHash('md5');
         var teacher = new Teacher({
             password: password = md5.update("111111").digest('hex')
         });
-        teacher.update(req.body.id, function(err, teacher) {
+        teacher.update(req.body.id, function (err, teacher) {
             if (err) {
                 teacher = {};
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
             return;
         });
     });

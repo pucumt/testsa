@@ -21,16 +21,16 @@ function ClassRoom(option) {
 module.exports = ClassRoom;
 
 //存储学区信息
-ClassRoom.prototype.save = function() {
+ClassRoom.prototype.save = function () {
     var newclassRoom = new classRoomModel(this.option);
 
     return newclassRoom.save();
 };
 
-ClassRoom.prototype.update = function(id, callback) {
+ClassRoom.prototype.update = function (id, callback) {
     classRoomModel.update({
         _id: id
-    }, this.option).exec(function(err, classRoom) {
+    }, this.option).exec(function (err, classRoom) {
         if (err) {
             return callback(err);
         }
@@ -40,36 +40,47 @@ ClassRoom.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ClassRoom.get = function(id) {
+ClassRoom.get = function (id) {
     //打开数据库
-    return classRoomModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return classRoomModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-ClassRoom.getAll = function(id, page, filter, callback) {
+ClassRoom.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = classRoomModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, classRooms) {
+            .exec(function (err, classRooms) {
                 callback(null, classRooms, count);
             });
     });
 };
 
 //删除一个学区
-ClassRoom.delete = function(id, callback) {
+ClassRoom.delete = function (id, callback) {
     classRoomModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, classRoom) {
+    }).exec(function (err, classRoom) {
         if (err) {
             return callback(err);
         }
@@ -78,28 +89,44 @@ ClassRoom.delete = function(id, callback) {
 };
 
 //一次获取20个学区信息
-ClassRoom.getAllWithoutPage = function(filter, callback) {
+ClassRoom.getAllWithoutPage = function (filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = classRoomModel.find(filter)
         .sort({
             schoolId: 1
         })
-        .exec(function(err, classRooms) {
+        .exec(function (err, classRooms) {
             callback(null, classRooms);
         });
 };
 
 //读取学区信息
-ClassRoom.getFilter = function(filter) {
+ClassRoom.getFilter = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     //打开数据库
     return classRoomModel.findOne(filter);
+};
+
+ClassRoom.rawAll = function () {
+    return classRoomModel.find();
 };
