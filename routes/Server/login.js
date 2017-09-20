@@ -1,5 +1,6 @@
 var crypto = require('crypto'),
-    User = require('../../models/mysql/user.js'),
+    model = require("../../model.js"),
+    User = model.user,
     auth = require("./auth"),
     checkNotLogin = auth.checkNotLogin;
 
@@ -18,16 +19,6 @@ module.exports = function (app) {
         var md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         //检查用户是否存在
-        User.sync({
-            force: true
-        });
-        // User.create({
-        //     name: 'bfbadmin',
-        //     password: password,
-        //     role: 0,
-        //     isDeleted: false
-        // });
-
         User.get(req.body.name)
             .then(function (user) {
                 if (!user) {

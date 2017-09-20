@@ -103,3 +103,7 @@ User.delete = function (name, callback) {
         callback(null, user);
     });
 };
+
+User.rawAll = function () {
+    return userModel.find();
+};

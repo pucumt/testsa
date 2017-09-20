@@ -4,7 +4,10 @@ var db = mongoose.connection;
 
 var gradeSchema = new mongoose.Schema({
     name: String,
-    sequence: { type: Number, default: 0 },
+    sequence: {
+        type: Number,
+        default: 0
+    },
     isDeleted: Boolean
 }, {
     collection: 'grades'
@@ -19,10 +22,10 @@ function Grade(option) {
 module.exports = Grade;
 
 //存储学区信息
-Grade.prototype.save = function(callback) {
+Grade.prototype.save = function (callback) {
     var newgrade = new gradeModel(this.option);
 
-    newgrade.save(function(err, grade) {
+    newgrade.save(function (err, grade) {
         if (err) {
             return callback(err);
         }
@@ -32,10 +35,10 @@ Grade.prototype.save = function(callback) {
     });
 };
 
-Grade.prototype.update = function(id, callback) {
+Grade.prototype.update = function (id, callback) {
     gradeModel.update({
         _id: id
-    }, this.option).exec(function(err, grade) {
+    }, this.option).exec(function (err, grade) {
         if (err) {
             return callback(err);
         }
@@ -45,34 +48,45 @@ Grade.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Grade.get = function(id) {
+Grade.get = function (id) {
     //打开数据库
-    return gradeModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return gradeModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-Grade.getAll = function(id, page, filter, callback) {
+Grade.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = gradeModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
-            .exec(function(err, grades) {
+            .exec(function (err, grades) {
                 callback(null, grades, count);
             });
     });
 };
 
 //删除一个学区
-Grade.delete = function(id, callback) {
+Grade.delete = function (id, callback) {
     gradeModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, grade) {
+    }).exec(function (err, grade) {
         if (err) {
             return callback(err);
         }
@@ -81,23 +95,37 @@ Grade.delete = function(id, callback) {
 };
 
 //一次获取所有信息
-Grade.getAllWithoutPage = function(filter) {
+Grade.getAllWithoutPage = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return gradeModel.find(filter).exec();
 };
 
-Grade.getFilter = function(filter) {
+Grade.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return gradeModel.findOne(filter);
 };
 
-Grade.getFilters = function(filter) {
+Grade.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return gradeModel.find(filter);
+};
+
+Grade.rawAll = function () {
+    return gradeModel.find();
 };

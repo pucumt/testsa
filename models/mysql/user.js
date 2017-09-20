@@ -14,7 +14,10 @@ const User = db.defineModel('users', {
         type: db.STRING(20),
         allowNull: true
     },
-    role: db.INTEGER, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 team leader
+    role: {
+        type: db.INTEGER,
+        defaultValue: 0
+    }, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 team leader
     isDeleted: {
         type: db.BOOLEAN,
         defaultValue: false
@@ -37,9 +40,4 @@ User.get = function (name) {
             'name': name
         }
     });
-};
-
-// this is a test function
-User.testSync = function () {
-    db.sync();
 };
