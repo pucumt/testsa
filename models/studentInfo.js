@@ -198,3 +198,7 @@ StudentInfo.updateUserInfo = function (filter, option) {
         multi: true
     }).exec();
 };
+
+StudentInfo.rawAll = function () {
+    return studentInfoModel.find();
+};

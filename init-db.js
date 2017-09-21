@@ -9,7 +9,15 @@ model.sync().then(function () {
                 entities.forEach(function (obj) {
                     var newObj = obj.toJSON();
                     newObj._id = newObj._id.toJSON();
-                    tmpArray.push(model[name].create(newObj));
+                    // handle discount
+                    if (newObj.discount === null) {
+                        delete newObj.discount;
+                    }
+                    var tmp = model[name].create(newObj)
+                        .catch(function (err) {
+                            throw new Error(newObj);
+                        });
+                    tmpArray.push(tmp);
                 });
                 return Promise.all(tmpArray);
             });

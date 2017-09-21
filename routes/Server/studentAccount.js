@@ -1,5 +1,7 @@
-var StudentAccount = require('../../models/studentAccount.js'),
-    StudentInfo = require('../../models/studentInfo.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    StudentAccount = model.studentAccount,
+    StudentInfo = model.studentInfo,
     auth = require("./auth"),
     crypto = require('crypto'),
     checkLogin = auth.checkLogin;
@@ -20,23 +22,19 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
 
         var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
         //查询并返回第 page 页的 20 篇文章
-        StudentAccount.getAll(null, page, filter, function (err, studentAccounts, total) {
-            if (err) {
-                studentAccounts = [];
-            }
+        StudentAccount.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                studentAccounts: studentAccounts,
-                total: total,
+                studentAccounts: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + studentAccounts.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
@@ -44,17 +42,16 @@ module.exports = function (app) {
     app.post('/admin/studentAccount/reset', checkLogin);
     app.post('/admin/studentAccount/reset', function (req, res) {
         var md5 = crypto.createHash('md5');
-        var studentAccount = new StudentAccount({
+        StudentAccount.update({
             password: password = md5.update("111111").digest('hex')
-        });
-        studentAccount.update(req.body.id, function (err, studentAccount) {
-            if (err) {
-                studentAccount = {};
+        }, {
+            where: {
+                _id: req.body.id
             }
+        }).then(function (result) {
             res.jsonp({
                 sucess: true
             });
-            return;
         });
     });
 
@@ -74,15 +71,14 @@ module.exports = function (app) {
                     });
                     return;
                 } else {
-                    var studentAccount = new StudentAccount({
+                    StudentAccount.update({
                         name: req.body.name
-                    });
-                    studentAccount.update(req.body.id, function (err, studentAccount) {
-                        if (err) {
-                            studentAccount = {};
+                    }, {
+                        where: {
+                            _id: req.body.id
                         }
+                    }).then(function (studentAccount) {
                         res.jsonp(studentAccount);
-                        return;
                     });
                 }
             });
@@ -94,25 +90,28 @@ module.exports = function (app) {
         var filter = {
             accountId: req.body.id
         };
-        StudentInfo.deleteFilter(filter, function (err, studentInfo) {
-            if (err) {
-                res.jsonp({
-                    error: err
-                });
-                return;
-            }
-            StudentAccount.delete(req.body.id, function (err, studentAccount) {
-                if (err) {
-                    res.jsonp({
-                        error: err
+        model.db.sequelize.transaction(function (t1) {
+            return StudentInfo.update({
+                    isDeleted: true
+                }, {
+                    where: filter,
+                    transaction: t1
+                })
+                .then(function (result) {
+                    return StudentAccount.update({
+                        isDeleted: true
+                    }, {
+                        where: {
+                            _id: req.body.id
+                        },
+                        transaction: t1
                     });
-                    return;
-                }
-                res.jsonp({
-                    sucess: true
                 });
+        }).then(function (result) {
+            res.jsonp({
+                sucess: true
             });
-        })
+        });
     });
 
     app.post('/admin/studentAccount/newStudent', checkLogin);
@@ -124,12 +123,11 @@ module.exports = function (app) {
             .then(function (account) {
                 if (!account) {
                     var md5 = crypto.createHash('md5');
-                    var studentAccount = new StudentAccount({
+                    return StudentAccount.create({
                         name: req.body.mobile,
                         password: md5.update("111111").digest('hex'),
                         createdBy: req.session.admin._id
                     });
-                    return studentAccount.save();
                 }
                 return account;
             })
@@ -148,7 +146,7 @@ module.exports = function (app) {
                     return;
                 }
 
-                var studentInfo = new StudentInfo({
+                return StudentInfo.create({
                     name: req.body.name,
                     sex: req.body.sex,
                     accountId: accountId,
@@ -159,28 +157,26 @@ module.exports = function (app) {
                     className: req.body.className,
                     createdBy: req.session.admin._id
                 });
-
-                return studentInfo.save();
             })
             .then(function (student) {
                 if (student) {
                     res.jsonp({
                         sucess: true
                     });
-                    return;
                 }
             })
             .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
             });
     });
 
     app.get('/admin/studentAccount/:id', checkLogin);
     app.get('/admin/studentAccount/:id', function (req, res) {
-        StudentAccount.get(req.params.id).then(function (account) {
+        StudentAccount.getFilter({
+            _id: req.params.id
+        }).then(function (account) {
             if (account) {
                 res.jsonp(account);
             }
@@ -192,12 +188,17 @@ module.exports = function (app) {
         StudentInfo.getFilters({})
             .then(function (students) {
                 students.forEach(function (student) {
-                    StudentAccount.get(student.accountId)
+                    StudentAccount.getFilter({
+                            _id: student.accountId
+                        })
                         .then(function (account) {
-                            var updateStudent = new StudentInfo({
+                            return StudentInfo.update({
                                 mobile: account.name
+                            }, {
+                                where: {
+                                    _id: student._id
+                                }
                             });
-                            updateStudent.update(student._id, function () {});
                         });
                 });
                 res.jsonp({

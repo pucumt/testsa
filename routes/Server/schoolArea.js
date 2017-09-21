@@ -42,8 +42,8 @@ module.exports = function (app) {
             where: {
                 _id: req.body.id
             }
-        }).then(function (schoolArea) {
-            res.jsonp(schoolArea);
+        }).then(function (result) {
+            res.jsonp(result);
         });
     });
 
@@ -55,7 +55,7 @@ module.exports = function (app) {
             where: {
                 _id: req.body.id
             }
-        }).then(function (schoolArea) {
+        }).then(function (result) {
             res.jsonp({
                 sucess: true
             });

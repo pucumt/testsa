@@ -7,7 +7,10 @@ var studentAccountSchema = new mongoose.Schema({
     password: String,
     wechat: String,
     isDeleted: Boolean,
-    createDate: { type: Date, default: Date.now },
+    createDate: {
+        type: Date,
+        default: Date.now
+    },
     createdBy: String,
     DeleteDate: Date
 }, {
@@ -23,15 +26,15 @@ function StudentAccount(option) {
 module.exports = StudentAccount;
 
 //存储学区信息
-StudentAccount.prototype.save = function() {
+StudentAccount.prototype.save = function () {
     var newstudentAccount = new studentAccountModel(this.option);
     return newstudentAccount.save();
 };
 
-StudentAccount.prototype.update = function(id, callback) {
+StudentAccount.prototype.update = function (id, callback) {
     studentAccountModel.update({
         _id: id
-    }, this.option).exec(function(err, studentAccount) {
+    }, this.option).exec(function (err, studentAccount) {
         if (err) {
             return callback(err);
         }
@@ -41,40 +44,53 @@ StudentAccount.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-StudentAccount.get = function(id) {
+StudentAccount.get = function (id) {
     //打开数据库
-    return studentAccountModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return studentAccountModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
-StudentAccount.getSpecial = function(id) {
+StudentAccount.getSpecial = function (id) {
     //打开数据库
-    return studentAccountModel.findOne({ _id: id });
+    return studentAccountModel.findOne({
+        _id: id
+    });
 };
 //一次获取20个学区信息
-StudentAccount.getAll = function(id, page, filter, callback) {
+StudentAccount.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = studentAccountModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, studentAccounts) {
+            .exec(function (err, studentAccounts) {
                 callback(null, studentAccounts, count);
             });
     });
 };
 
 //删除一个学区
-StudentAccount.delete = function(id, callback) {
+StudentAccount.delete = function (id, callback) {
     studentAccountModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, studentAccount) {
+    }).exec(function (err, studentAccount) {
         if (err) {
             return callback(err);
         }
@@ -83,19 +99,23 @@ StudentAccount.delete = function(id, callback) {
 };
 
 //读取学区信息
-StudentAccount.getFilter = function(filter) {
+StudentAccount.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return studentAccountModel.findOne(filter);
 };
 
-StudentAccount.getFilters = function(filter) {
+StudentAccount.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return studentAccountModel.find(filter);
 };
 
-StudentAccount.deleteAccount = function(id) {
+StudentAccount.deleteAccount = function (id) {
     return studentAccountModel.update({
         _id: id
     }, {
@@ -103,7 +123,7 @@ StudentAccount.deleteAccount = function(id) {
     }).exec();
 };
 
-StudentAccount.recoverAccount = function(id) {
+StudentAccount.recoverAccount = function (id) {
     return studentAccountModel.update({
         _id: id
     }, {
@@ -111,12 +131,28 @@ StudentAccount.recoverAccount = function(id) {
     }).exec();
 };
 
-StudentAccount.getAllDuplicated = function() {
-    return studentAccountModel.aggregate({ $match: { isDeleted: { $ne: true } } })
+StudentAccount.getAllDuplicated = function () {
+    return studentAccountModel.aggregate({
+            $match: {
+                isDeleted: {
+                    $ne: true
+                }
+            }
+        })
         .group({
             _id: "$name",
-            count: { $sum: 1 }
+            count: {
+                $sum: 1
+            }
         })
-        .match({ count: { $gt: 1 } })
+        .match({
+            count: {
+                $gt: 1
+            }
+        })
         .exec();
+};
+
+StudentAccount.rawAll = function () {
+    return studentAccountModel.find();
 };

@@ -1,0 +1,54 @@
+const db = require('../../db'),
+    config = require('../../settings');
+
+const StudentAccount = db.defineModel('studentAccounts', {
+    name: {
+        type: db.STRING(20)
+    },
+    password: db.STRING(50),
+    wechat: {
+        type: db.STRING(100),
+        defaultValue: ""
+    },
+    isDeleted: {
+        type: db.BOOLEAN,
+        defaultValue: false
+    },
+    createdBy: {
+        type: db.STRING(50),
+        defaultValue: ""
+    },
+    deletedBy: {
+        type: db.STRING(50),
+        defaultValue: ""
+    },
+    deleteDate: {
+        type: db.DATE,
+        allowNull: true
+    }
+});
+module.exports = StudentAccount;
+
+//读取用户信息
+StudentAccount.getFilter = function (filter) {
+    filter.isDeleted = false;
+    return StudentAccount.findOne({
+        'where': filter
+    });
+};
+
+StudentAccount.getFilters = function (filter) {
+    filter.isDeleted = false;
+    return StudentAccount.findAll({
+        'where': filter
+    });
+};
+
+StudentAccount.getFiltersWithPage = function (page, filter) {
+    filter.isDeleted = false;
+    return StudentAccount.findAndCountAll({
+        'where': filter,
+        offset: config.pageSize * (page - 1),
+        limit: config.pageSize
+    });
+};

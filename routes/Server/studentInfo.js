@@ -1,13 +1,15 @@
-var StudentInfo = require('../../models/studentInfo.js'),
-    StudentAccount = require('../../models/studentAccount.js'),
-    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    StudentInfo = model.studentInfo,
+    StudentAccount = model.studentAccount,
+    AdminEnrollTrain = model.adminEnrollTrain,
     crypto = require('crypto'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/studentsList', checkLogin);
-    app.get('/admin/studentsList', function(req, res) {
+    app.get('/admin/studentsList', function (req, res) {
         res.render('Server/studentInfoList.html', {
             title: '>学生管理',
             user: req.session.admin
@@ -15,7 +17,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/studentDetail/:id', checkLogin);
-    app.get('/admin/studentDetail/:id', function(req, res) {
+    app.get('/admin/studentDetail/:id', function (req, res) {
         res.render('Server/studentDetail.html', {
             title: '>学生管理',
             user: req.session.admin,
@@ -24,7 +26,7 @@ module.exports = function(app) {
     });
 
     app.get('/admin/studentScore/:id/:fromPage', checkLogin);
-    app.get('/admin/studentScore/:id/:fromPage', function(req, res) {
+    app.get('/admin/studentScore/:id/:fromPage', function (req, res) {
         res.render('Server/studentScore.html', {
             title: '>学生成绩',
             user: req.session.admin,
@@ -33,32 +35,40 @@ module.exports = function(app) {
         });
     });
 
-
     app.post('/admin/studentInfo/edit', checkLogin);
-    app.post('/admin/studentInfo/edit', function(req, res) {
-        StudentAccount.getFilter({ name: req.body.mobile })
-            .then(function(account) {
+    app.post('/admin/studentInfo/edit', function (req, res) {
+        StudentAccount.getFilter({
+                name: req.body.mobile
+            })
+            .then(function (account) {
                 var p;
                 if (account) {
                     var accountId = account._id == req.body.accountId ? req.body.accountId : account._id;
                     p = Promise.resolve(accountId);
                 } else {
                     var md5 = crypto.createHash('md5');
-                    var studentAccount = new StudentAccount({
+                    p = StudentAccount.create({
                         name: req.body.mobile,
                         password: md5.update("111111").digest('hex')
-                    });
-                    p = studentAccount.save().then(function(account) {
+                    }).then(function (account) {
                         return account._id;
                     });
                 }
-                p.then(function(accountId) {
-                    StudentInfo.getFilter({ accountId: accountId, name: req.body.name, _id: { $ne: req.body.id } })
-                        .then(function(student) {
+                p.then(function (accountId) {
+                    StudentInfo.getFilter({
+                            accountId: accountId,
+                            name: req.body.name,
+                            _id: {
+                                $ne: req.body.id
+                            }
+                        })
+                        .then(function (student) {
                             if (student) {
-                                res.jsonp({ error: "此学生已经存在" });
+                                res.jsonp({
+                                    error: "同名学生已经存在"
+                                });
                             } else {
-                                var studentInfo = new StudentInfo({
+                                StudentInfo.update({
                                     name: req.body.name,
                                     address: req.body.address,
                                     mobile: req.body.mobile,
@@ -70,13 +80,12 @@ module.exports = function(app) {
                                     gradeId: req.body.gradeId,
                                     gradeName: req.body.gradeName,
                                     accountId: accountId
-                                });
-
-                                studentInfo.update(req.body.id, function(err, studentInfo) {
-                                    if (err) {
-                                        studentInfo = {};
+                                }, {
+                                    where: {
+                                        _id: req.body.id
                                     }
-                                    res.jsonp(studentInfo);
+                                }).then(function (result) {
+                                    res.jsonp(result);
                                 });
                             }
                         });
@@ -86,111 +95,110 @@ module.exports = function(app) {
     });
 
     app.post('/admin/studentInfo/delete', checkLogin);
-    app.post('/admin/studentInfo/delete', function(req, res) {
-        StudentInfo.delete(req.body.id, function(err, studentInfo) {
-            if (err) {
-                res.jsonp({ error: err });
-                return;
+    app.post('/admin/studentInfo/delete', function (req, res) {
+        StudentInfo.update({
+            isDeleted: true
+        }, {
+            where: {
+                _id: req.body.id
             }
-            res.jsonp({ sucess: true });
+        }).then(function (result) {
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/studentInfo/search', checkLogin);
-    app.post('/admin/studentInfo/search', function(req, res) {
+    app.post('/admin/studentInfo/search', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
         var pPromise;
         if (req.body.mobile) {
-            pPromise = StudentAccount.getFilter({ name: req.body.mobile });
+            pPromise = StudentAccount.getFilter({
+                name: req.body.mobile
+            });
         } else {
             pPromise = Promise.resolve();
         }
 
-        pPromise.then(function(account) {
+        pPromise.then(function (account) {
             if (req.body.mobile) {
                 filter.accountId = account ? account._id : "";
             }
 
-            StudentInfo.getAll(null, page, filter, function(err, studentInfos, total) {
-                if (err) {
-                    studentInfos = [];
-                }
+            StudentInfo.getFiltersWithPage(page, filter).then(function (result) {
                 res.jsonp({
-                    studentInfos: studentInfos,
-                    total: total,
+                    studentInfos: result.rows,
+                    total: result.count,
                     page: page,
                     isFirstPage: (page - 1) == 0,
-                    isLastPage: ((page - 1) * 14 + studentInfos.length) == total
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
                 });
             });
         });
     });
 
     app.get('/admin/studentInfo/:id', checkLogin);
-    app.get('/admin/studentInfo/:id', function(req, res) {
-        StudentInfo.get(req.params.id).then(function(studentInfo) {
+    app.get('/admin/studentInfo/:id', function (req, res) {
+        StudentInfo.getFilter({
+            _id: req.params.id
+        }).then(function (studentInfo) {
             if (studentInfo) {
                 res.jsonp(studentInfo);
             }
         });
     });
 
+    // 优惠券可以根据年级或者班级来发放
     app.post('/admin/studentInfo/searchByGradeClass', checkLogin);
-    app.post('/admin/studentInfo/searchByGradeClass', function(req, res) {
+    app.post('/admin/studentInfo/searchByGradeClass', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
         if (req.body.trainId) {
+            // 根据班级订单设置优惠券
             filter.trainId = req.body.trainId;
             filter.isSucceed = 1;
-            if (req.body.name) {
-                var reg = new RegExp(req.body.name, 'i')
+            if (req.body.name && req.body.name.trim()) {
                 filter.studentName = {
-                    $regex: reg
+                    $like: `%${req.body.name.trim()}%`
                 };
             }
-            AdminEnrollTrain.getAllOfStudent(null, page, filter, function(err, adminEnrollTrains, total) {
-                if (err) {
-                    adminEnrollTrains = [];
-                }
+            AdminEnrollTrain.getFiltersWithPage(page, filter).then(function (result) {
                 res.jsonp({
-                    students: adminEnrollTrains,
-                    total: total,
+                    students: result.rows,
+                    total: result.count,
                     page: page,
                     isFirstPage: (page - 1) == 0,
-                    isLastPage: ((page - 1) * 14 + adminEnrollTrains.length) == total
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
                 });
             });
         } else {
+            // 根据年级和姓名设置优惠券
             if (req.body.gradeId) {
                 filter.gradeId = req.body.gradeId;
             }
-            if (req.body.name) {
-                var reg = new RegExp(req.body.name, 'i')
+            if (req.body.name && req.body.name.trim()) {
                 filter.name = {
-                    $regex: reg
+                    $like: `%${req.body.name.trim()}%`
                 };
             }
-            StudentInfo.getAllOfStudent(null, page, filter, function(err, studentInfos, total) {
-                if (err) {
-                    studentInfos = [];
-                }
+            StudentInfo.getFiltersWithPage(page, filter).then(function (result) {
                 res.jsonp({
-                    students: studentInfos,
-                    total: total,
+                    students: result.rows,
+                    total: result.count,
                     page: page,
                     isFirstPage: (page - 1) == 0,
-                    isLastPage: ((page - 1) * 14 + studentInfos.length) == total
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
                 });
             });
         }
