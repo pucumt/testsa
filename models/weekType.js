@@ -4,8 +4,14 @@ var db = mongoose.connection;
 
 var weekTypeSchema = new mongoose.Schema({
     name: String,
-    isChecked: { type: Boolean, default: true }, //是否使用
-    isDeleted: { type: Boolean, default: false }
+    isChecked: {
+        type: Boolean,
+        default: true
+    }, //是否使用
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'weekTypes'
 });
@@ -19,10 +25,10 @@ function WeekType(option) {
 module.exports = WeekType;
 
 //存储学区信息
-WeekType.prototype.save = function(callback) {
+WeekType.prototype.save = function (callback) {
     var newweekType = new weekTypeModel(this.option);
 
-    newweekType.save(function(err, weekType) {
+    newweekType.save(function (err, weekType) {
         if (err) {
             return callback(err);
         }
@@ -32,10 +38,10 @@ WeekType.prototype.save = function(callback) {
     });
 };
 
-WeekType.prototype.update = function(id, callback) {
+WeekType.prototype.update = function (id, callback) {
     weekTypeModel.update({
         _id: id
-    }, this.option).exec(function(err, weekType) {
+    }, this.option).exec(function (err, weekType) {
         if (err) {
             return callback(err);
         }
@@ -45,9 +51,14 @@ WeekType.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-WeekType.get = function(id, callback) {
+WeekType.get = function (id, callback) {
     //打开数据库
-    weekTypeModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, weekType) {
+    weekTypeModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, weekType) {
         if (err) {
             return callback(err);
         }
@@ -58,30 +69,36 @@ WeekType.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-WeekType.getAll = function(id, page, filter, callback) {
+WeekType.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = weekTypeModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, weekTypes) {
+            .exec(function (err, weekTypes) {
                 callback(null, weekTypes, count);
             });
     });
 };
 
 //删除一个学区
-WeekType.delete = function(id, callback) {
+WeekType.delete = function (id, callback) {
     weekTypeModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, weekType) {
+    }).exec(function (err, weekType) {
         if (err) {
             return callback(err);
         }
@@ -89,13 +106,21 @@ WeekType.delete = function(id, callback) {
     });
 };
 
-WeekType.updateBatch = function(filter, updated) {
-    return weekTypeModel.update(filter, updated, { multi: true })
+WeekType.updateBatch = function (filter, updated) {
+    return weekTypeModel.update(filter, updated, {
+            multi: true
+        })
         .exec();
 };
 
-WeekType.getFilters = function(filter) {
+WeekType.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return weekTypeModel.find(filter);
+};
+
+WeekType.rawAll = function () {
+    return weekTypeModel.find();
 };

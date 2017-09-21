@@ -4,8 +4,14 @@ var db = mongoose.connection;
 
 var timeTypeSchema = new mongoose.Schema({
     name: String,
-    isChecked: { type: Boolean, default: true }, //是否使用
-    isDeleted: { type: Boolean, default: false }
+    isChecked: {
+        type: Boolean,
+        default: true
+    }, //是否使用
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'timeTypes'
 });
@@ -19,10 +25,10 @@ function TimeType(option) {
 module.exports = TimeType;
 
 //存储学区信息
-TimeType.prototype.save = function(callback) {
+TimeType.prototype.save = function (callback) {
     var newtimeType = new timeTypeModel(this.option);
 
-    newtimeType.save(function(err, timeType) {
+    newtimeType.save(function (err, timeType) {
         if (err) {
             return callback(err);
         }
@@ -32,10 +38,10 @@ TimeType.prototype.save = function(callback) {
     });
 };
 
-TimeType.prototype.update = function(id, callback) {
+TimeType.prototype.update = function (id, callback) {
     timeTypeModel.update({
         _id: id
-    }, this.option).exec(function(err, timeType) {
+    }, this.option).exec(function (err, timeType) {
         if (err) {
             return callback(err);
         }
@@ -45,9 +51,14 @@ TimeType.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-TimeType.get = function(id, callback) {
+TimeType.get = function (id, callback) {
     //打开数据库
-    timeTypeModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, timeType) {
+    timeTypeModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, timeType) {
         if (err) {
             return callback(err);
         }
@@ -58,30 +69,36 @@ TimeType.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-TimeType.getAll = function(id, page, filter, callback) {
+TimeType.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = timeTypeModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, timeTypes) {
+            .exec(function (err, timeTypes) {
                 callback(null, timeTypes, count);
             });
     });
 };
 
 //删除一个学区
-TimeType.delete = function(id, callback) {
+TimeType.delete = function (id, callback) {
     timeTypeModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, timeType) {
+    }).exec(function (err, timeType) {
         if (err) {
             return callback(err);
         }
@@ -90,13 +107,21 @@ TimeType.delete = function(id, callback) {
 };
 
 
-TimeType.updateBatch = function(filter, updated) {
-    return timeTypeModel.update(filter, updated, { multi: true })
+TimeType.updateBatch = function (filter, updated) {
+    return timeTypeModel.update(filter, updated, {
+            multi: true
+        })
         .exec();
 };
 
-TimeType.getFilters = function(filter) {
+TimeType.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return timeTypeModel.find(filter);
+};
+
+TimeType.rawAll = function () {
+    return timeTypeModel.find();
 };

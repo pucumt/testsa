@@ -7,9 +7,15 @@ var teacherSchema = new mongoose.Schema({
     mobile: String,
     engName: String,
     address: String,
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
     password: String,
-    role: { type: Number, default: 0 } // 0 teacher, 1 team leader
+    role: {
+        type: Number,
+        default: 0
+    } // 0 teacher, 1 team leader
 }, {
     collection: 'teachers'
 });
@@ -23,16 +29,16 @@ function Teacher(option) {
 module.exports = Teacher;
 
 //存储学区信息
-Teacher.prototype.save = function(callback) {
+Teacher.prototype.save = function (callback) {
     var newteacher = new teacherModel(this.option);
 
     return newteacher.save();
 };
 
-Teacher.prototype.update = function(id, callback) {
+Teacher.prototype.update = function (id, callback) {
     teacherModel.update({
         _id: id
-    }, this.option).exec(function(err, teacher) {
+    }, this.option).exec(function (err, teacher) {
         if (err) {
             return callback(err);
         }
@@ -42,9 +48,14 @@ Teacher.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Teacher.get = function(id, callback) {
+Teacher.get = function (id, callback) {
     //打开数据库
-    teacherModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, teacher) {
+    teacherModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, teacher) {
         if (err) {
             return callback(err);
         }
@@ -55,30 +66,36 @@ Teacher.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-Teacher.getAll = function(id, page, filter, callback) {
+Teacher.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = teacherModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, teachers) {
+            .exec(function (err, teachers) {
                 callback(null, teachers, count);
             });
     });
 };
 
 //删除一个学区
-Teacher.delete = function(id, callback) {
+Teacher.delete = function (id, callback) {
     teacherModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, teacher) {
+    }).exec(function (err, teacher) {
         if (err) {
             return callback(err);
         }
@@ -87,23 +104,39 @@ Teacher.delete = function(id, callback) {
 };
 
 //一次获取20个学区信息
-Teacher.getAllWithoutPage = function(filter, callback) {
+Teacher.getAllWithoutPage = function (filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = teacherModel.find(filter)
-        .exec(function(err, teachers) {
+        .exec(function (err, teachers) {
             callback(null, teachers);
         });
 };
 
-Teacher.getFilter = function(filter) {
+Teacher.getFilter = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return teacherModel.findOne(filter);
+};
+
+Teacher.rawAll = function () {
+    return teacherModel.find();
 };

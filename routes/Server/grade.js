@@ -1,4 +1,5 @@
 var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
     Grade = model.grade,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;

@@ -1,4 +1,5 @@
 var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
     ClassRoom = model.classRoom,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -57,7 +58,7 @@ module.exports = function (app) {
             where: {
                 _id: req.body.id
             }
-        }).then(function (classRoom) {
+        }).then(function (result) {
             res.jsonp({
                 sucess: true
             });
@@ -89,7 +90,7 @@ module.exports = function (app) {
                 total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + result.rows.length) == result.count
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
