@@ -6,7 +6,10 @@ var absentStudentsSchema = new mongoose.Schema({
     studentId: String,
     studentName: String,
     mobile: String,
-    absentDate: { type: Date, default: Date.now }, //缺勤日期
+    absentDate: {
+        type: Date,
+        default: Date.now
+    }, //缺勤日期
     classId: String,
     className: String, //缺勤课程
     teacherId: String,
@@ -14,10 +17,22 @@ var absentStudentsSchema = new mongoose.Schema({
     schoolId: String,
     schoolName: String, //校区
     comment: String, //缺勤原因
-    isCheck: { type: Boolean, default: false }, //是否处理过
-    isDeleted: { type: Boolean, default: false }, //缺勤或者点错
-    createdDate: { type: Date, default: Date.now }, //创建日期
-    isExtra: { type: Boolean, default: false }, //是否补课
+    isCheck: {
+        type: Boolean,
+        default: false
+    }, //是否处理过
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }, //缺勤或者点错
+    createdDate: {
+        type: Date,
+        default: Date.now
+    }, //创建日期
+    isExtra: {
+        type: Boolean,
+        default: false
+    }, //是否补课
     deletedDate: Date //删除日期
 }, {
     collection: 'absentStudentss'
@@ -32,64 +47,91 @@ function AbsentStudents(option) {
 module.exports = AbsentStudents;
 
 //存储学区信息
-AbsentStudents.prototype.save = function() {
+AbsentStudents.prototype.save = function () {
     var newabsentStudents = new absentStudentsModel(this.option);
 
     return newabsentStudents.save();
 };
 
-AbsentStudents.prototype.update = function(id) {
+AbsentStudents.prototype.update = function (id) {
     return absentStudentsModel.update({
         _id: id
     }, this.option).exec();
 };
 
 //读取学区信息
-AbsentStudents.get = function(id) {
+AbsentStudents.get = function (id) {
     //打开数据库
-    return absentStudentsModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return absentStudentsModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-AbsentStudents.getAll = function(id, page, filter, callback) {
+AbsentStudents.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = absentStudentsModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
-            .sort({ _id: 1 })
+            .sort({
+                _id: 1
+            })
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, absentStudentss) {
+            .exec(function (err, absentStudentss) {
                 callback(null, absentStudentss, count);
             });
     });
 };
 
 //删除一个学区
-AbsentStudents.delete = function(filter) {
+AbsentStudents.delete = function (filter) {
     return absentStudentsModel.update(filter, {
         isDeleted: true,
         deletedDate: new Date()
-    }, { multi: true }).exec();
+    }, {
+        multi: true
+    }).exec();
 };
 
-AbsentStudents.getFilters = function(filter) {
+AbsentStudents.getFilters = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return absentStudentsModel.find(filter);
 };
 
 //删除一个学区
-AbsentStudents.makeUp = function(filter) {
+AbsentStudents.makeUp = function (filter) {
     return absentStudentsModel.update(filter, {
         isDeleted: true,
         isExtra: true
-    }, { multi: true }).exec();
+    }, {
+        multi: true
+    }).exec();
+};
+
+AbsentStudents.rawAll = function () {
+    return absentStudentsModel.find();
 };

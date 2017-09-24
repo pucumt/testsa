@@ -1,3 +1,5 @@
+// 管理员的账号，分等级权限将会不同
+
 const db = require('../../db'),
     config = require('../../settings');
 
@@ -23,7 +25,7 @@ const User = db.defineModel('users', {
         defaultValue: false
     },
     schoolId: {
-        type: db.STRING(32),
+        type: db.STRING(50),
         defaultValue: ''
     },
     schoolArea: {

@@ -1,3 +1,5 @@
+// 年级，暑假比较特殊，学生的年级还没有升上来，但是所上的课程已经是下学期的课程了
+
 const db = require('../../db'),
     config = require('../../settings');
 

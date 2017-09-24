@@ -56,6 +56,7 @@ var adminEnrollTrainHistorySchema = new mongoose.Schema({
     fromId: String, //调班从哪里调过来
     yearId: String,
     yearName: String,
+
     historyDate: {
         type: Date,
         default: Date.now
@@ -93,9 +94,13 @@ AdminEnrollTrainHistory.get = function (id) {
 };
 
 AdminEnrollTrainHistory.delete = function (id, callback) {
-    return adminEnrollTrainModel.update({
+    return adminEnrollTrainHistoryModel.update({
         _id: id
     }, {
         isDeleted: true
     }).exec();
+};
+
+AdminEnrollTrainHistory.rawAll = function () {
+    return adminEnrollTrainHistoryModel.find();
 };

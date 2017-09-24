@@ -171,3 +171,7 @@ RebateEnrollTrain.getRebateReportList = function (yearId, startDate, endDate, sc
         })
         .exec();
 };
+
+RebateEnrollTrain.rawAll = function () {
+    return rebateEnrollTrainModel.find();
+};

@@ -432,3 +432,7 @@ TrainClass.min100 = function (id) {
         multi: true
     }).exec();
 };
+
+TrainClass.rawAll = function () {
+    return trainClassModel.find();
+};

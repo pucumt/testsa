@@ -112,3 +112,7 @@ Book.batchUpdate = function (filter, option) {
         multi: true
     }).exec();
 };
+
+Book.rawAll = function () {
+    return bookModel.find();
+};

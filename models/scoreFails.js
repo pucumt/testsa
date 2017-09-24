@@ -21,21 +21,31 @@ function ScoreFail(option) {
 module.exports = ScoreFail;
 
 //存储学区信息
-ScoreFail.prototype.save = function() {
+ScoreFail.prototype.save = function () {
     var newScoreFail = new scoreFailModel(this.option);
     return newScoreFail.save();
 };
 
 //一次获取20个学区信息
-ScoreFail.getAllWithoutPaging = function(filter) {
+ScoreFail.getAllWithoutPaging = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return scoreFailModel.find(filter);
 };
 
-ScoreFail.clearAll = function() {
+ScoreFail.clearAll = function () {
     return scoreFailModel.remove();
+};
+
+ScoreFail.rawAll = function () {
+    return scoreFailModel.find();
 };

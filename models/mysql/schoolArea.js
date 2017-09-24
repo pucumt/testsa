@@ -1,3 +1,5 @@
+// 校区，有好多校区，同时学生也会交叉，后续逻辑将会非常复杂（最好前台只能处理本校区事务）
+
 const db = require('../../db'),
     config = require('../../settings');
 

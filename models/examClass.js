@@ -21,8 +21,14 @@ var examClassSchema = new mongoose.Schema({
     seatNumber: Number,
     examAreaId: String, //means old enroll
     examAreaName: String,
-    isScorePublished: { type: Boolean, default: false },
-    sequence: { type: Number, default: 0 }
+    isScorePublished: {
+        type: Boolean,
+        default: false
+    },
+    sequence: {
+        type: Number,
+        default: 0
+    }
 }, {
     collection: 'examClasss'
 });
@@ -36,12 +42,12 @@ function ExamClass(option) {
 module.exports = ExamClass;
 
 //存储学区信息
-ExamClass.prototype.save = function(callback) {
+ExamClass.prototype.save = function (callback) {
     this.option.enrollCount = 0;
     this.option.isWeixin = 0;
     var newexamClass = new examClassModel(this.option);
 
-    newexamClass.save(function(err, examClass) {
+    newexamClass.save(function (err, examClass) {
         if (err) {
             return callback(err);
         }
@@ -51,10 +57,10 @@ ExamClass.prototype.save = function(callback) {
     });
 };
 
-ExamClass.prototype.update = function(id, callback) {
+ExamClass.prototype.update = function (id, callback) {
     examClassModel.update({
         _id: id
-    }, this.option).exec(function(err, examClass) {
+    }, this.option).exec(function (err, examClass) {
         if (err) {
             return callback(err);
         }
@@ -64,37 +70,48 @@ ExamClass.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ExamClass.get = function(id) {
+ExamClass.get = function (id) {
     //打开数据库
-    return examClassModel.findOne({ _id: id });
+    return examClassModel.findOne({
+        _id: id
+    });
 };
 
 //一次获取20个学区信息
-ExamClass.getAll = function(id, page, filter, callback) {
+ExamClass.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = examClassModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
-            .sort({ sequence: 1, _id: 1 })
+            .sort({
+                sequence: 1,
+                _id: 1
+            })
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, examClasss) {
+            .exec(function (err, examClasss) {
                 callback(null, examClasss, count);
             });
     });
 };
 
 //删除一个学区
-ExamClass.delete = function(id, callback) {
+ExamClass.delete = function (id, callback) {
     examClassModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, examClass) {
+    }).exec(function (err, examClass) {
         if (err) {
             return callback(err);
         }
@@ -103,12 +120,12 @@ ExamClass.delete = function(id, callback) {
 };
 
 //发布
-ExamClass.publish = function(id, callback) {
+ExamClass.publish = function (id, callback) {
     examClassModel.update({
         _id: id
     }, {
         isWeixin: 1
-    }).exec(function(err, examClasss) {
+    }).exec(function (err, examClasss) {
         if (err) {
             return callback(err);
         }
@@ -116,12 +133,16 @@ ExamClass.publish = function(id, callback) {
     });
 };
 
-ExamClass.publishAll = function(ids, callback) {
+ExamClass.publishAll = function (ids, callback) {
     examClassModel.update({
-        _id: { $in: ids }
+        _id: {
+            $in: ids
+        }
     }, {
         isWeixin: 1
-    }, { multi: true }).exec(function(err, examClasss) {
+    }, {
+        multi: true
+    }).exec(function (err, examClasss) {
         if (err) {
             return callback(err);
         }
@@ -129,12 +150,12 @@ ExamClass.publishAll = function(ids, callback) {
     });
 };
 //停用
-ExamClass.unPublish = function(id, callback) {
+ExamClass.unPublish = function (id, callback) {
     examClassModel.update({
         _id: id
     }, {
         isWeixin: 9
-    }).exec(function(err, examClasss) {
+    }).exec(function (err, examClasss) {
         if (err) {
             return callback(err);
         }
@@ -142,12 +163,16 @@ ExamClass.unPublish = function(id, callback) {
     });
 };
 
-ExamClass.unPublishAll = function(ids, callback) {
+ExamClass.unPublishAll = function (ids, callback) {
     examClassModel.update({
-        _id: { $in: ids }
+        _id: {
+            $in: ids
+        }
     }, {
         isWeixin: 9
-    }, { multi: true }).exec(function(err, examClasss) {
+    }, {
+        multi: true
+    }).exec(function (err, examClasss) {
         if (err) {
             return callback(err);
         }
@@ -155,64 +180,104 @@ ExamClass.unPublishAll = function(ids, callback) {
     });
 };
 
-ExamClass.enroll = function(id) {
-    return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
-        .then(function(exam) {
+ExamClass.enroll = function (id) {
+    return examClassModel.findOne({
+            _id: id,
+            isDeleted: {
+                $ne: true
+            }
+        })
+        .then(function (exam) {
             if (exam) {
                 return examClassModel.update({ //return examClassModel.findOneAndUpdate({
                     _id: id,
-                    enrollCount: { $lt: exam.examCount }
-                }, { $inc: { enrollCount: 1 } }).exec(); // }, { $inc: { enrollCount: 1 } }, { new: true }).exec();
+                    enrollCount: {
+                        $lt: exam.examCount
+                    }
+                }, {
+                    $inc: {
+                        enrollCount: 1
+                    }
+                }).exec(); // }, { $inc: { enrollCount: 1 } }, { new: true }).exec();
             }
         });
 };
 
-ExamClass.cancel = function(id) {
-    return examClassModel.findOne({ _id: id, isDeleted: { $ne: true } })
-        .then(function(exam) {
+ExamClass.cancel = function (id) {
+    return examClassModel.findOne({
+            _id: id,
+            isDeleted: {
+                $ne: true
+            }
+        })
+        .then(function (exam) {
             return examClassModel.update({
                 _id: id
-            }, { $inc: { enrollCount: -1 } }).exec();
+            }, {
+                $inc: {
+                    enrollCount: -1
+                }
+            }).exec();
         });
 };
 
 
-ExamClass.enroll2 = function(id) {
+ExamClass.enroll2 = function (id) {
     return examClassModel.update({
         _id: id
-    }, { $inc: { enrollCount: 1 } }).exec();
+    }, {
+        $inc: {
+            enrollCount: 1
+        }
+    }).exec();
 };
 
-ExamClass.cancel2 = function(id) {
+ExamClass.cancel2 = function (id) {
     return examClassModel.update({
         _id: id
-    }, { $inc: { enrollCount: -1 } }).exec();
+    }, {
+        $inc: {
+            enrollCount: -1
+        }
+    }).exec();
 };
 
-ExamClass.getAllWithoutPage = function(filter) {
+ExamClass.getAllWithoutPage = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return examClassModel.find(filter).exec();
 };
 
-ExamClass.getFilter = function(filter) {
+ExamClass.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return examClassModel.findOne(filter);
 };
 
-ExamClass.showScore = function(id, isScorePublished, callback) {
+ExamClass.showScore = function (id, isScorePublished, callback) {
     examClassModel.update({
         _id: id
     }, {
         isScorePublished: (isScorePublished == "true" ? false : true)
-    }).exec(function(err, examClasss) {
+    }).exec(function (err, examClasss) {
         if (err) {
             return callback(err);
         }
         callback(null, examClasss);
     });
+};
+
+ExamClass.rawAll = function () {
+    return examClassModel.find();
 };

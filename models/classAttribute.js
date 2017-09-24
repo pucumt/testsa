@@ -4,7 +4,10 @@ var db = mongoose.connection;
 
 var classAttributeSchema = new mongoose.Schema({
     name: String,
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'classAttributes'
 });
@@ -18,10 +21,10 @@ function ClassAttribute(option) {
 module.exports = ClassAttribute;
 
 //存储学区信息
-ClassAttribute.prototype.save = function(callback) {
+ClassAttribute.prototype.save = function (callback) {
     var newclassAttribute = new classAttributeModel(this.option);
 
-    newclassAttribute.save(function(err, classAttribute) {
+    newclassAttribute.save(function (err, classAttribute) {
         if (err) {
             return callback(err);
         }
@@ -31,10 +34,10 @@ ClassAttribute.prototype.save = function(callback) {
     });
 };
 
-ClassAttribute.prototype.update = function(id, callback) {
+ClassAttribute.prototype.update = function (id, callback) {
     classAttributeModel.update({
         _id: id
-    }, this.option).exec(function(err, classAttribute) {
+    }, this.option).exec(function (err, classAttribute) {
         if (err) {
             return callback(err);
         }
@@ -44,36 +47,47 @@ ClassAttribute.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ClassAttribute.get = function(id) {
+ClassAttribute.get = function (id) {
     //打开数据库
-    return classAttributeModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return classAttributeModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-ClassAttribute.getAll = function(id, page, filter, callback) {
+ClassAttribute.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = classAttributeModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, classAttributes) {
+            .exec(function (err, classAttributes) {
                 callback(null, classAttributes, count);
             });
     });
 };
 
 //删除一个学区
-ClassAttribute.delete = function(id, callback) {
+ClassAttribute.delete = function (id, callback) {
     classAttributeModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, classAttribute) {
+    }).exec(function (err, classAttribute) {
         if (err) {
             return callback(err);
         }
@@ -81,18 +95,30 @@ ClassAttribute.delete = function(id, callback) {
     });
 };
 
-ClassAttribute.getAllWithoutPage = function(filter) {
+ClassAttribute.getAllWithoutPage = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
 
     return classAttributeModel.find(filter).exec();
 };
 
-ClassAttribute.getFilter = function(filter) {
+ClassAttribute.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return classAttributeModel.findOne(filter);
+};
+
+ClassAttribute.rawAll = function () {
+    return classAttributeModel.find();
 };

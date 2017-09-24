@@ -1,3 +1,5 @@
+// 考场，因为不一定在本校区考试，所以需要单独设置
+
 const db = require('../../db'),
     config = require('../../settings');
 

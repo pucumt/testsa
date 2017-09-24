@@ -53,3 +53,7 @@ OrderFromBank.getFilters = function (filter) {
     return orderFromBankModel.find(filter)
         .exec();
 };
+
+OrderFromBank.rawAll = function () {
+    return orderFromBankModel.find();
+};

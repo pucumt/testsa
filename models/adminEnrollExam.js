@@ -14,7 +14,10 @@ var adminEnrollExamSchema = new mongoose.Schema({
     isPayed: Boolean,
     payWay: Number, //0 cash 1 offline card 8 online zhifubao 9 online weixin
     isDeleted: Boolean,
-    orderDate: { type: Date, default: Date.now },
+    orderDate: {
+        type: Date,
+        default: Date.now
+    },
     CancelDate: Date,
     scores: [{
         subjectId: String,
@@ -24,7 +27,10 @@ var adminEnrollExamSchema = new mongoose.Schema({
     }],
     examAreaId: String, //means multi exam Area function
     examAreaName: String, //means multi exam Area function
-    isHide: { type: Boolean, default: false }
+    isHide: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'adminEnrollExams'
 });
@@ -38,16 +44,16 @@ function AdminEnrollExam(option) {
 module.exports = AdminEnrollExam;
 
 //存储学区信息
-AdminEnrollExam.prototype.save = function() {
+AdminEnrollExam.prototype.save = function () {
     this.option.orderDate = new Date();
     var newadminEnrollExam = new adminEnrollExamModel(this.option);
     return newadminEnrollExam.save();
 };
 
-AdminEnrollExam.prototype.update = function(id, callback) {
+AdminEnrollExam.prototype.update = function (id, callback) {
     adminEnrollExamModel.update({
         _id: id
-    }, this.option).exec(function(err, adminEnrollExam) {
+    }, this.option).exec(function (err, adminEnrollExam) {
         if (err) {
             return callback(err);
         }
@@ -57,36 +63,44 @@ AdminEnrollExam.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-AdminEnrollExam.get = function(id) {
+AdminEnrollExam.get = function (id) {
     //打开数据库
-    return adminEnrollExamModel.findOne({ _id: id });
+    return adminEnrollExamModel.findOne({
+        _id: id
+    });
 };
 
 //一次获取20个学区信息
-AdminEnrollExam.getAll = function(id, page, filter, callback) {
+AdminEnrollExam.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = adminEnrollExamModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, adminEnrollExams) {
+            .exec(function (err, adminEnrollExams) {
                 callback(null, adminEnrollExams, count);
             });
     });
 };
 
 //删除一个学区
-AdminEnrollExam.delete = function(id, callback) {
+AdminEnrollExam.delete = function (id, callback) {
     adminEnrollExamModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, adminEnrollExam) {
+    }).exec(function (err, adminEnrollExam) {
         if (err) {
             return callback(err);
         }
@@ -95,9 +109,15 @@ AdminEnrollExam.delete = function(id, callback) {
 };
 
 //读取学区信息
-AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId, examId) {
+AdminEnrollExam.getByStudentAndCategory = function (studentId, categoryId, examId) {
     //打开数据库
-    var filter = { studentId: studentId, isSucceed: 1, isDeleted: { $ne: true } };
+    var filter = {
+        studentId: studentId,
+        isSucceed: 1,
+        isDeleted: {
+            $ne: true
+        }
+    };
     if (categoryId) {
         filter.examCategoryId = categoryId;
     } else {
@@ -107,13 +127,13 @@ AdminEnrollExam.getByStudentAndCategory = function(studentId, categoryId, examId
     return adminEnrollExamModel.findOne(filter);
 };
 
-AdminEnrollExam.cancel = function(id, callback) {
+AdminEnrollExam.cancel = function (id, callback) {
     adminEnrollExamModel.update({
         _id: id
     }, {
         isSucceed: 9,
         CancelDate: new Date()
-    }).exec(function(err, adminEnrollExam) {
+    }).exec(function (err, adminEnrollExam) {
         if (err) {
             return callback(err);
         }
@@ -122,38 +142,61 @@ AdminEnrollExam.cancel = function(id, callback) {
 };
 
 //一次获取20个学区信息
-AdminEnrollExam.getAllWithoutPaging = function(filter) {
+AdminEnrollExam.getAllWithoutPaging = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return adminEnrollExamModel.find(filter);
 };
 
-AdminEnrollExam.getFilter = function(filter) {
+AdminEnrollExam.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return adminEnrollExamModel.findOne(filter);
 };
 
-AdminEnrollExam.getAllEnrolledWithoutPaging = function(filter) {
+AdminEnrollExam.getAllEnrolledWithoutPaging = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
         filter.isSucceed = 1;
     } else {
-        filter = { isSucceed: 1, isDeleted: { $ne: true } };
+        filter = {
+            isSucceed: 1,
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return adminEnrollExamModel.find(filter);
 };
 
-AdminEnrollExam.getFilters = function(filter) {
+AdminEnrollExam.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return adminEnrollExamModel.find(filter);
 };
 
-AdminEnrollExam.updateUserInfo = function(filter, option) {
+AdminEnrollExam.updateUserInfo = function (filter, option) {
     //打开数据库
-    return adminEnrollExamModel.update(filter, option, { multi: true }).exec();
+    return adminEnrollExamModel.update(filter, option, {
+        multi: true
+    }).exec();
+};
+
+AdminEnrollExam.rawAll = function () {
+    return adminEnrollExamModel.find();
 };

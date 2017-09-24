@@ -123,3 +123,7 @@ Lesson.batchUpdate = function (filter, option) {
         multi: true
     }).exec();
 };
+
+Lesson.rawAll = function () {
+    return lessonModel.find();
+};

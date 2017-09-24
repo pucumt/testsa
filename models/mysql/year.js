@@ -1,3 +1,5 @@
+// 年度，理想状态是只能处理本年度的事务，但是实际发现经常出现多年级事务交叉的情况
+
 const db = require('../../db'),
     config = require('../../settings');
 

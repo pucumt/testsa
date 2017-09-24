@@ -1,3 +1,5 @@
+// 教室号，跟学区有关系
+
 const db = require('../../db'),
     config = require('../../settings');
 
@@ -14,7 +16,7 @@ const ClassRoom = db.defineModel('classRooms', {
         defaultValue: false
     },
     schoolId: {
-        type: db.STRING(32),
+        type: db.STRING(50),
         defaultValue: ''
     },
     schoolArea: {

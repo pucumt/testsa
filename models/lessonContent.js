@@ -161,3 +161,7 @@ LessonContent.getContentOfSequence = function (filter, skipCount) {
         .limit(1)
         .exec();
 };
+
+LessonContent.rawAll = function () {
+    return lessonContentModel.find();
+};

@@ -131,3 +131,7 @@ StudentLessonScore.getAverage = function (lessonId, studentId, contentType) {
             }
         }).exec();
 };
+
+StudentLessonScore.rawAll = function () {
+    return studentLessonScoreModel.find();
+};

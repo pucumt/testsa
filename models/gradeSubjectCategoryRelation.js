@@ -11,7 +11,10 @@ var gradeSubjectCategoryRelationSchema = new mongoose.Schema({
     subjectName: String,
     categoryId: ObjectId,
     categoryName: String,
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'gradeSubjectCategoryRelations'
 });
@@ -25,16 +28,16 @@ function GradeSubjectCategoryRelation(option) {
 module.exports = GradeSubjectCategoryRelation;
 
 //存储学区信息
-GradeSubjectCategoryRelation.prototype.save = function() {
+GradeSubjectCategoryRelation.prototype.save = function () {
     var newgradeSubjectCategoryRelation = new gradeSubjectCategoryRelationModel(this.option);
 
     return newgradeSubjectCategoryRelation.save();
 };
 
-GradeSubjectCategoryRelation.prototype.update = function(id, callback) {
+GradeSubjectCategoryRelation.prototype.update = function (id, callback) {
     gradeSubjectCategoryRelationModel.update({
         _id: id
-    }, this.option).exec(function(err, gradeSubjectCategoryRelation) {
+    }, this.option).exec(function (err, gradeSubjectCategoryRelation) {
         if (err) {
             return callback(err);
         }
@@ -44,9 +47,14 @@ GradeSubjectCategoryRelation.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-GradeSubjectCategoryRelation.get = function(id, callback) {
+GradeSubjectCategoryRelation.get = function (id, callback) {
     //打开数据库
-    gradeSubjectCategoryRelationModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, gradeSubjectCategoryRelation) {
+    gradeSubjectCategoryRelationModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, gradeSubjectCategoryRelation) {
         if (err) {
             return callback(err);
         }
@@ -57,30 +65,36 @@ GradeSubjectCategoryRelation.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-GradeSubjectCategoryRelation.getAll = function(id, page, filter, callback) {
+GradeSubjectCategoryRelation.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = gradeSubjectCategoryRelationModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, gradeSubjectCategoryRelations) {
+            .exec(function (err, gradeSubjectCategoryRelations) {
                 callback(null, gradeSubjectCategoryRelations, count);
             });
     });
 };
 
 //删除一个学区
-GradeSubjectCategoryRelation.delete = function(id, callback) {
+GradeSubjectCategoryRelation.delete = function (id, callback) {
     gradeSubjectCategoryRelationModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, gradeSubjectCategoryRelation) {
+    }).exec(function (err, gradeSubjectCategoryRelation) {
         if (err) {
             return callback(err);
         }
@@ -88,16 +102,20 @@ GradeSubjectCategoryRelation.delete = function(id, callback) {
     });
 };
 
-GradeSubjectCategoryRelation.getFilters = function(filter) {
+GradeSubjectCategoryRelation.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return gradeSubjectCategoryRelationModel.find(filter);
 };
 
-GradeSubjectCategoryRelation.getFiltersWithCategory = function(gradeId, subjectId) {
+GradeSubjectCategoryRelation.getFiltersWithCategory = function (gradeId, subjectId) {
     //打开数据库
     var filter = {
-        isDeleted: { $ne: true },
+        isDeleted: {
+            $ne: true
+        },
         gradeId: mongoose.Types.ObjectId(gradeId),
         subjectId: mongoose.Types.ObjectId(subjectId)
     }
@@ -111,12 +129,20 @@ GradeSubjectCategoryRelation.getFiltersWithCategory = function(gradeId, subjectI
             foreignField: "_id",
             as: "categorys"
         })
-        .project({ categorys: 1 });
+        .project({
+            categorys: 1
+        });
     return query.exec();
 };
 
-GradeSubjectCategoryRelation.deleteAll = function(filter) {
+GradeSubjectCategoryRelation.deleteAll = function (filter) {
     return gradeSubjectCategoryRelationModel.update(filter, {
         isDeleted: true
-    }, { multi: true }).exec();
+    }, {
+        multi: true
+    }).exec();
+};
+
+GradeSubjectCategoryRelation.rawAll = function () {
+    return gradeSubjectCategoryRelationModel.find();
 };

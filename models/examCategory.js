@@ -18,10 +18,10 @@ function ExamCategory(option) {
 module.exports = ExamCategory;
 
 //存储学区信息
-ExamCategory.prototype.save = function(callback) {
+ExamCategory.prototype.save = function (callback) {
     var newexamCategory = new examCategoryModel(this.option);
 
-    newexamCategory.save(function(err, examCategory) {
+    newexamCategory.save(function (err, examCategory) {
         if (err) {
             return callback(err);
         }
@@ -31,10 +31,10 @@ ExamCategory.prototype.save = function(callback) {
     });
 };
 
-ExamCategory.prototype.update = function(id, callback) {
+ExamCategory.prototype.update = function (id, callback) {
     examCategoryModel.update({
         _id: id
-    }, this.option).exec(function(err, examCategory) {
+    }, this.option).exec(function (err, examCategory) {
         if (err) {
             return callback(err);
         }
@@ -44,9 +44,14 @@ ExamCategory.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ExamCategory.get = function(id, callback) {
+ExamCategory.get = function (id, callback) {
     //打开数据库
-    examCategoryModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, examCategory) {
+    examCategoryModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, examCategory) {
         if (err) {
             return callback(err);
         }
@@ -57,30 +62,36 @@ ExamCategory.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-ExamCategory.getAll = function(id, page, filter, callback) {
+ExamCategory.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = examCategoryModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, examCategorys) {
+            .exec(function (err, examCategorys) {
                 callback(null, examCategorys, count);
             });
     });
 };
 
 //删除一个学区
-ExamCategory.delete = function(id, callback) {
+ExamCategory.delete = function (id, callback) {
     examCategoryModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, examCategory) {
+    }).exec(function (err, examCategory) {
         if (err) {
             return callback(err);
         }
@@ -89,11 +100,21 @@ ExamCategory.delete = function(id, callback) {
 };
 
 //一次获取所有信息
-ExamCategory.getAllWithoutPage = function(filter) {
+ExamCategory.getAllWithoutPage = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return examCategoryModel.find(filter).exec();
+};
+
+ExamCategory.rawAll = function () {
+    return examCategoryModel.find();
 };

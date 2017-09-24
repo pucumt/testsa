@@ -17,10 +17,10 @@ function ChangeEnd(option) {
 module.exports = ChangeEnd;
 
 //存储学区信息
-ChangeEnd.prototype.save = function(callback) {
+ChangeEnd.prototype.save = function (callback) {
     var newchangeEnd = new changeEndModel(this.option);
 
-    newchangeEnd.save(function(err, changeEnd) {
+    newchangeEnd.save(function (err, changeEnd) {
         if (err) {
             return callback(err);
         }
@@ -30,10 +30,10 @@ ChangeEnd.prototype.save = function(callback) {
     });
 };
 
-ChangeEnd.prototype.update = function(id, callback) {
+ChangeEnd.prototype.update = function (id, callback) {
     changeEndModel.update({
         _id: id
-    }, this.option).exec(function(err, changeEnd) {
+    }, this.option).exec(function (err, changeEnd) {
         if (err) {
             return callback(err);
         }
@@ -43,21 +43,25 @@ ChangeEnd.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-ChangeEnd.get = function() {
+ChangeEnd.get = function () {
     //打开数据库
     return changeEndModel.findOne({});
 };
 
 //删除一个学区
-ChangeEnd.delete = function(id, callback) {
+ChangeEnd.delete = function (id, callback) {
     changeEndModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, changeEnd) {
+    }).exec(function (err, changeEnd) {
         if (err) {
             return callback(err);
         }
         callback(null, changeEnd);
     });
+};
+
+ChangeEnd.rawAll = function () {
+    return changeEndModel.find();
 };

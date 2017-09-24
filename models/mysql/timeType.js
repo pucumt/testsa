@@ -1,3 +1,5 @@
+// 用来选择具体时间点的，但是由于课程体系比较混乱，已经放弃了
+
 const db = require('../../db'),
     config = require('../../settings');
 

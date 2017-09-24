@@ -18,10 +18,10 @@ function Subject(option) {
 module.exports = Subject;
 
 //存储学区信息
-Subject.prototype.save = function(callback) {
+Subject.prototype.save = function (callback) {
     var newsubject = new subjectModel(this.option);
 
-    newsubject.save(function(err, subject) {
+    newsubject.save(function (err, subject) {
         if (err) {
             return callback(err);
         }
@@ -31,10 +31,10 @@ Subject.prototype.save = function(callback) {
     });
 };
 
-Subject.prototype.update = function(id, callback) {
+Subject.prototype.update = function (id, callback) {
     subjectModel.update({
         _id: id
-    }, this.option).exec(function(err, subject) {
+    }, this.option).exec(function (err, subject) {
         if (err) {
             return callback(err);
         }
@@ -44,36 +44,47 @@ Subject.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Subject.get = function(id) {
+Subject.get = function (id) {
     //打开数据库
-    return subjectModel.findOne({ _id: id, isDeleted: { $ne: true } });
+    return subjectModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-Subject.getAll = function(id, page, filter, callback) {
+Subject.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = subjectModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, subjects) {
+            .exec(function (err, subjects) {
                 callback(null, subjects, count);
             });
     });
 };
 
 //删除一个学区
-Subject.delete = function(id, callback) {
+Subject.delete = function (id, callback) {
     subjectModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, subject) {
+    }).exec(function (err, subject) {
         if (err) {
             return callback(err);
         }
@@ -82,23 +93,37 @@ Subject.delete = function(id, callback) {
 };
 
 //一次获取所有信息
-Subject.getAllWithoutPage = function(filter) {
+Subject.getAllWithoutPage = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return subjectModel.find(filter).exec();
 };
 
-Subject.getFilter = function(filter) {
+Subject.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return subjectModel.findOne(filter);
 };
 
-Subject.getFilters = function(filter) {
+Subject.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return subjectModel.find(filter);
+};
+
+Subject.rawAll = function () {
+    return subjectModel.find();
 };

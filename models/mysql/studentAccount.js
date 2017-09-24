@@ -1,3 +1,5 @@
+// 账号，现在比较复杂，允许一个账号下有多个学生
+
 const db = require('../../db'),
     config = require('../../settings');
 

@@ -688,3 +688,7 @@ AdminEnrollTrain.batchUpdate = function (filter, option) {
 //             collection: 'temps'
 //         })).find();
 //     });
+
+AdminEnrollTrain.rawAll = function () {
+    return adminEnrollTrainModel.find();
+};

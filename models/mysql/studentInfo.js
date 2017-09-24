@@ -1,3 +1,5 @@
+// 学生信息，归属于某个账号，但是家长可以随意改动，所以经常有问题
+
 const db = require('../../db'),
     config = require('../../settings');
 

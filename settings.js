@@ -1,6 +1,6 @@
 module.exports = {
     cookieSecret: 'BFBWX',
-    db: 'website',
+    db: 'websiteOnline20',
     host: '127.0.0.1',
     port: '10105',
     username: 'root',

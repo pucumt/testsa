@@ -4,7 +4,10 @@ var db = mongoose.connection;
 
 var categorySchema = new mongoose.Schema({
     name: String,
-    grade: { type: Number, default: 0 }, //基础班0 培优班5 通中预备10 通中15。可以下调
+    grade: {
+        type: Number,
+        default: 0
+    }, //基础班0 培优班5 通中预备10 通中15。可以下调
     isDeleted: Boolean
 }, {
     collection: 'categorys'
@@ -19,10 +22,10 @@ function Category(option) {
 module.exports = Category;
 
 //存储学区信息
-Category.prototype.save = function(callback) {
+Category.prototype.save = function (callback) {
     var newcategory = new categoryModel(this.option);
 
-    newcategory.save(function(err, category) {
+    newcategory.save(function (err, category) {
         if (err) {
             return callback(err);
         }
@@ -32,10 +35,10 @@ Category.prototype.save = function(callback) {
     });
 };
 
-Category.prototype.update = function(id, callback) {
+Category.prototype.update = function (id, callback) {
     categoryModel.update({
         _id: id
-    }, this.option).exec(function(err, category) {
+    }, this.option).exec(function (err, category) {
         if (err) {
             return callback(err);
         }
@@ -45,9 +48,14 @@ Category.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-Category.get = function(id, callback) {
+Category.get = function (id, callback) {
     //打开数据库
-    categoryModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, category) {
+    categoryModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, category) {
         if (err) {
             return callback(err);
         }
@@ -58,30 +66,36 @@ Category.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-Category.getAll = function(id, page, filter, callback) {
+Category.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = categoryModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, categorys) {
+            .exec(function (err, categorys) {
                 callback(null, categorys, count);
             });
     });
 };
 
 //删除一个学区
-Category.delete = function(id, callback) {
+Category.delete = function (id, callback) {
     categoryModel.update({
         _id: id
     }, {
         isDeleted: true
-    }).exec(function(err, category) {
+    }).exec(function (err, category) {
         if (err) {
             return callback(err);
         }
@@ -90,23 +104,37 @@ Category.delete = function(id, callback) {
 };
 
 //一次获取所有信息
-Category.getAllWithoutPage = function(filter) {
+Category.getAllWithoutPage = function (filter) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     return categoryModel.find(filter).exec();
 };
 
-Category.getFilter = function(filter) {
+Category.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return categoryModel.findOne(filter);
 };
 
-Category.getFilters = function(filter) {
+Category.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return categoryModel.find(filter);
+};
+
+Category.rawAll = function () {
+    return categoryModel.find();
 };

@@ -8,7 +8,10 @@ var schoolGradeRelationSchema = new mongoose.Schema({
     schoolArea: String,
     gradeId: ObjectId,
     gradeName: String,
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'schoolGradeRelations'
 });
@@ -22,16 +25,16 @@ function SchoolGradeRelation(option) {
 module.exports = SchoolGradeRelation;
 
 //存储学区信息
-SchoolGradeRelation.prototype.save = function(callback) {
+SchoolGradeRelation.prototype.save = function (callback) {
     var newschoolGradeRelation = new schoolGradeRelationModel(this.option);
 
     return newschoolGradeRelation.save();
 };
 
-SchoolGradeRelation.prototype.update = function(id, callback) {
+SchoolGradeRelation.prototype.update = function (id, callback) {
     schoolGradeRelationModel.update({
         _id: id
-    }, this.option).exec(function(err, schoolGradeRelation) {
+    }, this.option).exec(function (err, schoolGradeRelation) {
         if (err) {
             return callback(err);
         }
@@ -41,9 +44,14 @@ SchoolGradeRelation.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-SchoolGradeRelation.get = function(id, callback) {
+SchoolGradeRelation.get = function (id, callback) {
     //打开数据库
-    schoolGradeRelationModel.findOne({ _id: id, isDeleted: { $ne: true } }, function(err, schoolGradeRelation) {
+    schoolGradeRelationModel.findOne({
+        _id: id,
+        isDeleted: {
+            $ne: true
+        }
+    }, function (err, schoolGradeRelation) {
         if (err) {
             return callback(err);
         }
@@ -54,38 +62,54 @@ SchoolGradeRelation.get = function(id, callback) {
 };
 
 //一次获取20个学区信息
-SchoolGradeRelation.getAll = function(id, page, filter, callback) {
+SchoolGradeRelation.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = schoolGradeRelationModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, schoolGradeRelations) {
+            .exec(function (err, schoolGradeRelations) {
                 callback(null, schoolGradeRelations, count);
             });
     });
 };
 
 //删除一个学区
-SchoolGradeRelation.delete = function(filter) {
+SchoolGradeRelation.delete = function (filter) {
     return schoolGradeRelationModel.update(filter, {
         isDeleted: true
-    }, { multi: true }).exec();
+    }, {
+        multi: true
+    }).exec();
 };
 
-SchoolGradeRelation.deleteAll = function(filter) {
+SchoolGradeRelation.deleteAll = function (filter) {
     return schoolGradeRelationModel.update(filter, {
         isDeleted: true
-    }, { multi: true }).exec();
+    }, {
+        multi: true
+    }).exec();
 };
 
-SchoolGradeRelation.getFilters = function(filter) {
+SchoolGradeRelation.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return schoolGradeRelationModel.find(filter);
+};
+
+SchoolGradeRelation.rawAll = function () {
+    return schoolGradeRelationModel.find();
 };

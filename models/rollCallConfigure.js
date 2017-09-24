@@ -6,7 +6,10 @@ var rollCallConfigureSchema = new mongoose.Schema({
     yearId: String,
     yearName: String,
     sequence: Number,
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     collection: 'rollCallConfigures'
 });
@@ -20,16 +23,16 @@ function RollCallConfigure(option) {
 module.exports = RollCallConfigure;
 
 //存储学区信息
-RollCallConfigure.prototype.save = function() {
+RollCallConfigure.prototype.save = function () {
     var newrollCallConfigure = new rollCallConfigureModel(this.option);
 
     return newrollCallConfigure.save();
 };
 
-RollCallConfigure.prototype.update = function(id, callback) {
+RollCallConfigure.prototype.update = function (id, callback) {
     rollCallConfigureModel.update({
         _id: id
-    }, this.option).exec(function(err, rollCallConfigure) {
+    }, this.option).exec(function (err, rollCallConfigure) {
         if (err) {
             return callback(err);
         }
@@ -39,31 +42,41 @@ RollCallConfigure.prototype.update = function(id, callback) {
 };
 
 //读取学区信息
-RollCallConfigure.get = function() {
+RollCallConfigure.get = function () {
     //打开数据库
-    return rollCallConfigureModel.findOne({ isDeleted: { $ne: true } });
+    return rollCallConfigureModel.findOne({
+        isDeleted: {
+            $ne: true
+        }
+    });
 };
 
 //一次获取20个学区信息
-RollCallConfigure.getAll = function(id, page, filter, callback) {
+RollCallConfigure.getAll = function (id, page, filter, callback) {
     if (filter) {
-        filter.isDeleted = { $ne: true };
+        filter.isDeleted = {
+            $ne: true
+        };
     } else {
-        filter = { isDeleted: { $ne: true } };
+        filter = {
+            isDeleted: {
+                $ne: true
+            }
+        };
     }
     var query = rollCallConfigureModel.count(filter);
-    query.exec(function(err, count) {
+    query.exec(function (err, count) {
         query.find()
             .skip((page - 1) * 14)
             .limit(14)
-            .exec(function(err, rollCallConfigures) {
+            .exec(function (err, rollCallConfigures) {
                 callback(null, rollCallConfigures, count);
             });
     });
 };
 
 //删除一个学区
-RollCallConfigure.delete = function(id) {
+RollCallConfigure.delete = function (id) {
     return rollCallConfigureModel.update({
         _id: id
     }, {
@@ -71,19 +84,29 @@ RollCallConfigure.delete = function(id) {
     }).exec();
 };
 
-RollCallConfigure.getFilter = function(filter) {
+RollCallConfigure.getFilter = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return rollCallConfigureModel.findOne(filter);
 };
 
-RollCallConfigure.getFilters = function(filter) {
+RollCallConfigure.getFilters = function (filter) {
     //打开数据库
-    filter.isDeleted = { $ne: true };
+    filter.isDeleted = {
+        $ne: true
+    };
     return rollCallConfigureModel.find(filter);
 };
 
-RollCallConfigure.batchUpdate = function(filter, option) {
+RollCallConfigure.batchUpdate = function (filter, option) {
     //打开数据库
-    return rollCallConfigureModel.update(filter, option, { multi: true }).exec();
+    return rollCallConfigureModel.update(filter, option, {
+        multi: true
+    }).exec();
+};
+
+RollCallConfigure.rawAll = function () {
+    return rollCallConfigureModel.find();
 };

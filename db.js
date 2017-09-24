@@ -11,7 +11,7 @@ function generateId() {
     return `${strArr[4]}${strArr[3]}${strArr[2]}${strArr[1]}${strArr[0]}`;
 }
 
-var sequelize = new Sequelize(config.db, config.username, config.password, {
+var sequelize = new Sequelize("website", config.username, config.password, {
     host: config.host,
     dialect: 'mysql',
     pool: {

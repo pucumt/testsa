@@ -130,3 +130,7 @@ StudentLesson.batchUpdate = function (filter, option) {
         multi: true
     }).exec();
 };
+
+StudentLesson.rawAll = function () {
+    return studentLessonModel.find();
+};

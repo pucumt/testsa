@@ -1,3 +1,5 @@
+// 为了方便家长选课加入了星期几的这个选项，但是由于课程体系的混乱，使用起来还是比较复杂
+
 const db = require('../../db'),
     config = require('../../settings');
 

@@ -1,3 +1,5 @@
+// 老师，基本比较稳定，每学期都有新进来的老师也离职的老师
+
 const db = require('../../db'),
     config = require('../../settings');
 

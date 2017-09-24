@@ -1,4 +1,7 @@
-const db = require('../../db');
+// 课程订单，也是核心逻辑。改成关系数据库的话一些字段可以去掉
+
+const db = require('../../db'),
+    config = require('../../settings');
 
 const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
     studentId: {
@@ -122,20 +125,37 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
 module.exports = AdminEnrollTrain;
 
 //读取用户信息
-AdminEnrollTrain.get = function (name) {
-    return User.findOne({
-        'where': {
-            'name': name
-        }
+AdminEnrollTrain.getFilter = function (filter) {
+    filter.isDeleted = false;
+    return AdminEnrollTrain.findOne({
+        'where': filter
     });
 };
 
-AdminEnrollTrain.save = function (option) {
-    if (!option.yearId) {
-        if (global.currentYear) {
-            option.yearId = global.currentYear._id;
-            option.yearName = global.currentYear.name;
-        }
-    }
-    return AdminEnrollTrain.create(option);
+AdminEnrollTrain.getFilters = function (filter) {
+    filter.isDeleted = false;
+    return AdminEnrollTrain.findAll({
+        'where': filter
+    });
 };
+
+AdminEnrollTrain.getFiltersWithPage = function (page, filter) {
+    filter.isDeleted = false;
+    return AdminEnrollTrain.findAndCountAll({
+        'where': filter,
+        offset: config.pageSize * (page - 1),
+        limit: config.pageSize
+    });
+};
+
+// TBD 年度保存模块再看情况处理
+
+// AdminEnrollTrain.save = function (option) {
+//     if (!option.yearId) {
+//         if (global.currentYear) {
+//             option.yearId = global.currentYear._id;
+//             option.yearName = global.currentYear.name;
+//         }
+//     }
+//     return AdminEnrollTrain.create(option);
+// };
