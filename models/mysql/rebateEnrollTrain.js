@@ -33,7 +33,7 @@ const RebateEnrollTrain = db.defineModel('rebateEnrollTrains', {
         defaultValue: false
     },
     comment: {
-        type: db.STRING(50),
+        type: db.STRING(500),
         defaultValue: ''
     },
     rebateWay: {
