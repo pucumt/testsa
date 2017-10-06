@@ -14,11 +14,14 @@ function generateId() {
 var sequelize = new Sequelize("website", config.username, config.password, {
     host: config.host,
     dialect: 'mysql',
+    dialectOptions: {
+        charset: 'utf8mb4'
+    },
     pool: {
         max: 10,
         min: 0,
-        idle: 20000,
-        acquire: 20000
+        idle: 30000,
+        acquire: 30000
     }
 });
 
@@ -74,7 +77,8 @@ function defineModel(name, attributes) {
                     obj.version++;
                 }
             }
-        }
+        },
+        charset: 'utf8mb4'
     });
 }
 

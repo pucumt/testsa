@@ -5,7 +5,7 @@ const db = require('../../db'),
 
 const StudentInfo = db.defineModel('studentInfos', {
     name: {
-        type: db.STRING(20)
+        type: db.STRING(50)
     },
     address: {
         type: db.STRING(100),

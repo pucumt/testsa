@@ -21,7 +21,7 @@ function step2(i) {
     }
     // model.models.forEach(function (name) {
     if (name == "adminEnrollTrain" || "adminEnrollTrainHistory" == name ||
-        name == "couponAssign" || "studentInfo" == name || "trainClass" == name) {
+        name == "couponAssign" || "trainClass" == name) {
         i++;
         console.log(i + "..." + name + ".............finished!");
         step2(i);
@@ -99,6 +99,9 @@ function step2(i) {
             i++;
             console.log(i + "..." + name + ".............finished!");
             step2(i);
+        })
+        .catch(function (err) {
+            console.log(err);
         });
 };
 
