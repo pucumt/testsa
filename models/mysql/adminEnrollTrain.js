@@ -56,7 +56,10 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         type: db.BOOLEAN,
         defaultValue: false
     },
-    payWay: db.INTEGER, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin 6 weixinOnline 7 zhifubaoOnline
+    payWay: {
+        type: db.INTEGER,
+        defaultValue: 0
+    }, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin 6 weixinOnline 7 zhifubaoOnline
     attributeId: {
         type: db.STRING(50),
         defaultValue: ''

@@ -20,18 +20,19 @@ function step2(i) {
         // end of array
     }
     // model.models.forEach(function (name) {
-    if (name == "adminEnrollTrain" || "adminEnrollTrainHistory" == name ||
-        name == "couponAssign" || "trainClass" == name) {
+    if ("adminEnrollTrain" == name || "adminEnrollTrainHistory" == name ||
+        "trainClass" == name) {
         i++;
         console.log(i + "..." + name + ".............finished!");
-        step2(i);
+        return step2(i);
 
         return;
     }
 
-    var mongoObj = require(`./models/${name}.js`),
-        pMongo = mongoObj.rawAll().then(function (entities) {
-            var tmpArray = [];
+    var mongoObj = require(`./models/${name}.js`);
+    return mongoObj.rawAll().then(function (entities) {
+            var tmpArray = [],
+                nextArray = [];
             entities.forEach(function (obj) {
                 var newObj = obj.toJSON();
                 newObj._id = newObj._id.toJSON();
@@ -43,6 +44,15 @@ function step2(i) {
                 // handle special logic
                 if (name == "adminEnrollTrain") {
                     newObj.trainId = newObj.trainId.toJSON();
+                    if (newObj.baseId) {
+                        newObj.baseId = newObj.baseId.toJSON();
+                    }
+                    if (newObj.superCategoryId) {
+                        newObj.superCategoryId = newObj.superCategoryId.toJSON();
+                    }
+                    if (newObj.payWay) {
+                        delete newObj.payWay;
+                    }
                 }
                 if (name == "rebateEnrollTrain") {
                     newObj.trainOrderId = newObj.trainOrderId.toJSON();
@@ -87,18 +97,57 @@ function step2(i) {
                     }
                 }
 
-                var tmp = model[name].create(newObj)
-                    .catch(function (err) {
-                        throw new Error(newObj);
-                    });
-                tmpArray.push(tmp);
+                if (tmpArray.length < 5000) {
+                    tmpArray.push(newObj);
+                } else {
+                    nextArray.push(newObj);
+                }
             });
-            return Promise.all(tmpArray);
+
+            function bulkCreate(entityArray) {
+                var curArray = [],
+                    newArray = [];
+                entityArray.forEach(function (newObj) {
+                    if (curArray.length < 5000) {
+                        curArray.push(newObj);
+                    } else {
+                        newArray.push(newObj);
+                    }
+                });
+                entityArray = [];
+                return model[name].bulkCreate(curArray)
+                    .then(function () {
+                        curArray = [];
+                        if (newArray.length > 0) {
+                            return bulkCreate(newArray);
+                        }
+                    })
+                    .catch(function (err) {
+                        throw new Error(err);
+                    });
+            }
+
+            return model[name].bulkCreate(tmpArray)
+                .then(function () {
+                    tmpArray = [];
+                    if (nextArray.length > 0) {
+                        return bulkCreate(nextArray);
+                    }
+                })
+                .catch(function (err) {
+                    throw new Error(err);
+                });
+            // return Promise.all(tmpArray);
         })
         .then(function () {
+            tmpArray = null;
+            mongoObj = null;
             i++;
             console.log(i + "..." + name + ".............finished!");
-            step2(i);
+            // if (i < 5) {
+            // only test 7 objects
+            return step2(i);
+            // }
         })
         .catch(function (err) {
             console.log(err);
@@ -107,8 +156,11 @@ function step2(i) {
 
 step1().then(function () {
     try {
-        step2();
+        return step2();
     } catch (err) {
         console.log(err);
     }
+}).then(function () {
+    // TBD
+
 });
