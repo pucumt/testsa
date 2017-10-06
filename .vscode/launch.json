@@ -5,14 +5,14 @@
     "version": "0.2.0",
     "configurations": [{
             "name": "Launch Program",
-            "type": "node2",
+            "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}\\init-db.js",
             "cwd": "${workspaceRoot}"
         },
         {
             "name": "Attach to Process",
-            "type": "node2",
+            "type": "node",
             "request": "attach",
             "port": 9229
         }

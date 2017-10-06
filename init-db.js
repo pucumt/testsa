@@ -100,12 +100,6 @@ function step2(i) {
             console.log(i + "..." + name + ".............finished!");
             step2(i);
         });
-    //pArray.push(pMongo);
-    // });
-
-    // Promise.all(pArray).then(function () {
-    //     console.log('finished step 2 ....');
-    // });
 };
 
 step1().then(function () {
