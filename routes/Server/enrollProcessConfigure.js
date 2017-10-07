@@ -1,28 +1,30 @@
-var EnrollProcessConfigure = require('../../models/enrollProcessConfigure.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    EnrollProcessConfigure = model.enrollProcessConfigure,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
-module.exports = function(app) {
-    function checkIsConfigureExist() {
-        //just used for the first run, and then be comments
-        EnrollProcessConfigure.get().then(function(configure) {
-            if (!configure) {
-                configure = new EnrollProcessConfigure({
-                    newStudentStatus: false,
-                    oldStudentStatus: false,
-                    oldStudentSwitch: false,
-                    isGradeUpgrade: false
-                });
-                configure.save();
-            }
-        });
+module.exports = function (app) {
+    // function checkIsConfigureExist() {
+    //     //just used for the first run, and then be comments
+    //     EnrollProcessConfigure.getFilter({}).then(function (configure) {
+    //         if (!configure) {
+    //             configure = new EnrollProcessConfigure({
+    //                 newStudentStatus: false,
+    //                 oldStudentStatus: false,
+    //                 oldStudentSwitch: false,
+    //                 isGradeUpgrade: false
+    //             });
+    //             configure.save();
+    //         }
+    //     });
 
-    };
+    // };
 
-    checkIsConfigureExist();
+    // checkIsConfigureExist();
 
     app.get('/admin/enrollProcess', checkLogin);
-    app.get('/admin/enrollProcess', function(req, res) {
+    app.get('/admin/enrollProcess', function (req, res) {
         res.render('Server/enrollProcessConfigureList.html', {
             title: '>报名过程控制',
             user: req.session.admin
@@ -30,9 +32,9 @@ module.exports = function(app) {
     });
 
     app.post('/admin/enrollProcessConfigure/edit', checkLogin);
-    app.post('/admin/enrollProcessConfigure/edit', function(req, res) {
+    app.post('/admin/enrollProcessConfigure/edit', function (req, res) {
         //req.body.status,
-        EnrollProcessConfigure.get().then(function(configure) {
+        EnrollProcessConfigure.getFilter({}).then(function (configure) {
             var option = {}
             switch (req.body.status) {
                 case "new":
@@ -49,15 +51,18 @@ module.exports = function(app) {
                     break;
 
             }
-            EnrollProcessConfigure.batchUpdate({}, option).then(function() {
-                res.jsonp(option);
-            });
+            EnrollProcessConfigure.update(option, {
+                    where: {}
+                })
+                .then(function () {
+                    res.jsonp(option);
+                });
         });
     });
 
     app.post('/admin/enrollProcessConfigureList/search', checkLogin);
-    app.post('/admin/enrollProcessConfigureList/search', function(req, res) {
-        EnrollProcessConfigure.get().then(function(configure) {
+    app.post('/admin/enrollProcessConfigureList/search', function (req, res) {
+        EnrollProcessConfigure.getFilter({}).then(function (configure) {
             res.jsonp(configure);
         });
     });

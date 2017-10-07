@@ -1,14 +1,16 @@
-var Subject = require('../../models/subject.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    Subject = model.subject,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/subjectList', checkLogin);
-    app.get('/admin/subjectList', function(req, res) {
+    app.get('/admin/subjectList', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        Subject.getAll(null, page, {}, function(err, subjects, total) {
+        Subject.getAll(null, page, {}, function (err, subjects, total) {
             if (err) {
                 subjects = [];
             }
@@ -25,12 +27,12 @@ module.exports = function(app) {
     });
 
     app.post('/admin/subject/add', checkLogin);
-    app.post('/admin/subject/add', function(req, res) {
+    app.post('/admin/subject/add', function (req, res) {
         var subject = new Subject({
             name: req.body.name
         });
 
-        subject.save(function(err, subject) {
+        subject.save(function (err, subject) {
             if (err) {
                 subject = {};
             }
@@ -39,12 +41,12 @@ module.exports = function(app) {
     });
 
     app.post('/admin/subject/edit', checkLogin);
-    app.post('/admin/subject/edit', function(req, res) {
+    app.post('/admin/subject/edit', function (req, res) {
         var subject = new Subject({
             name: req.body.name
         });
 
-        subject.update(req.body.id, function(err, subject) {
+        subject.update(req.body.id, function (err, subject) {
             if (err) {
                 subject = {};
             }
@@ -53,23 +55,27 @@ module.exports = function(app) {
     });
 
     app.post('/admin/subject/delete', checkLogin);
-    app.post('/admin/subject/delete', function(req, res) {
-        Subject.delete(req.body.id, function(err, subject) {
+    app.post('/admin/subject/delete', function (req, res) {
+        Subject.delete(req.body.id, function (err, subject) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.get('/admin/subject/getAllWithoutPage', checkLogin);
-    app.get('/admin/subject/getAllWithoutPage', function(req, res) {
+    app.get('/admin/subject/getAllWithoutPage', function (req, res) {
         Subject.getAllWithoutPage()
-            .then(function(subjects) {
+            .then(function (subjects) {
                 res.jsonp(subjects);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('errored');
             });
     });

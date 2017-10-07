@@ -689,6 +689,9 @@ AdminEnrollTrain.batchUpdate = function (filter, option) {
 //         })).find();
 //     });
 
-AdminEnrollTrain.rawAll = function () {
-    return adminEnrollTrainModel.find();
+AdminEnrollTrain.rawAll = function (page) {
+    page = page || 1;
+    return adminEnrollTrainModel.find()
+        .skip((page - 1) * 5000)
+        .limit(5000);
 };

@@ -1,13 +1,15 @@
-var StudentInfo = require('../../models/studentInfo.js'),
-    CouponAssign = require('../../models/couponAssign.js'),
-    StudentAccount = require('../../models/studentAccount.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    StudentInfo = model.studentInfo,
+    CouponAssign = model.couponAssign,
+    StudentAccount = model.studentAccount,
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin;
+    checkJSONLogin = auth.checkJSONLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/personalCenter', checkLogin);
-    app.get('/personalCenter', function(req, res) {
+    app.get('/personalCenter', function (req, res) {
         var currentUser = req.session.user;
         //StudentInfo.getFilter({ accountId: currentUser._id })
         //.then(function(students) {
@@ -20,7 +22,7 @@ module.exports = function(app) {
     });
 
     app.get('/personalCenter/resetPWD', checkLogin);
-    app.get('/personalCenter/resetPWD', function(req, res) {
+    app.get('/personalCenter/resetPWD', function (req, res) {
         var currentUser = req.session.user;
         //StudentInfo.getFilter({ accountId: currentUser._id })
         //.then(function(students) {
@@ -33,18 +35,22 @@ module.exports = function(app) {
     });
 
     app.post('/personalCenter/resetPWD', checkJSONLogin);
-    app.post('/personalCenter/resetPWD', function(req, res) {
+    app.post('/personalCenter/resetPWD', function (req, res) {
         var currentUser = req.session.user;
         if (currentUser.password != req.body.oldPassword) {
-            res.jsonp({ error: "旧密码不正确" });
+            res.jsonp({
+                error: "旧密码不正确"
+            });
             return;
         }
         var studentAccount = new StudentAccount({
             password: req.body.password
         });
-        studentAccount.update(currentUser._id, function(error, account) {
+        studentAccount.update(currentUser._id, function (error, account) {
             currentUser.password = req.body.password;
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
             return;
         });
     });

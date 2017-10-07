@@ -1,14 +1,16 @@
-var ExamCategory = require('../../models/examCategory.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    ExamCategory = model.examCategory,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/examCategoryList', checkLogin);
-    app.get('/admin/examCategoryList', function(req, res) {
+    app.get('/admin/examCategoryList', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        ExamCategory.getAll(null, page, {}, function(err, examCategorys, total) {
+        ExamCategory.getAll(null, page, {}, function (err, examCategorys, total) {
             if (err) {
                 examCategorys = [];
             }
@@ -25,12 +27,12 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examCategory/add', checkLogin);
-    app.post('/admin/examCategory/add', function(req, res) {
+    app.post('/admin/examCategory/add', function (req, res) {
         var examCategory = new ExamCategory({
             name: req.body.name
         });
 
-        examCategory.save(function(err, examCategory) {
+        examCategory.save(function (err, examCategory) {
             if (err) {
                 examCategory = {};
             }
@@ -39,12 +41,12 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examCategory/edit', checkLogin);
-    app.post('/admin/examCategory/edit', function(req, res) {
+    app.post('/admin/examCategory/edit', function (req, res) {
         var examCategory = new ExamCategory({
             name: req.body.name
         });
 
-        examCategory.update(req.body.id, function(err, examCategory) {
+        examCategory.update(req.body.id, function (err, examCategory) {
             if (err) {
                 examCategory = {};
             }
@@ -53,20 +55,24 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examCategory/delete', checkLogin);
-    app.post('/admin/examCategory/delete', function(req, res) {
-        ExamCategory.delete(req.body.id, function(err, examCategory) {
+    app.post('/admin/examCategory/delete', function (req, res) {
+        ExamCategory.delete(req.body.id, function (err, examCategory) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.get('/admin/examCategory/getAllWithoutPage', checkLogin);
-    app.get('/admin/examCategory/getAllWithoutPage', function(req, res) {
+    app.get('/admin/examCategory/getAllWithoutPage', function (req, res) {
         ExamCategory.getAllWithoutPage()
-            .then(function(data) {
+            .then(function (data) {
                 res.jsonp(data);
             });
     });

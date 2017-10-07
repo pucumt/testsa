@@ -1,10 +1,12 @@
-var CouponAssign = require('../../models/couponAssign.js'),
-    Coupon = require('../../models/coupon.js'),
-    StudentInfo = require('../../models/studentInfo.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    CouponAssign = model.couponAssign,
+    Coupon = model.coupon,
+    StudentInfo = model.studentInfo,
     Random = require('../../util/random.js'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin;
+    checkJSONLogin = auth.checkJSONLogin; // TBD
 
 module.exports = function (app) {
     app.post('/coupon/isRandomCouponExist', checkJSONLogin);

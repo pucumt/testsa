@@ -1,7 +1,9 @@
-var RollCallConfigure = require('../../models/rollCallConfigure.js'),
-    Year = require('../../models/year.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    RollCallConfigure = model.rollCallConfigure,
+    Year = model.year,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     // function checkIsConfigureExist() {

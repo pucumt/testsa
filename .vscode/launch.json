@@ -7,7 +7,7 @@
             "name": "Launch Program",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}\\init-db.js",
+            "program": "${workspaceRoot}\\app.js",
             "cwd": "${workspaceRoot}"
         },
         {

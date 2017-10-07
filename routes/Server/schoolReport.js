@@ -1,10 +1,12 @@
-var AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
-    SchoolArea = require('../../models/schoolArea.js'),
-    TrainClass = require('../../models/trainClass.js'),
-    Subject = require('../../models/subject.js'),
-    Year = require('../../models/year.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    AdminEnrollTrain = model.adminEnrollTrain,
+    SchoolArea = model.schoolArea,
+    TrainClass = model.trainClass,
+    Subject = model.subject,
+    Year = model.year,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     app.get('/admin/schoolReportList', checkLogin);

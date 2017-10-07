@@ -1,12 +1,14 @@
-var ExamClass = require('../../models/examClass.js'),
-    ExamClassExamArea = require('../../models/examClassExamArea.js'),
-    ExamArea = require('../../models/examArea.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    ExamClass = model.examClass,
+    ExamClassExamArea = model.examClassExamArea,
+    ExamArea = model.examArea,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/examClassList', checkLogin);
-    app.get('/admin/examClassList', function(req, res) {
+    app.get('/admin/examClassList', function (req, res) {
         res.render('Server/examClassList.html', {
             title: '>测试设置',
             user: req.session.admin
@@ -14,7 +16,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examClass/add', checkLogin);
-    app.post('/admin/examClass/add', function(req, res) {
+    app.post('/admin/examClass/add', function (req, res) {
         var examClass = new ExamClass({
             name: req.body.name,
             examDate: req.body.examDate,
@@ -27,18 +29,18 @@ module.exports = function(app) {
             isWeixin: 0,
             courseContent: req.body.courseContent,
             subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : [])
-                // examAreaId: req.body.examAreaId,
-                // examAreaName: req.body.examAreaName
+            // examAreaId: req.body.examAreaId,
+            // examAreaName: req.body.examAreaName
         });
 
-        examClass.save(function(err, examClass) {
+        examClass.save(function (err, examClass) {
             if (err) {
                 examClass = {};
             }
             if (req.body.examAreas) {
                 var examAreas = JSON.parse(req.body.examAreas);
                 var pArray = [];
-                examAreas.forEach(function(examArea) {
+                examAreas.forEach(function (examArea) {
                     var newExamArea = new ExamClassExamArea({
                         examId: examClass._id,
                         examCount: examArea.areaCount,
@@ -49,9 +51,11 @@ module.exports = function(app) {
                     pArray.push(newExamArea.save());
                 });
 
-                Promise.all(pArray).then(function() {
-                    ExamClassExamArea.getFilters({ examId: examClass._id })
-                        .then(function(examClassExamAreas) {
+                Promise.all(pArray).then(function () {
+                    ExamClassExamArea.getFilters({
+                            examId: examClass._id
+                        })
+                        .then(function (examClassExamAreas) {
                             examClass.examAreas = examClassExamAreas;
                             res.jsonp(examClass);
                         });
@@ -63,7 +67,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examClass/edit', checkLogin);
-    app.post('/admin/examClass/edit', function(req, res) {
+    app.post('/admin/examClass/edit', function (req, res) {
         var examClass = new ExamClass({
             name: req.body.name,
             examDate: req.body.examDate,
@@ -74,26 +78,29 @@ module.exports = function(app) {
             sequence: req.body.sequence,
             courseContent: req.body.courseContent,
             subjects: (req.body.subjects ? JSON.parse(req.body.subjects) : [])
-                // examAreaId: req.body.examAreaId,
-                // examAreaName: req.body.examAreaName
+            // examAreaId: req.body.examAreaId,
+            // examAreaName: req.body.examAreaName
         });
 
-        examClass.update(req.body.id, function(err, examClass) {
+        examClass.update(req.body.id, function (err, examClass) {
             if (err) {
                 examClass = {};
             }
             if (req.body.examAreas) {
                 var examAreas = JSON.parse(req.body.examAreas);
 
-                ExamArea.getAllWithoutPage().then(function(allExamAreas) {
+                ExamArea.getAllWithoutPage().then(function (allExamAreas) {
                     var pArray = [],
                         selectArea;
-                    allExamAreas.forEach(function(singleExamArea) {
-                        var p = ExamClassExamArea.getFilter({ examId: examClass._id, examAreaId: singleExamArea._id })
-                            .then(function(examClassExamArea) {
+                    allExamAreas.forEach(function (singleExamArea) {
+                        var p = ExamClassExamArea.getFilter({
+                                examId: examClass._id,
+                                examAreaId: singleExamArea._id
+                            })
+                            .then(function (examClassExamArea) {
                                 selectArea = null;
                                 if (examClassExamArea) { //已经存在
-                                    if (examAreas.some(function(area) {
+                                    if (examAreas.some(function (area) {
                                             if (area.examAreaId == singleExamArea._id) {
                                                 selectArea = area;
                                                 return true;
@@ -109,7 +116,7 @@ module.exports = function(app) {
                                         return ExamClassExamArea.delete(examClassExamArea._id);
                                     }
                                 } else { //原来没有
-                                    if (examAreas.some(function(area) {
+                                    if (examAreas.some(function (area) {
                                             if (area.examAreaId == singleExamArea._id) {
                                                 selectArea = area;
                                                 return true;
@@ -132,88 +139,116 @@ module.exports = function(app) {
                         pArray.push(p);
                     });
 
-                    Promise.all(pArray).then(function() {
-                        ExamClassExamArea.getFilters({ examId: examClass._id })
-                            .then(function(examClassExamAreas) {
+                    Promise.all(pArray).then(function () {
+                        ExamClassExamArea.getFilters({
+                                examId: examClass._id
+                            })
+                            .then(function (examClassExamAreas) {
                                 examClass.examAreas = examClassExamAreas;
                                 res.jsonp(examClass);
                             });
                     });
                 });
             } else {
-                ExamClassExamArea.deleteFilter({ examId: examClass._id });
+                ExamClassExamArea.deleteFilter({
+                    examId: examClass._id
+                });
                 res.jsonp(examClass);
             }
         });
     });
 
     app.post('/admin/examClass/delete', checkLogin);
-    app.post('/admin/examClass/delete', function(req, res) {
-        ExamClass.delete(req.body.id, function(err, examClass) {
+    app.post('/admin/examClass/delete', function (req, res) {
+        ExamClass.delete(req.body.id, function (err, examClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/examClass/publish', checkLogin);
-    app.post('/admin/examClass/publish', function(req, res) {
-        ExamClass.publish(req.body.id, function(err, examClass) {
+    app.post('/admin/examClass/publish', function (req, res) {
+        ExamClass.publish(req.body.id, function (err, examClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/examClass/publishAll', checkLogin);
-    app.post('/admin/examClass/publishAll', function(req, res) {
-        ExamClass.publishAll(JSON.parse(req.body.ids), function(err, examClass) {
+    app.post('/admin/examClass/publishAll', function (req, res) {
+        ExamClass.publishAll(JSON.parse(req.body.ids), function (err, examClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/examClass/unPublish', checkLogin);
-    app.post('/admin/examClass/unPublish', function(req, res) {
-        ExamClass.unPublish(req.body.id, function(err, examClass) {
+    app.post('/admin/examClass/unPublish', function (req, res) {
+        ExamClass.unPublish(req.body.id, function (err, examClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/examClass/unPublishAll', checkLogin);
-    app.post('/admin/examClass/unPublishAll', function(req, res) {
-        ExamClass.unPublishAll(JSON.parse(req.body.ids), function(err, examClass) {
+    app.post('/admin/examClass/unPublishAll', function (req, res) {
+        ExamClass.unPublishAll(JSON.parse(req.body.ids), function (err, examClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/examClass/showScore', checkLogin);
-    app.post('/admin/examClass/showScore', function(req, res) {
-        ExamClass.showScore(req.body.id, req.body.isScorePublished, function(err, examClass) {
+    app.post('/admin/examClass/showScore', function (req, res) {
+        ExamClass.showScore(req.body.id, req.body.isScorePublished, function (err, examClass) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
     app.post('/admin/examClass/search', checkLogin);
-    app.post('/admin/examClass/search', function(req, res) {
+    app.post('/admin/examClass/search', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
@@ -225,7 +260,7 @@ module.exports = function(app) {
             };
         }
 
-        ExamClass.getAll(null, page, filter, function(err, examClasss, total) {
+        ExamClass.getAll(null, page, filter, function (err, examClasss, total) {
             if (err) {
                 examClasss = [];
             }

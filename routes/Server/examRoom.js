@@ -1,12 +1,14 @@
-var ExamRoom = require('../../models/examRoom.js'),
-    ExamClass = require('../../models/examClass.js'),
-    AdminEnrollExam = require('../../models/adminEnrollExam.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    ExamRoom = model.examRoom,
+    ExamClass = model.examClass,
+    AdminEnrollExam = model.adminEnrollExam,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/examRoomList', checkLogin);
-    app.get('/admin/examRoomList', function(req, res) {
+    app.get('/admin/examRoomList', function (req, res) {
         res.render('Server/examRoomList.html', {
             title: '>考场列表',
             user: req.session.admin
@@ -14,13 +16,13 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examRoom/add', checkLogin);
-    app.post('/admin/examRoom/add', function(req, res) {
+    app.post('/admin/examRoom/add', function (req, res) {
         var examRoom = new ExamRoom({
             name: req.body.name,
             address: req.body.address
         });
 
-        examRoom.save(function(err, examRoom) {
+        examRoom.save(function (err, examRoom) {
             if (err) {
                 examRoom = {};
             }
@@ -29,12 +31,12 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examRoom/edit', checkLogin);
-    app.post('/admin/examRoom/edit', function(req, res) {
+    app.post('/admin/examRoom/edit', function (req, res) {
         var examRoom = new ExamRoom({
             classRooms: JSON.parse(req.body.classRooms)
         });
 
-        examRoom.update(req.body.id, function(err, examRoom) {
+        examRoom.update(req.body.id, function (err, examRoom) {
             if (err) {
                 examRoom = {};
             }
@@ -43,18 +45,22 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examRoom/delete', checkLogin);
-    app.post('/admin/examRoom/delete', function(req, res) {
-        ExamRoom.delete(req.body.id, function(err, examRoom) {
+    app.post('/admin/examRoom/delete', function (req, res) {
+        ExamRoom.delete(req.body.id, function (err, examRoom) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/examRoomList/search', checkLogin);
-    app.post('/admin/examRoomList/search', function(req, res) {
+    app.post('/admin/examRoomList/search', function (req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -67,7 +73,7 @@ module.exports = function(app) {
             };
         }
 
-        ExamRoom.getAll(null, page, filter, function(err, examRooms, total) {
+        ExamRoom.getAll(null, page, filter, function (err, examRooms, total) {
             if (err) {
                 examRooms = [];
             }
@@ -82,14 +88,16 @@ module.exports = function(app) {
     });
 
     app.get('/admin/examRoom/trainId/:id', checkLogin);
-    app.get('/admin/examRoom/trainId/:id', function(req, res) {
-        ExamRoom.getFilter({ examId: req.params.id })
-            .then(function(examRoom) {
+    app.get('/admin/examRoom/trainId/:id', function (req, res) {
+        ExamRoom.getFilter({
+                examId: req.params.id
+            })
+            .then(function (examRoom) {
                 if (examRoom) {
                     return examRoom;
                 } else {
                     return ExamClass.get(req.params.id)
-                        .then(function(examClass) {
+                        .then(function (examClass) {
                             if (examClass) {
                                 var examRoom = new ExamRoom({
                                     examId: examClass._id,
@@ -100,7 +108,7 @@ module.exports = function(app) {
                         });
                 }
             })
-            .then(function(examRoom) {
+            .then(function (examRoom) {
                 if (examRoom) {
                     res.render('Server/examRoomDetail.html', {
                         title: '>考场管理',
@@ -112,14 +120,14 @@ module.exports = function(app) {
     });
 
     app.get('/admin/examRoom/:id', checkLogin);
-    app.get('/admin/examRoom/:id', function(req, res) {
+    app.get('/admin/examRoom/:id', function (req, res) {
         ExamRoom.get(req.params.id)
-            .then(function(examRoom) {
+            .then(function (examRoom) {
                 if (examRoom) {
                     return examRoom;
                 }
             })
-            .then(function(examRoom) {
+            .then(function (examRoom) {
                 if (examRoom) {
                     res.render('Server/examRoomDetail.html', {
                         title: '>考场管理',
@@ -131,29 +139,33 @@ module.exports = function(app) {
     });
 
     app.post('/admin/examRoom/assign', checkLogin);
-    app.post('/admin/examRoom/assign', function(req, res) {
+    app.post('/admin/examRoom/assign', function (req, res) {
         var examRoom = new ExamRoom({
             classRooms: JSON.parse(req.body.classRooms)
         });
 
-        examRoom.update(req.body.id, function(err, examRoom) {
+        examRoom.update(req.body.id, function (err, examRoom) {
             if (err) {
                 examRoom = {};
             }
             ExamRoom.get(examRoom._id)
-                .then(function(examRoom) {
+                .then(function (examRoom) {
                     getStudents(examRoom.examId)
-                        .then(function(students) {
+                        .then(function (students) {
                             var sites = getSites(examRoom);
                             if (students > sites) {
-                                res.jsonp({ error: "座位数少于报名人数，无法分配" });
+                                res.jsonp({
+                                    error: "座位数少于报名人数，无法分配"
+                                });
                                 return;
                             }
 
                             assignStudents(examRoom)
-                                .then(function(result) {
+                                .then(function (result) {
                                     if (result) {
-                                        res.jsonp({ sucess: true });
+                                        res.jsonp({
+                                            sucess: true
+                                        });
                                     }
                                 });
                         });
@@ -164,7 +176,7 @@ module.exports = function(app) {
 
     function getSites(examRoom) {
         var sites = 0;
-        examRoom.classRooms.forEach(function(classRoom) {
+        examRoom.classRooms.forEach(function (classRoom) {
             sites += parseInt(classRoom.examCount);
         });
         return sites;
@@ -172,16 +184,18 @@ module.exports = function(app) {
 
     function getStudents(examId) {
         return ExamClass.get(examId)
-            .then(function(examClass) {
+            .then(function (examClass) {
                 return examClass.enrollCount;
             });
     };
 
     function assignStudents(examRoom) {
-        return AdminEnrollExam.getAllEnrolledWithoutPaging({ examId: examRoom.examId })
-            .then(function(orders) {
+        return AdminEnrollExam.getAllEnrolledWithoutPaging({
+                examId: examRoom.examId
+            })
+            .then(function (orders) {
                 var i = 0;
-                examRoom.classRooms.forEach(function(classRoom) {
+                examRoom.classRooms.forEach(function (classRoom) {
                     if (i >= orders.length) {
                         return;
                     }
@@ -206,7 +220,7 @@ module.exports = function(app) {
             examNo: siteNo
         });
 
-        adminEnrollExam.update(order._id, function(err, result) {
+        adminEnrollExam.update(order._id, function (err, result) {
             if (err) {
                 result = {};
             }

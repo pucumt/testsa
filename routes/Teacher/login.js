@@ -1,11 +1,13 @@
 var crypto = require('crypto'),
-    Teacher = require('../../models/teacher.js'),
+    model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    Teacher = model.teacher,
     auth = require("./auth"),
-    checkNotLogin = auth.checkNotLogin;
+    checkNotLogin = auth.checkNotLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/Teacher/login', checkNotLogin);
-    app.get('/Teacher/login', function(req, res) {
+    app.get('/Teacher/login', function (req, res) {
         res.render('Teacher/login.html', {
             title: '登录',
             user: req.session.teacher
@@ -13,14 +15,16 @@ module.exports = function(app) {
     });
 
     app.post('/Teacher/login', checkNotLogin);
-    app.post('/Teacher/login', function(req, res) {
+    app.post('/Teacher/login', function (req, res) {
         //登录注册放在一起
         //生成密码的 md5 值
         var md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         //检查用户是否存在
-        Teacher.getFilter({ mobile: req.body.name })
-            .then(function(user) {
+        Teacher.getFilter({
+                mobile: req.body.name
+            })
+            .then(function (user) {
                 if (!user) {
                     return res.redirect('/Teacher/login?err=1'); //用户不存在则跳转到登录页
                 }

@@ -1,11 +1,13 @@
-var crypto = require('crypto'),
-    StudentAccount = require('../../models/studentAccount.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    crypto = require('crypto'),
+    StudentAccount = model.studentAccount,
     auth = require("./auth"),
-    checkNotLogin = auth.checkNotLogin;
+    checkNotLogin = auth.checkNotLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/reg', checkNotLogin);
-    app.get('/reg', function(req, res) {
+    app.get('/reg', function (req, res) {
         res.render('Client/reg.html', {
             title: '注册',
             user: req.session.user
@@ -13,7 +15,7 @@ module.exports = function(app) {
     });
 
     app.post('/reg', checkNotLogin);
-    app.post('/reg', function(req, res) {
+    app.post('/reg', function (req, res) {
         var name = req.body.name,
             password = req.body.password; //,
         // password_re = req.body['password-repeat'];
@@ -29,8 +31,10 @@ module.exports = function(app) {
             password: password
         });
         //检查用户名是否已经存在 
-        StudentAccount.getFilter({ name: req.body.name })
-            .then(function(account) {
+        StudentAccount.getFilter({
+                name: req.body.name
+            })
+            .then(function (account) {
                 if (account) {
                     return res.render('Client/reg.html', {
                         title: '注册',
@@ -38,7 +42,7 @@ module.exports = function(app) {
                     }); //返回注册页
                 } else {
                     //如果不存在则新增用户
-                    newUser.save().then(function(user) {
+                    newUser.save().then(function (user) {
                         if (user) {
                             //将用户信息存入 session
                             req.session.user = user.toJSON();

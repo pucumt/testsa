@@ -1,6 +1,8 @@
-var LessonContent = require('../../models/lessonContent.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    LessonContent = model.lessonContent,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     app.post('/admin/lessonContent/save', checkLogin);

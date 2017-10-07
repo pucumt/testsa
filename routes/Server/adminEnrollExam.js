@@ -1,11 +1,13 @@
-var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
-    ExamClass = require('../../models/examClass.js'),
-    StudentInfo = require('../../models/studentInfo.js'),
-    StudentAccount = require('../../models/studentAccount.js'),
-    ClassRoom = require('../../models/classRoom.js'),
-    ExamClassExamArea = require('../../models/examClassExamArea.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    AdminEnrollExam = model.adminEnrollExam,
+    ExamClass = model.examClass,
+    StudentInfo = model.studentInfo,
+    StudentAccount = model.studentAccount,
+    ClassRoom = model.classRoom,
+    ExamClassExamArea = model.examClassExamArea,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     app.get('/admin/adminEnrollExamList', checkLogin);

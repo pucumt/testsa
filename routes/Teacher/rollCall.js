@@ -1,15 +1,17 @@
-var TrainClass = require('../../models/trainClass.js'),
-    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
-    StudentInfo = require('../../models/studentInfo.js'),
-    AbsentStudents = require('../../models/absentStudents.js'),
-    AbsentClass = require('../../models/absentClass.js'),
-    RollCallConfigure = require('../../models/rollCallConfigure.js'),
-    StudentLesson = require('../../models/studentLesson.js'),
-    LessonContent = require('../../models/lessonContent.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    TrainClass = model.trainClass,
+    AdminEnrollTrain = model.adminEnrollTrain,
+    StudentInfo = model.studentInfo,
+    AbsentStudents = model.absentStudents,
+    AbsentClass = model.absentClass,
+    RollCallConfigure = model.rollCallConfigure,
+    StudentLesson = model.studentLesson,
+    LessonContent = model.lessonContent,
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin;
+    checkJSONLogin = auth.checkJSONLogin; // TBD
 
 module.exports = function (app) {
     app.get('/Teacher/rollCallClasses', checkLogin);

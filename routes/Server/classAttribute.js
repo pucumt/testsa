@@ -1,10 +1,12 @@
-var ClassAttribute = require('../../models/classAttribute.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    ClassAttribute = model.classAttribute,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/classAttributeList', checkLogin);
-    app.get('/admin/classAttributeList', function(req, res) {
+    app.get('/admin/classAttributeList', function (req, res) {
         res.render('Server/classAttributeList.html', {
             title: '>课程属性',
             user: req.session.admin
@@ -12,13 +14,13 @@ module.exports = function(app) {
     });
 
     app.post('/admin/classAttribute/add', checkLogin);
-    app.post('/admin/classAttribute/add', function(req, res) {
+    app.post('/admin/classAttribute/add', function (req, res) {
         var classAttribute = new ClassAttribute({
             name: req.body.name,
             address: req.body.address
         });
 
-        classAttribute.save(function(err, classAttribute) {
+        classAttribute.save(function (err, classAttribute) {
             if (err) {
                 classAttribute = {};
             }
@@ -27,13 +29,13 @@ module.exports = function(app) {
     });
 
     app.post('/admin/classAttribute/edit', checkLogin);
-    app.post('/admin/classAttribute/edit', function(req, res) {
+    app.post('/admin/classAttribute/edit', function (req, res) {
         var classAttribute = new ClassAttribute({
             name: req.body.name,
             address: req.body.address
         });
 
-        classAttribute.update(req.body.id, function(err, classAttribute) {
+        classAttribute.update(req.body.id, function (err, classAttribute) {
             if (err) {
                 classAttribute = {};
             }
@@ -42,18 +44,22 @@ module.exports = function(app) {
     });
 
     app.post('/admin/classAttribute/delete', checkLogin);
-    app.post('/admin/classAttribute/delete', function(req, res) {
-        ClassAttribute.delete(req.body.id, function(err, classAttribute) {
+    app.post('/admin/classAttribute/delete', function (req, res) {
+        ClassAttribute.delete(req.body.id, function (err, classAttribute) {
             if (err) {
-                res.jsonp({ error: err });
+                res.jsonp({
+                    error: err
+                });
                 return;
             }
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
         });
     });
 
     app.post('/admin/classAttributeList/search', checkLogin);
-    app.post('/admin/classAttributeList/search', function(req, res) {
+    app.post('/admin/classAttributeList/search', function (req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -66,7 +72,7 @@ module.exports = function(app) {
             };
         }
 
-        ClassAttribute.getAll(null, page, filter, function(err, classAttributes, total) {
+        ClassAttribute.getAll(null, page, filter, function (err, classAttributes, total) {
             if (err) {
                 classAttributes = [];
             }

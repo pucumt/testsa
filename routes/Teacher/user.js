@@ -1,11 +1,13 @@
-var Teacher = require('../../models/teacher.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    Teacher = model.teacher,
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin;
+    checkJSONLogin = auth.checkJSONLogin; // TBD
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/Teacher/personalCenter', checkLogin);
-    app.get('/Teacher/personalCenter', function(req, res) {
+    app.get('/Teacher/personalCenter', function (req, res) {
         res.render('Teacher/personalCenter.html', {
             title: '老师',
             user: req.session.teacher
@@ -13,14 +15,14 @@ module.exports = function(app) {
     });
 
     app.get('/Teacher/personalCenter/exit', checkLogin);
-    app.get('/Teacher/personalCenter/exit', function(req, res) {
+    app.get('/Teacher/personalCenter/exit', function (req, res) {
         delete req.session.teacher;
         req.session.originalUrl = "/Teacher/personalCenter";
         res.redirect('/Teacher/login');
     });
 
     app.get('/Teacher/personalCenter/resetPWD', checkLogin);
-    app.get('/Teacher/personalCenter/resetPWD', function(req, res) {
+    app.get('/Teacher/personalCenter/resetPWD', function (req, res) {
         res.render('Teacher/personalCenter_resetPWD.html', {
             title: '个人中心',
             user: req.session.teacher
@@ -28,21 +30,25 @@ module.exports = function(app) {
     });
 
     app.post('/Teacher/personalCenter/resetPWD', checkJSONLogin);
-    app.post('/Teacher/personalCenter/resetPWD', function(req, res) {
+    app.post('/Teacher/personalCenter/resetPWD', function (req, res) {
         var currentUser = req.session.teacher;
         if (currentUser.password != req.body.oldPassword) {
-            res.jsonp({ error: "旧密码不正确" });
+            res.jsonp({
+                error: "旧密码不正确"
+            });
             return;
         }
         var teacher = new Teacher({
             password: req.body.password
         });
-        teacher.update(currentUser._id, function(err, teacher) {
+        teacher.update(currentUser._id, function (err, teacher) {
             if (err) {
                 teacher = {};
             }
             currentUser.password = req.body.password;
-            res.jsonp({ sucess: true });
+            res.jsonp({
+                sucess: true
+            });
             return;
         });
     });

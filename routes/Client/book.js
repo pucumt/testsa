@@ -1,15 +1,17 @@
-var Lesson = require('../../models/lesson.js'),
-    Book = require('../../models/book.js'),
-    StudentInfo = require('../../models/studentInfo.js'),
-    LessonContent = require('../../models/lessonContent.js'),
-    StudentLesson = require('../../models/studentLesson.js'),
-    StudentLessonScore = require('../../models/studentLessonScore.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    Lesson = model.lesson,
+    Book = model.book,
+    StudentInfo = model.studentInfo,
+    LessonContent = model.lessonContent,
+    StudentLesson = model.studentLesson,
+    StudentLessonScore = model.studentLessonScore,
     fs = require('fs'),
     path = require('path'),
     request = require('request'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin;
+    checkJSONLogin = auth.checkJSONLogin; // TBD
 
 module.exports = function (app) {
     app.get('/personalCenter/book/id/:id', checkLogin);

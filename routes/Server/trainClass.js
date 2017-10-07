@@ -1,14 +1,16 @@
-var TrainClass = require('../../models/trainClass.js'),
-    Year = require('../../models/year.js'),
-    Grade = require('../../models/grade.js'),
-    Subject = require('../../models/subject.js'),
-    Category = require('../../models/category.js'),
-    ExamCategory = require('../../models/examCategory.js'),
-    ExamClass = require('../../models/examClass.js'),
-    ClassAttribute = require('../../models/classAttribute.js'),
-    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    TrainClass = model.trainClass,
+    Year = model.year,
+    Grade = model.grade,
+    Subject = model.subject,
+    Category = model.category,
+    ExamCategory = model.examCategory,
+    ExamClass = model.examClass,
+    ClassAttribute = model.classAttribute,
+    AdminEnrollTrain = model.adminEnrollTrain,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     app.get('/admin/trainClassList', checkLogin);

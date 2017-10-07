@@ -1,7 +1,9 @@
-var CouponAssign = require('../../models/couponAssign.js'),
-    Coupon = require('../../models/coupon.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    CouponAssign = model.couponAssign,
+    Coupon = model.coupon,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     app.get('/admin/couponAssign/:id', checkLogin);

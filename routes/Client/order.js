@@ -1,16 +1,18 @@
-var AdminEnrollExam = require('../../models/adminEnrollExam.js'),
-    AdminEnrollTrain = require('../../models/adminEnrollTrain.js'),
-    ExamClassExamArea = require('../../models/examClassExamArea.js'),
-    TrainClass = require('../../models/trainClass.js'),
-    ExamClass = require('../../models/examClass.js'),
-    StudentInfo = require('../../models/studentInfo.js'),
-    ClassRoom = require('../../models/classRoom.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    AdminEnrollExam = model.adminEnrollExam,
+    AdminEnrollTrain = model.adminEnrollTrain,
+    ExamClassExamArea = model.examClassExamArea,
+    TrainClass = model.trainClass,
+    ExamClass = model.examClass,
+    StudentInfo = model.studentInfo,
+    ClassRoom = model.classRoom,
     payHelper = require('../../util/payHelper.js'),
-    ChangeEnd = require('../../models/changeEnd.js'),
+    ChangeEnd = model.changeEnd,
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin;
+    checkJSONLogin = auth.checkJSONLogin; // TBD
 
 module.exports = function (app) {
     app.post('/personalCenter/order/all', checkJSONLogin);
