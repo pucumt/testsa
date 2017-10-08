@@ -54,6 +54,10 @@ body {
     margin-top: 50px;
 }
 
+.admin-header .menu-top li.active {
+    color: #faff64;
+}
+
 .admin-header .menu-top li:first-child {
     margin-left: 10px;
 }

@@ -3,4 +3,5 @@ $(document).ready(function () {
         location.href = "/admin/adminBookList";
     });
 
+    $(".admin-header .menu-top #header_btnBook").addClass("active");
 });
