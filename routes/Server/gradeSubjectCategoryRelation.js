@@ -4,17 +4,15 @@ var model = require("../../model.js"),
     Category = model.category,
     TrainClass = model.trainClass,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     function newGradeSubjectCategoryRelation(categoryId, subjectId, gradeId) {
-        var gradeSubjectCategoryRelation = new GradeSubjectCategoryRelation({
+        return GradeSubjectCategoryRelation.create({
             subjectId: subjectId,
             gradeId: gradeId,
             categoryId: categoryId
         });
-
-        return gradeSubjectCategoryRelation.save();
     };
 
     app.post('/admin/gradeSubjectCategoryRelation/save', checkLogin);
@@ -33,11 +31,15 @@ module.exports = function (app) {
         }
 
         if (removeCategories.length > 0) {
-            pArray.push(GradeSubjectCategoryRelation.deleteAll({
-                gradeId: gradeId,
-                subjectId: subjectId,
-                categoryId: {
-                    $in: removeCategories
+            pArray.push(GradeSubjectCategoryRelation.update({
+                isDeleted: true
+            }, {
+                where: {
+                    gradeId: gradeId,
+                    subjectId: subjectId,
+                    categoryId: {
+                        $in: removeCategories
+                    }
                 }
             }));
         }
@@ -71,15 +73,16 @@ module.exports = function (app) {
 
     app.post('/admin/gradeSubjectCategoryRelation/filter', checkLogin);
     app.post('/admin/gradeSubjectCategoryRelation/filter', function (req, res) {
-        TrainClass.get(req.body.trainId)
-            .then(function (trainClass) {
-                if (trainClass) {
-                    ///objectId to filter
-                    GradeSubjectCategoryRelation.getFiltersWithCategory(trainClass.gradeId, trainClass.subjectId)
-                        .then(function (relations) {
-                            res.jsonp(relations);
-                        });
-                }
+        model.db.sequelize.query("select C.* from gradeSubjectCategoryRelations R, categorys C,\
+         (select gradeId, subjectId from trainClasss where _id=:trainId) T where \
+         R.categoryId=C._id and R.gradeId=T.gradeId and R.subjectId=T.subjectId", {
+                replacements: {
+                    trainId: req.body.trainId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(relations => {
+                res.jsonp(relations);
             });
     });
 }

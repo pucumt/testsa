@@ -3,16 +3,14 @@ var model = require("../../model.js"),
     SchoolGradeRelation = model.schoolGradeRelation,
     Grade = model.grade,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     function newSchoolGradeRelation(gradeId, schoolId) {
-        var schoolGradeRelation = new SchoolGradeRelation({
+        return SchoolGradeRelation.create({
             schoolId: schoolId,
             gradeId: gradeId
         });
-
-        return schoolGradeRelation.save();
     };
 
     app.post('/admin/schoolGradeRelation/save', checkLogin);
@@ -29,10 +27,14 @@ module.exports = function (app) {
         }
 
         if (removeGrades.length > 0) {
-            pArray.push(SchoolGradeRelation.deleteAll({
-                schoolId: schoolId,
-                gradeId: {
-                    $in: removeGrades
+            pArray.push(SchoolGradeRelation.update({
+                isDeleted: true
+            }, {
+                where: {
+                    schoolId: schoolId,
+                    gradeId: {
+                        $in: removeGrades
+                    }
                 }
             }));
         }

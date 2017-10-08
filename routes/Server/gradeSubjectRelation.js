@@ -4,16 +4,14 @@ var model = require("../../model.js"),
     Subject = model.subject,
     Grade = model.grade,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     function newGradeSubjectRelation(subjectId, gradeId) {
-        var gradeSubjectRelation = new GradeSubjectRelation({
+        return GradeSubjectRelation.create({
             subjectId: subjectId,
             gradeId: gradeId
         });
-
-        return gradeSubjectRelation.save();
     };
 
     app.post('/admin/gradeSubjectRelation/save', checkLogin);
@@ -31,10 +29,14 @@ module.exports = function (app) {
         }
 
         if (removeSubjects.length > 0) {
-            pArray.push(GradeSubjectRelation.deleteAll({
-                gradeId: gradeId,
-                subjectId: {
-                    $in: removeSubjects
+            pArray.push(GradeSubjectRelation.update({
+                isDeleted: true
+            }, {
+                where: {
+                    gradeId: gradeId,
+                    subjectId: {
+                        $in: removeSubjects
+                    }
                 }
             }));
         }
@@ -67,9 +69,13 @@ module.exports = function (app) {
 
     app.get('/admin/gradeSubject/settings/:gradeId/:subjectId', checkLogin);
     app.get('/admin/gradeSubject/settings/:gradeId/:subjectId', function (req, res) {
-        Grade.get(req.params.gradeId).then(function (grade) {
+        Grade.getFilter({
+            _id: req.params.gradeId
+        }).then(function (grade) {
             if (grade) {
-                Subject.get(req.params.subjectId).then(function (subject) {
+                Subject.getFilter({
+                    _id: req.params.subjectId
+                }).then(function (subject) {
                     res.render('Server/gradeSubjectCategoryRelationList.html', {
                         title: '>' + grade.name + '>' + subject.name + '>年级科目难度',
                         user: req.session.admin,

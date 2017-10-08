@@ -2,7 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     EnrollProcessConfigure = model.enrollProcessConfigure,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     // function checkIsConfigureExist() {

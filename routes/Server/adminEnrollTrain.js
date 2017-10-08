@@ -1,4 +1,5 @@
 var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
     AdminEnrollTrain = model.adminEnrollTrain,
     AdminEnrollTrainHistory = model.adminEnrollTrainHistory,
     AdminEnrollExam = model.adminEnrollExam,
@@ -12,7 +13,7 @@ var model = require("../../model.js"),
     fs = require('fs'),
     parseString = require('xml2js').parseString,
     settings = require('../../settings'),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin; // TBD
 
 module.exports = function (app) {
     app.get('/admin/adminEnrollTrainList', checkLogin);
@@ -47,10 +48,9 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.studentName) {
-            var reg = new RegExp(req.body.studentName, 'i')
+        if (req.body.studentName && req.body.studentName.trim()) {
             filter.studentName = {
-                $regex: reg
+                $like: `%${req.body.studentName.trim()}%`
             };
         }
         if (req.body.className) {
@@ -74,16 +74,13 @@ module.exports = function (app) {
         if (req.body.orderId) {
             filter._id = req.body.orderId;
         }
-        AdminEnrollTrain.getAll(null, page, filter, function (err, adminEnrollTrains, total) {
-            if (err) {
-                adminEnrollTrains = [];
-            }
+        AdminEnrollTrain.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                adminEnrollTrains: adminEnrollTrains,
-                total: total,
+                adminEnrollTrains: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + adminEnrollTrains.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
