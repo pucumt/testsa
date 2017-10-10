@@ -75,7 +75,7 @@ module.exports = function (app) {
     app.post('/admin/gradeSubjectCategoryRelation/filter', function (req, res) {
         model.db.sequelize.query("select C.* from gradeSubjectCategoryRelations R, categorys C,\
          (select gradeId, subjectId from trainClasss where _id=:trainId) T where \
-         R.categoryId=C._id and R.gradeId=T.gradeId and R.subjectId=T.subjectId", {
+         R.categoryId=C._id and R.gradeId=T.gradeId and R.subjectId=T.subjectId and R.isDeleted=false and C.isDeleted=false", {
                 replacements: {
                     trainId: req.body.trainId
                 },

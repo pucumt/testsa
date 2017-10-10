@@ -436,7 +436,7 @@ function renderAttributeCoupon() {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
                 var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + (coupon.couponName || coupon.name) + '</td><td>' + dateStr +
                     '</td><td>' + coupon.reducePrice + '</td></tr>');
-                $tr.find("#coupon").data("data", coupon);
+                $tr.find("#coupon").data("obj", coupon);
                 $couponSelectBody.append($tr);
             }
         });

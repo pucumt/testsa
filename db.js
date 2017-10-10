@@ -74,6 +74,7 @@ function defineModel(name, attributes) {
                     }
                 } else {
                     console.log('will update entity...');
+                    obj.updatedDate = now;
                     obj.version++;
                 }
             }

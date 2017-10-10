@@ -1,13 +1,24 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnAdminEnrollExam").addClass("active");
-    // $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
-    // $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+    $("#selectModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
+    $("#selectModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    $('#selectModal').on('shown.bs.modal', function () {
+        resetScroll();
+    })
+
     addValidation();
     resetDropDown();
 });
 //grade/getAll
+
+function resetScroll() {
+    if ($("#selectModal .modal-content").height() > $(window).height()) {
+        $("#selectModal .modal-content .modal-body").height($(window).height() - 122);
+    }
+};
 
 function addValidation(callback) {
     $('#studentInfo').formValidation({
@@ -93,7 +104,7 @@ function addValidation(callback) {
     });
 };
 
-$("#btnAddStudent").on("click", function(e) {
+$("#btnAddStudent").on("click", function (e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
         $("#btnAddStudent").attr("disabled", "disabled");
@@ -107,7 +118,7 @@ $("#btnAddStudent").on("click", function(e) {
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
             };
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             if (data && data.sucess) {
                 showAlert("添加成功");
             } else {
@@ -118,105 +129,61 @@ $("#btnAddStudent").on("click", function(e) {
     }
 });
 
-$("#btnEnroll").on("click", function(e) {
+$("#btnEnroll").on("click", function (e) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
         $("#btnEnroll").attr("disabled", "disabled");
 
         var examArea = $('#enrollInfo #examAreas').val();
-        if (!examArea) {
-            //old enroll
-            var postURI = "/admin/adminEnrollExam/enroll",
-                postObj = {
-                    studentId: $('#enrollInfo #studentId').val(),
-                    studentName: $('#enrollInfo #studentName').val(),
-                    mobile: $('#enrollInfo #mobile').val(),
-                    examId: $('#enrollInfo #examId').val(),
-                    examName: $('#enrollInfo #examName').val(),
-                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
-                    examCategoryName: $('#enrollInfo #examCategoryName').val()
-                };
-            selfAjax("post", postURI, postObj, function(data) {
-                if (data && data.sucess) {
-                    showAlert("报名成功");
-                } else {
-                    showAlert(data.error);
-                }
-                $("#btnEnroll").removeAttr("disabled");
-            });
-        } else {
-            //new enroll with multi areas
-            var postURI = "/admin/adminEnrollExam/enroll2",
-                postObj = {
-                    studentId: $('#enrollInfo #studentId').val(),
-                    studentName: $('#enrollInfo #studentName').val(),
-                    mobile: $('#enrollInfo #mobile').val(),
-                    examId: $('#enrollInfo #examId').val(),
-                    examName: $('#enrollInfo #examName').val(),
-                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
-                    examCategoryName: $('#enrollInfo #examCategoryName').val(),
-                    examClassExamAreaId: examArea
-                };
-            selfAjax("post", postURI, postObj, function(data) {
-                if (data && data.sucess) {
-                    showAlert("报名成功");
-                } else {
-                    showAlert(data.error);
-                }
-                $("#btnEnroll").removeAttr("disabled");
-            });
-        }
+        //new enroll with multi areas
+        var postURI = "/admin/adminEnrollExam/enroll2",
+            postObj = {
+                studentId: $('#enrollInfo #studentId').val(),
+                studentName: $('#enrollInfo #studentName').val(),
+                mobile: $('#enrollInfo #mobile').val(),
+                examId: $('#enrollInfo #examId').val(),
+                examName: $('#enrollInfo #examName').val(),
+                examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                examCategoryName: $('#enrollInfo #examCategoryName').val(),
+                examClassExamAreaId: examArea
+            };
+        selfAjax("post", postURI, postObj, function (data) {
+            if (data && data.sucess) {
+                showAlert("报名成功");
+            } else {
+                showAlert(data.error);
+            }
+            $("#btnEnroll").removeAttr("disabled");
+        });
     }
 });
 
-$("#btnHideEnroll").on("click", function(e) {
+$("#btnHideEnroll").on("click", function (e) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
         $("#btnEnroll").attr("disabled", "disabled");
 
         var examArea = $('#enrollInfo #examAreas').val();
-        if (!examArea) {
-            //old enroll
-            var postURI = "/admin/adminEnrollExam/hideEnroll",
-                postObj = {
-                    studentId: $('#enrollInfo #studentId').val(),
-                    studentName: $('#enrollInfo #studentName').val(),
-                    mobile: $('#enrollInfo #mobile').val(),
-                    examId: $('#enrollInfo #examId').val(),
-                    examName: $('#enrollInfo #examName').val(),
-                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
-                    examCategoryName: $('#enrollInfo #examCategoryName').val()
-                };
-            selfAjax("post", postURI, postObj, function(data) {
-                if (data && data.sucess) {
-                    showAlert("报名成功");
-                } else {
-                    showAlert(data.error);
-                }
-                $("#btnEnroll").removeAttr("disabled");
-            });
-        } else {
-            //new enroll with multi areas
-            var postURI = "/admin/adminEnrollExam/hideEnroll2",
-                postObj = {
-                    studentId: $('#enrollInfo #studentId').val(),
-                    studentName: $('#enrollInfo #studentName').val(),
-                    mobile: $('#enrollInfo #mobile').val(),
-                    examId: $('#enrollInfo #examId').val(),
-                    examName: $('#enrollInfo #examName').val(),
-                    examCategoryId: $('#enrollInfo #examCategoryId').val(),
-                    examCategoryName: $('#enrollInfo #examCategoryName').val(),
-                    examClassExamAreaId: examArea
-                };
-            selfAjax("post", postURI, postObj, function(data) {
-                if (data && data.sucess) {
-                    showAlert("报名成功");
-                } else {
-                    showAlert(data.error);
-                }
-                $("#btnEnroll").removeAttr("disabled");
-            });
-        }
+        //new enroll with multi areas
+        var postURI = "/admin/adminEnrollExam/hideEnroll2",
+            postObj = {
+                studentId: $('#enrollInfo #studentId').val(),
+                studentName: $('#enrollInfo #studentName').val(),
+                mobile: $('#enrollInfo #mobile').val(),
+                examId: $('#enrollInfo #examId').val(),
+                examName: $('#enrollInfo #examName').val(),
+                examCategoryId: $('#enrollInfo #examCategoryId').val(),
+                examCategoryName: $('#enrollInfo #examCategoryName').val(),
+                examClassExamAreaId: examArea
+            };
+        selfAjax("post", postURI, postObj, function (data) {
+            if (data && data.sucess) {
+                showAlert("报名成功");
+            } else {
+                showAlert(data.error);
+            }
+            $("#btnEnroll").removeAttr("disabled");
+        });
     }
 });
 
@@ -226,14 +193,17 @@ var $selectSearch = $('#selectModal #InfoSearch');
 
 function openStudent(p) {
     $('#selectModal #selectModalLabel').text("选择学生");
-    var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
+    var filter = {
+            name: $("#selectModal #InfoSearch #studentName").val(),
+            mobile: $("#selectModal #InfoSearch #mobile").val()
+        },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function (data) {
         if (data && data.studentInfos.length > 0) {
-            data.studentInfos.forEach(function(student) {
+            data.studentInfos.forEach(function (student) {
                 student.School = "";
                 student.className = "";
                 var sex = student.sex ? "女" : "男";
@@ -242,7 +212,7 @@ function openStudent(p) {
                 $tr.data("obj", student);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('#enrollInfo #studentName').val(entity.name); //
                 $('#enrollInfo #studentId').val(entity._id); //
                 $('#enrollInfo #mobile').val(entity.mobile); //
@@ -253,20 +223,26 @@ function openStudent(p) {
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
         setPaging("#selectModal", data);
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $('#selectModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     });
 };
 
 function openExam(p) {
     $('#selectModal #selectModalLabel').text("选择测试");
-    var filter = { name: $("#selectModal #InfoSearch #studentName").val(), mobile: $("#selectModal #InfoSearch #mobile").val() },
+    var filter = {
+            name: $("#selectModal #InfoSearch #studentName").val(),
+            mobile: $("#selectModal #InfoSearch #mobile").val()
+        },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>测试名称</th><th width="180px">测试类别</th><th width="120px">报名情况</th></tr>');
-    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function (data) {
         if (data && data.examClasss.length > 0) {
-            data.examClasss.forEach(function(examClass) {
+            data.examClasss.forEach(function (examClass) {
                 examClass.courseContent = "";
                 var $tr = $('<tr ><td>' + examClass.name +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.enrollCount + '/' +
@@ -274,7 +250,7 @@ function openExam(p) {
                 $tr.data("obj", examClass);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('#enrollInfo #examName').val(entity.name); //
                 $('#enrollInfo #examId').val(entity._id); //
                 $('#enrollInfo #examCategoryName').val(entity.examCategoryName); //
@@ -286,12 +262,15 @@ function openExam(p) {
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
         setPaging("#selectModal", data);
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $('#selectModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     });
 };
 
 var openEntity = "student";
-$("#panel_btnStudent").on("click", function(e) {
+$("#panel_btnStudent").on("click", function (e) {
     openEntity = "student";
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
@@ -303,7 +282,7 @@ $("#panel_btnStudent").on("click", function(e) {
     openStudent();
 });
 
-$("#panel_btnExam").on("click", function(e) {
+$("#panel_btnExam").on("click", function (e) {
     openEntity = "exam";
     $selectSearch.empty();
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
@@ -313,7 +292,7 @@ $("#panel_btnExam").on("click", function(e) {
     openExam();
 });
 
-$("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
+$("#selectModal #InfoSearch").on("click", "#btnSearch", function (e) {
     if (openEntity == "student") {
         openStudent();
     } else if (openEntity == "exam") {
@@ -321,7 +300,7 @@ $("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
     }
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     if (openEntity == "student") {
         openStudent(page);
@@ -330,7 +309,7 @@ $("#selectModal .paging .prepage").on("click", function(e) {
     }
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     if (openEntity == "student") {
         openStudent(page);
@@ -341,10 +320,10 @@ $("#selectModal .paging .nextpage").on("click", function(e) {
 
 function resetDropDown() {
     $('#studentInfo').find("#grade option").remove();
-    selfAjax("get", "/admin/grade/getAll", null, function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function (data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(grade) {
+                data.forEach(function (grade) {
                     $("#studentInfo #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
                 });
             }
@@ -353,11 +332,13 @@ function resetDropDown() {
 };
 
 function renderExamAreas(examId) {
-    selfAjax("post", "/admin/examClassExamArea/examAreas", { examId: examId }, function(data) {
+    selfAjax("post", "/admin/examClassExamArea/examAreas", {
+        examId: examId
+    }, function (data) {
         if (data) {
             var d = $(document.createDocumentFragment());
             if (data && data.length > 0) {
-                data.forEach(function(examArea) {
+                data.forEach(function (examArea) {
                     d.append("<option value='" + examArea._id + "'>" + examArea.examAreaName + "</option>");
                 });
             } else {

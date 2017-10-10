@@ -48,10 +48,10 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
         type: db.BOOLEAN,
         defaultValue: false
     },
-    orderDate: {
-        type: db.DATE,
-        defaultValue: db.NOW
-    }, // 订单日期
+    // orderDate: {
+    //     type: db.DATE,
+    //     defaultValue: db.NOW
+    // }, // 订单日期
     CancelDate: {
         type: db.DATE,
         allowNull: true
@@ -93,7 +93,10 @@ AdminEnrollExam.getFilter = function (filter) {
 AdminEnrollExam.getFilters = function (filter) {
     filter.isDeleted = false;
     return AdminEnrollExam.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate', 'DESC']
+        ]
     });
 };
 
@@ -101,6 +104,9 @@ AdminEnrollExam.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return AdminEnrollExam.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate', 'DESC']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

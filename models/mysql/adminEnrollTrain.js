@@ -68,10 +68,10 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    orderDate: {
-        type: db.DATE,
-        defaultValue: db.NOW
-    },
+    // orderDate: {
+    //     type: db.DATE,
+    //     defaultValue: db.NOW
+    // },
     createdBy: {
         type: db.STRING(50),
         defaultValue: ''
@@ -138,7 +138,8 @@ AdminEnrollTrain.getFilter = function (filter) {
 AdminEnrollTrain.getFilters = function (filter) {
     filter.isDeleted = false;
     return AdminEnrollTrain.findAll({
-        'where': filter
+        'where': filter,
+        order: 'createdDate DESC'
     });
 };
 
@@ -146,6 +147,9 @@ AdminEnrollTrain.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return AdminEnrollTrain.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate', 'DESC']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

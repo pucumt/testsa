@@ -71,7 +71,7 @@ module.exports = function (app) {
 
     app.get('/admin/examCategory/getAllWithoutPage', checkLogin);
     app.get('/admin/examCategory/getAllWithoutPage', function (req, res) {
-        ExamCategory.getAllWithoutPage()
+        ExamCategory.getFilters({})
             .then(function (data) {
                 res.jsonp(data);
             });

@@ -202,21 +202,21 @@ module.exports = function (app) {
     app.get('/admin/trainClass/gradesubjectcategoryyear', checkLogin);
     app.get('/admin/trainClass/gradesubjectcategoryyear', function (req, res) {
         var objReturn = {};
-        var p1 = Grade.getAllWithoutPage()
+        var p1 = Grade.getFilters({})
             .then(function (grades) {
                 objReturn.grades = grades;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p2 = Subject.getAllWithoutPage()
+        var p2 = Subject.getFilters({})
             .then(function (subjects) {
                 objReturn.subjects = subjects;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p3 = Category.getAllWithoutPage()
+        var p3 = Category.getFilters({})
             .then(function (categorys) {
                 objReturn.categorys = categorys;
             })
@@ -241,21 +241,21 @@ module.exports = function (app) {
     app.get('/admin/trainClass/gradesubjectattribute', checkLogin);
     app.get('/admin/trainClass/gradesubjectattribute', function (req, res) {
         var objReturn = {};
-        var p1 = Grade.getAllWithoutPage()
+        var p1 = Grade.getFilters({})
             .then(function (grades) {
                 objReturn.grades = grades;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p2 = Subject.getAllWithoutPage()
+        var p2 = Subject.getFilters({})
             .then(function (subjects) {
                 objReturn.subjects = subjects;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p5 = ClassAttribute.getAllWithoutPage()
+        var p5 = ClassAttribute.getFilters({})
             .then(function (attributes) {
                 objReturn.attributes = attributes;
             })
@@ -395,10 +395,9 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
         if (req.body.school) {
@@ -424,16 +423,13 @@ module.exports = function (app) {
             }
         }
 
-        TrainClass.getAll(null, page, filter, function (err, trainClasss, total) {
-            if (err) {
-                trainClasss = [];
-            }
+        TrainClass.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                trainClasss: trainClasss,
-                total: total,
+                trainClasss: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + trainClasss.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });

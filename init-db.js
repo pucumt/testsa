@@ -173,6 +173,7 @@ function step3() {
                 entities.forEach(function (obj) {
                     var newObj = obj.toJSON();
                     newObj._id = newObj._id.toJSON();
+                    newObj.createdDate = newObj.orderDate;
 
                     // handle student discount
                     if (newObj.discount === null) {
@@ -228,6 +229,7 @@ function step4() {
             entities.forEach(function (obj) {
                 var newObj = obj.toJSON();
                 newObj._id = newObj._id.toJSON();
+                newObj.createdDate = newObj.orderDate;
 
                 // handle student discount
                 if (newObj.discount === null) {
@@ -396,7 +398,7 @@ function step7() {
                 if (newObj.mobile === null) {
                     delete newObj.mobile;
                 }
-
+                newObj.createdDate = newObj.orderDate;
                 if (newObj.scores && newObj.scores.length > 0) {
                     newObj.scores
                         .forEach(function (score) {

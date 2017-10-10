@@ -8,7 +8,7 @@ var model = require("../../model.js"),
 module.exports = function (app) {
     app.post('/admin/examClassExamArea/withAllexamArea', checkLogin);
     app.post('/admin/examClassExamArea/withAllexamArea', function (req, res) {
-        ExamArea.getAllWithoutPage()
+        ExamArea.getFilters({})
             .then(function (examAreas) {
                 ExamClassExamArea.getFilters({
                     examId: req.body.examId

@@ -71,7 +71,7 @@ module.exports = function (app) {
 
     app.get('/admin/subject/getAllWithoutPage', checkLogin);
     app.get('/admin/subject/getAllWithoutPage', function (req, res) {
-        Subject.getAllWithoutPage()
+        Subject.getFilters({})
             .then(function (subjects) {
                 res.jsonp(subjects);
             })

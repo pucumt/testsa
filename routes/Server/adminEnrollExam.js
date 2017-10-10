@@ -1,13 +1,14 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     AdminEnrollExam = model.adminEnrollExam,
+    AdminEnrollExamScore = model.adminEnrollExamScore,
     ExamClass = model.examClass,
     StudentInfo = model.studentInfo,
     StudentAccount = model.studentAccount,
     ClassRoom = model.classRoom,
     ExamClassExamArea = model.examClassExamArea,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/adminEnrollExamList', checkLogin);
@@ -49,16 +50,14 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.studentName) {
-            var reg = new RegExp(req.body.studentName, 'i')
+        if (req.body.studentName && req.body.studentName.trim()) {
             filter.studentName = {
-                $regex: reg
+                $like: `%${req.body.studentName.trim()}%`
             };
         }
-        if (req.body.className) {
-            var reg = new RegExp(req.body.className, 'i')
+        if (req.body.className && req.body.className.trim()) {
             filter.examName = {
-                $regex: reg
+                $like: `%${req.body.className.trim()}%`
             };
         }
         if (req.body.isSucceed) {
@@ -67,20 +66,18 @@ module.exports = function (app) {
         if (req.body.studentId) {
             filter.studentId = req.body.studentId;
         }
-        AdminEnrollExam.getAll(null, page, filter, function (err, adminEnrollExams, total) {
-            if (err) {
-                adminEnrollExams = [];
-            }
+        AdminEnrollExam.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                adminEnrollExams: adminEnrollExams,
-                total: total,
+                adminEnrollExams: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + adminEnrollExams.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
+    // 准考证查询，暂时没用到
     app.post('/admin/adminEnrollExam/searchCard', checkLogin);
     app.post('/admin/adminEnrollExam/searchCard', function (req, res) {
         var filter = {},
@@ -127,167 +124,55 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/admin/adminEnrollExam/add', checkLogin);
-    app.post('/admin/adminEnrollExam/add', function (req, res) {
-        var adminEnrollExam = new AdminEnrollExam({
-            studentId: req.body.studentId,
-            studentName: req.body.studentName,
-            mobile: req.body.mobile,
-            examId: req.body.examId,
-            examName: req.body.examName,
-            examCategoryId: req.body.examCategoryId,
-            examCategoryName: req.body.examCategoryName,
-            isSucceed: 1
-        });
-
-        return adminEnrollExam.save();
-    });
-
-    app.post('/admin/adminEnrollExam/edit', checkLogin);
-    app.post('/admin/adminEnrollExam/edit', function (req, res) {
-        var adminEnrollExam = new AdminEnrollExam({
-            studentId: req.body.studentId,
-            studentName: req.body.studentName,
-            mobile: req.body.mobile,
-            examId: req.body.examId,
-            examName: req.body.examName,
-            examCategoryId: req.body.examCategoryId,
-            examCategoryName: req.body.examCategoryName
-        });
-
-        adminEnrollExam.update(req.body.id, function (err, adminEnrollExam) {
-            if (err) {
-                adminEnrollExam = {};
-            }
-            res.jsonp(adminEnrollExam);
-        });
-    });
-
-    app.post('/admin/adminEnrollExam/delete', checkLogin);
-    app.post('/admin/adminEnrollExam/delete', function (req, res) {
-        AdminEnrollExam.delete(req.body.id, function (err, adminEnrollExam) {
-            if (err) {
-                res.jsonp({
-                    error: err
-                });
-                return;
-            }
-            res.jsonp({
-                sucess: true
-            });
-        });
-    });
-
-    app.post('/admin/adminEnrollExam/enroll', checkLogin);
-    app.post('/admin/adminEnrollExam/enroll', function (req, res) {
-        ExamClass.get(req.body.examId)
-            .then(function (examClass) {
-                if (examClass) {
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
-                        .then(function (enrollExam) {
-                            if (enrollExam) {
-                                res.jsonp({
-                                    error: "你已经报过名了，此课程不允许多次报名"
-                                });
-                                return;
-                            }
-                            ExamClass.enroll(req.body.examId)
-                                .then(function (result) {
-                                    if (result && result.ok && result.nModified == 1) {
-                                        //报名成功
-                                        var adminEnrollExam = new AdminEnrollExam({
-                                            studentId: req.body.studentId,
-                                            studentName: req.body.studentName,
-                                            mobile: req.body.mobile,
-                                            examId: req.body.examId,
-                                            examName: req.body.examName,
-                                            examCategoryId: req.body.examCategoryId,
-                                            examCategoryName: req.body.examCategoryName,
-                                            isSucceed: 1,
-                                            scores: examClass.subjects
-                                        });
-                                        adminEnrollExam.save()
-                                            .then(function (enrollExam) {
-                                                res.jsonp({
-                                                    sucess: true
-                                                });
-                                                return;
-                                            });
-                                    } else {
-                                        //报名失败
-                                        res.jsonp({
-                                            error: "报名失败"
-                                        });
-                                        return;
-                                    }
-                                });
-                        });
-                }
-            });
-    });
-
-    app.post('/admin/adminEnrollExam/hideEnroll', checkLogin);
-    app.post('/admin/adminEnrollExam/hideEnroll', function (req, res) {
-        ExamClass.get(req.body.examId)
-            .then(function (examClass) {
-                if (examClass) {
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
-                        .then(function (enrollExam) {
-                            if (enrollExam) {
-                                res.jsonp({
-                                    error: "你已经报过名了，此课程不允许多次报名"
-                                });
-                                return;
-                            }
-                            //报名成功
-                            var adminEnrollExam = new AdminEnrollExam({
-                                studentId: req.body.studentId,
-                                studentName: req.body.studentName,
-                                mobile: req.body.mobile,
-                                examId: req.body.examId,
-                                examName: req.body.examName,
-                                examCategoryId: req.body.examCategoryId,
-                                examCategoryName: req.body.examCategoryName,
-                                isSucceed: 1,
-                                isHide: true,
-                                scores: examClass.subjects
-                            });
-                            adminEnrollExam.save()
-                                .then(function (enrollExam) {
-                                    res.jsonp({
-                                        sucess: true
-                                    });
-                                    return;
-                                });
-                        });
-                }
-            });
-    });
-
     //examClassExamAreaId: examArea
     app.post('/admin/adminEnrollExam/enroll2', checkLogin);
     app.post('/admin/adminEnrollExam/enroll2', function (req, res) {
-        ExamClass.get(req.body.examId)
-            .then(function (examClass) {
-                if (examClass) {
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
-                        .then(function (enrollExam) {
-                            if (enrollExam) {
-                                res.jsonp({
-                                    error: "你已经报过名了，此课程不允许多次报名"
-                                });
-                                return;
-                            }
-                            ExamClassExamArea.enroll(req.body.examClassExamAreaId)
-                                .then(function (result) {
-                                    if (result && result.ok && result.nModified == 1) {
-                                        //报名成功
-                                        //更新总数，更新订单
-                                        ExamClass.enroll2(req.body.examId);
+        model.db.sequelize.query("select 1 from adminEnrollExams O join examClasss C \
+                on C._id=:id and C.isDeleted=false and O.examCategoryId=C.examCategoryId where O.studentId=:studentId and O.isDeleted=false", {
+                replacements: {
+                    id: req.body.examId,
+                    studentId: req.body.studentId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                if (orders.length > 0) {
+                    res.jsonp({
+                        error: "你已经报过名了，此课程不允许多次报名"
+                    });
+                    return;
+                }
 
-                                        ExamClassExamArea.get(req.body.examClassExamAreaId)
-                                            .then(function (examClassExamArea) {
-                                                var adminEnrollExam = new AdminEnrollExam({
+                ExamClassExamArea.getFilter({
+                        _id: req.body.examClassExamAreaId
+                    })
+                    .then(examClassExamArea => {
+                        // 1. 更新报名考场名额
+                        // 2. 更新总考试名额
+                        // 3. 插入订单
+                        model.db.sequelize.transaction(function (t1) {
+                            return ExamClassExamArea.update({
+                                    enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                                }, {
+                                    where: {
+                                        _id: req.body.examClassExamAreaId,
+                                        'enrollCount': model.db.sequelize.literal('`enrollCount`<`examCount`')
+                                    },
+                                    transaction: t1
+                                })
+                                .then(function (resultArea) {
+                                    if (resultArea.length && resultArea[0]) {
+                                        // 必须操作成功
+                                        return ExamClass.update({
+                                                enrollCount: model.db.sequelize.literal('`enrollCount` +1')
+                                            }, {
+                                                where: {
+                                                    _id: req.body.examId
+                                                },
+                                                transaction: t1
+                                            })
+                                            .then(function () {
+                                                return AdminEnrollExam.create({
                                                     studentId: req.body.studentId,
                                                     studentName: req.body.studentName,
                                                     mobile: req.body.mobile,
@@ -295,185 +180,166 @@ module.exports = function (app) {
                                                     examName: req.body.examName,
                                                     examCategoryId: req.body.examCategoryId,
                                                     examCategoryName: req.body.examCategoryName,
-                                                    isSucceed: 1,
-                                                    scores: examClass.subjects,
                                                     examAreaId: examClassExamArea.examAreaId,
                                                     examAreaName: examClassExamArea.examAreaName
+                                                }, {
+                                                    transaction: t1
                                                 });
-                                                adminEnrollExam.save()
-                                                    .then(function (enrollExam) {
-                                                        res.jsonp({
-                                                            sucess: true
-                                                        });
-                                                        return;
-                                                    });
                                             });
                                     } else {
-                                        //报名失败
-                                        res.jsonp({
-                                            error: "报名失败"
-                                        });
-                                        return;
+                                        return {
+                                            error: "已经报满了"
+                                        };
                                     }
                                 });
-                        });
-                }
-            });
-    });
-
-    app.post('/admin/adminEnrollExam/hideEnroll2', checkLogin);
-    app.post('/admin/adminEnrollExam/hideEnroll2', function (req, res) {
-        ExamClass.get(req.body.examId)
-            .then(function (examClass) {
-                if (examClass) {
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, req.body.examCategoryId, req.body.examId)
-                        .then(function (enrollExam) {
-                            if (enrollExam) {
-                                res.jsonp({
-                                    error: "你已经报过名了，此课程不允许多次报名"
-                                });
-                                return;
-                            }
-                            //报名成功
-                            ExamClassExamArea.get(req.body.examClassExamAreaId)
-                                .then(function (examClassExamArea) {
-                                    var adminEnrollExam = new AdminEnrollExam({
-                                        studentId: req.body.studentId,
-                                        studentName: req.body.studentName,
-                                        mobile: req.body.mobile,
-                                        examId: req.body.examId,
-                                        examName: req.body.examName,
-                                        examCategoryId: req.body.examCategoryId,
-                                        examCategoryName: req.body.examCategoryName,
-                                        isSucceed: 1,
-                                        isHide: true,
-                                        scores: examClass.subjects,
-                                        examAreaId: examClassExamArea.examAreaId,
-                                        examAreaName: examClassExamArea.examAreaName
-                                    });
-                                    adminEnrollExam.save()
-                                        .then(function (enrollExam) {
-                                            res.jsonp({
-                                                sucess: true
-                                            });
-                                            return;
-                                        });
-                                });
-                        });
-                }
-            });
-    });
-
-    app.post('/admin/adminEnrollExam/cancel', checkLogin);
-    app.post('/admin/adminEnrollExam/cancel', function (req, res) {
-        if (req.body.examAreaId) {
-            //mult exam areas
-            ExamClassExamArea.getFilter({
-                    examId: req.body.examId,
-                    examAreaId: req.body.examAreaId
-                })
-                .then(function (examClassExamArea) {
-                    if (examClassExamArea) { //mult exam areas
-                        ExamClassExamArea.cancel(examClassExamArea._id)
-                            .then(function (examClassExamAreaResult) {
-                                if (examClassExamAreaResult && examClassExamAreaResult.ok && examClassExamAreaResult.nModified == 1) {
-                                    ExamClass.cancel2(req.body.examId).then(function (examClassResult) {
-                                        if (examClassResult && examClassResult.ok && examClassResult.nModified == 1) {
-                                            AdminEnrollExam.cancel(req.body.id, function (err, adminEnrollExam) {
-                                                if (err) {
-                                                    res.jsonp({
-                                                        error: err
-                                                    });
-                                                    return;
-                                                }
-                                                res.jsonp({
-                                                    sucess: true
-                                                });
-                                            });
-                                        } else {
-                                            res.jsonp({
-                                                error: "取消总数失败"
-                                            });
-                                            return;
-                                        }
-                                    });
-                                } else {
-                                    res.jsonp({
-                                        error: "取消失败"
-                                    });
-                                    return;
-                                }
-                            });
-                    }
-                });
-        } else {
-            //only one exam areas
-            ExamClass.cancel(req.body.examId)
-                .then(function (examClass) {
-                    if (examClass && examClass.ok && examClass.nModified == 1) {
-                        AdminEnrollExam.cancel(req.body.id, function (err, adminEnrollExam) {
-                            if (err) {
-                                res.jsonp({
-                                    error: err
-                                });
+                        }).then(function (result) {
+                            if (result.error) {
+                                res.jsonp(result);
                                 return;
                             }
                             res.jsonp({
                                 sucess: true
                             });
+                        }).catch(function () {
+                            res.jsonp({
+                                error: "报名失败"
+                            });
                         });
-                    } else {
-                        res.jsonp({
-                            error: "取消失败"
-                        });
-                        return;
-                    }
-                });
+                    });
+            });
+    });
 
-        }
+    // TBD
+    app.post('/admin/adminEnrollExam/hideEnroll2', checkLogin);
+    app.post('/admin/adminEnrollExam/hideEnroll2', function (req, res) {
+        model.db.sequelize.query("select 1 from adminEnrollExams O join examClasss C \
+        on C._id=:id and C.isDeleted=false and O.examCategoryId=C.examCategoryId where O.studentId=:studentId and O.isDeleted=false", {
+                replacements: {
+                    id: req.body.examId,
+                    studentId: req.body.studentId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                if (orders.length > 0) {
+                    res.jsonp({
+                        error: "你已经报过名了，此课程不允许多次报名"
+                    });
+                    return;
+                }
+
+                ExamClassExamArea.getFilter({
+                        _id: req.body.examClassExamAreaId
+                    })
+                    .then(examClassExamArea => {
+                        // 直接插入订单，不更改名额
+                        return AdminEnrollExam.create({
+                            studentId: req.body.studentId,
+                            studentName: req.body.studentName,
+                            mobile: req.body.mobile,
+                            examId: req.body.examId,
+                            examName: req.body.examName,
+                            isHide: true,
+                            examCategoryId: req.body.examCategoryId,
+                            examCategoryName: req.body.examCategoryName,
+                            examAreaId: examClassExamArea.examAreaId,
+                            examAreaName: examClassExamArea.examAreaName
+                        }).then(function () {
+                            res.jsonp({
+                                sucess: true
+                            });
+                        }).catch(function () {
+                            res.jsonp({
+                                error: "报名失败"
+                            });
+                        });
+                    });
+            });
+    });
+
+    app.post('/admin/adminEnrollExam/cancel', checkLogin);
+    app.post('/admin/adminEnrollExam/cancel', function (req, res) {
+        // 1. cancel exam area relation count
+        // 2. cancel examclass count
+        // 3. cancel exam order
+        model.db.sequelize.transaction(function (t1) {
+            return ExamClassExamArea.update({
+                    enrollCount: model.db.sequelize.literal('`enrollCount` -1')
+                }, {
+                    where: {
+                        examId: req.body.examId,
+                        examAreaId: req.body.examAreaId,
+                        isDeleted: false
+                    },
+                    transaction: t1
+                })
+                .then(function () {
+                    return ExamClass.update({
+                            enrollCount: model.db.sequelize.literal('`enrollCount` -1')
+                        }, {
+                            where: {
+                                _id: req.body.examId
+                            },
+                            transaction: t1
+                        })
+                        .then(function () {
+                            return AdminEnrollExam.update({
+                                isDeleted: true
+                            }, {
+                                where: {
+                                    _id: req.body.id
+                                },
+                                transaction: t1
+                            });
+                        });
+                });
+        }).then(function () {
+            res.jsonp({
+                sucess: true
+            });
+        }).catch(function () {
+            res.jsonp({
+                error: "取消失败"
+            });
+        });
     });
 
     app.post('/admin/adminEnrollExam/changeStudent', checkLogin);
     app.post('/admin/adminEnrollExam/changeStudent', function (req, res) {
-        var exam = new AdminEnrollExam({
-            studentId: req.body.studentId,
-            studentName: req.body.studentName
-        });
-        exam.update(req.body.id, function () {
-            res.jsonp({
-                sucess: true
+        AdminEnrollExam.update({
+                studentId: req.body.studentId,
+                studentName: req.body.studentName
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/adminEnrollExam/searchExamScore', checkLogin);
     app.post('/admin/adminEnrollExam/searchExamScore', function (req, res) {
-        AdminEnrollExam.get(req.body.id)
-            .then(function (examOrder) {
-                if (examOrder) {
-                    ExamClass.get(examOrder.examId)
-                        .then(function (examClass) {
-                            var result = examOrder.toJSON();
-                            result.examDate = examClass.examDate;
-                            result.examTime = examClass.examTime;
-                            return res.jsonp(result);
-                        });
-                }
+        model.db.sequelize.query("select C.examDate, C.examTime, O.* from adminEnrollExams O left join examClasss C on O.examId=C._id where \
+        O._id=:id and C.isDeleted=false", {
+                replacements: {
+                    id: req.body.id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(results => {
+                var exam = results[0];
+                AdminEnrollExamScore.getFilters({
+                        examOrderId: exam._id
+                    })
+                    .then(scores => {
+                        exam.scores = scores;
+                        res.jsonp(exam);
+                    });
             });
-    });
-
-    app.post('/admin/adminEnrollExam/ScoreInput', checkLogin);
-    app.post('/admin/adminEnrollExam/ScoreInput', function (req, res) {
-        var adminEnrollExam = new AdminEnrollExam({
-            score: req.body.score,
-        });
-
-        adminEnrollExam.update(req.body.id, function (err, adminEnrollExam) {
-            if (err) {
-                adminEnrollExam = {};
-            }
-            res.jsonp(adminEnrollExam);
-        });
     });
 
     function isEmptyObject(e) {

@@ -68,10 +68,10 @@ const AdminEnrollTrainHistory = db.defineModel('adminEnrollTrainHistorys', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    orderDate: {
-        type: db.DATE,
-        defaultValue: db.NOW
-    },
+    // orderDate: {
+    //     type: db.DATE,
+    //     defaultValue: db.NOW
+    // },
     createdBy: {
         type: db.STRING(50),
         defaultValue: ''

@@ -4,7 +4,7 @@ var model = require("../../model.js"),
     AbsentClass = model.absentClass,
     auth = require("./authRollCall"),
     moment = require("moment"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/adminRollCallList', checkLogin);
@@ -31,16 +31,13 @@ module.exports = function (app) {
             filter.isCheck = (req.body.isChecked == "1");
         }
 
-        AbsentStudents.getAll(null, page, filter, function (err, absentStudents, total) {
-            if (err) {
-                absentStudents = [];
-            }
+        AbsentStudents.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                absentStudents: absentStudents,
-                total: total,
+                absentStudents: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + absentStudents.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
@@ -53,9 +50,11 @@ module.exports = function (app) {
         if (req.body.isCheck == "1") {
             option.isCheck = true;
         }
-        var abStudent = new AbsentStudents(option);
-
-        abStudent.update(req.body.id)
+        AbsentStudents.update(option, {
+                where: {
+                    _id: req.body.id
+                }
+            })
             .then(function (result) {
                 res.jsonp({
                     sucess: true
@@ -91,40 +90,47 @@ module.exports = function (app) {
             $lte: dayStr + " " + req.body.endDate
         };
 
-        AbsentClass.getAll(null, page, filter, function (err, absentClasses, total) {
-            if (err) {
-                absentClasses = [];
-            }
+        AbsentClass.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                absentClasses: absentClasses,
-                total: total,
+                absentClasses: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 50 + absentClasses.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
     app.post('/admin/adminRollCallClassList/cancel', checkLogin);
     app.post('/admin/adminRollCallClassList/cancel', function (req, res) {
-        AbsentClass.delete({
-            _id: req.body.id
-        }).then(function () {
-            res.jsonp({
-                sucess: true
+        AbsentClass.update({
+                isDeleted: true
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/adminRollCallClassList/recover', checkLogin);
     app.post('/admin/adminRollCallClassList/recover', function (req, res) {
-        AbsentClass.recover({
-            _id: req.body.id
-        }).then(function () {
-            res.jsonp({
-                sucess: true
+        AbsentClass.update({
+                isDeleted: false
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/adminRollCallClassList/schoolArea', checkLogin);

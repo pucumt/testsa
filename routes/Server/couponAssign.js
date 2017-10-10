@@ -8,7 +8,9 @@ var model = require("../../model.js"),
 module.exports = function (app) {
     app.get('/admin/couponAssign/:id', checkLogin);
     app.get('/admin/couponAssign/:id', function (req, res) {
-        Coupon.get(req.params.id).then(function (coupon) {
+        Coupon.getFilter({
+            _id: req.params.id
+        }).then(function (coupon) {
             if (coupon) {
                 res.render('Server/couponAssign.html', {
                     title: '>优惠券分配',
@@ -145,27 +147,30 @@ module.exports = function (app) {
         if (req.body.name) {
             filter.studentName = req.body.name;
         }
-        CouponAssign.getAll(null, page, filter, function (err, couponAssigns, total) {
-            if (err) {
-                couponAssigns = [];
-            }
+        CouponAssign.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                couponAssigns: couponAssigns,
-                total: total,
+                couponAssigns: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + couponAssigns.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
     app.post('/admin/couponAssignList/withoutpage/onlystudentId', checkLogin);
     app.post('/admin/couponAssignList/withoutpage/onlystudentId', function (req, res) {
-        var filter = {};
+        var filter = {
+            isDeleted: false
+        };
         if (req.body.couponId) {
             filter.couponId = req.body.couponId;
         }
-        CouponAssign.getAllStudentIdWithoutPage(filter, function (err, couponAssigns) {
+
+        CouponAssign.findAll({
+            where: filter,
+            attributes: ['studentId']
+        }).then(function (couponAssigns) {
             res.jsonp(couponAssigns);
         });
     });
@@ -199,16 +204,13 @@ module.exports = function (app) {
             $gte: now
         };
 
-        CouponAssign.getAll(null, page, filter, function (err, couponAssigns, total) {
-            if (err) {
-                couponAssigns = [];
-            }
+        CouponAssign.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                couponAssigns: couponAssigns,
-                total: total,
+                couponAssigns: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + couponAssigns.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });

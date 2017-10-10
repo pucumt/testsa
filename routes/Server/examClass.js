@@ -253,23 +253,19 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
 
-        ExamClass.getAll(null, page, filter, function (err, examClasss, total) {
-            if (err) {
-                examClasss = [];
-            }
+        ExamClass.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                examClasss: examClasss,
-                total: total,
+                examClasss: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + examClasss.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });

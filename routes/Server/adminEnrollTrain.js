@@ -60,7 +60,7 @@ module.exports = function (app) {
             filter.trainId = req.body.trainId;
         }
         if (req.body.isSucceed) {
-            filter.isSucceed = req.body.isSucceed;
+            filter.isSucceed = (req.body.isSucceed == "1" ? true : false);
         }
         if (req.body.isPayed) {
             filter.isPayed = req.body.isPayed;
@@ -82,6 +82,8 @@ module.exports = function (app) {
                 isFirstPage: (page - 1) == 0,
                 isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
+        }).catch(err => {
+
         });
     });
 
@@ -126,100 +128,81 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/admin/adminEnrollTrain/add', checkLogin);
-    app.post('/admin/adminEnrollTrain/add', function (req, res) {
-        var adminEnrollTrain = new AdminEnrollTrain({
-            name: req.body.name,
-            address: req.body.address
-        });
-
-        adminEnrollTrain.save(function (err, adminEnrollTrain) {
-            if (err) {
-                adminEnrollTrain = {};
-            }
-            res.jsonp(adminEnrollTrain);
-        });
-    });
-
     app.post('/admin/adminEnrollTrain/changecomment', checkLogin);
     app.post('/admin/adminEnrollTrain/changecomment', function (req, res) {
         var option = {
             comment: req.body.comment
         };
-        var adminEnrollTrain = new AdminEnrollTrain(option);
-
-        adminEnrollTrain.update(req.body.id, function (err, adminEnrollTrain) {
-            if (err) {
-                adminEnrollTrain = {};
-                res.jsonp({
-                    error: "更新出错了"
-                });
+        AdminEnrollTrain.update(option, {
+            where: {
+                _id: req.body.id
             }
+        }).then(result => {
             res.jsonp({
                 sucess: true
+            });
+        }).catch(err => {
+            res.jsonp({
+                error: "更新出错了"
             });
         });
     });
 
+    // 学生信息由于某些原因不正确了，需要重新设置
     app.post('/admin/adminEnrollTrain/changeStudent', checkLogin);
     app.post('/admin/adminEnrollTrain/changeStudent', function (req, res) {
-        AdminEnrollTrain.get(req.body.id)
-            .then(function (order) {
+        AdminEnrollTrain.getFilter({
+                _id: req.body.id
+            })
+            .then(order => {
                 if (order) {
                     var history = order.toJSON();
                     history.historyid = history._id;
                     history.createdBy = req.session.admin._id;
                     history._id = null;
-                    var adminEnrollTrainHistory = new AdminEnrollTrainHistory(history);
-                    return adminEnrollTrainHistory.save()
-                        .then(function (history) {
-                            if (history) {
+                    // 1. 生成历史记录
+                    // 2. 更新订单
+                    model.db.sequelize.transaction(function (t1) {
+                        return AdminEnrollTrainHistory.create(history, {
+                                transaction: t1
+                            })
+                            .then(function (resultArea) {
                                 var option = {
                                     studentId: req.body.studentId,
                                     studentName: req.body.studentName,
                                 };
-                                var adminEnrollTrain = new AdminEnrollTrain(option);
 
-                                return adminEnrollTrain.update(req.body.id, function (err, adminEnrollTrain) {
-                                    if (err) {
-                                        adminEnrollTrain = {};
-                                        res.jsonp({
-                                            error: "更新出错了"
-                                        });
-                                    }
-                                    res.jsonp({
-                                        sucess: true
-                                    });
+                                return AdminEnrollTrain.update(option, {
+                                    where: {
+                                        _id: req.body.id
+                                    },
+                                    transaction: t1
                                 });
-                            }
-                            return res.jsonp({
-                                error: "订单历史保存失败"
                             });
+                    }).then(function (result) {
+                        res.jsonp({
+                            sucess: true
                         });
+                    }).catch(function () {
+                        res.jsonp({
+                            error: "修改失败"
+                        });
+                    });
+                } else {
+                    return res.jsonp({
+                        error: "没找到订单"
+                    });
                 }
-                return res.jsonp({
-                    error: "没找到订单"
-                });
             });
     });
 
-    app.post('/admin/adminEnrollTrain/delete', checkLogin);
-    app.post('/admin/adminEnrollTrain/delete', function (req, res) {
-        AdminEnrollTrain.delete(req.body.id, function (err, adminEnrollTrain) {
-            if (err) {
-                res.jsonp({
-                    error: err
-                });
-                return;
-            }
-            res.jsonp({
-                sucess: true
-            });
-        });
-    });
-
+    // 报名详细方法,管理员可以超员报名
     function enroll(req, res) {
-        AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.trainId)
+        AdminEnrollTrain.getFilter({
+                studentId: req.body.studentId,
+                trainId: req.body.trainId,
+                isSucceed: 1
+            })
             .then(function (enrollTrain) {
                 if (enrollTrain) {
                     res.jsonp({
@@ -228,95 +211,122 @@ module.exports = function (app) {
                     return;
                 }
 
-                TrainClass.adminEnroll(req.body.trainId)
-                    .then(function (trainClassResult) {
-                        if (trainClassResult && trainClassResult.ok && trainClassResult.nModified == 1) {
-                            //报名成功
-                            TrainClass.get(req.body.trainId).then(function (trainClass) {
-                                if (trainClass.enrollCount == trainClass.totalStudentCount) {
-                                    TrainClass.full(req.body.trainId);
-                                    //updated to full
-                                }
-                            });
-
-                            var adminEnrollTrain = new AdminEnrollTrain({
-                                studentId: req.body.studentId,
-                                studentName: req.body.studentName,
-                                mobile: req.body.mobile,
-                                trainId: req.body.trainId,
-                                trainName: req.body.trainName,
-                                attributeId: req.body.attributeId,
-                                attributeName: req.body.attributeName,
-                                trainPrice: req.body.trainPrice,
-                                materialPrice: req.body.materialPrice,
-                                discount: req.body.discount,
-                                totalPrice: req.body.totalPrice,
-                                realMaterialPrice: req.body.realMaterialPrice,
-                                isSucceed: 1,
-                                comment: req.body.comment,
-                                createdBy: req.session.admin._id,
-                                schoolId: req.body.schoolId,
-                                schoolArea: req.body.schoolArea
-                            });
-                            adminEnrollTrain.save()
-                                .then(function (enrollExam) {
-                                    //修改优惠券状态
-                                    if (req.body.couponId) {
-                                        CouponAssign.get(req.body.couponId)
-                                            .then(function (couponAssign) {
-                                                if (couponAssign) {
-                                                    CouponAssign.use(req.body.couponId, enrollExam._id);
-                                                    res.jsonp({
-                                                        sucess: true,
-                                                        orderId: enrollExam._id
-                                                    });
-                                                    return;
-                                                } else {
-                                                    //报名3科减
-                                                    Coupon.get(req.body.couponId)
-                                                        .then(function (coupon) {
-                                                            var couponAssign = new CouponAssign({
-                                                                couponId: coupon._id,
-                                                                couponName: coupon.name,
-                                                                gradeId: coupon.gradeId,
-                                                                gradeName: coupon.gradeName,
-                                                                subjectId: coupon.subjectId,
-                                                                subjectName: coupon.subjectName,
-                                                                reducePrice: coupon.reducePrice,
-                                                                couponStartDate: coupon.couponStartDate,
-                                                                couponEndDate: coupon.couponEndDate,
-                                                                studentId: req.body.studentId,
-                                                                studentName: req.body.studentName,
-                                                                isUsed: true,
-                                                                orderId: enrollExam._id,
-                                                                createdBy: req.session.admin._id
-                                                            });
-                                                            couponAssign.save().then(function (couponAssign) {
-                                                                res.jsonp({
-                                                                    sucess: true,
-                                                                    orderId: enrollExam._id
-                                                                });
-                                                                return;
-                                                            });
+                // 1. 修改报名人数
+                // 2. 如果报满修改字段为满员 (may useless)
+                // 3. 添加新订单
+                model.db.sequelize.transaction(function (t1) {
+                    return TrainClass.update({
+                            enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                        }, {
+                            where: {
+                                _id: req.body.trainId
+                            },
+                            transaction: t1
+                        })
+                        .then(function () {
+                            return TrainClass.update({
+                                    isFull: true
+                                }, {
+                                    where: {
+                                        _id: req.body.trainId,
+                                        enrollCount: model.db.sequelize.literal('`enrollCount`>=`totalStudentCount`')
+                                    },
+                                    transaction: t1
+                                })
+                                .then(function () {
+                                    if (global) {
+                                        return AdminEnrollTrain.create({
+                                            studentId: req.body.studentId,
+                                            studentName: req.body.studentName,
+                                            mobile: req.body.mobile,
+                                            trainId: req.body.trainId,
+                                            trainName: req.body.trainName,
+                                            attributeId: req.body.attributeId,
+                                            attributeName: req.body.attributeName,
+                                            trainPrice: req.body.trainPrice,
+                                            materialPrice: req.body.materialPrice,
+                                            discount: req.body.discount,
+                                            totalPrice: req.body.totalPrice,
+                                            realMaterialPrice: req.body.realMaterialPrice,
+                                            comment: req.body.comment,
+                                            createdBy: req.session.admin._id,
+                                            schoolId: req.body.schoolId,
+                                            schoolArea: req.body.schoolArea,
+                                            yearId: global.currentYear._id,
+                                            yearName: global.currentYear.name
+                                        }, {
+                                            transaction: t1
+                                        }).then(order => {
+                                            if (req.body.couponId) {
+                                                // 假定是优惠券的ID而不是分配好的优惠券
+                                                return Coupon.getFilter({
+                                                    _id: req.body.couponId
+                                                }).then(coupon => {
+                                                    if (coupon) { // 报名3科减
+                                                        return CouponAssign.create({
+                                                            couponId: coupon._id,
+                                                            couponName: coupon.name,
+                                                            gradeId: coupon.gradeId,
+                                                            gradeName: coupon.gradeName,
+                                                            subjectId: coupon.subjectId,
+                                                            subjectName: coupon.subjectName,
+                                                            reducePrice: coupon.reducePrice,
+                                                            couponStartDate: coupon.couponStartDate,
+                                                            couponEndDate: coupon.couponEndDate,
+                                                            studentId: req.body.studentId,
+                                                            studentName: req.body.studentName,
+                                                            isUsed: true,
+                                                            orderId: order._id,
+                                                            createdBy: req.session.admin._id
+                                                        }).then(assign => {
+                                                            return order;
                                                         });
-                                                }
-                                            });
-                                    } else {
-                                        res.jsonp({
-                                            sucess: true,
-                                            orderId: enrollExam._id
+                                                    } else {
+                                                        // 分配好的优惠券, couponId 就是assignId
+                                                        return CouponAssign.getFilter({
+                                                                _id: req.body.couponId,
+                                                                studentId: req.body.studentId,
+                                                                isDeleted: false,
+                                                                isUsed: false
+                                                            })
+                                                            .then(function (couponAssign) {
+                                                                if (couponAssign) {
+                                                                    // 优惠券就是真实未使用的
+                                                                    return CouponAssign.update({
+                                                                        isUsed: true,
+                                                                        orderId: order._id
+                                                                    }, {
+                                                                        where: {
+                                                                            _id: couponAssign._id
+                                                                        },
+                                                                        transaction: t1
+                                                                    }).then(result => {
+                                                                        return order;
+                                                                    });
+                                                                } else {
+                                                                    // 优惠券状态更改,报名失败
+                                                                    throw new Error("优惠券状态发生更改");
+                                                                }
+                                                            });
+                                                    }
+                                                });
+                                            } else {
+                                                return order;
+                                            }
                                         });
-                                        return;
                                     }
                                 });
-                        } else {
-                            //报名失败
-                            res.jsonp({
-                                error: "报名失败,很可能报满"
-                            });
-                            return;
-                        }
+                        });
+                }).then(function (order) {
+                    res.jsonp({
+                        sucess: true,
+                        orderId: order._id
                     });
+                }).catch(function (err) {
+                    res.jsonp({
+                        error: "报名失败"
+                    });
+                });
             });
     };
 
@@ -361,6 +371,7 @@ module.exports = function (app) {
             }
         });
     };
+
     app.post('/admin/adminEnrollTrain/enroll', checkLogin);
     app.post('/admin/adminEnrollTrain/enroll', enroll);
 
@@ -375,29 +386,42 @@ module.exports = function (app) {
             isSucceed: 1
         }).then(function (order) {
             if (order) {
-                TrainClass.cancel(req.body.trainId)
-                    .then(function (trainClass) {
-                        if (trainClass && trainClass.ok && trainClass.nModified == 1) {
-                            AdminEnrollTrain.cancel(req.body.id, req.session.admin._id, function (err, adminEnrollTrain) {
-                                if (err) {
-                                    res.jsonp({
-                                        error: err
-                                    });
-                                    return;
-                                }
-                                res.jsonp({
-                                    sucess: true
-                                });
-                                //send message to xingye
-                                payHelper.closeOrder(req.body.id);
+                // 1. 修改课程人数
+                // 2. 取消订单
+                model.db.sequelize.transaction(function (t1) {
+                    return TrainClass.update({
+                            enrollCount: model.db.sequelize.literal('`enrollCount`-1')
+                        }, {
+                            where: {
+                                _id: req.body.trainId
+                            },
+                            transaction: t1
+                        })
+                        .then(function () {
+                            return AdminEnrollTrain.update({
+                                isSucceed: 9,
+                                cancelledBy: req.session.admin._id,
+                                cancelDate: new Date()
+                            }, {
+                                where: {
+                                    _id: req.body.id
+                                },
+                                transaction: t1
                             });
-                        } else {
-                            res.jsonp({
-                                error: "取消失败"
-                            });
-                            return;
-                        }
+                        });
+                }).then(function (order) {
+                    //send message to xingye
+                    payHelper.closeOrder(req.body.id);
+
+                    res.jsonp({
+                        sucess: true,
+                        orderId: order._id
                     });
+                }).catch(function (err) {
+                    res.jsonp({
+                        error: "取消失败"
+                    });
+                });
             } else {
                 res.jsonp({
                     error: "取消失败，或许订单已经取消"
@@ -643,7 +667,9 @@ module.exports = function (app) {
 
     app.get('/admin/payList/:id', checkLogin);
     app.get('/admin/payList/:id', function (req, res) {
-        AdminEnrollTrain.get(req.params.id)
+        AdminEnrollTrain.getFilter({
+                _id: req.params.id
+            })
             .then(function (trainOrder) {
                 res.render('Server/payList.html', {
                     title: '>订单支付',
@@ -655,14 +681,19 @@ module.exports = function (app) {
 
     app.post('/admin/adminEnrollTrain/pay', checkLogin);
     app.post('/admin/adminEnrollTrain/pay', function (req, res) {
-        AdminEnrollTrain.pay(req.body.id, req.body.payWay)
-            .then(function (result) {
-                if (result && result.nModified == 1) {
-                    res.jsonp({
-                        sucess: true
-                    });
-                    return;
+        AdminEnrollTrain.update({
+                isPayed: true,
+                payWay: req.body.payWay
+            }, {
+                where: {
+                    _id: req.body.id
                 }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            }).catch(function () {
                 res.jsonp({
                     error: "付款失败"
                 });
@@ -752,7 +783,9 @@ module.exports = function (app) {
             isPayed: true,
             isSucceed: 1
         }
-        AdminEnrollTrain.getCount(filter)
+        AdminEnrollTrain.count({
+                where: filter
+            })
             .then(function (result) {
                 if (result && result >= 2) {
                     Coupon.getFilter({
@@ -864,10 +897,12 @@ module.exports = function (app) {
 
     app.post('/admin/adminEnrollTrain/getorder', checkLogin);
     app.post('/admin/adminEnrollTrain/getorder', function (req, res) {
-        AdminEnrollTrain.get(req.body.id)
-            .then(function (adminEnrollTrain) {
-                if (adminEnrollTrain) {
-                    res.jsonp(adminEnrollTrain);
+        AdminEnrollTrain.getFilter({
+                _id: req.body.id
+            })
+            .then(function (result) {
+                if (result) {
+                    res.jsonp(result);
                 } else {
                     res.jsonp({
                         error: "没找到订单"
