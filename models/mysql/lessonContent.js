@@ -16,10 +16,6 @@ const LessonContent = db.defineModel('lessonContents', {
         type: db.INTEGER,
         defaultValue: 0
     }, //0 content 1 word 2 sentence
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0

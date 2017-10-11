@@ -53,7 +53,9 @@ module.exports = function (app) {
     app.post('/admin/classRoom/delete', checkLogin);
     app.post('/admin/classRoom/delete', function (req, res) {
         ClassRoom.update({
-            isDeleted: true
+            isDeleted: true,
+            deletedBy: req.session.admin._id,
+            deletedDate: new Date()
         }, {
             where: {
                 _id: req.body.id

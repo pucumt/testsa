@@ -11,10 +11,6 @@ const ClassRoom = db.defineModel('classRooms', {
         type: db.INTEGER,
         defaultValue: 0
     },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     schoolId: {
         type: db.STRING(50),
         defaultValue: ''

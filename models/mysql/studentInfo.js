@@ -31,10 +31,6 @@ const StudentInfo = db.defineModel('studentInfos', {
         type: db.BOOLEAN,
         defaultValue: false
     }, //0 男 1 女
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     accountId: {
         type: db.STRING(50),
         defaultValue: ""
@@ -50,18 +46,6 @@ const StudentInfo = db.defineModel('studentInfos', {
     gradeName: {
         type: db.STRING(50),
         defaultValue: ""
-    },
-    createdBy: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    deletedBy: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    deleteDate: {
-        type: db.DATE,
-        allowNull: true
     }
 });
 module.exports = StudentInfo;

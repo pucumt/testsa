@@ -48,11 +48,7 @@ const Coupon = db.defineModel('coupons', {
     isPublished: {
         type: db.BOOLEAN,
         defaultValue: false
-    }, // 只有发布了的优惠券才能使用
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    }
+    } // 只有发布了的优惠券才能使用
 });
 module.exports = Coupon;
 

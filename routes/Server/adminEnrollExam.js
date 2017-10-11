@@ -284,7 +284,9 @@ module.exports = function (app) {
                         })
                         .then(function () {
                             return AdminEnrollExam.update({
-                                isDeleted: true
+                                isDeleted: true,
+                                deletedBy: req.session.admin._id,
+                                deletedDate: new Date()
                             }, {
                                 where: {
                                     _id: req.body.id

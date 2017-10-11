@@ -44,18 +44,6 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
         type: db.INTEGER,
         defaultValue: 0
     }, // 0 cash 1 offline card 8 online zhifubao 9 online weixin 
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
-    // orderDate: {
-    //     type: db.DATE,
-    //     defaultValue: db.NOW
-    // }, // 订单日期
-    CancelDate: {
-        type: db.DATE,
-        allowNull: true
-    }, // 取消日期
     examAreaId: {
         type: db.STRING(50),
         defaultValue: ''
@@ -63,14 +51,6 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
     examAreaName: {
         type: db.STRING(50),
         defaultValue: ''
-    },
-    createdBy: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    deletedBy: {
-        type: db.STRING(50),
-        defaultValue: ""
     },
     isHide: {
         type: db.BOOLEAN,

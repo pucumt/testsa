@@ -17,6 +17,37 @@ module.exports = function (app) {
 
     app.post('/admin/examClass/add', checkLogin);
     app.post('/admin/examClass/add', function (req, res) {
+        // 1. 添加考试课程
+        // 2. 添加考试科目
+        // 3. 添加考试场地
+        model.db.sequelize.transaction(function (t1) {
+
+            return AdminEnrollTrainHistory.create(history, {
+                    transaction: t1
+                })
+                .then(function (resultArea) {
+                    var option = {
+                        studentId: req.body.studentId,
+                        studentName: req.body.studentName,
+                    };
+
+                    return AdminEnrollTrain.update(option, {
+                        where: {
+                            _id: req.body.id
+                        },
+                        transaction: t1
+                    });
+                });
+        }).then(function (result) {
+            res.jsonp({
+                sucess: true
+            });
+        }).catch(function () {
+            res.jsonp({
+                error: "修改失败"
+            });
+        });
+
         var examClass = new ExamClass({
             name: req.body.name,
             examDate: req.body.examDate,
@@ -64,6 +95,8 @@ module.exports = function (app) {
                 res.jsonp(examClass);
             }
         });
+
+
     });
 
     app.post('/admin/examClass/edit', checkLogin);

@@ -10,10 +10,6 @@ const ExamArea = db.defineModel('examAreas', {
     address: {
         type: db.STRING(100),
         defaultValue: ""
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = ExamArea;

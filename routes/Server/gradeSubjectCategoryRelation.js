@@ -17,7 +17,7 @@ module.exports = function (app) {
 
     app.post('/admin/gradeSubjectCategoryRelation/save', checkLogin);
     app.post('/admin/gradeSubjectCategoryRelation/save', function (req, res) {
-        ///content
+        // content
         var newCategories = JSON.parse(req.body.newCategories),
             removeCategories = JSON.parse(req.body.removeCategories),
             gradeId = req.body.gradeId,
@@ -56,15 +56,17 @@ module.exports = function (app) {
         var result = {};
 
         var p0 = GradeSubjectCategoryRelation.getFilters({
-            gradeId: req.body.gradeId,
-            subjectId: req.body.subjectId
-        }).then(function (relations) {
-            result.relations = relations;
-        });
+                gradeId: req.body.gradeId,
+                subjectId: req.body.subjectId
+            })
+            .then(function (relations) {
+                result.relations = relations;
+            });
 
-        var p1 = Category.getFilters({}).then(function (categories) {
-            result.categories = categories;
-        });
+        var p1 = Category.getFilters({})
+            .then(function (categories) {
+                result.categories = categories;
+            });
 
         Promise.all([p0, p1]).then(function () {
             res.jsonp(result);

@@ -53,11 +53,7 @@ const CouponAssign = db.defineModel('couponAssigns', {
     orderId: {
         type: db.STRING(50),
         defaultValue: ''
-    }, //just used in train class now
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    }
+    } //just used in train class now
 });
 module.exports = CouponAssign;
 

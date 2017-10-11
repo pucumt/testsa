@@ -2,7 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Book = model.book,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/adminBookList', checkLogin);
@@ -25,17 +25,16 @@ module.exports = function (app) {
                         error: "同名课本已经存在！"
                     });
                 } else {
-                    var book = new Book({
-                        name: req.body.name,
-                        sequence: req.body.sequence,
-                        createdBy: req.session.admin._id
-                    });
-
-                    book.save().then(function (result) {
-                        if (result) {
-                            res.jsonp(book);
-                        }
-                    });
+                    Book.create({
+                            name: req.body.name,
+                            sequence: req.body.sequence,
+                            createdBy: req.session.admin._id
+                        })
+                        .then(function (result) {
+                            if (result) {
+                                res.jsonp(result);
+                            }
+                        });
                 }
             });
     });
@@ -54,12 +53,14 @@ module.exports = function (app) {
                         error: "同名课本已经存在！"
                     });
                 } else {
-                    var book = new Book({
-                        name: req.body.name,
-                        sequence: req.body.sequence
-                    });
-
-                    book.update(req.body.id)
+                    Book.update({
+                            name: req.body.name,
+                            sequence: req.body.sequence
+                        }, {
+                            where: {
+                                _id: req.body.id
+                            }
+                        })
                         .then(function () {
                             res.jsonp({
                                 sucess: true
@@ -71,37 +72,41 @@ module.exports = function (app) {
 
     app.post('/admin/book/delete', checkLogin);
     app.post('/admin/book/delete', function (req, res) {
-        Book.delete(req.body.id, req.session.admin._id).then(function (result) {
-            res.jsonp({
-                sucess: true
+        Book.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/bookList/search', checkLogin);
     app.post('/admin/bookList/search', function (req, res) {
-
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
 
-        Book.getAll(null, page, filter, function (err, books, total) {
-            if (err) {
-                books = [];
-            }
+        Book.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                books: books,
-                total: total,
+                books: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + books.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });

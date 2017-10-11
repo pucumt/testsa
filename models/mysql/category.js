@@ -11,11 +11,7 @@ const Category = db.defineModel('categorys', {
     grade: {
         type: db.INTEGER,
         defaultValue: 0
-    }, // 基础班0 培优班5 通中预备10 通中15。可以下调
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    }
+    } // 基础班0 培优班5 通中预备10 通中15。可以下调
 });
 module.exports = Category;
 

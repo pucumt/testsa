@@ -27,10 +27,6 @@ const StudentLessonScore = db.defineModel('studentLessonScores', {
     score: {
         type: db.DECIMAL,
         defaultValue: 0
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = StudentLessonScore;

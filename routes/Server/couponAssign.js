@@ -3,22 +3,23 @@ var model = require("../../model.js"),
     CouponAssign = model.couponAssign,
     Coupon = model.coupon,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/couponAssign/:id', checkLogin);
     app.get('/admin/couponAssign/:id', function (req, res) {
         Coupon.getFilter({
-            _id: req.params.id
-        }).then(function (coupon) {
-            if (coupon) {
-                res.render('Server/couponAssign.html', {
-                    title: '>优惠券分配',
-                    user: req.session.admin,
-                    coupon: coupon
-                });
-            }
-        });
+                _id: req.params.id
+            })
+            .then(function (coupon) {
+                if (coupon) {
+                    res.render('Server/couponAssign.html', {
+                        title: '>优惠券分配',
+                        user: req.session.admin,
+                        coupon: coupon
+                    });
+                }
+            });
     });
 
     app.get('/admin/couponAssignList/:id', checkLogin);
@@ -31,7 +32,7 @@ module.exports = function (app) {
     });
 
     function newCouponAssign(coupon, student, admin) {
-        var couponAssign = new CouponAssign({
+        return {
             couponId: coupon.couponId,
             couponName: coupon.couponName,
             gradeId: coupon.gradeId,
@@ -44,8 +45,7 @@ module.exports = function (app) {
             studentId: student.studentId,
             studentName: student.studentName,
             createdBy: admin._id
-        });
-        return couponAssign;
+        };
     };
 
     app.post('/admin/couponAssign/assign', checkLogin);
@@ -53,76 +53,66 @@ module.exports = function (app) {
         var students = JSON.parse(req.body.students);
         var coupon = JSON.parse(req.body.coupon);
 
+        var pArray = [];
         students.forEach(function (student) {
-            CouponAssign.getFilter({
+            var p = CouponAssign.getFilter({
                     couponId: coupon.couponId,
                     studentId: student.studentId
                 })
                 .then(function (assign) {
                     if (assign) {
-                        if (student.checked) {
-                            //update
-                            var couponAssign = newCouponAssign(coupon, student, req.session.admin);
-                            couponAssign.update(assign._id, function (err, couponAssign) {
-                                if (err) {
-                                    couponAssign = {};
-                                }
-                            });
-                        } else {
-                            //delete
-                            CouponAssign.delete(assign._id, req.session.admin._id, function (err, couponAssign) {
-                                if (err) {
-                                    res.jsonp({
-                                        error: err
-                                    });
-                                    return;
+                        if (!student.checked) {
+                            // delete
+                            return CouponAssign.update({
+                                isDeleted: true,
+                                deletedBy: req.session.admin._id,
+                                deletedDate: new Date()
+                            }, {
+                                where: {
+                                    _id: assign._id
                                 }
                             });
                         }
                     } else {
                         if (student.checked) {
-                            //add
+                            // add
                             var couponAssign = newCouponAssign(coupon, student, req.session.admin);
-                            couponAssign.save();
+                            return CouponAssign.create(couponAssign);
                         }
                     }
                 });
+            pArray.push(p);
         });
 
-        res.jsonp({
-            sucess: true
-        });
+        Promise.all(pArray)
+            .then(function (order) {
+                res.jsonp({
+                    sucess: true
+                });
+            }).catch(function (err) {
+                res.jsonp({
+                    error: "分配失败"
+                });
+            });
     });
 
-    app.post('/admin/couponAssign/edit', checkLogin);
-    app.post('/admin/couponAssign/edit', function (req, res) {
-        var couponAssign = new CouponAssign({
-            name: req.body.name,
-            address: req.body.address
-        });
-
-        couponAssign.update(req.body.id, function (err, couponAssign) {
-            if (err) {
-                couponAssign = {};
-            }
-            res.jsonp(couponAssign);
-        });
-    });
 
     app.post('/admin/couponAssign/delete', checkLogin);
     app.post('/admin/couponAssign/delete', function (req, res) {
-
-        CouponAssign.delete(req.body.id, req.session.admin._id, function (err, couponAssign) {
-            if (err) {
+        CouponAssign.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body._id
+                }
+            })
+            .then(function () {
                 res.jsonp({
-                    error: err
+                    sucess: true
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.post('/admin/couponAssignList/search', checkLogin);
@@ -217,26 +207,33 @@ module.exports = function (app) {
 
     app.get('/admin/couponAssign/batchAssign/:id', checkLogin);
     app.get('/admin/couponAssign/batchAssign/:id', function (req, res) {
-        Coupon.get(req.params.id).then(function (coupon) {
-            if (coupon) {
-                res.render('Server/couponBatchAssign.html', {
-                    title: '>优惠券分配',
-                    user: req.session.admin,
-                    coupon: coupon
-                });
-            }
-        });
+        Coupon.getFilter({
+                _id: req.params.id
+            })
+            .then(function (coupon) {
+                if (coupon) {
+                    res.render('Server/couponBatchAssign.html', {
+                        title: '>优惠券分配',
+                        user: req.session.admin,
+                        coupon: coupon
+                    });
+                }
+            });
     });
 
     app.post('/admin/coupon/batchDeleteGtIds', checkLogin);
     app.post('/admin/coupon/batchDeleteGtIds', function (req, res) {
-        CouponAssign.batchUpdate({
-                couponId: req.body.couponId,
-                _id: {
-                    $gt: req.body.id
-                }
+        CouponAssign.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
             }, {
-                isDeleted: true
+                where: {
+                    couponId: req.body.couponId,
+                    _id: {
+                        $gt: req.body.id
+                    }
+                }
             })
             .then(function () {
                 res.jsonp({

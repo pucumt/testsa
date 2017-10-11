@@ -7,10 +7,6 @@ const ClassAttribute = db.defineModel('classAttributes', {
     name: {
         type: db.STRING(50),
         defaultValue: ""
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = ClassAttribute;

@@ -52,10 +52,6 @@ const AbsentStudents = db.defineModel('absentStudentss', {
         type: db.BOOLEAN,
         defaultValue: false
     }, // 是否处理过
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    }, // 缺勤或者 点错
     isExtra: {
         type: db.BOOLEAN,
         defaultValue: false

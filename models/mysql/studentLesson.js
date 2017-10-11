@@ -31,11 +31,7 @@ const StudentLesson = db.defineModel('studentLessons', {
     paragraphAve: {
         type: db.DECIMAL,
         defaultValue: 0
-    }, //课文平均分
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    }
+    } //课文平均分
 });
 module.exports = StudentLesson;
 

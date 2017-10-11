@@ -3,12 +3,14 @@ var model = require("../../model.js"),
     Lesson = model.lesson,
     Book = model.book,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/book/:id', checkLogin);
     app.get('/admin/book/:id', function (req, res) {
-        Book.get(req.params.id)
+        Book.getFilter({
+                _id: req.params.id
+            })
             .then(function (book) {
                 if (book) {
                     res.render('Server/lessonList.html', {
@@ -23,7 +25,9 @@ module.exports = function (app) {
     });
     app.get('/admin/lesson/:id', checkLogin);
     app.get('/admin/lesson/:id', function (req, res) {
-        Lesson.get(req.params.id)
+        Lesson.getFilter({
+                _id: req.params.id
+            })
             .then(function (lesson) {
                 if (lesson) {
                     res.render('Server/lessonDetail.html', {
@@ -39,28 +43,29 @@ module.exports = function (app) {
 
     app.post('/admin/lesson/add', checkLogin);
     app.post('/admin/lesson/add', function (req, res) {
-        var lesson = new Lesson({
-            bookId: req.body.bookId,
-            name: req.body.name,
-            sequence: req.body.sequence,
-            createdBy: req.session.admin._id
-        });
-
-        lesson.save().then(function (result) {
-            if (result) {
-                res.jsonp(lesson);
-            }
-        });
+        Lesson.create({
+                bookId: req.body.bookId,
+                name: req.body.name,
+                sequence: req.body.sequence,
+                createdBy: req.session.admin._id
+            })
+            .then(function (result) {
+                if (result) {
+                    res.jsonp(lesson);
+                }
+            });
     });
 
     app.post('/admin/lesson/edit', checkLogin);
     app.post('/admin/lesson/edit', function (req, res) {
-        var lesson = new Lesson({
-            name: req.body.name,
-            sequence: req.body.sequence
-        });
-
-        lesson.update(req.body.id)
+        Lesson.update({
+                name: req.body.name,
+                sequence: req.body.sequence
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
             .then(function () {
                 res.jsonp({
                     sucess: true
@@ -70,11 +75,20 @@ module.exports = function (app) {
 
     app.post('/admin/lesson/delete', checkLogin);
     app.post('/admin/lesson/delete', function (req, res) {
-        Lesson.delete(req.body.id, req.session.admin._id).then(function (result) {
-            res.jsonp({
-                sucess: true
+        Lesson.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/lessonList/search', checkLogin);
@@ -88,23 +102,19 @@ module.exports = function (app) {
             filter.bookId = req.body.bookId;
         }
 
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
 
-        Lesson.getAll(null, page, filter, function (err, lessons, total) {
-            if (err) {
-                lessons = [];
-            }
+        Lesson.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                lessons: lessons,
-                total: total,
+                lessons: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + lessons.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });

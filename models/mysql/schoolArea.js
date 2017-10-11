@@ -14,10 +14,6 @@ const SchoolArea = db.defineModel('schoolAreas', {
     sequence: {
         type: db.INTEGER,
         defaultValue: 0
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = SchoolArea;

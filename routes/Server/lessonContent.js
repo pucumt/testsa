@@ -13,30 +13,32 @@ module.exports = function (app) {
             })
             .then(function (content) {
                 if (content) {
-                    var lessonContent = new LessonContent({
-                        name: req.body.content,
-                        duration: req.body.duration
-                    });
-                    lessonContent.update(content._id)
+                    LessonContent.update({
+                            name: req.body.content,
+                            duration: req.body.duration
+                        }, {
+                            where: {
+                                _id: content._id
+                            }
+                        })
                         .then(function () {
                             res.jsonp({
                                 sucess: true
                             });
                         });
                 } else {
-                    var lessonContent = new LessonContent({
-                        contentType: 0,
-                        name: req.body.content,
-                        lessonId: req.body.lessonId,
-                        duration: req.body.duration,
-                        createdBy: req.session.admin._id
-                    });
-
-                    lessonContent.save().then(function (result) {
-                        if (result) {
-                            res.jsonp(result);
-                        }
-                    });
+                    LessonContent.create({
+                            contentType: 0,
+                            name: req.body.content,
+                            lessonId: req.body.lessonId,
+                            duration: req.body.duration,
+                            createdBy: req.session.admin._id
+                        })
+                        .then(function (result) {
+                            if (result) {
+                                res.jsonp(result);
+                            }
+                        });
                 }
             });
     });
@@ -74,7 +76,7 @@ module.exports = function (app) {
                 }
             });
 
-            LessonContent.insertMany(pArray)
+            LessonContent.bulkCreate(pArray)
                 .then(function () {
                     res.jsonp({
                         sucess: true

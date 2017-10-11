@@ -6,10 +6,6 @@ const db = require('../../db'),
 const ExamCategory = db.defineModel('examCategorys', {
     name: {
         type: db.STRING(50)
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = ExamCategory;

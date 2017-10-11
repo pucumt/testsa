@@ -59,7 +59,9 @@ module.exports = function (app) {
     app.post('/admin/coupon/delete', checkLogin);
     app.post('/admin/coupon/delete', function (req, res) {
         Coupon.update({
-            isDeleted: true
+            isDeleted: true,
+            deletedBy: req.session.admin._id,
+            deletedDate: new Date()
         }, {
             where: {
                 _id: req.body.id

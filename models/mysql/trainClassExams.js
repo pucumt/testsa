@@ -18,10 +18,6 @@ const TrainClassExams = db.defineModel('trainClassExams', {
     minScore: {
         type: db.DECIMAL,
         defaultValue: 0
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = TrainClassExams;

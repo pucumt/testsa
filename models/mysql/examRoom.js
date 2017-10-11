@@ -11,10 +11,6 @@ const ExamRoom = db.defineModel('examRooms', {
     examName: {
         type: db.STRING(50),
         defaultValue: ''
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = ExamRoom;

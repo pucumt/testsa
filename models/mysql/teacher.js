@@ -20,10 +20,6 @@ const Teacher = db.defineModel('teachers', {
         type: db.STRING(100),
         defaultValue: ""
     },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     role: {
         type: db.INTEGER,
         defaultValue: 0

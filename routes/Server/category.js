@@ -2,7 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Category = model.category,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/categoryList', checkLogin);
@@ -10,71 +10,77 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        Category.getAll(null, page, {}, function (err, categorys, total) {
-            if (err) {
-                categorys = [];
-            }
+        Category.getFiltersWithPage(page, {}).then(function (result) {
             res.render('Server/categoryList.html', {
                 title: '>课程难度',
                 user: req.session.admin,
-                categorys: categorys,
-                total: total,
+                categorys: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + categorys.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
     app.post('/admin/category/add', checkLogin);
     app.post('/admin/category/add', function (req, res) {
-        var category = new Category({
+        Category.create({
             name: req.body.name,
             grade: req.body.grade
-        });
-
-        category.save(function (err, category) {
-            if (err) {
-                category = {};
-            }
+        }).then(function (category) {
             res.jsonp(category);
         });
     });
 
     app.post('/admin/category/edit', checkLogin);
     app.post('/admin/category/edit', function (req, res) {
-        var category = new Category({
-            name: req.body.name,
-            grade: req.body.grade
-        });
-
-        category.update(req.body.id, function (err, category) {
-            if (err) {
-                category = {};
-            }
-            res.jsonp(category);
-        });
+        Category.update({
+                name: req.body.name,
+                grade: req.body.grade
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (category) {
+                res.jsonp(category);
+            })
+            .catch(function (err) {
+                res.jsonp({
+                    error: err
+                });
+            });
     });
 
     app.post('/admin/category/delete', checkLogin);
     app.post('/admin/category/delete', function (req, res) {
-        Category.delete(req.body.id, function (err, category) {
-            if (err) {
+        Category.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (category) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.get('/admin/category/all', checkLogin);
     app.get('/admin/category/all', function (req, res) {
-        Category.getAllWithoutPage({}).then(function (categories) {
-            res.jsonp(categories);
-        });
+        Category.getFilters({})
+            .then(function (categories) {
+                res.jsonp(categories);
+            });
     });
 }

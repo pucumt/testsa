@@ -34,36 +34,38 @@ module.exports = function (app) {
     app.post('/admin/enrollProcessConfigure/edit', checkLogin);
     app.post('/admin/enrollProcessConfigure/edit', function (req, res) {
         //req.body.status,
-        EnrollProcessConfigure.getFilter({}).then(function (configure) {
-            var option = {}
-            switch (req.body.status) {
-                case "new":
-                    option.newStudentStatus = !configure.newStudentStatus;
-                    break;
-                case "old":
-                    option.oldStudentStatus = !configure.oldStudentStatus;
-                    break;
-                case "switch":
-                    option.oldStudentSwitch = !configure.oldStudentSwitch;
-                    break;
-                case "grade":
-                    option.isGradeUpgrade = !configure.isGradeUpgrade;
-                    break;
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                var option = {}
+                switch (req.body.status) {
+                    case "new":
+                        option.newStudentStatus = !configure.newStudentStatus;
+                        break;
+                    case "old":
+                        option.oldStudentStatus = !configure.oldStudentStatus;
+                        break;
+                    case "switch":
+                        option.oldStudentSwitch = !configure.oldStudentSwitch;
+                        break;
+                    case "grade":
+                        option.isGradeUpgrade = !configure.isGradeUpgrade;
+                        break;
 
-            }
-            EnrollProcessConfigure.update(option, {
-                    where: {}
-                })
-                .then(function () {
-                    res.jsonp(option);
-                });
-        });
+                }
+                EnrollProcessConfigure.update(option, {
+                        where: {}
+                    })
+                    .then(function () {
+                        res.jsonp(option);
+                    });
+            });
     });
 
     app.post('/admin/enrollProcessConfigureList/search', checkLogin);
     app.post('/admin/enrollProcessConfigureList/search', function (req, res) {
-        EnrollProcessConfigure.getFilter({}).then(function (configure) {
-            res.jsonp(configure);
-        });
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                res.jsonp(configure);
+            });
     });
 }

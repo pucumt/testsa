@@ -28,10 +28,6 @@ const RebateEnrollTrain = db.defineModel('rebateEnrollTrains', {
         type: db.DECIMAL,
         defaultValue: 0
     }, //教材费退费
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     comment: {
         type: db.STRING(500),
         defaultValue: ''

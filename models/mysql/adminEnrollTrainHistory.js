@@ -68,22 +68,6 @@ const AdminEnrollTrainHistory = db.defineModel('adminEnrollTrainHistorys', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    // orderDate: {
-    //     type: db.DATE,
-    //     defaultValue: db.NOW
-    // },
-    createdBy: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    cancelledBy: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    cancelDate: {
-        type: db.DATE,
-        allowNull: true
-    },
     comment: {
         type: db.STRING(100),
         defaultValue: ''
@@ -103,10 +87,6 @@ const AdminEnrollTrainHistory = db.defineModel('adminEnrollTrainHistorys', {
     yearName: {
         type: db.STRING(50),
         defaultValue: ''
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     },
     historyDate: {
         type: db.DATE,

@@ -45,6 +45,10 @@ function defineModel(name, attributes) {
         type: ID_TYPE,
         primaryKey: true
     };
+    attrs.createdBy = {
+        type: Sequelize.STRING(50),
+        defaultValue: ''
+    };
     attrs.createdDate = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
@@ -54,6 +58,18 @@ function defineModel(name, attributes) {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
+    };
+    attrs.isDeleted = {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    };
+    attrs.deletedBy = {
+        type: Sequelize.STRING(50),
+        defaultValue: ''
+    };
+    attrs.deletedDate = {
+        type: Sequelize.DATE,
+        allowNull: true
     };
     attrs.version = {
         type: Sequelize.BIGINT,

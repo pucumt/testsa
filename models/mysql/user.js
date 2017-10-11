@@ -20,10 +20,6 @@ const User = db.defineModel('users', {
         type: db.INTEGER,
         defaultValue: 0
     }, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 team leader
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     schoolId: {
         type: db.STRING(50),
         defaultValue: ''

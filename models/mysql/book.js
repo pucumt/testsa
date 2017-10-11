@@ -11,10 +11,6 @@ const Book = db.defineModel('books', {
     sequence: {
         type: db.INTEGER,
         defaultValue: 0
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = Book;

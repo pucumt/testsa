@@ -7,10 +7,6 @@ const Year = db.defineModel('years', {
     name: {
         type: db.STRING(20)
     },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0

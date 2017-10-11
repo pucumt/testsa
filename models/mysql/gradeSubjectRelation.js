@@ -19,10 +19,6 @@ const GradeSubjectRelation = db.defineModel('gradeSubjectRelations', {
     subjectName: {
         type: db.STRING(50),
         defaultValue: ''
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
     }
 });
 module.exports = GradeSubjectRelation;

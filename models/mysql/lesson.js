@@ -16,10 +16,6 @@ const Lesson = db.defineModel('lessons', {
         type: db.STRING(50),
         defaultValue: ''
     }, // useless
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0

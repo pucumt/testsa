@@ -40,7 +40,9 @@ module.exports = function (app) {
     app.post('/admin/examArea/delete', checkLogin);
     app.post('/admin/examArea/delete', function (req, res) {
         ExamArea.update({
-            isDeleted: true
+            isDeleted: true,
+            deletedBy: req.session.admin._id,
+            deletedDate: new Date()
         }, {
             where: {
                 _id: req.body.id

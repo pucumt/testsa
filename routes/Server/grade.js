@@ -10,14 +10,15 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        Grade.getFiltersWithPage(page, {}).then(function (result) {
-            res.render('Server/gradeList.html', {
-                title: '>年级设置',
-                user: req.session.admin,
-                grades: result.rows,
-                total: result.count
+        Grade.getFiltersWithPage(page, {})
+            .then(function (result) {
+                res.render('Server/gradeList.html', {
+                    title: '>年级设置',
+                    user: req.session.admin,
+                    grades: result.rows,
+                    total: result.count
+                });
             });
-        });
     });
 
     app.post('/admin/grade/add', checkLogin);

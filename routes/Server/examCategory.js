@@ -2,7 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     ExamCategory = model.examCategory,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/examCategoryList', checkLogin);
@@ -10,63 +10,59 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        ExamCategory.getAll(null, page, {}, function (err, examCategorys, total) {
-            if (err) {
-                examCategorys = [];
-            }
+        ExamCategory.getFiltersWithPage(page, {}).then(function (result) {
             res.render('Server/examCategoryList.html', {
                 title: '>测试类别',
                 user: req.session.admin,
-                examCategorys: examCategorys,
-                total: total,
+                examCategorys: result.rows,
+                total: result.count,
                 page: page,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + examCategorys.length) == total
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
     app.post('/admin/examCategory/add', checkLogin);
     app.post('/admin/examCategory/add', function (req, res) {
-        var examCategory = new ExamCategory({
-            name: req.body.name
-        });
-
-        examCategory.save(function (err, examCategory) {
-            if (err) {
-                examCategory = {};
-            }
-            res.jsonp(examCategory);
-        });
+        ExamCategory.create({
+                name: req.body.name
+            })
+            .then(function (examCategory) {
+                res.jsonp(examCategory);
+            });
     });
 
     app.post('/admin/examCategory/edit', checkLogin);
     app.post('/admin/examCategory/edit', function (req, res) {
-        var examCategory = new ExamCategory({
-            name: req.body.name
-        });
-
-        examCategory.update(req.body.id, function (err, examCategory) {
-            if (err) {
-                examCategory = {};
-            }
-            res.jsonp(examCategory);
-        });
+        ExamCategory.update({
+                name: req.body.name
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (examCategory) {
+                res.jsonp(examCategory);
+            });
     });
 
     app.post('/admin/examCategory/delete', checkLogin);
     app.post('/admin/examCategory/delete', function (req, res) {
-        ExamCategory.delete(req.body.id, function (err, examCategory) {
-            if (err) {
+        ExamCategory.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
                 res.jsonp({
-                    error: err
+                    sucess: true
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.get('/admin/examCategory/getAllWithoutPage', checkLogin);

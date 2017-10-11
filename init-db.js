@@ -98,6 +98,10 @@ function step2(i) {
                         newObj.schoolId = newObj.schoolId.toJSON();
                     }
                 }
+                // if (newObj.deletedDate) {
+                //     // change all the deletedDate to cancelled Date
+                //     newObj.cancelledDate = newObj.deletedDate;
+                // }
 
                 if (tmpArray.length < 5000) {
                     tmpArray.push(newObj);
@@ -174,6 +178,12 @@ function step3() {
                     var newObj = obj.toJSON();
                     newObj._id = newObj._id.toJSON();
                     newObj.createdDate = newObj.orderDate;
+                    if (newObj.cancelDate) {
+                        newObj.deletedDate = newObj.cancelDate;
+                    }
+                    if (newObj.cancelledBy) {
+                        newObj.deletedBy = newObj.cancelledBy;
+                    }
 
                     // handle student discount
                     if (newObj.discount === null) {
@@ -230,6 +240,12 @@ function step4() {
                 var newObj = obj.toJSON();
                 newObj._id = newObj._id.toJSON();
                 newObj.createdDate = newObj.orderDate;
+                if (newObj.cancelDate) {
+                    newObj.deletedDate = newObj.cancelDate;
+                }
+                if (newObj.cancelledBy) {
+                    newObj.deletedBy = newObj.cancelledBy;
+                }
 
                 // handle student discount
                 if (newObj.discount === null) {
@@ -399,6 +415,9 @@ function step7() {
                     delete newObj.mobile;
                 }
                 newObj.createdDate = newObj.orderDate;
+                if (newObj.CancelDate) {
+                    newObj.deletedDate = newObj.CancelDate;
+                }
                 if (newObj.scores && newObj.scores.length > 0) {
                     newObj.scores
                         .forEach(function (score) {

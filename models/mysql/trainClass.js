@@ -114,10 +114,6 @@ const TrainClass = db.defineModel('trainClasss', {
         type: db.BOOLEAN,
         defaultValue: true
     },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: true
-    },
     // isFull: {
     //     type: db.BOOLEAN,
     //     defaultValue: true

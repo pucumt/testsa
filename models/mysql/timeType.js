@@ -7,10 +7,6 @@ const TimeType = db.defineModel('timeTypes', {
     name: {
         type: db.STRING(20)
     },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     isChecked: {
         type: db.BOOLEAN,
         defaultValue: true

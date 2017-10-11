@@ -53,14 +53,16 @@ module.exports = function (app) {
         var result = {};
 
         var p0 = GradeSubjectRelation.getFilters({
-            gradeId: req.body.gradeId
-        }).then(function (relations) {
-            result.relations = relations;
-        });
+                gradeId: req.body.gradeId
+            })
+            .then(function (relations) {
+                result.relations = relations;
+            });
 
-        var p1 = Subject.getFilters({}).then(function (subjects) {
-            result.subjects = subjects;
-        });
+        var p1 = Subject.getFilters({})
+            .then(function (subjects) {
+                result.subjects = subjects;
+            });
 
         Promise.all([p0, p1]).then(function () {
             res.jsonp(result);
@@ -74,15 +76,16 @@ module.exports = function (app) {
         }).then(function (grade) {
             if (grade) {
                 Subject.getFilter({
-                    _id: req.params.subjectId
-                }).then(function (subject) {
-                    res.render('Server/gradeSubjectCategoryRelationList.html', {
-                        title: '>' + grade.name + '>' + subject.name + '>年级科目难度',
-                        user: req.session.admin,
-                        gradeId: req.params.gradeId,
-                        subjectId: req.params.subjectId
+                        _id: req.params.subjectId
+                    })
+                    .then(function (subject) {
+                        res.render('Server/gradeSubjectCategoryRelationList.html', {
+                            title: '>' + grade.name + '>' + subject.name + '>年级科目难度',
+                            user: req.session.admin,
+                            gradeId: req.params.gradeId,
+                            subjectId: req.params.subjectId
+                        });
                     });
-                });
             }
         });
     });

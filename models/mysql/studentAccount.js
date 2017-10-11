@@ -11,22 +11,6 @@ const StudentAccount = db.defineModel('studentAccounts', {
     wechat: {
         type: db.STRING(100),
         defaultValue: ""
-    },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
-    createdBy: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    deletedBy: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    deleteDate: {
-        type: db.DATE,
-        allowNull: true
     }
 });
 module.exports = StudentAccount;

@@ -14,7 +14,7 @@ var model = require("../../model.js"),
     fs = require('fs'),
     parseString = require('xml2js').parseString,
     settings = require('../../settings'),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/adminEnrollTrainList', checkLogin);
@@ -397,8 +397,8 @@ module.exports = function (app) {
                         .then(function () {
                             return AdminEnrollTrain.update({
                                 isSucceed: 9,
-                                cancelledBy: req.session.admin._id,
-                                cancelDate: new Date()
+                                deletedBy: req.session.admin._id,
+                                deletedDate: new Date()
                             }, {
                                 where: {
                                     _id: req.body.id
@@ -632,8 +632,8 @@ module.exports = function (app) {
                                             }).then(function () {
                                                 return AdminEnrollTrain.update({
                                                     isSucceed: 9,
-                                                    cancelDate: new Date(),
-                                                    cancelledBy: req.session.admin._id
+                                                    deletedDate: new Date(),
+                                                    deletedBy: req.session.admin._id
                                                 }, {
                                                     where: {
                                                         _id: req.body.oldOrderId

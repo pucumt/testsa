@@ -39,10 +39,6 @@ const ExamClass = db.defineModel('examClasss', {
         type: db.INTEGER,
         defaultValue: 0
     },
-    isDeleted: {
-        type: db.BOOLEAN,
-        defaultValue: false
-    },
     isWeixin: {
         type: db.INTEGER,
         defaultValue: 0
