@@ -118,10 +118,10 @@ const TrainClass = db.defineModel('trainClasss', {
         type: db.BOOLEAN,
         defaultValue: true
     },
-    isFull: {
-        type: db.BOOLEAN,
-        defaultValue: true
-    },
+    // isFull: {
+    //     type: db.BOOLEAN,
+    //     defaultValue: true
+    // }, // 感觉没用到，去掉先
     fromClassId: {
         type: db.STRING(50),
         defaultValue: ""

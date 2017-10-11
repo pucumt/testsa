@@ -139,7 +139,9 @@ AdminEnrollTrain.getFilters = function (filter) {
     filter.isDeleted = false;
     return AdminEnrollTrain.findAll({
         'where': filter,
-        order: 'createdDate DESC'
+        order: [
+            ['createdDate', 'DESC']
+        ]
     });
 };
 
