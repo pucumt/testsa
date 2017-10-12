@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnExamClass").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -8,7 +8,7 @@ $(document).ready(function() {
     $("#examDate").datepicker({
         changeMonth: true,
         dateFormat: "yy-mm-dd",
-        onClose: function(selectedDate) {
+        onClose: function (selectedDate) {
 
         }
     });
@@ -18,7 +18,7 @@ $(document).ready(function() {
 //------------search funfunction
 
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function(isWeixin, isScorePublished) {
+var getButtons = function (isWeixin, isScorePublished) {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     if (isScorePublished) {
         buttons = buttons + '<a class="btn btn-default btnScorePublish">隐藏成绩</a>';
@@ -32,7 +32,7 @@ var getButtons = function(isWeixin, isScorePublished) {
     }
     return buttons;
 };
-var getClassStatus = function(isWeixin) {
+var getClassStatus = function (isWeixin) {
     if (isWeixin == 1) {
         return "发布";
     } else if (isWeixin == 9) {
@@ -48,10 +48,10 @@ function searchExams(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/examClass/search?" + pStr, filter, function (data) {
         $mainSelectBody.empty();
         if (data && data.examClasss.length > 0) {
-            data.examClasss.forEach(function(examClass) {
+            data.examClasss.forEach(function (examClass) {
                 var $tr = $('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
@@ -66,16 +66,16 @@ function searchExams(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     searchExams();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     searchExams(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     searchExams(page);
 });
@@ -89,7 +89,7 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
             // List of fields and their validation rules
             fields: {
@@ -164,10 +164,10 @@ function addValidation(callback) {
 function resetDropDown(objId) {
     $('#myModal').find("#examCategoryName option").remove();
     $("#myModal #examCategoryName").append("<option value=''></option>");
-    selfAjax("get", "/admin/examCategory/getAllWithoutPage", null, function(data) {
+    selfAjax("get", "/admin/examCategory/getAllWithoutPage", null, function (data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(examCategory) {
+                data.forEach(function (examCategory) {
                     var select = "";
                     if (objId && examCategory._id == objId) {
                         select = "selected";
@@ -179,14 +179,16 @@ function resetDropDown(objId) {
     });
 };
 
-function resetCheckBox(subjects) {
+function resetCheckBox(examId) {
     $('#myModal').find(".subject").empty();
-    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function(data) {
+    selfAjax("post", "/admin/examClassSubject/getAllWithoutPage", {
+        examId: examId
+    }, function (data) {
         if (data) {
-            if (data && data.length > 0) {
-                data.forEach(function(subject) {
+            if (data && data.subjects.length > 0) {
+                data.subjects.forEach(function (subject) {
                     var select = "";
-                    if (subjects && subjects.some(function(entity) {
+                    if (data.examClassSubjects && data.examClassSubjects.some(function (entity) {
                             return entity.subjectId == subject._id;
                         })) {
                         select = "checked";
@@ -200,14 +202,16 @@ function resetCheckBox(subjects) {
 
 function resetExamArea(examId) {
     $('#myModal').find(".examArea").empty();
-    selfAjax("post", "/admin/examClassExamArea/withAllexamArea", { examId: examId }, function(data) {
+    selfAjax("post", "/admin/examClassExamArea/withAllexamArea", {
+        examId: examId
+    }, function (data) {
         if (data) {
             if (data && data.examAreas && data.examAreas.length > 0) {
                 var d = $(document.createDocumentFragment());
                 var examCount = 0;
                 areas = data.examClassExamAreas;
-                data.examAreas.forEach(function(examArea) {
-                    if (areas && areas.some(function(entity) {
+                data.examAreas.forEach(function (examArea) {
+                    if (areas && areas.some(function (entity) {
                             if (entity.examAreaId == examArea._id) {
                                 examCount = entity.examCount;
                                 return true;
@@ -224,7 +228,7 @@ function resetExamArea(examId) {
     });
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -239,16 +243,19 @@ $("#btnAdd").on("click", function(e) {
     resetDropDown();
     resetCheckBox();
     resetExamArea();
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var subjects = [],
             examAreas = [],
             someError;
-        $("#myModal .examArea .checkbox-inline input").each(function(index) {
+        $("#myModal .examArea .checkbox-inline input").each(function (index) {
             if (this.checked) {
                 var areaCount = $(this).parents("li").find(".areaCount").val();
                 if (areaCount == "" || (!Number(areaCount))) {
@@ -256,7 +263,11 @@ $("#btnSave").on("click", function(e) {
                     $(this).parents("li").find(".areaCount").focus();
                     return;
                 }
-                examAreas.push({ examAreaId: $(this).attr("id"), examAreaName: $(this).val(), areaCount: areaCount });
+                examAreas.push({
+                    examAreaId: $(this).attr("id"),
+                    examAreaName: $(this).val(),
+                    examCount: areaCount
+                });
             }
         });
 
@@ -265,9 +276,12 @@ $("#btnSave").on("click", function(e) {
             return;
         }
 
-        $("#myModal .subject .checkbox-inline input").each(function(index) {
+        $("#myModal .subject .checkbox-inline input").each(function (index) {
             if (this.checked) {
-                subjects.push({ subjectId: $(this).attr("id"), subjectName: $(this).val() });
+                subjects.push({
+                    subjectId: $(this).attr("id"),
+                    subjectName: $(this).val()
+                });
             }
         });
 
@@ -288,41 +302,17 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/examClass/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
-            $('#myModal').modal('hide');
-            var examDate = data.examDate && moment(data.examDate, "YYYY-M-D").format("YYYY-M-D");
-            if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td><span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name +
-                    "</td><td>新建</td><td>" + examDate + "</td><td>" + data.examTime +
-                    "</td><td>" + data.examCategoryName + "</td><td>" + data.examCount +
-                    "</td><td>0</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a><a class='btn btn-default btnPublish'>发布</a></div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
-            } else {
-                var name = $('#' + data._id + ' td:first-child');
-                var pubstr = "新建";
-                switch (data.isWeixin) {
-                    case 1:
-                        pubstr = "发布";
-                        break;
-                    case 9:
-                        pubstr = "停用";
-                        break;
-                }
-                name.html("<span><input type='checkbox' name='trainId' value=" + data._id + " /></span>" + data.name);
-                var $pub = name.next().text(pubstr),
-                    $examDate = $pub.next().text(examDate),
-                    $examTime = $examDate.next().text(data.examTime),
-                    $examCategoryName = $examTime.next().text(data.examCategoryName),
-                    $examCount = $examCategoryName.next().text(data.examCount);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
+        selfAjax("post", postURI, postObj, function (data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
             }
+            location.reload();
         });
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -339,19 +329,22 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#id').val(entity._id);
     $('#courseContent').val(entity.courseContent);
     resetDropDown(entity.examCategoryId);
-    resetCheckBox(entity.subjects);
+    resetCheckBox(entity._id);
     resetExamArea(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/examClass/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
@@ -360,15 +353,15 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnScorePublish", function(e) {
+$("#gridBody").on("click", "td .btnScorePublish", function (e) {
     showConfirm("确定要显示成绩吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/examClass/showScore", {
             id: entity._id,
             isScorePublished: entity.isScorePublished
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 var operation = $('#' + entity._id + ' td:last-child .btn-group');
@@ -383,14 +376,14 @@ $("#gridBody").on("click", "td .btnScorePublish", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnPublish", function(e) {
+$("#gridBody").on("click", "td .btnPublish", function (e) {
     showConfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/examClass/publish", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 var name = $('#' + entity._id + ' td:first-child');
@@ -403,14 +396,14 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnUnPublish", function(e) {
+$("#gridBody").on("click", "td .btnUnPublish", function (e) {
     showConfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/examClass/unPublish", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 var name = $('#' + entity._id + ' td:first-child');
@@ -426,7 +419,7 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
 function getAllCheckedExams() {
     var examIds = [];
     $(".mainModal #gridBody [name='examId']")
-        .each(function(index) {
+        .each(function (index) {
             if (this.checked) {
                 examIds.push($(this).val());
             }
@@ -434,17 +427,17 @@ function getAllCheckedExams() {
     return examIds;
 };
 
-$(".toolbar #btnPublishAll").on("click", function(e) {
+$(".toolbar #btnPublishAll").on("click", function (e) {
     var examIds = getAllCheckedExams();
     if (examIds.length > 0) {
         showConfirm("确定要发布吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/examClass/publishAll", {
                 ids: JSON.stringify(examIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("发布成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchExams(page);
                     });
@@ -454,17 +447,17 @@ $(".toolbar #btnPublishAll").on("click", function(e) {
     }
 });
 
-$(".toolbar #btnStopAll").on("click", function(e) {
+$(".toolbar #btnStopAll").on("click", function (e) {
     var examIds = getAllCheckedExams();
     if (examIds.length > 0) {
         showConfirm("确定要停用吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/examClass/unPublishAll", {
                 ids: JSON.stringify(examIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("停用成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchExams(page);
                     });

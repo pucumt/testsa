@@ -48,11 +48,12 @@ module.exports = function (app) {
                 } else {
                     var md5 = crypto.createHash('md5');
                     p = StudentAccount.create({
-                        name: req.body.mobile,
-                        password: md5.update("111111").digest('hex')
-                    }).then(function (account) {
-                        return account._id;
-                    });
+                            name: req.body.mobile,
+                            password: md5.update("111111").digest('hex')
+                        })
+                        .then(function (account) {
+                            return account._id;
+                        });
                 }
                 p.then(function (accountId) {
                     StudentInfo.getFilter({
@@ -69,24 +70,25 @@ module.exports = function (app) {
                                 });
                             } else {
                                 StudentInfo.update({
-                                    name: req.body.name,
-                                    address: req.body.address,
-                                    mobile: req.body.mobile,
-                                    studentNo: req.body.studentNo,
-                                    sex: req.body.sex,
-                                    School: req.body.School,
-                                    className: req.body.className,
-                                    discount: req.body.discount,
-                                    gradeId: req.body.gradeId,
-                                    gradeName: req.body.gradeName,
-                                    accountId: accountId
-                                }, {
-                                    where: {
-                                        _id: req.body.id
-                                    }
-                                }).then(function (result) {
-                                    res.jsonp(result);
-                                });
+                                        name: req.body.name,
+                                        address: req.body.address,
+                                        mobile: req.body.mobile,
+                                        studentNo: req.body.studentNo,
+                                        sex: req.body.sex,
+                                        School: req.body.School,
+                                        className: req.body.className,
+                                        discount: req.body.discount,
+                                        gradeId: req.body.gradeId,
+                                        gradeName: req.body.gradeName,
+                                        accountId: accountId
+                                    }, {
+                                        where: {
+                                            _id: req.body.id
+                                        }
+                                    })
+                                    .then(function (result) {
+                                        res.jsonp(result);
+                                    });
                             }
                         });
                 });
@@ -97,16 +99,19 @@ module.exports = function (app) {
     app.post('/admin/studentInfo/delete', checkLogin);
     app.post('/admin/studentInfo/delete', function (req, res) {
         StudentInfo.update({
-            isDeleted: true
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/studentInfo/search', checkLogin);
@@ -149,12 +154,13 @@ module.exports = function (app) {
     app.get('/admin/studentInfo/:id', checkLogin);
     app.get('/admin/studentInfo/:id', function (req, res) {
         StudentInfo.getFilter({
-            _id: req.params.id
-        }).then(function (studentInfo) {
-            if (studentInfo) {
-                res.jsonp(studentInfo);
-            }
-        });
+                _id: req.params.id
+            })
+            .then(function (studentInfo) {
+                if (studentInfo) {
+                    res.jsonp(studentInfo);
+                }
+            });
     });
 
     // 优惠券可以根据年级或者班级来发放

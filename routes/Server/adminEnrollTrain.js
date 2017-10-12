@@ -164,31 +164,33 @@ module.exports = function (app) {
                     // 1. 生成历史记录
                     // 2. 更新订单
                     model.db.sequelize.transaction(function (t1) {
-                        return AdminEnrollTrainHistory.create(history, {
-                                transaction: t1
-                            })
-                            .then(function (resultArea) {
-                                var option = {
-                                    studentId: req.body.studentId,
-                                    studentName: req.body.studentName,
-                                };
-
-                                return AdminEnrollTrain.update(option, {
-                                    where: {
-                                        _id: req.body.id
-                                    },
+                            return AdminEnrollTrainHistory.create(history, {
                                     transaction: t1
+                                })
+                                .then(function (resultArea) {
+                                    var option = {
+                                        studentId: req.body.studentId,
+                                        studentName: req.body.studentName,
+                                    };
+
+                                    return AdminEnrollTrain.update(option, {
+                                        where: {
+                                            _id: req.body.id
+                                        },
+                                        transaction: t1
+                                    });
                                 });
+                        })
+                        .then(function (result) {
+                            res.jsonp({
+                                sucess: true
                             });
-                    }).then(function (result) {
-                        res.jsonp({
-                            sucess: true
+                        })
+                        .catch(function () {
+                            res.jsonp({
+                                error: "修改失败"
+                            });
                         });
-                    }).catch(function () {
-                        res.jsonp({
-                            error: "修改失败"
-                        });
-                    });
                 } else {
                     return res.jsonp({
                         error: "没找到订单"
@@ -216,107 +218,113 @@ module.exports = function (app) {
                 // 2. 如果报满修改字段为满员 (may useless)
                 // 3. 添加新订单
                 model.db.sequelize.transaction(function (t1) {
-                    return TrainClass.update({
-                            enrollCount: model.db.sequelize.literal('`enrollCount`+1')
-                        }, {
-                            where: {
-                                _id: req.body.trainId
-                            },
-                            transaction: t1
-                        })
-                        .then(function () {
-                            if (global) {
-                                return AdminEnrollTrain.create({
-                                    studentId: req.body.studentId,
-                                    studentName: req.body.studentName,
-                                    mobile: req.body.mobile,
-                                    trainId: req.body.trainId,
-                                    trainName: req.body.trainName,
-                                    attributeId: req.body.attributeId,
-                                    attributeName: req.body.attributeName,
-                                    trainPrice: req.body.trainPrice,
-                                    materialPrice: req.body.materialPrice,
-                                    discount: req.body.discount,
-                                    totalPrice: req.body.totalPrice,
-                                    realMaterialPrice: req.body.realMaterialPrice,
-                                    comment: req.body.comment,
-                                    createdBy: req.session.admin._id,
-                                    schoolId: req.body.schoolId,
-                                    schoolArea: req.body.schoolArea,
-                                    yearId: global.currentYear._id,
-                                    yearName: global.currentYear.name
-                                }, {
-                                    transaction: t1
-                                }).then(order => {
-                                    if (req.body.couponId) {
-                                        // 假定是优惠券的ID而不是分配好的优惠券
-                                        return Coupon.getFilter({
-                                            _id: req.body.couponId
-                                        }).then(coupon => {
-                                            if (coupon) { // 报名3科减
-                                                return CouponAssign.create({
-                                                    couponId: coupon._id,
-                                                    couponName: coupon.name,
-                                                    gradeId: coupon.gradeId,
-                                                    gradeName: coupon.gradeName,
-                                                    subjectId: coupon.subjectId,
-                                                    subjectName: coupon.subjectName,
-                                                    reducePrice: coupon.reducePrice,
-                                                    couponStartDate: coupon.couponStartDate,
-                                                    couponEndDate: coupon.couponEndDate,
-                                                    studentId: req.body.studentId,
-                                                    studentName: req.body.studentName,
-                                                    isUsed: true,
-                                                    orderId: order._id,
-                                                    createdBy: req.session.admin._id
-                                                }).then(assign => {
-                                                    return order;
-                                                });
-                                            } else {
-                                                // 分配好的优惠券, couponId 就是assignId
-                                                return CouponAssign.getFilter({
-                                                        _id: req.body.couponId,
-                                                        studentId: req.body.studentId,
-                                                        isDeleted: false,
-                                                        isUsed: false
+                        return TrainClass.update({
+                                enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                            }, {
+                                where: {
+                                    _id: req.body.trainId
+                                },
+                                transaction: t1
+                            })
+                            .then(function () {
+                                if (global) {
+                                    return AdminEnrollTrain.create({
+                                            studentId: req.body.studentId,
+                                            studentName: req.body.studentName,
+                                            mobile: req.body.mobile,
+                                            trainId: req.body.trainId,
+                                            trainName: req.body.trainName,
+                                            attributeId: req.body.attributeId,
+                                            attributeName: req.body.attributeName,
+                                            trainPrice: req.body.trainPrice,
+                                            materialPrice: req.body.materialPrice,
+                                            discount: req.body.discount,
+                                            totalPrice: req.body.totalPrice,
+                                            realMaterialPrice: req.body.realMaterialPrice,
+                                            comment: req.body.comment,
+                                            createdBy: req.session.admin._id,
+                                            schoolId: req.body.schoolId,
+                                            schoolArea: req.body.schoolArea,
+                                            yearId: global.currentYear._id,
+                                            yearName: global.currentYear.name
+                                        }, {
+                                            transaction: t1
+                                        })
+                                        .then(order => {
+                                            if (req.body.couponId) {
+                                                // 假定是优惠券的ID而不是分配好的优惠券
+                                                return Coupon.getFilter({
+                                                        _id: req.body.couponId
                                                     })
-                                                    .then(function (couponAssign) {
-                                                        if (couponAssign) {
-                                                            // 优惠券就是真实未使用的
-                                                            return CouponAssign.update({
-                                                                isUsed: true,
-                                                                orderId: order._id
-                                                            }, {
-                                                                where: {
-                                                                    _id: couponAssign._id
-                                                                },
-                                                                transaction: t1
-                                                            }).then(result => {
-                                                                return order;
-                                                            });
+                                                    .then(coupon => {
+                                                        if (coupon) { // 报名3科减
+                                                            return CouponAssign.create({
+                                                                    couponId: coupon._id,
+                                                                    couponName: coupon.name,
+                                                                    gradeId: coupon.gradeId,
+                                                                    gradeName: coupon.gradeName,
+                                                                    subjectId: coupon.subjectId,
+                                                                    subjectName: coupon.subjectName,
+                                                                    reducePrice: coupon.reducePrice,
+                                                                    couponStartDate: coupon.couponStartDate,
+                                                                    couponEndDate: coupon.couponEndDate,
+                                                                    studentId: req.body.studentId,
+                                                                    studentName: req.body.studentName,
+                                                                    isUsed: true,
+                                                                    orderId: order._id,
+                                                                    createdBy: req.session.admin._id
+                                                                })
+                                                                .then(assign => {
+                                                                    return order;
+                                                                });
                                                         } else {
-                                                            // 优惠券状态更改,报名失败
-                                                            throw new Error("优惠券状态发生更改");
+                                                            // 分配好的优惠券, couponId 就是assignId
+                                                            return CouponAssign.getFilter({
+                                                                    _id: req.body.couponId,
+                                                                    studentId: req.body.studentId,
+                                                                    isDeleted: false,
+                                                                    isUsed: false
+                                                                })
+                                                                .then(function (couponAssign) {
+                                                                    if (couponAssign) {
+                                                                        // 优惠券就是真实未使用的
+                                                                        return CouponAssign.update({
+                                                                                isUsed: true,
+                                                                                orderId: order._id
+                                                                            }, {
+                                                                                where: {
+                                                                                    _id: couponAssign._id
+                                                                                },
+                                                                                transaction: t1
+                                                                            })
+                                                                            .then(result => {
+                                                                                return order;
+                                                                            });
+                                                                    } else {
+                                                                        // 优惠券状态更改,报名失败
+                                                                        throw new Error("优惠券状态发生更改");
+                                                                    }
+                                                                });
                                                         }
                                                     });
+                                            } else {
+                                                return order;
                                             }
                                         });
-                                    } else {
-                                        return order;
-                                    }
-                                });
-                            }
+                                }
+                            });
+                    })
+                    .then(function (order) {
+                        res.jsonp({
+                            sucess: true,
+                            orderId: order._id
                         });
-                }).then(function (order) {
-                    res.jsonp({
-                        sucess: true,
-                        orderId: order._id
+                    })
+                    .catch(function (err) {
+                        res.jsonp({
+                            error: "报名失败"
+                        });
                     });
-                }).catch(function (err) {
-                    res.jsonp({
-                        error: "报名失败"
-                    });
-                });
             });
     };
 
@@ -327,42 +335,44 @@ module.exports = function (app) {
             .then(function (exams) {
                 if (exams && exams.length > 0) {
                     TrainClass.getFilter({
-                        _id: req.body.trainId
-                    }).then(trainClass => {
-                        var pArray = [],
-                            minScore;
-                        exams.forEach(function (exam) {
-                            minScore = exam.minScore;
-                            var p = model.db.sequelize.query("select S.score from adminEnrollExams O join adminEnrollExamScores S \
+                            _id: req.body.trainId
+                        })
+                        .then(trainClass => {
+                            var pArray = [],
+                                minScore;
+                            exams.forEach(function (exam) {
+                                minScore = exam.minScore;
+                                var p = model.db.sequelize.query("select S.score from adminEnrollExams O join adminEnrollExamScores S \
                         on O._id=S.examOrderId \
                         where O.examId=:examId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
                         S.isDeleted=false and S.subjectId=:subjectId", {
-                                replacements: {
-                                    examId: exam.examId,
-                                    studentId: req.body.studentId,
-                                    subjectId: trainClass.subjectId
-                                },
-                                type: model.db.sequelize.QueryTypes.SELECT
-                            }).then(scores => {
-                                if (scores && scores.length > 0 && scores[0] >= minScore) {
-                                    return true;
+                                        replacements: {
+                                            examId: exam.examId,
+                                            studentId: req.body.studentId,
+                                            subjectId: trainClass.subjectId
+                                        },
+                                        type: model.db.sequelize.QueryTypes.SELECT
+                                    })
+                                    .then(scores => {
+                                        if (scores && scores.length > 0 && scores[0] >= minScore) {
+                                            return true;
+                                        }
+                                    });
+                                pArray.push(p);
+                            });
+                            Promise.all(pArray).then(function (results) {
+                                if (results.some(function (result) {
+                                        return result;
+                                    })) {
+                                    next();
+                                } else {
+                                    res.jsonp({
+                                        error: "本课程成绩要求" + minScore + "分，根据您的考试成绩，建议报名其他课程或咨询前台！"
+                                    });
+                                    return;
                                 }
                             });
-                            pArray.push(p);
                         });
-                        Promise.all(pArray).then(function (results) {
-                            if (results.some(function (result) {
-                                    return result;
-                                })) {
-                                next();
-                            } else {
-                                res.jsonp({
-                                    error: "本课程成绩要求" + minScore + "分，根据您的考试成绩，建议报名其他课程或咨询前台！"
-                                });
-                                return;
-                            }
-                        });
-                    });
                 } else {
                     next();
                 }

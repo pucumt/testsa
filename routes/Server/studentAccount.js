@@ -28,31 +28,33 @@ module.exports = function (app) {
             };
         }
         //查询并返回第 page 页的 20 篇文章
-        StudentAccount.getFiltersWithPage(page, filter).then(function (result) {
-            res.jsonp({
-                studentAccounts: result.rows,
-                total: result.count,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+        StudentAccount.getFiltersWithPage(page, filter)
+            .then(function (result) {
+                res.jsonp({
+                    studentAccounts: result.rows,
+                    total: result.count,
+                    page: page,
+                    isFirstPage: (page - 1) == 0,
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+                });
             });
-        });
     });
 
     app.post('/admin/studentAccount/reset', checkLogin);
     app.post('/admin/studentAccount/reset', function (req, res) {
         var md5 = crypto.createHash('md5');
         StudentAccount.update({
-            password: password = md5.update("111111").digest('hex')
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+                password: password = md5.update("111111").digest('hex')
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/studentAccount/edit', checkLogin);
@@ -72,14 +74,15 @@ module.exports = function (app) {
                     return;
                 } else {
                     StudentAccount.update({
-                        name: req.body.name
-                    }, {
-                        where: {
-                            _id: req.body.id
-                        }
-                    }).then(function (studentAccount) {
-                        res.jsonp(studentAccount);
-                    });
+                            name: req.body.name
+                        }, {
+                            where: {
+                                _id: req.body.id
+                            }
+                        })
+                        .then(function (studentAccount) {
+                            res.jsonp(studentAccount);
+                        });
                 }
             });
     });
@@ -92,14 +95,18 @@ module.exports = function (app) {
         };
         model.db.sequelize.transaction(function (t1) {
             return StudentInfo.update({
-                    isDeleted: true
+                    isDeleted: true,
+                    deletedBy: req.session.admin._id,
+                    deletedDate: new Date()
                 }, {
                     where: filter,
                     transaction: t1
                 })
                 .then(function (result) {
                     return StudentAccount.update({
-                        isDeleted: true
+                        isDeleted: true,
+                        deletedBy: req.session.admin._id,
+                        deletedDate: new Date()
                     }, {
                         where: {
                             _id: req.body.id
@@ -175,12 +182,13 @@ module.exports = function (app) {
     app.get('/admin/studentAccount/:id', checkLogin);
     app.get('/admin/studentAccount/:id', function (req, res) {
         StudentAccount.getFilter({
-            _id: req.params.id
-        }).then(function (account) {
-            if (account) {
-                res.jsonp(account);
-            }
-        });
+                _id: req.params.id
+            })
+            .then(function (account) {
+                if (account) {
+                    res.jsonp(account);
+                }
+            });
     });
 
     app.post('/admin/studentAccount/updateMobile', checkLogin);

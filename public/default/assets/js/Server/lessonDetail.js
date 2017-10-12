@@ -258,6 +258,10 @@ $(".mainModal.word #gridBody").on("click", "td .btnDelete", function (e) {
         selfAjax("post", "/admin/lessonWord/delete", {
             id: entity._id
         }, function (data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
+            }
             location.reload();
         });
     });
@@ -306,6 +310,10 @@ $(".mainModal.sentence #gridBody").on("click", "td .btnDelete", function (e) {
         selfAjax("post", "/admin/lessonSentence/delete", {
             id: entity._id
         }, function (data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
+            }
             location.reload();
         });
     });

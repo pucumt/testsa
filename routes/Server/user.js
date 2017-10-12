@@ -16,94 +16,102 @@ module.exports = function (app) {
     app.post('/admin/user/add', checkLogin);
     app.post('/admin/user/add', function (req, res) {
         User.create({
-            name: req.body.username,
-            password: req.body.password,
-            schoolId: req.body.schoolId,
-            schoolArea: req.body.schoolArea,
-            role: req.body.role
-        }).then(function (user) {
-            res.jsonp(user);
-        });
+                name: req.body.username,
+                password: req.body.password,
+                schoolId: req.body.schoolId,
+                schoolArea: req.body.schoolArea,
+                role: req.body.role
+            })
+            .then(function (user) {
+                res.jsonp(user);
+            });
     });
 
     app.post('/admin/user/edit', checkLogin);
     app.post('/admin/user/edit', function (req, res) {
         User.update({
-            password: req.body.password,
-            schoolId: req.body.schoolId,
-            schoolArea: req.body.schoolArea,
-            role: req.body.role
-        }, {
-            where: {
-                name: req.body.username,
-                isDeleted: false
-            }
-        }).then(function (user) {
-            res.jsonp(user);
-        });
+                password: req.body.password,
+                schoolId: req.body.schoolId,
+                schoolArea: req.body.schoolArea,
+                role: req.body.role
+            }, {
+                where: {
+                    name: req.body.username,
+                    isDeleted: false
+                }
+            })
+            .then(function (user) {
+                res.jsonp(user);
+            });
     });
 
     app.post('/admin/user/setRole', checkLogin);
     app.post('/admin/user/setRole', function (req, res) {
         User.update({
-            schoolId: req.body.schoolId,
-            schoolArea: req.body.schoolArea,
-            role: req.body.role
-        }, {
-            where: {
-                name: req.body.username,
-                isDeleted: false
-            }
-        }).then(function (user) {
-            res.jsonp(user);
-        });
+                schoolId: req.body.schoolId,
+                schoolArea: req.body.schoolArea,
+                role: req.body.role
+            }, {
+                where: {
+                    name: req.body.username,
+                    isDeleted: false
+                }
+            })
+            .then(function (user) {
+                res.jsonp(user);
+            });
     });
 
     app.post('/admin/user/delete', checkLogin);
     app.post('/admin/user/delete', function (req, res) {
         User.update({
-            isDeleted: true
-        }, {
-            where: {
-                name: req.body.username,
-                isDeleted: false
-            }
-        }).then(function (user) {
-            res.jsonp(user);
-        });
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    name: req.body.username,
+                    isDeleted: false
+                }
+            })
+            .then(function (user) {
+                res.jsonp(user);
+            });
     });
 
     app.post('/admin/user/find', checkLogin);
     app.post('/admin/user/find', function (req, res) {
         User.getFilter({
-            name: req.body.username
-        }).then(function (user) {
-            if (user) {
-                res.jsonp({
-                    "valid": false
-                });
-            } else {
-                res.jsonp({
-                    "valid": true
-                });
-            }
-        });
+                name: req.body.username
+            })
+            .then(function (user) {
+                if (user) {
+                    res.jsonp({
+                        "valid": false
+                    });
+                } else {
+                    res.jsonp({
+                        "valid": true
+                    });
+                }
+            });
     });
 
     app.post('/admin/user/SetSuper', checkLogin);
     app.post('/admin/user/SetSuper', function (req, res) {
         User.update({
-            role: 0
-        }, {
-            where: {
-                name: "bfbadmin",
-                isDeleted: false
-            }
-        }).then(function (user) {
-            res.jsonp({
-                sucess: true
+                role: 0
+            }, {
+                where: {
+                    name: "bfbadmin",
+                    isDeleted: false
+                }
+            })
+            .then(function (user) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/adminList/search', checkLogin);

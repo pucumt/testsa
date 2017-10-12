@@ -148,6 +148,10 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
         selfAjax("post", "/admin/#name#/delete", {
             id: entity._id
         }, function(data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
+            }
            location.reload();
         });
     });

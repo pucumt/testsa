@@ -28,7 +28,9 @@ module.exports = function (app) {
 
         if (removeGrades.length > 0) {
             pArray.push(SchoolGradeRelation.update({
-                isDeleted: true
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
             }, {
                 where: {
                     schoolId: schoolId,
@@ -51,17 +53,20 @@ module.exports = function (app) {
         var result = {};
 
         var p0 = SchoolGradeRelation.getFilters({
-            schoolId: req.body.schoolId
-        }).then(function (relations) {
-            result.relations = relations;
-        });
+                schoolId: req.body.schoolId
+            })
+            .then(function (relations) {
+                result.relations = relations;
+            });
 
-        var p1 = Grade.getFilters({}).then(function (grades) {
-            result.grades = grades;
-        });
+        var p1 = Grade.getFilters({})
+            .then(function (grades) {
+                result.grades = grades;
+            });
 
-        Promise.all([p0, p1]).then(function () {
-            res.jsonp(result);
-        });
+        Promise.all([p0, p1])
+            .then(function () {
+                res.jsonp(result);
+            });
     });
 }

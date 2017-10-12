@@ -50,7 +50,9 @@ module.exports = function (app) {
     app.post('/admin/schoolArea/delete', checkLogin);
     app.post('/admin/schoolArea/delete', function (req, res) {
         SchoolArea.update({
-            isDeleted: true
+            isDeleted: true,
+            deletedBy: req.session.admin._id,
+            deletedDate: new Date()
         }, {
             where: {
                 _id: req.body.id
@@ -64,9 +66,10 @@ module.exports = function (app) {
 
     app.get('/admin/schoolArea/all', checkLogin);
     app.get('/admin/schoolArea/all', function (req, res) {
-        SchoolArea.getFilters({}).then(function (schoolAreas) {
-            res.jsonp(schoolAreas);
-        });
+        SchoolArea.getFilters({})
+            .then(function (schoolAreas) {
+                res.jsonp(schoolAreas);
+            });
     });
 
     app.get('/admin/schoolArea/settings/:id', checkLogin);

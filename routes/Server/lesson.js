@@ -51,7 +51,7 @@ module.exports = function (app) {
             })
             .then(function (result) {
                 if (result) {
-                    res.jsonp(lesson);
+                    res.jsonp(result);
                 }
             });
     });

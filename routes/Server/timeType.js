@@ -16,39 +16,44 @@ module.exports = function (app) {
     app.post('/admin/timeType/add', checkLogin);
     app.post('/admin/timeType/add', function (req, res) {
         TimeType.create({
-            name: req.body.name,
-            isChecked: true
-        }).then(function (timeType) {
-            res.jsonp(timeType);
-        });
+                name: req.body.name,
+                isChecked: true
+            })
+            .then(function (timeType) {
+                res.jsonp(timeType);
+            });
     });
 
     app.post('/admin/timeType/edit', checkLogin);
     app.post('/admin/timeType/edit', function (req, res) {
         TimeType.update({
-            name: req.body.name
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (timeType) {
-            res.jsonp(timeType);
-        });
+                name: req.body.name
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (timeType) {
+                res.jsonp(timeType);
+            });
     });
 
     app.post('/admin/timeType/delete', checkLogin);
     app.post('/admin/timeType/delete', function (req, res) {
         TimeType.update({
-            isDeleted: true
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/timeTypeList/search', checkLogin);
@@ -78,34 +83,36 @@ module.exports = function (app) {
     app.post('/admin/timeType/startAll', checkLogin);
     app.post('/admin/timeType/startAll', function (req, res) {
         TimeType.update({
-            isChecked: true
-        }, {
-            where: {
-                _id: {
-                    $in: JSON.parse(req.body.ids)
+                isChecked: true
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
                 }
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.post('/admin/timeType/stopAll', checkLogin);
     app.post('/admin/timeType/stopAll', function (req, res) {
         TimeType.update({
-            isChecked: false
-        }, {
-            where: {
-                _id: {
-                    $in: JSON.parse(req.body.ids)
+                isChecked: false
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
                 }
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 }

@@ -3,7 +3,7 @@ var model = require("../../model.js"),
     RollCallConfigure = model.rollCallConfigure,
     Year = model.year,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     // function checkIsConfigureExist() {
@@ -33,28 +33,33 @@ module.exports = function (app) {
     app.post('/admin/rollCallConfigure/edit', checkLogin);
     app.post('/admin/rollCallConfigure/edit', function (req, res) {
         //req.body.status,
-        RollCallConfigure.get().then(function (configure) {
-            var option = {
-                yearId: req.body.yearId,
-                yearName: req.body.yearName,
-                sequence: req.body.sequence
-            }
-            RollCallConfigure.batchUpdate({}, option).then(function () {
-                res.jsonp(option);
+        RollCallConfigure.getFilter({})
+            .then(function (configure) {
+                var option = {
+                    yearId: req.body.yearId,
+                    yearName: req.body.yearName,
+                    sequence: req.body.sequence
+                }
+                RollCallConfigure.update(option, {
+                        where: {}
+                    })
+                    .then(function () {
+                        res.jsonp(option);
+                    });
             });
-        });
     });
 
     app.post('/admin/rollCallConfigureList/search', checkLogin);
     app.post('/admin/rollCallConfigureList/search', function (req, res) {
         Year.getFilters({})
             .then(function (years) {
-                RollCallConfigure.get().then(function (configure) {
-                    res.jsonp({
-                        configure: configure,
-                        years: years
+                RollCallConfigure.getFilter({})
+                    .then(function (configure) {
+                        res.jsonp({
+                            configure: configure,
+                            years: years
+                        });
                     });
-                });
             });
     });
 }

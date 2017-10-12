@@ -36,52 +36,58 @@ module.exports = function (app) {
     app.post('/admin/teacher/add', function (req, res) {
         var md5 = crypto.createHash('md5');
         Teacher.create({
-            name: req.body.name,
-            engName: req.body.engName,
-            mobile: req.body.mobile,
-            address: req.body.address,
-            password: md5.update("111111").digest('hex')
-        }).then(function (teacher) {
-            res.jsonp(teacher);
-        });
+                name: req.body.name,
+                engName: req.body.engName,
+                mobile: req.body.mobile,
+                address: req.body.address,
+                password: md5.update("111111").digest('hex')
+            })
+            .then(function (teacher) {
+                res.jsonp(teacher);
+            });
     });
 
     app.post('/admin/teacher/edit', checkLogin);
     app.post('/admin/teacher/edit', function (req, res) {
         Teacher.update({
-            name: req.body.name,
-            engName: req.body.engName,
-            mobile: req.body.mobile,
-            address: req.body.address
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (teacher) {
-            res.jsonp(teacher);
-        });
+                name: req.body.name,
+                engName: req.body.engName,
+                mobile: req.body.mobile,
+                address: req.body.address
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (teacher) {
+                res.jsonp(teacher);
+            });
     });
 
     app.post('/admin/teacher/delete', checkLogin);
     app.post('/admin/teacher/delete', function (req, res) {
         Teacher.update({
-            isDeleted: true
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 
     app.get('/admin/teacher/withoutpage', checkLogin);
     app.get('/admin/teacher/withoutpage', function (req, res) {
-        Teacher.getFilters({}).then(function (teachers) {
-            res.jsonp(teachers);
-        });
+        Teacher.getFilters({})
+            .then(function (teachers) {
+                res.jsonp(teachers);
+            });
     });
 
     app.post('/admin/teacher/search', checkLogin);
@@ -111,15 +117,16 @@ module.exports = function (app) {
     app.post('/admin/teacher/reset', function (req, res) {
         var md5 = crypto.createHash('md5');
         Teacher.update({
-            password: password = md5.update("111111").digest('hex')
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (result) {
-            res.jsonp({
-                sucess: true
+                password: password = md5.update("111111").digest('hex')
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 }

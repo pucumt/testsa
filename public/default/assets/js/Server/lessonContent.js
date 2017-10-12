@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#btnAdmin").addClass("active");
 
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
@@ -11,7 +11,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
+var getButtons = function () {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
@@ -22,9 +22,9 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/lessonContentList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/lessonContentList/search?" + pStr, filter, function (data) {
         if (data && data.lessonContents.length > 0) {
-            data.lessonContents.forEach(function(lessonContent) {
+            data.lessonContents.forEach(function (lessonContent) {
                 var $tr = $('<tr id=' + lessonContent._id + '><td>' + lessonContent.name + '</td><td>' +
                     lessonContent.sCount + '</td><td>' + lessonContent.schoolArea + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", lessonContent);
@@ -37,62 +37,61 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     search(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     search(page);
 });
 //------------end
 
-function destroy(){
+function destroy() {
     var validator = $('#myModal').data('formValidation');
-    if(validator)
-    {
+    if (validator) {
         validator.destroy();
     }
 };
 
-function addValidation(callback){
-    setTimeout(function() {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '校区不能为空'
-                    },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '校区在4-30个字符之间'
+function addValidation(callback) {
+    setTimeout(function () {
+        $('#myModal').formValidation({
+            // List of fields and their validation rules
+            fields: {
+                'name': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '校区不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 30,
+                            message: '校区在4-30个字符之间'
+                        }
+                    }
+                },
+                'address': {
+                    trigger: "blur change",
+                    validators: {
+                        stringLength: {
+                            max: 100,
+                            message: '地址不能超过100个字符'
+                        },
                     }
                 }
-            },
-            'address': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 100,
-                        message: '地址不能超过100个字符'
-                    },
-                }
             }
-        }
-    });
+        });
     }, 0);
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -100,23 +99,25 @@ $("#btnAdd").on("click", function(e) {
     $('#myModalLabel').text("新增校区");
     $('#name').val("");
     $('#address').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
-    if(validator.isValid())
-    {
+    if (validator.isValid()) {
         var postURI = "/admin/lessonContent/add",
             postObj = {
-            name: $.trim($('#name').val()),
-            address: $.trim($('#address').val())
-        };
+                name: $.trim($('#name').val()),
+                address: $.trim($('#address').val())
+            };
         if (!isNew) {
             postURI = "/admin/lessonContent/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             if (data.error) {
                 showAlert(data.error);
                 return;
@@ -126,7 +127,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -137,18 +138,25 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#name').val(entity.name);
     $('#address').val(entity.address);
     $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/lessonContent/delete", {
             id: entity._id
-        }, function(data) {
-           location.reload();
+        }, function (data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
+            }
+            location.reload();
         });
     });
 });
