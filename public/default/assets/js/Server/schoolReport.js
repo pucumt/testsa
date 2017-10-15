@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnSchoolReport").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -24,13 +24,13 @@ var $mainSelectBody = $('.content.mainModal table tbody');
 function search(p) {
     var filter = {
             startDate: $(".mainModal #InfoSearch #startDate").val(),
-            endDate: $(".mainModal #InfoSearch #endDate").val()
+            endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').format("YYYY-MM-DD")
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/schoolReportList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/schoolReportList/search?" + pStr, filter, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(schoolReport) {
+            data.forEach(function (schoolReport) {
                 var $tr = $('<tr id=' + schoolReport._id + '><td>' + schoolReport.name + '</td><td>' +
                     schoolReport.trainPrice + '</td><td>' + schoolReport.materialPrice + '</td><td>' + schoolReport.totalPrice + '</td></tr>');
                 $mainSelectBody.append($tr);
@@ -39,7 +39,7 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 //------------end

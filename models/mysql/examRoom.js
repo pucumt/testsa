@@ -1,4 +1,4 @@
-// 考场教室布置
+// 考场教室布置, 没有使用，可以暂时不处理
 
 const db = require('../../db'),
     config = require('../../settings');

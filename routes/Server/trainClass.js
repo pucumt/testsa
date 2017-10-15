@@ -1,6 +1,7 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     TrainClass = model.trainClass,
+    TrainClassExam = model.trainClassExams,
     Year = model.year,
     Grade = model.grade,
     Subject = model.subject,
@@ -10,7 +11,7 @@ var model = require("../../model.js"),
     ClassAttribute = model.classAttribute,
     AdminEnrollTrain = model.adminEnrollTrain,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/trainClassList', checkLogin);
@@ -56,7 +57,7 @@ module.exports = function (app) {
 
     app.post('/admin/trainClass/add', checkLogin);
     app.post('/admin/trainClass/add', function (req, res) {
-        var trainClass = new TrainClass({
+        var option = {
             name: req.body.name,
             yearId: req.body.yearId,
             yearName: req.body.yearName,
@@ -66,8 +67,8 @@ module.exports = function (app) {
             subjectName: req.body.subjectName,
             categoryId: req.body.categoryId,
             categoryName: req.body.categoryName,
-            totalStudentCount: req.body.totalStudentCount, //招生人数
-            totalClassCount: req.body.totalClassCount, //共多少课时
+            totalStudentCount: req.body.totalStudentCount, // 招生人数
+            totalClassCount: req.body.totalClassCount, // 共多少课时
             trainPrice: req.body.trainPrice,
             materialPrice: req.body.materialPrice,
             teacherId: (req.body.teacherId || null),
@@ -83,115 +84,221 @@ module.exports = function (app) {
             schoolId: req.body.schoolId,
             schoolArea: req.body.schoolArea,
             isWeixin: 0,
-            enrollCount: 0,
-            exams: JSON.parse(req.body.exams)
-        });
-
-        trainClass.save().then(function (tclass) {
-            res.jsonp(tclass);
-        });
+            enrollCount: 0
+        };
+        model.db.sequelize.transaction(function (t1) {
+                return TrainClass.create(option, {
+                        transaction: t1
+                    })
+                    .then(function (result) {
+                        var exams = JSON.parse(req.body.exams);
+                        if (exams.length > 0) {
+                            var examArray = [];
+                            exams.forEach(function (exam) {
+                                exam.trainClassId = result._id;
+                            });
+                            return TrainClassExam.bulkCreate(examArray, {
+                                transaction: t1
+                            }).then(function () {
+                                return result;
+                            });
+                        }
+                    });
+            })
+            .then(function (result) {
+                res.jsonp(result);
+            })
+            .catch(function () {
+                res.jsonp({
+                    error: "创建失败"
+                });
+            });
     });
 
     app.post('/admin/trainClass/edit', checkLogin);
     app.post('/admin/trainClass/edit', function (req, res) {
-        var trainClass = new TrainClass({
-            name: req.body.name,
-            yearId: req.body.yearId,
-            yearName: req.body.yearName,
-            gradeId: req.body.gradeId,
-            gradeName: req.body.gradeName,
-            subjectId: req.body.subjectId,
-            subjectName: req.body.subjectName,
-            categoryId: req.body.categoryId,
-            categoryName: req.body.categoryName,
-            totalStudentCount: req.body.totalStudentCount, //招生人数
-            totalClassCount: req.body.totalClassCount, //共多少课时
-            trainPrice: req.body.trainPrice,
-            materialPrice: req.body.materialPrice,
-            teacherId: (req.body.teacherId || null),
-            teacherName: req.body.teacherName,
-            attributeId: req.body.attributeId,
-            attributeName: req.body.attributeName,
-            courseStartDate: req.body.courseStartDate,
-            courseEndDate: req.body.courseEndDate,
-            courseTime: req.body.courseTime,
-            courseContent: req.body.courseContent,
-            classRoomId: req.body.classRoomId,
-            classRoomName: req.body.classRoomName,
-            schoolId: req.body.schoolId,
-            schoolArea: req.body.schoolArea,
-            exams: JSON.parse(req.body.exams)
-        });
+        var option = {
+                name: req.body.name,
+                yearId: req.body.yearId,
+                yearName: req.body.yearName,
+                gradeId: req.body.gradeId,
+                gradeName: req.body.gradeName,
+                subjectId: req.body.subjectId,
+                subjectName: req.body.subjectName,
+                categoryId: req.body.categoryId,
+                categoryName: req.body.categoryName,
+                totalStudentCount: req.body.totalStudentCount, //招生人数
+                totalClassCount: req.body.totalClassCount, //共多少课时
+                trainPrice: req.body.trainPrice,
+                materialPrice: req.body.materialPrice,
+                teacherId: (req.body.teacherId || null),
+                teacherName: req.body.teacherName,
+                attributeId: req.body.attributeId,
+                attributeName: req.body.attributeName,
+                courseStartDate: req.body.courseStartDate,
+                courseEndDate: req.body.courseEndDate,
+                courseTime: req.body.courseTime,
+                courseContent: req.body.courseContent,
+                classRoomId: req.body.classRoomId,
+                classRoomName: req.body.classRoomName,
+                schoolId: req.body.schoolId,
+                schoolArea: req.body.schoolAre
+            },
+            exams = JSON.parse(req.body.exams),
+            toCreateExams = [],
+            toUpdateExams = [],
+            toDeleteExamIds = [];
+        TrainClassExam.getFilters({
+                trainClassId: req.body.id
+            })
+            .then(function (orgExams) {
+                exams.forEach(function (exam) {
+                    var updateExam;
+                    if (orgExams.some(orgExam => {
+                            if (orgExam.examId == exam.examId) {
+                                orgExam.minScore = exam.minScore;
+                                updateExam = orgExam;
+                                return true;
+                            }
+                        })) {
+                        // 更新的考试成绩
+                        toUpdateExams.push(updateExam);
+                    } else {
+                        // 新建的考试成绩
+                        exam._id = model.db.generateId();
+                        exam.trainClassId = req.body.id;
+                        exam.createdBy = req.session.admin._id;
+                        toCreateExams.push(exam);
+                    }
+                });
 
-        trainClass.update(req.body.id)
-            .then(function () {
-                res.jsonp(trainClass);
-            }).catch(function (err) {
-                console.log(err);
+                orgExams.forEach(orgExam => {
+                    if (!toUpdateExams.some(exam => {
+                            return orgExam.examId == exam.examId;
+                        })) {
+                        // 删除的考场
+                        toDeleteExamIds.push(orgExam._id);
+                    }
+                });
+                model.db.sequelize.transaction(function (t1) {
+                        return TrainClass.update(option, {
+                                where: {
+                                    _id: req.body.id
+                                },
+                                transaction: t1
+                            })
+                            .then(function (resultClass) {
+                                var pArray = [];
+                                if (toCreateExams.length > 0) {
+                                    var p = TrainClassExam.bulkCreate(toCreateExams, {
+                                        transaction: t1
+                                    });
+                                    pArray.push(p);
+                                }
+                                if (toDeleteExamIds.length > 0) {
+                                    var p = TrainClassExam.update({
+                                        isDeleted: true,
+                                        deletedBy: req.session.admin._id,
+                                        deletedDate: new Date()
+                                    }, {
+                                        where: {
+                                            _id: {
+                                                $in: toDeleteExamIds
+                                            }
+                                        },
+                                        transaction: t1
+                                    });
+                                    pArray.push(p);
+                                }
+                                if (toUpdateExams.length > 0) {
+                                    toUpdateExams.forEach(exam => {
+                                        var p = exam.save({
+                                            transaction: t1
+                                        });
+                                        pArray.push(p);
+                                    });
+                                }
+                                return Promise.all(pArray);
+                            });
+                    })
+                    .then(function (result) {
+                        res.jsonp({
+                            sucess: true
+                        });
+                    })
+                    .catch(function () {
+                        res.jsonp({
+                            error: "修改失败"
+                        });
+                    });
             });
     });
 
     app.post('/admin/trainClass/delete', checkLogin);
     app.post('/admin/trainClass/delete', function (req, res) {
-        TrainClass.delete(req.body.id, function (err, trainClass) {
-            if (err) {
+        TrainClass.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
                 res.jsonp({
-                    error: err
+                    sucess: true
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', checkLogin);
     app.get('/admin/trainClass/yeargradesubjectcategoryexamattribute', function (req, res) {
         var objReturn = {};
-        var p0 = Year.getAllWithoutPage()
+        var p0 = Year.getFilters({})
             .then(function (years) {
                 objReturn.years = years;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p1 = Grade.getAllWithoutPage()
+        var p1 = Grade.getFilters({})
             .then(function (grades) {
                 objReturn.grades = grades;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p2 = Subject.getAllWithoutPage()
+        var p2 = Subject.getFilters({})
             .then(function (subjects) {
                 objReturn.subjects = subjects;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p3 = Category.getAllWithoutPage()
+        var p3 = Category.getFilters({})
             .then(function (categorys) {
                 objReturn.categorys = categorys;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p4 = ExamClass.getAllWithoutPage()
+        var p4 = ExamClass.getFilters({})
             .then(function (exams) {
                 objReturn.exams = exams;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        var p5 = ClassAttribute.getAllWithoutPage()
+        var p5 = ClassAttribute.getFilters({})
             .then(function (attributes) {
                 objReturn.attributes = attributes;
             })
             .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p0, p1, p2, p3, p4, p5]).then(function () {
+        Promise.all([p0, p1, p2, p3, p4, p5])
+            .then(function () {
                 res.jsonp(objReturn);
             })
             .catch(function (err) {
@@ -230,7 +337,8 @@ module.exports = function (app) {
             .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p3, p4]).then(function () {
+        Promise.all([p1, p2, p3, p4])
+            .then(function () {
                 res.jsonp(objReturn);
             })
             .catch(function (err) {
@@ -262,7 +370,8 @@ module.exports = function (app) {
             .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p5]).then(function () {
+        Promise.all([p1, p2, p5])
+            .then(function () {
                 res.jsonp(objReturn);
             })
             .catch(function (err) {
@@ -272,119 +381,179 @@ module.exports = function (app) {
 
     app.post('/admin/trainClass/publish', checkLogin);
     app.post('/admin/trainClass/publish', function (req, res) {
-        TrainClass.publish(req.body.id, function (err, trainClass) {
-            if (err) {
+        TrainClass.update({
+                isWeixin: 1
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.post('/admin/trainClass/publishAll', checkLogin);
     app.post('/admin/trainClass/publishAll', function (req, res) {
-        TrainClass.publishAll(JSON.parse(req.body.ids), function (err, trainClass) {
-            if (err) {
+        TrainClass.update({
+                isWeixin: 1
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.post('/admin/trainClass/unPublish', checkLogin);
     app.post('/admin/trainClass/unPublish', function (req, res) {
-        TrainClass.unPublish(req.body.id, function (err, trainClass) {
-            if (err) {
+        TrainClass.update({
+                isWeixin: 9
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.post('/admin/trainClass/originalclass', checkLogin);
     app.post('/admin/trainClass/originalclass', function (req, res) {
-        TrainClass.setToOriginal(req.body.id, function (err, trainClass) {
-            if (err) {
+        TrainClass.update({
+                isWeixin: 2
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
+    // 实际订单跟课程里的报名名额显示不一致的时候使用
     app.post('/admin/trainClass/reset', checkLogin);
     app.post('/admin/trainClass/reset', function (req, res) {
         AdminEnrollTrain.getFilters({
             isSucceed: 1,
             trainId: req.body.id
         }).then(function (orders) {
-            var trainClass = new TrainClass({
-                enrollCount: orders.length
-            });
-            trainClass.update(req.body.id).then(function () {
-                res.jsonp({
-                    sucess: true
-                });
-            });
-        });
-    });
-
-    app.post('/admin/trainClass/updateOrder', checkLogin);
-    app.post('/admin/trainClass/updateOrder', function (req, res) {
-        TrainClass.get(req.body.id)
-            .then(function (trainClass) {
-                AdminEnrollTrain.batchUpdate({
-                    isSucceed: 1,
-                    trainId: req.body.id
+            TrainClass.update({
+                    enrollCount: orders.length
                 }, {
-                    trainName: trainClass.name
-                }).then(function () {
+                    where: {
+                        _id: req.body.id
+                    }
+                })
+                .then(function () {
                     res.jsonp({
                         sucess: true
                     });
                 });
+        });
+    });
+
+    // 修改课程名称后要修改订单里的名称
+    app.post('/admin/trainClass/updateOrder', checkLogin);
+    app.post('/admin/trainClass/updateOrder', function (req, res) {
+        TrainClass.getFilter({
+                _id: req.body.id
+            })
+            .then(function (trainClass) {
+                AdminEnrollTrain.update({
+                        trainName: trainClass.name
+                    }, {
+                        where: {
+                            isSucceed: 1,
+                            trainId: req.body.id
+                        }
+                    })
+                    .then(function () {
+                        res.jsonp({
+                            sucess: true
+                        });
+                    });
             });
     });
 
     app.post('/admin/trainClass/unPublishAll', checkLogin);
     app.post('/admin/trainClass/unPublishAll', function (req, res) {
-        TrainClass.unPublishAll(JSON.parse(req.body.ids), function (err, trainClass) {
-            if (err) {
+        TrainClass.update({
+                isWeixin: 9
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
                 res.jsonp({
                     error: err
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.post('/admin/trainClass/deleteAll', checkLogin);
     app.post('/admin/trainClass/deleteAll', function (req, res) {
-        TrainClass.deleteAll(JSON.parse(req.body.ids))
-            .then(function () {
+        TrainClass.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
+                }
+            })
+            .then(function (result) {
                 res.jsonp({
                     sucess: true
+                });
+            })
+            .catch(function (err) {
+                res.jsonp({
+                    error: err
                 });
             });
     });
@@ -436,20 +605,44 @@ module.exports = function (app) {
 
     app.post('/admin/batchTrainClasspublish', checkLogin);
     app.post('/admin/batchTrainClasspublish', function (req, res) {
-        TrainClass.publishWithYear(req.body.id)
-            .then(function () {
+        TrainClass.update({
+                isWeixin: 1
+            }, {
+                where: {
+                    yearId: req.body.id,
+                    isDeleted: false
+                }
+            })
+            .then(function (result) {
                 res.jsonp({
                     sucess: true
+                });
+            })
+            .catch(function (err) {
+                res.jsonp({
+                    error: err
                 });
             });
     });
 
     app.post('/admin/batchTrainClassUnpublish', checkLogin);
     app.post('/admin/batchTrainClassUnpublish', function (req, res) {
-        TrainClass.unpublishWithYear(req.body.id)
-            .then(function () {
+        TrainClass.update({
+                isWeixin: 9
+            }, {
+                where: {
+                    yearId: req.body.id,
+                    isDeleted: false
+                }
+            })
+            .then(function (result) {
                 res.jsonp({
                     sucess: true
+                });
+            })
+            .catch(function (err) {
+                res.jsonp({
+                    error: err
                 });
             });
     });
@@ -464,10 +657,20 @@ module.exports = function (app) {
                 $ne: req.body.gradeId
             };
         }
-        TrainClass.add100(filter)
-            .then(function () {
+
+        TrainClass.update({
+                trainPrice: model.db.sequelize.literal('`trainPrice`+100')
+            }, {
+                where: filter
+            })
+            .then(function (result) {
                 res.jsonp({
                     sucess: true
+                });
+            })
+            .catch(function (err) {
+                res.jsonp({
+                    error: err
                 });
             });
     });
@@ -482,17 +685,29 @@ module.exports = function (app) {
                 $ne: req.body.gradeId
             };
         }
-        TrainClass.min100(filter)
-            .then(function () {
+
+        TrainClass.update({
+                trainPrice: model.db.sequelize.literal('`trainPrice`-100')
+            }, {
+                where: filter
+            })
+            .then(function (result) {
                 res.jsonp({
                     sucess: true
+                });
+            })
+            .catch(function (err) {
+                res.jsonp({
+                    error: err
                 });
             });
     });
 
     app.post('/admin/adminEnrollTrain/getTrain', checkLogin);
     app.post('/admin/adminEnrollTrain/getTrain', function (req, res) {
-        TrainClass.get(req.body.id)
+        TrainClass.getFilter({
+                _id: req.body.id
+            })
             .then(function (trainClass) {
                 if (trainClass) {
                     res.jsonp(trainClass);
@@ -502,6 +717,16 @@ module.exports = function (app) {
                     });
                     return;
                 }
+            });
+    });
+
+    app.post('/admin/trainClass/getExams', checkLogin);
+    app.post('/admin/trainClass/getExams', function (req, res) {
+        TrainClassExam.getFilters({
+                trainClassId: req.body.id
+            })
+            .then(function (exams) {
+                res.jsonp(exams);
             });
     });
 }

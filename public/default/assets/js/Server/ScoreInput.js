@@ -282,7 +282,7 @@ function openExam(p) {
                 $('#editfile #examName').val(entity.name); //
                 $('#editfile #examId').val(entity._id); //
                 $('#selectModal').modal('hide');
-                resetDropDown(entity.subjects);
+                resetDropDown(entity._id);
             });
         }
         $("#selectModal #total").val(data.total);
@@ -319,9 +319,13 @@ $("#selectModal .paging .nextpage").on("click", function (e) {
     openExam(page);
 });
 
-function resetDropDown(data) {
-    $('#editfile').find("#subject option").remove();
-    data.forEach(function (subject) {
-        $("#editfile #subject").append("<option value='" + subject.subjectId + "'>" + subject.subjectName + "</option>");
+function resetDropDown(id) {
+    selfAjax("post", "/admin/examClassSubject/id", {
+        examId: id
+    }, function (data) {
+        $('#editfile').find("#subject option").remove();
+        data.forEach(function (subject) {
+            $("#editfile #subject").append("<option value='" + subject.subjectId + "'>" + subject.subjectName + "</option>");
+        });
     });
 };

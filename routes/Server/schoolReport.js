@@ -6,7 +6,7 @@ var model = require("../../model.js"),
     Subject = model.subject,
     Year = model.year,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/schoolReportList', checkLogin);
@@ -58,30 +58,34 @@ module.exports = function (app) {
         });
     });
 
+    // 校区金额报表
     app.post('/admin/schoolReportList/search', checkLogin);
     app.post('/admin/schoolReportList/search', function (req, res) {
-        var list = [];
-        AdminEnrollTrain.getSchoolReportList(global.currentYear._id, req.body.startDate, req.body.endDate)
-            .then(function (orders) {
-                orders.forEach(function (order) {
-                    list.push({
-                        _id: order._id.schoolId,
-                        name: order._id.schoolArea,
-                        trainPrice: order.trainPrice.toFixed(2),
-                        materialPrice: order.materialPrice.toFixed(2),
-                        totalPrice: (order.trainPrice + order.materialPrice).toFixed(2)
+        model.db.sequelize.query("select C.schoolId as _id, C.schoolArea as name, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice \
+        from adminEnrollTrains O join trainClasss C \
+        on O.trainId=C._id \
+        where O.isDeleted=false and O.isSucceed=1 \
+        and O.yearId=:yearId and O.createdDate between :startDate and :endDate \
+        group by C.schoolId, C.schoolArea", {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                if (orders && orders.length > 0) {
+                    orders.forEach(function (order) {
+                        order.totalPrice = parseFloat(order.trainPrice) + parseFloat(order.materialPrice);
                     });
-                });
-                res.json(list.sort(function (a, b) {
-                    return a.name < b.name;
-                }));
+                }
+                res.json(orders);
             });
     });
 
     app.post('/admin/payWayReportList/search', checkLogin);
     app.post('/admin/payWayReportList/search', function (req, res) {
-        var list = [];
-
         function getPayWay(way) {
             switch (way) {
                 case 0:
@@ -100,74 +104,52 @@ module.exports = function (app) {
                     return "No payWay";
             }
         }
-        AdminEnrollTrain.getPayWayReportList(global.currentYear._id, req.body.startDate, req.body.endDate, req.body.schoolId)
-            .then(function (orders) {
-                orders.forEach(function (order) {
-                    list.push({
-                        name: getPayWay(order._id),
-                        trainPrice: order.trainPrice.toFixed(2),
-                        materialPrice: order.materialPrice.toFixed(2),
-                        totalPrice: (order.trainPrice + order.materialPrice).toFixed(2)
+        var strQuery = "select O.payWay, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice \
+                            from adminEnrollTrains O join trainClasss C \
+                            on O.trainId=C._id \
+                            where O.isDeleted=false and O.isSucceed=1 \
+                            and O.yearId=:yearId and O.createdDate between :startDate and :endDate ";
+        if (req.body.schoolId) {
+            strQuery = strQuery + "and C.schoolId=:schoolId";
+        }
+        strQuery = strQuery + " group by O.payWay ";
+        model.db.sequelize.query(strQuery, {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate,
+                    schoolId: req.body.schoolId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                if (orders && orders.length > 0) {
+                    orders.forEach(function (order) {
+                        order.totalPrice = parseFloat(order.trainPrice) + parseFloat(order.materialPrice);
+                        order.name = getPayWay(order.payWay);
                     });
-                });
-                res.json(list.sort(function (a, b) {
-                    return a.name < b.name;
-                }));
+                }
+                res.json(orders);
             });
     });
 
     app.post('/admin/rebateReportList/search', checkLogin);
     app.post('/admin/rebateReportList/search', function (req, res) {
-        var list = [];
-        Subject.getFilters({}).then(function (subjects) {
-            var pArray = [];
-            subjects.forEach(function (subject) {
-                var p = TrainClass.getFilters({
-                        schoolId: req.body.schoolId,
-                        subjectId: subject._id
-                    })
-                    .then(function (trainClasses) {
-                        if (trainClasses && trainClasses.length > 0) {
-                            var classIds = trainClasses.map(function (singleClass) {
-                                return singleClass._id;
-                            });
-                            return AdminEnrollTrain.getFilters({
-                                trainId: {
-                                    $in: classIds
-                                },
-                                orderDate: {
-                                    $lte: req.body.endDate
-                                },
-                                orderDate: {
-                                    $gte: req.body.startDate
-                                },
-                                isPayed: true
-                            }).then(function (orders) {
-                                var rebatePrice = 0;
-                                orders.forEach(function (order) {
-                                    rebatePrice = rebatePrice + order.rebatePrice;
-                                });
-
-                                list.push({
-                                    _id: subject._id,
-                                    name: subject.name,
-                                    rebatePrice: rebatePrice.toFixed(2)
-                                });
-                            });
-                        } else {
-                            list.push({
-                                _id: subject._id,
-                                name: subject.name,
-                                rebatePrice: 0
-                            });
-                        }
-                    });
-                pArray.push(p);
+        model.db.sequelize.query("select C.subjectId as _id, C.subjectName as name, sum(R.rebateTotalPrice) as rebatePrice \
+                    from rebateenrolltrains R join adminEnrollTrains O on R.trainOrderId=O._id \
+                    join trainClasss C on O.trainId=C._id \
+                    where R.createdDate between :startDate and :endDate and C.schoolId=:schoolId \
+                    group by C.subjectId, C.subjectName", {
+                replacements: {
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate,
+                    schoolId: req.body.schoolId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                res.json(orders);
             });
-            Promise.all(pArray).then(function () {
-                res.json(list);
-            });
-        });
     });
 
     app.post('/admin/peopleCountList/search', checkLogin);
@@ -214,6 +196,7 @@ module.exports = function (app) {
             });
     });
 
+    // 留存报表
     app.post('/admin/compareLastList/search', checkLogin);
     app.post('/admin/compareLastList/search', function (req, res) {
         Year.getFilter({
@@ -255,9 +238,18 @@ module.exports = function (app) {
                                                     return order.studentId;
                                                 });
 
-                                                return AdminEnrollTrain.getCountOfStudentSubject(global.currentYear._id, trainClass.subjectId, studentIds)
+                                                return model.db.sequelize.query("select count(0) as count \
+                                                        from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+                                                        where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId and O.studentId in (:studentIds) and C.subjectId=:subjectId ", {
+                                                        replacements: {
+                                                            yearId: global.currentYear._id,
+                                                            subjectId: trainClass.subjectId,
+                                                            studentIds: studentIds
+                                                        },
+                                                        type: model.db.sequelize.QueryTypes.SELECT
+                                                    })
                                                     .then(function (result) {
-                                                        var count = (result[0] && result[0].count) || 0;
+                                                        var count = (result && result[0] && result[0].count) || 0;
                                                         list.push({
                                                             _id: trainClass._id,
                                                             name: trainClass.name,
@@ -307,30 +299,120 @@ module.exports = function (app) {
         });
     });
 
+    // 连报统计
     app.post('/admin/enrollAggregateList/search', checkLogin);
     app.post('/admin/enrollAggregateList/search', function (req, res) {
-        var list = [];
-        AdminEnrollTrain.getOrderCount(global.currentYear._id, req.body.gradeId, req.body.schoolId)
+        var countObject = {};
+        var strQuery = "select count(0) as count from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+            where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
+        if (req.body.gradeId) {
+            strQuery = strQuery + " and C.gradeId=:gradeId";
+        }
+        var p0 = model.db.sequelize.query(strQuery, {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    gradeId: req.body.gradeId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
             .then(function (result) {
+                countObject.totalCount = (result && result[0] && result[0].count) || 0; // 总订单
+            });
+
+        strQuery = "select count(0) as count from \
+            (select 1 from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+            where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
+        if (req.body.gradeId) {
+            strQuery = strQuery + " and C.gradeId=:gradeId";
+        }
+        strQuery = strQuery + " group by O.studentId) R ";
+        var p1 = model.db.sequelize.query(strQuery, {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    gradeId: req.body.gradeId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (result) {
+                countObject.peopleCount = (result && result[0] && result[0].count) || 0; // 下单总人数
+            });
+
+        strQuery = "select count(0) as count from \
+            (select count(0) as countChild from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+            where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
+        if (req.body.gradeId) {
+            strQuery = strQuery + " and C.gradeId=:gradeId";
+        }
+        strQuery = strQuery + " group by O.studentId) R where R.countChild=2";
+        var p2 = model.db.sequelize.query(strQuery, {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    gradeId: req.body.gradeId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (result) {
+                countObject.twoOrderCount = (result && result[0] && result[0].count) || 0; // 连报2门
+            });
+
+        strQuery = "select count(0) as count from \
+            (select count(0) as countChild from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+            where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
+        if (req.body.gradeId) {
+            strQuery = strQuery + " and C.gradeId=:gradeId";
+        }
+        strQuery = strQuery + " group by O.studentId) R where R.countChild=3";
+        var p3 = model.db.sequelize.query(strQuery, {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    gradeId: req.body.gradeId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (result) {
+                countObject.threeOrderCount = (result && result[0] && result[0].count) || 0; // 连报3门
+            });
+
+        strQuery = "select count(0) as count from \
+            (select count(0) as countChild from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+            where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
+        if (req.body.gradeId) {
+            strQuery = strQuery + " and C.gradeId=:gradeId";
+        }
+        strQuery = strQuery + " group by O.studentId) R where R.countChild>3";
+        var p4 = model.db.sequelize.query(strQuery, {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    gradeId: req.body.gradeId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (result) {
+                countObject.fourOrMoreCount = (result && result[0] && result[0].count) || 0; // 连报4门及以上
+            });
+
+        Promise.all([p0, p1, p2, p3, p4])
+            .then(function () {
+                var list = [];
                 list.push({
                     name: "总订单",
-                    value: result.totalCount || 0
+                    value: countObject.totalCount || 0
                 });
                 list.push({
                     name: "下单总人数",
-                    value: result.peopleCount || 0
+                    value: countObject.peopleCount || 0
                 });
                 list.push({
                     name: "连报2门",
-                    value: result.twoOrderCount || 0
+                    value: countObject.twoOrderCount || 0
                 });
                 list.push({
                     name: "连报3门",
-                    value: result.threeOrderCount || 0
+                    value: countObject.threeOrderCount || 0
                 });
                 list.push({
                     name: "连报4门及以上",
-                    value: result.fourOrMoreCount || 0
+                    value: countObject.fourOrMoreCount || 0
                 });
 
                 res.json(list);

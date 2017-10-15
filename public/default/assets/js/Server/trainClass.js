@@ -370,11 +370,11 @@ $("#myModal #btnSave").on("click", function (e) {
                 totalStudentCount: $.trim($('#myModal #totalStudentCount').val()),
                 totalClassCount: $.trim($('#myModal #totalClassCount').val()),
                 courseContent: $.trim($('#myModal #courseContent').val()),
-                classRoomName: $.trim($('#myModal #classRoom').val()), //TBD
-                classRoomId: $('#myModal #classRoomid').val(), //
-                schoolArea: $('#myModal #school').val(), //TBD
+                classRoomName: $.trim($('#myModal #classRoom').val()),
+                classRoomId: $('#myModal #classRoomid').val(),
+                schoolArea: $('#myModal #school').val(),
                 schoolId: $('#myModal #schoolid').val(), //
-                teacherName: $('#myModal #teacher').val(), //TBD
+                teacherName: $('#myModal #teacher').val(), //
                 teacherId: $('#myModal #teacherid').val(), //
                 yearId: $('#myModal #year').val(),
                 yearName: $('#myModal #year').find("option:selected").text(),
@@ -472,14 +472,20 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
     $('#myModal #teacher').val(entity.teacherName); //
     $('#myModal #teacherid').val(entity.teacherId); //
     // $('#minScore').val(entity.minScore);
-    resetDropDown({
-        yearid: entity.yearId,
-        gradeid: entity.gradeId,
-        subjectid: entity.subjectId,
-        categoryid: entity.categoryId,
-        attributeid: entity.attributeId,
-        exams: entity.exams
+
+    selfAjax("post", "/admin/trainClass/getExams", {
+        id: entity._id
+    }, function (data) {
+        resetDropDown({
+            yearid: entity.yearId,
+            gradeid: entity.gradeId,
+            subjectid: entity.subjectId,
+            categoryid: entity.categoryId,
+            attributeid: entity.attributeId,
+            exams: data || []
+        });
     });
+
     $('#myModal #id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({

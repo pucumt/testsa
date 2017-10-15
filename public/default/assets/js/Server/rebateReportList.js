@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnRebateReport").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -22,9 +22,9 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderSearchSchoolDropDown() {
-    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(school) {
+            data.forEach(function (school) {
                 $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
             });
         };
@@ -36,14 +36,14 @@ var $mainSelectBody = $('.content.mainModal table tbody');
 function search(p) {
     var filter = {
             startDate: $(".mainModal #InfoSearch #startDate").val(),
-            endDate: $(".mainModal #InfoSearch #endDate").val(),
+            endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').format("YYYY-MM-DD"),
             schoolId: $(".mainModal #InfoSearch #searchSchool").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/rebateReportList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/rebateReportList/search?" + pStr, filter, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(schoolReport) {
+            data.forEach(function (schoolReport) {
                 var $tr = $('<tr ><td>' + schoolReport.name + '</td><td>' +
                     schoolReport.rebatePrice + '</td></tr>');
                 $mainSelectBody.append($tr);
@@ -52,14 +52,14 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$(".mainModal #InfoSearch #btnExport").on("click", function(e) {
+$(".mainModal #InfoSearch #btnExport").on("click", function (e) {
     selfAjax("post", "/admin/export/rebateAllList", {
         // gradeId: $(".mainModal #InfoSearch #searchGrade").val()
-    }, function(data) {
+    }, function (data) {
         if (data && data.sucess) {
             location.href = "/admin/export/scoreTemplate?name=" + encodeURI("全部退费列表.xlsx");
         }

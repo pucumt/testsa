@@ -228,7 +228,7 @@ module.exports = function (app) {
                     })
                     .catch(function () {
                         res.jsonp({
-                            error: "添加失败"
+                            error: "修改失败"
                         });
                     });
             });
@@ -396,6 +396,19 @@ module.exports = function (app) {
                             examClassSubjects: examClassSubjects
                         });
                     });
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+    });
+
+    app.post('/admin/examClassSubject/id', checkLogin);
+    app.post('/admin/examClassSubject/id', function (req, res) {
+        ExamClassSubject.getFilters({
+                examId: req.body.examId
+            })
+            .then(function (examClassSubjects) {
+                res.jsonp(examClassSubjects);
             })
             .catch(function (err) {
                 console.log('errored');

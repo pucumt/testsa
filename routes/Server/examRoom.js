@@ -1,10 +1,11 @@
+// no need anymore
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     ExamRoom = model.examRoom,
     ExamClass = model.examClass,
     AdminEnrollExam = model.adminEnrollExam,
     auth = require("./auth"),
-    checkLogin = auth.checkLogin; // TBD
+    checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/examRoomList', checkLogin);
