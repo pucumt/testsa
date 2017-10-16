@@ -3,7 +3,7 @@ var crypto = require('crypto'),
     pageSize = model.db.config.pageSize,
     Teacher = model.teacher,
     auth = require("./auth"),
-    checkNotLogin = auth.checkNotLogin; // TBD
+    checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
     app.get('/Teacher/login', checkNotLogin);

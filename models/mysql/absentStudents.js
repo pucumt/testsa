@@ -17,7 +17,7 @@ const AbsentStudents = db.defineModel('absentStudentss', {
         defaultValue: ""
     },
     absentDate: {
-        type: db.DATE,
+        type: db.DATEONLY,
         defaultValue: db.NOW
     }, // 缺勤日期
     classId: {
@@ -78,6 +78,9 @@ AbsentStudents.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return AbsentStudents.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate', 'DESC']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

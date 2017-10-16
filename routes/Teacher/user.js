@@ -3,7 +3,7 @@ var model = require("../../model.js"),
     Teacher = model.teacher,
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin; // TBD
+    checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function (app) {
     app.get('/Teacher/personalCenter', checkLogin);
@@ -38,18 +38,18 @@ module.exports = function (app) {
             });
             return;
         }
-        var teacher = new Teacher({
-            password: req.body.password
-        });
-        teacher.update(currentUser._id, function (err, teacher) {
-            if (err) {
-                teacher = {};
-            }
-            currentUser.password = req.body.password;
-            res.jsonp({
-                sucess: true
+        Teacher.update({
+                password: req.body.password
+            }, {
+                where: {
+                    _id: currentUser._id
+                }
+            })
+            .then(function () {
+                currentUser.password = req.body.password;
+                res.jsonp({
+                    sucess: true
+                });
             });
-            return;
-        });
     });
 }

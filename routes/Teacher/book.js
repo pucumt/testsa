@@ -8,7 +8,7 @@ var model = require("../../model.js"),
     StudentLessonScore = model.studentLessonScore,
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin; // TBD
+    checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function (app) {
     app.get('/Teacher/book/:id', checkLogin);
@@ -30,19 +30,15 @@ module.exports = function (app) {
         var filter = {
             bookId: req.body.bookId
         };
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
-        Lesson.getAll(null, page, filter, function (err, lessons, total) {
-            if (err) {
-                lessons = [];
-            }
+        Lesson.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                lessons: lessons,
-                isLastPage: ((page - 1) * 14 + lessons.length) == total
+                lessons: result.rows,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
@@ -68,7 +64,9 @@ module.exports = function (app) {
 
     app.get('/Teacher/book/lesson/:id', checkLogin);
     app.get('/Teacher/book/lesson/:id', function (req, res) {
-        Lesson.get(req.params.id)
+        Lesson.getFilter({
+                _id: req.params.id
+            })
             .then(function (lesson) {
                 res.render('Teacher/book_lesson_detail.html', {
                     title: '课文内容',

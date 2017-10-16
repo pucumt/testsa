@@ -1,37 +1,38 @@
-$(document).ready(function() {
-    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+$(document).ready(function () {
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/Teacher/personalCenter";
     });
 
-    $(".enroll #resetForm .btn").on("click", function(e) {
+    $(".enroll #resetForm .btn").on("click", function (e) {
         var validator = $('#resetForm').data('formValidation').validate();
         if (validator.isValid()) {
             $(".enroll #resetForm .btn").attr("disabled", "disabled");
             selfAjax("post", "/Teacher/personalCenter/resetPWD", {
-                oldPassword: hex_md5($('#resetForm #oldPassword').val()),
-                password: hex_md5($('#resetForm #password').val()),
-                originalUrl: "/Teacher/personalCenter/resetPWD"
-            }, function(data) {
-                $(".enroll #resetForm .btn").removeAttr("disabled");
-                if (data) {
-                    if (data.notLogin) {
-                        location.href = "/Teacher/login";
-                        return;
-                    }
+                    oldPassword: hex_md5($('#resetForm #oldPassword').val()),
+                    password: hex_md5($('#resetForm #password').val()),
+                    originalUrl: "/Teacher/personalCenter/resetPWD"
+                })
+                .then(function (data) {
+                    $(".enroll #resetForm .btn").removeAttr("disabled");
+                    if (data) {
+                        if (data.notLogin) {
+                            location.href = "/Teacher/login";
+                            return;
+                        }
 
-                    if (data.sucess) {
-                        $("#bgBack").show();
-                        showAlert("密码修改成功", null, function() {
-                            $("#bgBack").hide();
-                        });
-                    } else {
-                        $("#bgBack").show();
-                        showAlert(data.error, null, function() {
-                            $("#bgBack").hide();
-                        });
+                        if (data.sucess) {
+                            $("#bgBack").show();
+                            showAlert("密码修改成功", null, function () {
+                                $("#bgBack").hide();
+                            });
+                        } else {
+                            $("#bgBack").show();
+                            showAlert(data.error, null, function () {
+                                $("#bgBack").hide();
+                            });
+                        }
                     }
-                }
-            });
+                });
         }
     });
 
@@ -39,7 +40,7 @@ $(document).ready(function() {
 });
 
 function addValidation() {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#resetForm').formValidation({
             // List of fields and their validation rules
             fields: {

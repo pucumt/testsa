@@ -105,7 +105,7 @@ module.exports = function (app) {
     app.post('/admin/adminRollCallClassList/cancel', function (req, res) {
         AbsentClass.update({
                 isDeleted: true,
-                deletedBy: req.session.admin._id,
+                deletedBy: req.session.adminRollCall._id,
                 deletedDate: new Date()
             }, {
                 where: {

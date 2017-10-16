@@ -5,7 +5,7 @@ const db = require('../../db'),
 
 const AbsentClass = db.defineModel('absentClasss', {
     absentDate: {
-        type: db.DATE,
+        type: db.DATEONLY,
         defaultValue: db.NOW
     },
     classId: {
@@ -55,9 +55,14 @@ AbsentClass.getFilters = function (filter) {
 };
 
 AbsentClass.getFiltersWithPage = function (page, filter) {
-    filter.isDeleted = false;
+    if (filter.isDeleted === undefined) {
+        filter.isDeleted = false;
+    }
     return AbsentClass.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate', 'DESC']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

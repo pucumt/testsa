@@ -1730,25 +1730,8 @@ module.exports = function (app) {
     app.post('/admin/downloadPic', upload.single('avatar'), function (req, res, next) {
         var uploadFolder = path.join(serverPath, "../public/uploads/");
         var list = xlsx.parse(path.join(uploadFolder, req.file.filename));
-        //list[0].data[0] [0] [1] [2]
-        // var length = list[0].data.length;
-        // for (var i = 1; i < 2; i++) {
-        //     if (!list[0].data[i][0]) {
-        //         break;
-        //     }
 
         downloadPicture(list[0].data, 1, uploadFolder);
-
-        // var data = list[0].data[i],
-        //     strArr = data[2].split(";"),
-        //     name = strArr[0].split(":")[1],
-        //     mobile = strArr[4].split(":")[1],
-        //     url = strArr[3].substr(5);
-
-        // var x = request(url)
-        //     .pipe(fs.createWriteStream(path.join(uploadFolder, 'pics', name + mobile + '.jpg')));
-        // }
-        // res.redirect('/admin/score');
         res.jsonp({});
     });
 }
