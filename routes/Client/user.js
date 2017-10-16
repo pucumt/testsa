@@ -10,7 +10,7 @@ var model = require("../../model.js"),
     ClassRoom = model.classRoom,
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin; // TBD
+    checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function (app) {
     app.post('/studentInfo/add', checkJSONLogin);
@@ -25,18 +25,16 @@ module.exports = function (app) {
                         error: "此学生已经存在"
                     });
                 } else {
-                    var studentInfo = new StudentInfo({
-                        name: req.body.name,
-                        mobile: req.session.user.name,
-                        sex: req.body.sex,
-                        School: req.body.School,
-                        className: req.body.className,
-                        gradeId: req.body.gradeId,
-                        gradeName: req.body.gradeName,
-                        accountId: req.session.user._id
-                    });
-
-                    studentInfo.save()
+                    return StudentInfo.create({
+                            name: req.body.name,
+                            mobile: req.session.user.name,
+                            sex: req.body.sex,
+                            School: req.body.School,
+                            className: req.body.className,
+                            gradeId: req.body.gradeId,
+                            gradeName: req.body.gradeName,
+                            accountId: req.session.user._id
+                        })
                         .then(function (student) {
                             res.jsonp({
                                 student: student
@@ -61,98 +59,117 @@ module.exports = function (app) {
                         error: "此学生已经存在"
                     });
                 } else {
-                    var studentInfo = new StudentInfo({
-                        name: req.body.name,
-                        mobile: req.session.user.name,
-                        sex: req.body.sex,
-                        School: req.body.School,
-                        className: req.body.className,
-                        gradeId: req.body.gradeId,
-                        gradeName: req.body.gradeName
-                    });
-
-                    studentInfo.update(req.body.id, function (err, result) {
-                        if (err) {
-                            studentInfo = {};
-                        }
-                        res.jsonp({
-                            succeed: true
+                    return StudentInfo.update({
+                            name: req.body.name,
+                            mobile: req.session.user.name,
+                            sex: req.body.sex,
+                            School: req.body.School,
+                            className: req.body.className,
+                            gradeId: req.body.gradeId,
+                            gradeName: req.body.gradeName
+                        }, {
+                            where: {
+                                _id: req.body.id
+                            }
+                        })
+                        .then(function () {
+                            res.jsonp({
+                                succeed: true
+                            });
                         });
-                    });
                 }
             });
     });
 
     app.post('/studentInfo/delete', checkJSONLogin);
     app.post('/studentInfo/delete', function (req, res) {
-        StudentInfo.delete(req.body.id, function (err, studentInfo) {
-            if (err) {
+        StudentInfo.update({
+                isDeleted: true,
+                deletedBy: req.session.user._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
                 res.jsonp({
-                    error: err
+                    sucess: true
                 });
-                return;
-            }
-            res.jsonp({
-                sucess: true
             });
-        });
     });
 
     app.post('/studentInfo/coupon', checkJSONLogin);
     app.post('/studentInfo/coupon', function (req, res) {
-        TrainClass.get(req.body.classId).then(function (trainClass) {
-            StudentInfo.get(req.body.studentId).then(function (student) {
-                var now = new Date((new Date()).toLocaleDateString());
-                var filter = {
-                    studentId: req.body.studentId,
-                    gradeId: {
-                        $in: [trainClass.gradeId, ""]
-                    },
-                    subjectId: {
-                        $in: [trainClass.subjectId, ""]
-                    },
-                    isUsed: {
-                        $ne: true
-                    },
-                    couponStartDate: {
-                        $lte: now
-                    },
-                    couponEndDate: {
-                        $gte: now
-                    }
-                };
-                CouponAssign.getAllWithoutPage(filter).then(function (assigns) {
-                    if (trainClass.attributeId) {
+        TrainClass.getFilter({
+                _id: req.body.classId
+            })
+            .then(function (trainClass) {
+                StudentInfo.getFilter({
+                        _id: req.body.studentId
+                    })
+                    .then(function (student) {
+                        var now = new Date((new Date()).toLocaleDateString());
                         var filter = {
-                            studentId: student._id,
-                            attributeId: trainClass.attributeId,
-                            isPayed: true,
-                            isSucceed: 1
-                        }
-                        AdminEnrollTrain.getCount(filter)
-                            .then(function (result) {
-                                if (result && result >= 2) {
-                                    Coupon.getFilter({
-                                            category: trainClass.attributeId
+                            studentId: req.body.studentId,
+                            gradeId: {
+                                $in: [trainClass.gradeId, ""]
+                            },
+                            subjectId: {
+                                $in: [trainClass.subjectId, ""]
+                            },
+                            isUsed: {
+                                $ne: true
+                            },
+                            couponStartDate: {
+                                $lte: now
+                            },
+                            couponEndDate: {
+                                $gte: now
+                            }
+                        };
+                        CouponAssign.getFilters(filter)
+                            .then(function (assigns) {
+                                if (trainClass.attributeId) {
+                                    var filter = {
+                                        studentId: student._id,
+                                        attributeId: trainClass.attributeId,
+                                        isPayed: true,
+                                        isSucceed: 1
+                                    }
+                                    AdminEnrollTrain.count({
+                                            where: filter
                                         })
-                                        .then(function (coupon) {
-                                            assigns.push({
-                                                _id: coupon._id,
-                                                couponId: coupon._id,
-                                                couponName: coupon.name,
-                                                gradeId: coupon.gradeId,
-                                                gradeName: coupon.gradeName,
-                                                subjectId: coupon.subjectId,
-                                                subjectName: coupon.subjectName,
-                                                reducePrice: coupon.reducePrice,
-                                                couponStartDate: coupon.couponStartDate,
-                                                couponEndDate: coupon.couponEndDate,
-                                                studentId: student._id
-                                            });
-                                            res.jsonp({
-                                                student: student,
-                                                assigns: assigns
-                                            });
+                                        .then(function (result) {
+                                            if (result && result >= 2) {
+                                                Coupon.getFilter({
+                                                        category: trainClass.attributeId
+                                                    })
+                                                    .then(function (coupon) {
+                                                        assigns.push({
+                                                            _id: coupon._id,
+                                                            couponId: coupon._id,
+                                                            couponName: coupon.name,
+                                                            gradeId: coupon.gradeId,
+                                                            gradeName: coupon.gradeName,
+                                                            subjectId: coupon.subjectId,
+                                                            subjectName: coupon.subjectName,
+                                                            reducePrice: coupon.reducePrice,
+                                                            couponStartDate: coupon.couponStartDate,
+                                                            couponEndDate: coupon.couponEndDate,
+                                                            studentId: student._id
+                                                        });
+                                                        res.jsonp({
+                                                            student: student,
+                                                            assigns: assigns
+                                                        });
+                                                    });
+                                            } else {
+                                                res.jsonp({
+                                                    student: student,
+                                                    assigns: assigns
+                                                });
+                                            }
                                         });
                                 } else {
                                     res.jsonp({
@@ -161,15 +178,8 @@ module.exports = function (app) {
                                     });
                                 }
                             });
-                    } else {
-                        res.jsonp({
-                            student: student,
-                            assigns: assigns
-                        });
-                    }
-                });
+                    });
             });
-        });
     });
 
     app.get('/personalCenter/students', checkLogin);
@@ -226,7 +236,10 @@ module.exports = function (app) {
 
     app.get('/enroll/exam/card/:id', checkLogin);
     app.get('/enroll/exam/card/:id', function (req, res) {
-        ExamClass.get(req.params.id).then(function (train) {
+        ExamClass.getFilter({
+                _id: req.params.id
+            })
+            .then(function (train) {
                 if (train) {
                     var currentUser = req.session.user;
                     StudentInfo.getFilters({
@@ -238,14 +251,15 @@ module.exports = function (app) {
                                 students.forEach(function (student) {
                                     student.accountMobile = currentUser.name;
                                     var p = AdminEnrollExam.getFilter({
-                                        studentId: student._id,
-                                        examId: train._id,
-                                        isSucceed: 1
-                                    }).then(function (order) {
-                                        if (order) {
-                                            student.order = order;
-                                        }
-                                    });
+                                            studentId: student._id,
+                                            examId: train._id,
+                                            isSucceed: 1
+                                        })
+                                        .then(function (order) {
+                                            if (order) {
+                                                student.order = order;
+                                            }
+                                        });
                                     pArray.push(p);
                                 });
 
@@ -287,7 +301,10 @@ module.exports = function (app) {
 
     app.get('/enroll/exam/score/:id', checkLogin);
     app.get('/enroll/exam/score/:id', function (req, res) {
-        ExamClass.get(req.params.id).then(function (train) {
+        ExamClass.getFilter({
+                _id: req.params.id
+            })
+            .then(function (train) {
                 if (train) {
                     var currentUser = req.session.user;
                     StudentInfo.getFilters({
@@ -298,14 +315,15 @@ module.exports = function (app) {
                                 var pArray = [];
                                 students.forEach(function (student) {
                                     var p = AdminEnrollExam.getFilter({
-                                        studentId: student._id,
-                                        examId: train._id,
-                                        isSucceed: 1
-                                    }).then(function (order) {
-                                        if (order) {
-                                            student.order = order;
-                                        }
-                                    });
+                                            studentId: student._id,
+                                            examId: train._id,
+                                            isSucceed: 1
+                                        })
+                                        .then(function (order) {
+                                            if (order) {
+                                                student.order = order;
+                                            }
+                                        });
                                     pArray.push(p);
                                 });
 

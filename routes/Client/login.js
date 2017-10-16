@@ -3,7 +3,7 @@ var model = require("../../model.js"),
     crypto = require('crypto'),
     StudentAccount = model.studentAccount,
     auth = require("./auth"),
-    checkNotLogin = auth.checkNotLogin; // TBD
+    checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
     app.get('/login', checkNotLogin);

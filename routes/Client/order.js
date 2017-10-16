@@ -12,180 +12,141 @@ var model = require("../../model.js"),
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin; // TBD
+    checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function (app) {
     app.post('/personalCenter/order/all', checkJSONLogin);
     app.post('/personalCenter/order/all', function (req, res) {
         var currentUser = req.session.user;
-        ChangeEnd.get().then(function (changeEnd) {
-            StudentInfo.getFilters({
-                accountId: currentUser._id
-            }).then(function (students) {
-                var parray = [];
-                students.forEach(function (student) {
-                    var filter = {
-                        studentId: student._id.toJSON(),
-                        isSucceed: 1,
-                        isDeleted: {
-                            $ne: true
-                        }
-                    };
-                    if (global.currentYear) {
-                        filter.yearId = global.currentYear._id.toJSON();
-                    }
-
-                    var p = AdminEnrollTrain.getFiltersWithClass(filter)
-                        .then(function (trains) {
-                            var orders = [];
-                            trains.forEach(function (train) {
-                                var newClass = train.trainClasss[0] || {};
-                                orders.push({
-                                    studentId: train.studentId,
-                                    studentName: student.name,
-                                    _id: train._id,
-                                    isPayed: train.isPayed,
-                                    className: train.trainName,
-                                    totalPrice: train.totalPrice,
-                                    realMaterialPrice: train.realMaterialPrice,
-                                    orderDate: train.orderDate,
-                                    courseTime: newClass.courseTime,
-                                    bookId: newClass.bookId,
-                                    minLesson: newClass.minLesson,
-                                    maxLesson: newClass.maxLesson,
-                                    courseStartDate: ((changeEnd && changeEnd.endDate) || newClass.courseStartDate)
-                                });
+        ChangeEnd.getFilter({})
+            .then(function (changeEnd) {
+                return model.db.sequelize.query("select O.studentId, O.studentName, O._id, O.isPayed, O.trainName as className,\
+                        O.totalPrice, O.realMaterialPrice, O.createdDate, C.courseTime, C.bookId, C.minLesson, C.maxLesson, C.courseStartDate\
+                        from studentInfos S join adminEnrollTrains O \
+                        on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId \
+                        join trainClasss C on O.trainId=C._id where S.isDeleted=false and S.accountId=:accountId", {
+                        replacements: {
+                            yearId: global.currentYear._id,
+                            accountId: currentUser._id
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(function (orders) {
+                        if (changeEnd && changeEnd.endDate) {
+                            orders.forEach(function (order) {
+                                order.courseStartDate = changeEnd.endDate;
                             });
-                            return orders;
-                        });
-                    parray.push(p);
-                });
-                Promise.all(parray).then(function (results) {
-                    var orders = [];
-                    results.forEach(function (trains) {
-                        if (trains) {
-                            orders = orders.concat(trains);
                         }
+                        res.jsonp(orders);
                     });
-                    res.jsonp(orders);
-                    return;
-                });
             });
-        });
     });
 
+    // TBD need test the function
     app.post('/personalCenter/exam/all', checkJSONLogin);
     app.post('/personalCenter/exam/all', function (req, res) {
         var currentUser = req.session.user;
-        StudentInfo.getFilters({
-            accountId: currentUser._id
-        }).then(function (students) {
-            var orders = [],
-                parray = [];
-            students.forEach(function (student) {
-                var filter = {
-                    studentId: student._id,
-                    isSucceed: 1
-                };
-                var p = AdminEnrollExam.getFilters(filter)
-                    .then(function (trains) {
-                        var pChildArray = [];
-                        trains.forEach(function (train) {
-                            var pChild = ExamClass.getFilter({
-                                    _id: train.examId,
-                                    isDeleted: {
-                                        $ne: true
-                                    }
-                                })
-                                .then(function (examClass) {
-                                    if (examClass) {
-                                        orders.push({
-                                            studentName: student.name,
-                                            _id: train._id,
-                                            className: train.examName,
-                                            orderDate: train.orderDate,
-                                            score: train.score,
-                                            examDate: examClass.examDate
-                                        });
-                                    }
-                                });
-                            pChildArray.push(pChild);
-                        });
-                        return Promise.all(pChildArray);
-                    });
-                parray.push(p);
-            });
-            Promise.all(parray).then(function () {
+        return model.db.sequelize.query("select O.studentName, O._id, O.examName as className,\
+                     O.createdDate, C.examDate\
+                    from studentInfos S join adminEnrollExams O \
+                    on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 \
+                    join examClasss C on O.examId=C._id where S.isDeleted=false and S.accountId=:accountId", {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    accountId: currentUser._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (orders) {
                 res.jsonp(orders);
-                return;
             });
-        });
     });
 
     app.get('/personalCenter/order/id/:id', checkLogin);
     app.get('/personalCenter/order/id/:id', function (req, res) {
-        AdminEnrollTrain.get(req.params.id).then(function (order) {
-            if (order) {
-                TrainClass.get(order.trainId).then(function (train) {
-                    if (train) {
-                        res.render('Client/personalCenter_order_detail.html', {
-                            title: '测试列表',
-                            user: req.session.user,
-                            order: order,
-                            train: train
-                        });
-                    }
-                })
-            }
-        });
+        AdminEnrollTrain.getFilter({
+                _id: req.params.id
+            })
+            .then(function (order) {
+                if (order) {
+                    TrainClass.getFilter({
+                            _id: order.trainId
+                        })
+                        .then(function (train) {
+                            if (train) {
+                                res.render('Client/personalCenter_order_detail.html', {
+                                    title: '测试列表',
+                                    user: req.session.user,
+                                    order: order,
+                                    train: train
+                                });
+                            }
+                        })
+                }
+            });
     });
 
     app.get('/personalCenter/changeClass/id/:id', checkLogin);
     app.get('/personalCenter/changeClass/id/:id', function (req, res) {
-        AdminEnrollTrain.get(req.params.id).then(function (order) {
-            if (order) {
-                TrainClass.get(order.trainId).then(function (train) {
-                    if (train) {
-                        res.render('Client/personalCenter_order_changeClass.html', {
-                            title: '调班',
-                            user: req.session.user,
-                            order: order,
-                            train: train
-                        });
-                    }
-                })
-            }
-        });
+        AdminEnrollTrain.getFilter({
+                _id: req.params.id
+            })
+            .then(function (order) {
+                if (order) {
+                    TrainClass.getFilter({
+                            _id: order.trainId
+                        })
+                        .then(function (train) {
+                            if (train) {
+                                res.render('Client/personalCenter_order_changeClass.html', {
+                                    title: '调班',
+                                    user: req.session.user,
+                                    order: order,
+                                    train: train
+                                });
+                            }
+                        })
+                }
+            });
     });
 
     app.get('/personalCenter/exam/id/:id', checkLogin);
     app.get('/personalCenter/exam/id/:id', function (req, res) {
-        AdminEnrollExam.get(req.params.id).then(function (order) {
-            if (order) {
-                ExamClass.get(order.examId).then(function (train) {
-                    if (train) {
-                        if (order.classRoomId) {
-                            ClassRoom.get(order.classRoomId).then(function (classRoom) {
-                                res.render('Client/personalCenter_exam_detail.html', {
-                                    title: '测试列表',
-                                    user: req.session.user,
-                                    order: order,
-                                    train: train,
-                                    classRoom: classRoom
-                                });
-                            })
-                        } else {
-                            res.render('Client/personalCenter_exam_detail.html', {
-                                title: '测试列表',
-                                user: req.session.user,
-                                order: order,
-                                train: train
-                            });
-                        }
-                    }
-                })
-            }
-        });
+        AdminEnrollExam.getFilter({
+                _id: req.params.id
+            })
+            .then(function (order) {
+                if (order) {
+                    ExamClass.getFilter({
+                            _id: order.examId
+                        })
+                        .then(function (train) {
+                            if (train) {
+                                if (order.classRoomId) {
+                                    ClassRoom.getFilter({
+                                            _id: order.classRoomId
+                                        })
+                                        .then(function (classRoom) {
+                                            res.render('Client/personalCenter_exam_detail.html', {
+                                                title: '测试列表',
+                                                user: req.session.user,
+                                                order: order,
+                                                train: train,
+                                                classRoom: classRoom
+                                            });
+                                        })
+                                } else {
+                                    res.render('Client/personalCenter_exam_detail.html', {
+                                        title: '测试列表',
+                                        user: req.session.user,
+                                        order: order,
+                                        train: train
+                                    });
+                                }
+                            }
+                        })
+                }
+            });
     });
 
     app.get('/personalCenter/order/wechatpay/:id', checkLogin);
@@ -213,7 +174,9 @@ module.exports = function (app) {
 
     function opennativeWechatPay(res, id, openId) {
         debugger;
-        AdminEnrollTrain.get(id)
+        AdminEnrollTrain.getFilter({
+                _id: id
+            })
             .then(function (order) {
                 if (order) {
                     var payParas = {
@@ -231,7 +194,9 @@ module.exports = function (app) {
 
     function openWechatPay(res, id, openId) {
         debugger;
-        AdminEnrollTrain.get(id)
+        AdminEnrollTrain.getFilter({
+                _id: id
+            })
             .then(function (order) {
                 if (order) {
                     var payParas = {
@@ -247,7 +212,9 @@ module.exports = function (app) {
 
     function openzhifubaoPay(res, id, openId) {
         debugger;
-        AdminEnrollTrain.get(id)
+        AdminEnrollTrain.getFilter({
+                _id: id
+            })
             .then(function (order) {
                 if (order) {
                     var payParas = {
@@ -266,75 +233,60 @@ module.exports = function (app) {
         payHelper.wechatPay(req, res, opennativeWechatPay);
     });
 
+    // 取消测试订单
     app.post('/cancel/exam', checkJSONLogin);
     app.post('/cancel/exam', function (req, res) {
-        AdminEnrollExam.get(req.body.id).then(function (order) {
-            if (order) {
-                if (order.examAreaId) {
-                    //multi
-                    ExamClassExamArea.getFilter({
-                            examId: order.examId,
-                            examAreaId: order.examAreaId
-                        })
-                        .then(function (examClassExamArea) {
-                            if (examClassExamArea) { //mult exam areas
-                                ExamClassExamArea.cancel(examClassExamArea._id)
-                                    .then(function (examClassExamAreaResult) {
-                                        if (examClassExamAreaResult && examClassExamAreaResult.ok && examClassExamAreaResult.nModified == 1) {
-                                            ExamClass.cancel2(order.examId).then(function (examClassResult) {
-                                                if (examClassResult && examClassResult.ok && examClassResult.nModified == 1) {
-                                                    AdminEnrollExam.cancel(req.body.id, function (err, adminEnrollExamResult) {
-                                                        if (err) {
-                                                            res.jsonp({
-                                                                error: err
-                                                            });
-                                                            return;
-                                                        }
-                                                        res.jsonp({
-                                                            sucess: true
-                                                        });
-                                                    });
-                                                } else {
-                                                    res.jsonp({
-                                                        error: "取消总数失败"
-                                                    });
-                                                    return;
-                                                }
-                                            });
-                                        } else {
-                                            res.jsonp({
-                                                error: "取消失败"
-                                            });
-                                            return;
-                                        }
-                                    });
-                            }
-                        });
-                } else {
-                    //old single exam area
-                    ExamClass.cancel(order.examId)
-                        .then(function (examClass) {
-                            if (examClass && examClass.ok && examClass.nModified == 1) {
-                                AdminEnrollExam.cancel(req.body.id, function (err, adminEnrollExam) {
-                                    if (err) {
-                                        res.jsonp({
-                                            error: err
+        // 1. 增加此考场的名额
+        // 2. 增加此次考试的名额
+        // 3. 取消此次考试订单
+        AdminEnrollExam.getFilter({
+                _id: req.body.id
+            })
+            .then(function (order) {
+                if (order) {
+                    model.db.sequelize.transaction(function (t1) {
+                        return ExamClassExamArea.update({
+                                enrollCount: model.db.sequelize.literal('`enrollCount` -1')
+                            }, {
+                                where: {
+                                    examId: order.examId,
+                                    examAreaId: order.examAreaId,
+                                    isDeleted: false
+                                },
+                                transaction: t1
+                            })
+                            .then(function () {
+                                return ExamClass.update({
+                                        enrollCount: model.db.sequelize.literal('`enrollCount` -1')
+                                    }, {
+                                        where: {
+                                            _id: order.examId
+                                        },
+                                        transaction: t1
+                                    })
+                                    .then(function () {
+                                        return AdminEnrollExam.update({
+                                            isDeleted: true,
+                                            deletedBy: req.session.user._id,
+                                            deletedDate: new Date()
+                                        }, {
+                                            where: {
+                                                _id: req.body.id
+                                            },
+                                            transaction: t1
                                         });
-                                        return;
-                                    }
-                                    res.jsonp({
-                                        sucess: true
                                     });
-                                });
-                            } else {
-                                res.jsonp({
-                                    error: "取消失败"
-                                });
-                                return;
-                            }
+                            });
+                    }).then(function () {
+                        res.jsonp({
+                            sucess: true
                         });
+                    }).catch(function () {
+                        res.jsonp({
+                            error: "取消失败"
+                        });
+                    });
                 }
-            }
-        });
+            });
     });
 }

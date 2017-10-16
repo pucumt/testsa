@@ -343,9 +343,9 @@ module.exports = function (app) {
                             exams.forEach(function (exam) {
                                 minScore = exam.minScore;
                                 var p = model.db.sequelize.query("select S.score from adminEnrollExams O join adminEnrollExamScores S \
-                        on O._id=S.examOrderId \
-                        where O.examId=:examId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
-                        S.isDeleted=false and S.subjectId=:subjectId", {
+                                            on O._id=S.examOrderId \
+                                            where O.examId=:examId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
+                                            S.isDeleted=false and S.subjectId=:subjectId", {
                                         replacements: {
                                             examId: exam.examId,
                                             studentId: req.body.studentId,

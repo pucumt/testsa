@@ -1,16 +1,16 @@
 var newStudent = true,
     editStudent;
-$(document).ready(function() {
+$(document).ready(function () {
     renderExamAreas();
 
-    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/enrollExam";
     });
 
-    $("#btnEnroll").on("click", function(e) {
+    $("#btnEnroll").on("click", function (e) {
         selfAjax("post", "/enroll/students", {
             originalUrl: "/enroll/exam/" + $("#id").val()
-        }, function(data) {
+        }, function (data) {
             if (data) {
                 if (data.notLogin) {
                     location.href = "/login";
@@ -35,12 +35,12 @@ $(document).ready(function() {
     });
 
     //<span class="name"></span><span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
-    $("#Enroll-select .student").on("click", function(e) {
+    $("#Enroll-select .student").on("click", function (e) {
         $("#Enroll-student").show();
         $("#Enroll-select").hide();
     });
 
-    $("#Enroll-student #btnNewStudent").on("click", function(e) {
+    $("#Enroll-student #btnNewStudent").on("click", function (e) {
         destroy();
         addValidation();
         $("#Enroll-student-edit").show();
@@ -55,17 +55,17 @@ $(document).ready(function() {
         newStudent = true;
     });
 
-    $("#Enroll-student-edit .glyphicon").on("click", function(e) {
+    $("#Enroll-student-edit .glyphicon").on("click", function (e) {
         $("#Enroll-student-edit").hide();
         $("#Enroll-student").show();
     });
 
-    $("#Enroll-student .glyphicon").on("click", function(e) {
+    $("#Enroll-student .glyphicon").on("click", function (e) {
         $("#Enroll-student").hide();
         $("#Enroll-select").show();
     });
 
-    $("#Enroll-student-edit #btnSave").on("click", function(e) {
+    $("#Enroll-student-edit #btnSave").on("click", function (e) {
         var validator = $('#studentInfo').data('formValidation').validate();
         if (validator.isValid()) {
             $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
@@ -84,7 +84,7 @@ $(document).ready(function() {
                 postURI = "/studentInfo/edit";
                 postObj.id = editStudent._id;
             }
-            selfAjax("post", postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function (data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 if (data && data.error) {
                     showAlert(data.error);
@@ -106,7 +106,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#Enroll-student .student .student-list").on("click", "li .btn-edit", function(e) {
+    $("#Enroll-student .student .student-list").on("click", "li .btn-edit", function (e) {
         var obj = e.currentTarget;
         var entity = $(obj).parent().data("obj");
         editStudent = entity;
@@ -120,7 +120,7 @@ $(document).ready(function() {
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(entity.School);
         $('#studentInfo #className').val(entity.className);
-        resetDropDown(null, function() {
+        resetDropDown(null, function () {
             $('#studentInfo #grade').val(entity.gradeId);
         });
         newStudent = false;
@@ -128,49 +128,36 @@ $(document).ready(function() {
         e.stopPropagation();
     });
 
-    $("#Enroll-student .student .student-list").on("click", "li", function(e) {
+    $("#Enroll-student .student .student-list").on("click", "li", function (e) {
         var obj = e.currentTarget;
         var entity = $(obj).data("obj");
         resetOKStudent(entity);
         setSelectedStudent(entity);
     });
 
-    $("#Enroll-select #btnNext").on("click", function(e) {
+    $("#Enroll-select #btnNext").on("click", function (e) {
         if ($("#Enroll-select .student .name").text() == "" || $("#Enroll-select #studentId").val() == "") {
             $("#Enroll-student").show();
             $("#Enroll-select").hide();
         } else {
             $("#Enroll-select #btnNext").attr("disabled", "disabled");
-            var filter = { examId: $("#id").val(), studentId: $("#Enroll-select #studentId").val() };
+            var filter = {
+                examId: $("#id").val(),
+                studentId: $("#Enroll-select #studentId").val()
+            };
             var examClassExamAreaId = $("#Enroll-select #examAreas").val();
             if (examClassExamAreaId) {
                 //multi areas
                 filter.examClassExamAreaId = examClassExamAreaId;
-                selfAjax("post", "/enroll/exam/enroll2", filter, function(data) {
+                selfAjax("post", "/enroll/exam/enroll", filter, function (data) {
                     if (data.sucess) {
                         $("#Enroll-select").hide();
-                        showAlert("报名成功！", null, function() {
+                        showAlert("报名成功！", null, function () {
                             location.href = "/enroll/exam/card/" + $("#id").val();
                         });
                     } else {
                         $("#Enroll-select").hide();
-                        showAlert(data.error, null, function() {
-                            $("#bgBack").hide();
-                        });
-                        $("#Enroll-select #btnNext").removeAttr("disabled");
-                    }
-                });
-            } else {
-                //one exam area
-                selfAjax("post", "/enroll/exam/enroll", filter, function(data) {
-                    if (data.sucess) {
-                        $("#Enroll-select").hide();
-                        showAlert("报名成功！", null, function() {
-                            location.href = "/enroll/exam/card/" + $("#id").val();
-                        });
-                    } else {
-                        $("#Enroll-select").hide();
-                        showAlert(data.error, null, function() {
+                        showAlert(data.error, null, function () {
                             $("#bgBack").hide();
                         });
                         $("#Enroll-select #btnNext").removeAttr("disabled");
@@ -180,18 +167,18 @@ $(document).ready(function() {
         }
     });
 
-    $("#Enroll-select .title .glyphicon-remove-circle").on("click", function(e) {
+    $("#Enroll-select .title .glyphicon-remove-circle").on("click", function (e) {
         $("#bgBack").hide();
         $("#Enroll-select").hide();
     });
 });
 
 function renderExamAreas() {
-    selfAjax("get", "/enroll/exam/examClassExamAreas/" + $("#id").val(), null, function(data) {
+    selfAjax("get", "/enroll/exam/examClassExamAreas/" + $("#id").val(), null, function (data) {
         if (data && data.length > 0) {
             var d1 = $(document.createDocumentFragment()),
                 d2 = $(document.createDocumentFragment());
-            data.forEach(function(examClassExamArea) {
+            data.forEach(function (examClassExamArea) {
                 d1.append('<div>' + examClassExamArea.examAreaName + ': 已报' + examClassExamArea.enrollCount + '&nbsp;&nbsp;共' + examClassExamArea.examCount + '</div>');
                 d2.append("<option value='" + examClassExamArea._id + "'>" + examClassExamArea.examAreaName + "</option>");
             });
@@ -211,7 +198,7 @@ function destroy() {
 };
 
 function addValidation() {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#studentInfo').formValidation({
             // List of fields and their validation rules
             fields: {
@@ -265,7 +252,7 @@ var $ul = $("#Enroll-student .student .student-list");
 function renderStudents(students, id) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
-        students.forEach(function(student) {
+        students.forEach(function (student) {
             var selected = "";
             if (student._id == id) {
                 selected = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
@@ -294,10 +281,10 @@ function renderNewStudent(student) {
 
 function resetDropDown(id, callback) {
     $('#studentInfo').find("#grade option").remove();
-    selfAjax("get", "/enroll/grade/all", null, function(data) {
+    selfAjax("get", "/enroll/grade/all", null, function (data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(grade) {
+                data.forEach(function (grade) {
                     var select = "";
                     if (grade._id == id) {
                         select = "selected";

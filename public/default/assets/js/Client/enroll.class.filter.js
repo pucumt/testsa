@@ -1,8 +1,8 @@
-$(document).ready(function() {
+$(document).ready(function () {
     renderfilter();
     $("#page").val(1);
     $(".enroll-filter .btn-search")
-        .on("click", function(e) {
+        .on("click", function (e) {
             $('.enroll .exam-list').empty();
             loadData();
             $('.enroll-filter').hide();
@@ -10,30 +10,30 @@ $(document).ready(function() {
         });
 
     $(".enroll .pageTitle .filter")
-        .on("click", function(e) {
+        .on("click", function (e) {
             $('.enroll-filter').show();
             $('.container.enroll').hide();
         });
 
     $(".enroll-filter .glyphicon-remove-circle")
-        .on("click", function(e) {
+        .on("click", function (e) {
             $(".enroll-filter").hide();
             $('.container.enroll').show();
         });
 
     $(".enroll-filter #drpSchool")
-        .on("change", function(e) {
+        .on("change", function (e) {
             changeGrades();
             changeSubjects();
             changeCategories();
         });
     $(".enroll-filter #drpGrade")
-        .on("change", function(e) {
+        .on("change", function (e) {
             changeSubjects();
             changeCategories();
         });
     $(".enroll-filter #drpSubject")
-        .on("change", function(e) {
+        .on("change", function (e) {
             changeCategories();
         });
 });
@@ -41,17 +41,19 @@ $(document).ready(function() {
 var objFilters;
 
 function renderfilter() {
-    selfAjax("get", "/enroll/schoolgradesubjectcategory", null, function(data) {
+    selfAjax("get", "/enroll/schoolgradesubjectcategory", null, function (data) {
         if (data) {
             if (data.error) {
                 $selectBody.text(data.error);
-                $(".enroll .pageTitle .filter").css({ visibility: "hidden" });
+                $(".enroll .pageTitle .filter").css({
+                    visibility: "hidden"
+                });
                 $("#btnMore").hide();
                 return;
             }
             objFilters = data;
             if (data.schools.length > 0) {
-                data.schools.forEach(function(school) {
+                data.schools.forEach(function (school) {
                     $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
                 });
             }
@@ -86,11 +88,11 @@ function renderfilter() {
 function changeGrades() {
     $('.enroll-filter').find("#drpGrade option").remove();
     if (objFilters.grades.length > 0) {
-        var schoolGradeRelations = objFilters.schoolGradeRelations.filter(function(relation) {
+        var schoolGradeRelations = objFilters.schoolGradeRelations.filter(function (relation) {
             return relation.schoolId == $(".enroll-filter #drpSchool").val();
         });
-        objFilters.grades.forEach(function(grade) {
-            if (schoolGradeRelations.some(function(relation) {
+        objFilters.grades.forEach(function (grade) {
+            if (schoolGradeRelations.some(function (relation) {
                     return relation.gradeId == grade._id;
                 })) {
                 $(".enroll-filter #drpGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
@@ -102,11 +104,11 @@ function changeGrades() {
 function changeSubjects() {
     $('.enroll-filter').find("#drpSubject option").remove();
     if (objFilters.subjects.length > 0) {
-        var gradeSubjectRelations = objFilters.gradeSubjectRelations.filter(function(relation) {
+        var gradeSubjectRelations = objFilters.gradeSubjectRelations.filter(function (relation) {
             return relation.gradeId == $(".enroll-filter #drpGrade").val();
         });
-        objFilters.subjects.forEach(function(subject) {
-            if (gradeSubjectRelations.some(function(relation) {
+        objFilters.subjects.forEach(function (subject) {
+            if (gradeSubjectRelations.some(function (relation) {
                     return relation.subjectId == subject._id;
                 })) {
                 $(".enroll-filter #drpSubject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
@@ -118,12 +120,12 @@ function changeSubjects() {
 function changeCategories() {
     $('.enroll-filter').find("#drpCategory option").remove();
     if (objFilters.categorys.length > 0) {
-        var gradeSubjectCategoryRelations = objFilters.gradeSubjectCategoryRelations.filter(function(relation) {
+        var gradeSubjectCategoryRelations = objFilters.gradeSubjectCategoryRelations.filter(function (relation) {
             return relation.subjectId == $(".enroll-filter #drpSubject").val() && relation.gradeId == $(".enroll-filter #drpGrade").val();
         });
 
-        objFilters.categorys.forEach(function(category) {
-            if (gradeSubjectCategoryRelations.some(function(relation) {
+        objFilters.categorys.forEach(function (category) {
+            if (gradeSubjectCategoryRelations.some(function (relation) {
                     return relation.categoryId == category._id;
                 })) {
                 $(".enroll-filter #drpCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
@@ -142,10 +144,10 @@ function loadData(p) {
             subjectId: $('.enroll-filter #drpSubject').val(),
             categoryId: $('.enroll-filter #drpCategory').val()
         };
-    selfAjax("post", "/enroll/class?" + pStr, filter, function(data) {
+    selfAjax("post", "/enroll/class?" + pStr, filter, function (data) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.classs.forEach(function(trainclass) {
+            data.classs.forEach(function (trainclass) {
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);
@@ -182,19 +184,19 @@ function generateLi(trainclass) {
     $infoContainer.append($('<div>上课地点：' + trainclass.schoolArea + (trainclass.classRoomName || ' (待定)') + '室</div>'));
     $infoContainer.append($('<div>培训费：' + trainclass.trainPrice + '元</div>'));
     $infoContainer.append($('<div>教材费：' + trainclass.materialPrice + '元</div>'));
-    $infoContainer.append($('<div>合计：' + (trainclass.trainPrice + trainclass.materialPrice).toFixed(2) + '元</div>'));
+    $infoContainer.append($('<div>合计：' + (parseFloat(trainclass.trainPrice) + parseFloat(trainclass.materialPrice)).toFixed(2) + '元</div>'));
     var isFull = trainclass.enrollCount == trainclass.totalStudentCount ? "<span class='full'>(已满)</span>" : "";
     $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + trainclass.enrollCount + '&nbsp;&nbsp;共' + trainclass.totalStudentCount + isFull + '</p><button type="button" class="btn btn-primary btn-xs">报名</button></div>'));
     //$infoContainer.append($('<div>' + trainclass.address + '</div>'));
     return $li;
 };
 
-$("#btnMore").on("click", function(e) {
+$("#btnMore").on("click", function (e) {
     var page = parseInt($("#page").val()) + 1;
     loadData(page);
 });
 
-$selectBody.on("click", "li", function(e) {
+$selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
     location.href = "/enroll/class/" + entity._id;

@@ -11,7 +11,7 @@ var model = require("../../model.js"),
     request = require('request'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin,
-    checkJSONLogin = auth.checkJSONLogin; // TBD
+    checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function (app) {
     app.get('/personalCenter/book/id/:id', checkLogin);
@@ -33,10 +33,9 @@ module.exports = function (app) {
         var filter = {
             bookId: req.body.bookId
         };
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
         if (req.body.minLesson) {
@@ -45,20 +44,19 @@ module.exports = function (app) {
                 $gte: req.body.minLesson
             };
         }
-        Lesson.getAll(null, page, filter, function (err, lessons, total) {
-            if (err) {
-                lessons = [];
-            }
+        Lesson.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                lessons: lessons,
-                isLastPage: ((page - 1) * 14 + lessons.length) == total
+                lessons: result.rows,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
     app.get('/book/lesson/:id', checkLogin);
     app.get('/book/lesson/:id', function (req, res) {
-        Lesson.get(req.params.id)
+        Lesson.getFilter({
+                _id: req.params.id
+            })
             .then(function (lesson) {
                 res.render('Client/book_lesson_detail.html', {
                     title: '课文列表',
@@ -105,29 +103,31 @@ module.exports = function (app) {
                     //save record
                     saveRecord(req.body.studentId, req.body.recordId, score._id);
 
-                    var newScore = new StudentLessonScore({
+                    return StudentLessonScore.update({
                         score: req.body.score,
                         contentRecord: req.body.recordId
-                    });
-                    return newScore.update(score._id);
-                } else {
-                    var newScore = new StudentLessonScore({
-                        lessonId: req.body.lessonId,
-                        studentId: req.body.studentId,
-                        contentId: req.body.wordId,
-                        contentType: req.body.contentType,
-                        score: req.body.score,
-                        contentRecord: req.body.recordId,
-                        createdBy: req.session.user._id
-                    });
-
-                    return newScore.save().then(function (result) {
-                        if (result) {
-                            //save record
-                            saveRecord(req.body.studentId, req.body.recordId, result._id);
+                    }, {
+                        where: {
+                            _id: score._id
                         }
-                        return result;
                     });
+                } else {
+                    return StudentLessonScore.create({
+                            lessonId: req.body.lessonId,
+                            studentId: req.body.studentId,
+                            contentId: req.body.wordId,
+                            contentType: req.body.contentType,
+                            score: req.body.score,
+                            contentRecord: req.body.recordId,
+                            createdBy: req.session.user._id
+                        })
+                        .then(function (result) {
+                            if (result) {
+                                //save record
+                                saveRecord(req.body.studentId, req.body.recordId, result._id);
+                            }
+                            return result;
+                        });
                 }
             });
     };
@@ -179,7 +179,15 @@ module.exports = function (app) {
         if (req.body.contentType == "0") {
             return Promise.resolve();
         }
-        return StudentLessonScore.getAverage(req.body.lessonId, req.body.studentId, req.body.contentType)
+        return model.db.sequelize.query("select avg(score) as score from studentLessonScores \
+                where isDeleted=false and lessonId=:lessonId and studentId=:studentId and contentType=:contentType", {
+                replacements: {
+                    lessonId: req.body.lessonId,
+                    studentId: req.body.studentId,
+                    contentType: req.body.contentType
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
             .then(function (result) {
                 return (result && result[0] && result[0].score) || req.body.score;
             });
@@ -199,14 +207,16 @@ module.exports = function (app) {
                             .then(function (option) {
                                 if (studentLesson) {
                                     //关系已经存在
-                                    var newRelation = new StudentLesson(option);
-                                    return newRelation.update(studentLesson._id);
+                                    return StudentLesson.update(option, {
+                                        where: {
+                                            _id: studentLesson._id
+                                        }
+                                    });
                                 } else {
                                     //关系未存在
                                     option.studentId = req.body.studentId;
                                     option.lessonId = req.body.lessonId;
-                                    var newRelation = new StudentLesson(option);
-                                    return newRelation.save();
+                                    return StudentLesson.create(option);
                                 }
                             });
                     })

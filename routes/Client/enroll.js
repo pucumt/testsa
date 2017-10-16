@@ -2,6 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     ExamClass = model.examClass,
     TrainClass = model.trainClass,
+    TrainClassExams = model.trainClassExams,
     AdminEnrollExam = model.adminEnrollExam,
     AdminEnrollTrain = model.adminEnrollTrain,
     StudentInfo = model.studentInfo,
@@ -51,30 +52,16 @@ module.exports = function (app) {
         });
     });
 
-    // app.get('/enrollClass/schoolId/:schoolId/gradeId/:gradeId/subjectId/:subjectId/categoryId/:categoryId', function(req, res) {
-    //     res.render('Client/enroll_class.html', {
-    //         title: '课程报名',
-    //         user: req.session.user,
-    //         schoolId: req.params.schoolId,
-    //         gradeId: req.params.gradeId,
-    //         subjectId: req.params.subjectId,
-    //         categoryId: req.params.categoryId
-    //     });
-    // });
-
     app.get('/enroll/exam', function (req, res) {
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 14 篇文章
-        ExamClass.getAll(null, page, {
+        ExamClass.getFiltersWithPage(page, {
             isWeixin: 1
-        }, function (err, examClasss, total) {
-            if (err) {
-                examClasss = [];
-            }
+        }).then(function (result) {
             res.jsonp({
-                examClasss: examClasss,
-                isLastPage: ((page - 1) * 14 + examClasss.length) == total
+                examClasss: result.rows,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
@@ -85,7 +72,7 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         var filter = {
             isWeixin: 1,
-            yearId: global.currentYear._id.toJSON()
+            yearId: global.currentYear._id
         };
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
@@ -100,13 +87,10 @@ module.exports = function (app) {
             filter.categoryId = req.body.categoryId;
         }
         //查询并返回第 page 页的 14 篇文章
-        TrainClass.getAllToEnroll(null, page, filter, function (err, classs, total) {
-            if (err) {
-                classs = [];
-            }
+        TrainClass.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                classs: classs,
-                isLastPage: ((page - 1) * 14 + classs.length) == total
+                classs: result.rows,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
@@ -115,7 +99,7 @@ module.exports = function (app) {
         //debugger;
         var filter = {
             isWeixin: 1,
-            yearId: global.currentYear._id.toJSON()
+            yearId: global.currentYear._id
         };
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
@@ -130,19 +114,19 @@ module.exports = function (app) {
             filter.categoryId = req.body.categoryId;
         }
         if (req.body.timespan) {
-            var reg = new RegExp(req.body.timespan, 'i')
             filter.courseTime = {
-                $regex: reg
+                $like: `%${req.body.timespan.trim()}%`
             };
         }
-        TrainClass.filtersToEnroll(filter).then(function (classs) {
-            res.jsonp({
-                classs: classs
+        TrainClass.getFilters(filter)
+            .then(function (classs) {
+                res.jsonp({
+                    classs: classs
+                });
             });
-        });
     });
 
-    //老生调班对应班级
+    // 老生调班对应班级
     app.get('/enroll/originalclass/switch/:orderId', function (req, res) {
         res.render('Client/enroll_originalclass_switch.html', {
             title: '课程报名',
@@ -153,14 +137,14 @@ module.exports = function (app) {
         });
     });
 
-    //老生调班功能
+    // 老生调班功能
     app.post('/enroll/originalclass/switch', function (req, res) {
         //debugger;
         // number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         var filter = {
             isWeixin: 1,
-            yearId: global.currentYear._id.toJSON()
+            yearId: global.currentYear._id
         }; //依赖发布报班
         if (req.body.schoolId) {
             filter.schoolId = req.body.schoolId;
@@ -176,18 +160,15 @@ module.exports = function (app) {
         }
 
         //查询并返回第 page 页的 14 篇文章
-        TrainClass.getAllToOriginalEnroll(null, page, filter, function (err, classs, total) {
-            if (err) {
-                classs = [];
-            }
+        TrainClass.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
-                classs: classs,
-                isLastPage: ((page - 1) * 14 + classs.length) == total
+                classs: result.rows,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
             });
         });
     });
 
-    //原班对应新班
+    // 原班对应新班
     app.get('/enroll/originalclass/classes/:trainId/student/:studentId', function (req, res) {
         res.render('Client/enroll_originalclass_classes.html', {
             title: '课程报名',
@@ -197,7 +178,7 @@ module.exports = function (app) {
         });
     });
 
-    //原班对应新班
+    // 原班对应新班
     app.post('/enroll/originalclass/classes', function (req, res) {
         //debugger;
         // number 类型
@@ -207,15 +188,18 @@ module.exports = function (app) {
         if (req.body.fromClassId) {
             filter.fromClassId = req.body.fromClassId;
         }
-        TrainClass.getFilters(filter).then(function (classes) {
-            res.jsonp({
-                classs: classes
+        TrainClass.getFilters(filter)
+            .then(function (classes) {
+                res.jsonp({
+                    classs: classes
+                });
             });
-        });
     });
 
     app.get('/enroll/exam/:id', function (req, res) {
-        ExamClass.get(req.params.id)
+        ExamClass.getFilter({
+                _id: req.params.id
+            })
             .then(function (exam) {
                 res.render('Client/enroll_exam_detail.html', {
                     title: '考试报名',
@@ -226,136 +210,140 @@ module.exports = function (app) {
     });
 
     app.get('/enroll/class/:id', function (req, res) {
-        TrainClass.get(req.params.id).then(function (trainClass) {
-            var totalPrice = (trainClass.trainPrice + trainClass.materialPrice).toFixed(2);
-            res.render('Client/enroll_class_detail.html', {
-                title: '课程报名',
-                trainClass: trainClass,
-                totalPrice: totalPrice
+        TrainClass.getFilter({
+                _id: req.params.id
+            })
+            .then(function (trainClass) {
+                var totalPrice = (parseFloat(trainClass.trainPrice) + parseFloat(trainClass.materialPrice)).toFixed(2);
+                res.render('Client/enroll_class_detail.html', {
+                    title: '课程报名',
+                    trainClass: trainClass,
+                    totalPrice: totalPrice
+                });
             });
-        });
     });
 
     app.get('/enroll/originalclass/id/:trainId/student/:studentId', function (req, res) {
-        TrainClass.get(req.params.trainId).then(function (trainClass) {
-            var totalPrice = (trainClass.trainPrice + trainClass.materialPrice).toFixed(2);
-            res.render('Client/enroll_originalclass_detail.html', {
-                title: '原班升报课程报名',
-                trainClass: trainClass,
-                totalPrice: totalPrice,
-                studentId: req.params.studentId,
-                orderId: req.query.orderId
+        TrainClass.getFilter({
+                _id: req.params.trainId
+            })
+            .then(function (trainClass) {
+                var totalPrice = (parseFloat(trainClass.trainPrice) + parseFloat(trainClass.materialPrice)).toFixed(2);
+                res.render('Client/enroll_originalclass_detail.html', {
+                    title: '原班升报课程报名',
+                    trainClass: trainClass,
+                    totalPrice: totalPrice,
+                    studentId: req.params.studentId,
+                    orderId: req.query.orderId
+                });
             });
-        });
     });
 
+    // 测试报名
     app.post('/enroll/exam/enroll', checkLogin);
     app.post('/enroll/exam/enroll', function (req, res) {
-        ExamClass.get(req.body.examId)
+        ExamClass.getFilter({
+                _id: req.body.examId
+            })
             .then(function (examClass) {
                 if (examClass) {
-                    //studentId
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, examClass.examCategoryId, examClass._id)
-                        .then(function (enrollExam) {
-                            if (enrollExam) {
+                    var strQuery = "select count(0) as count from adminEnrollExams \
+                        where isDeleted=false and isSucceed=1 and studentId=:studentId ";
+                    if (examClass.examCategoryId) {
+                        strQuery += " and examCategoryId=:examCategoryId ";
+                    } else {
+                        strQuery += " and examId=:examId ";
+                    }
+                    return model.db.sequelize.query(strQuery, {
+                            replacements: {
+                                studentId: req.body.studentId,
+                                examCategoryId: examClass.examCategoryId,
+                                examId: examClass._id
+                            },
+                            type: model.db.sequelize.QueryTypes.SELECT
+                        })
+                        .then(function (result) {
+                            if (result && result[0] && result[0].count) {
+                                // 已经报过名了
                                 res.jsonp({
                                     error: "你已经报过名了，此测试不允许多次报名"
                                 });
-                                return;
-                            }
-                            StudentInfo.get(req.body.studentId)
-                                .then(function (student) {
-                                    ExamClass.enroll(req.body.examId)
-                                        .then(function (result) {
-                                            if (result && result.ok && result.nModified == 1) {
-                                                //报名成功
-                                                var adminEnrollExam = new AdminEnrollExam({
-                                                    studentId: student._id,
-                                                    studentName: student.name,
-                                                    mobile: student.mobile,
-                                                    examId: examClass._id,
-                                                    examName: examClass.name,
-                                                    examCategoryId: examClass.examCategoryId,
-                                                    examCategoryName: examClass.examCategoryName,
-                                                    isSucceed: 1,
-                                                    scores: examClass.subjects
-                                                });
-                                                adminEnrollExam.save()
-                                                    .then(function (enrollExam) {
-                                                        res.jsonp({
-                                                            sucess: true
-                                                        });
-                                                        return;
-                                                    });
-                                            } else {
-                                                //报名失败
-                                                res.jsonp({
-                                                    error: "报名失败,很可能报满"
-                                                });
-                                                return;
-                                            }
-                                        });
-                                });
-                        });
-                }
-            });
-    });
-
-    app.post('/enroll/exam/enroll2', checkLogin);
-    app.post('/enroll/exam/enroll2', function (req, res) {
-        ExamClass.get(req.body.examId)
-            .then(function (examClass) {
-                if (examClass) {
-                    //studentId
-                    AdminEnrollExam.getByStudentAndCategory(req.body.studentId, examClass.examCategoryId, examClass._id)
-                        .then(function (enrollExam) {
-                            if (enrollExam) {
-                                res.jsonp({
-                                    error: "你已经报过名了，此测试不允许多次报名"
-                                });
-                                return;
-                            }
-                            StudentInfo.get(req.body.studentId)
-                                .then(function (student) {
-                                    ExamClassExamArea.enroll(req.body.examClassExamAreaId)
-                                        .then(function (result) {
-                                            if (result && result.ok && result.nModified == 1) {
-                                                //报名成功
-                                                //更新总数，更新订单
-                                                ExamClass.enroll2(req.body.examId);
-
-                                                ExamClassExamArea.get(req.body.examClassExamAreaId)
-                                                    .then(function (examClassExamArea) {
-                                                        var adminEnrollExam = new AdminEnrollExam({
-                                                            studentId: student._id,
-                                                            studentName: student.name,
-                                                            mobile: student.mobile,
-                                                            examId: examClass._id,
-                                                            examName: examClass.name,
-                                                            examCategoryId: examClass.examCategoryId,
-                                                            examCategoryName: examClass.examCategoryName,
-                                                            isSucceed: 1,
-                                                            scores: examClass.subjects,
-                                                            examAreaId: examClassExamArea.examAreaId,
-                                                            examAreaName: examClassExamArea.examAreaName
-                                                        });
-                                                        adminEnrollExam.save()
-                                                            .then(function (enrollExam) {
+                            } else {
+                                return ExamClassExamArea.getFilter({
+                                        _id: req.body.examClassExamAreaId
+                                    })
+                                    .then(function (examClassExamArea) {
+                                        if (examClassExamArea.enrollCount < examClassExamArea.examCount) {
+                                            return StudentInfo.getFilter({
+                                                    _id: req.body.studentId
+                                                })
+                                                .then(function (student) {
+                                                    // 1. 查看名额并修改
+                                                    // 2. 生成订单
+                                                    model.db.sequelize.transaction(function (t1) {
+                                                            return ExamClassExamArea.update({
+                                                                    enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                                                                }, {
+                                                                    where: {
+                                                                        _id: req.body.examClassExamAreaId,
+                                                                        enrollCount: model.db.sequelize.literal('`enrollCount`<`examCount`')
+                                                                    },
+                                                                    transaction: t1
+                                                                })
+                                                                .then(function (updateResult) {
+                                                                    if (updateResult && updateResult[0]) {
+                                                                        return ExamClass.update({
+                                                                                enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                                                                            }, {
+                                                                                where: {
+                                                                                    _id: req.body.examId
+                                                                                },
+                                                                                transaction: t1
+                                                                            })
+                                                                            .then(function () {
+                                                                                return AdminEnrollExam.create({
+                                                                                    studentId: student._id,
+                                                                                    studentName: student.name,
+                                                                                    mobile: student.mobile,
+                                                                                    examId: examClass._id,
+                                                                                    examName: examClass.name,
+                                                                                    examCategoryId: examClass.examCategoryId,
+                                                                                    examCategoryName: examClass.examCategoryName,
+                                                                                    isSucceed: 1,
+                                                                                    scores: examClass.subjects,
+                                                                                    examAreaId: examClassExamArea.examAreaId,
+                                                                                    examAreaName: examClassExamArea.examAreaName
+                                                                                });
+                                                                            });
+                                                                    } else {
+                                                                        return {
+                                                                            error: "报名失败,很可能此考点已报满"
+                                                                        };
+                                                                    }
+                                                                });
+                                                        })
+                                                        .then(function (order) {
+                                                            if (order.error) {
+                                                                res.jsonp(order);
+                                                            } else {
                                                                 res.jsonp({
                                                                     sucess: true
                                                                 });
-                                                                return;
+                                                            }
+                                                        })
+                                                        .catch(function (err) {
+                                                            res.jsonp({
+                                                                error: "报名失败"
                                                             });
-                                                    });
-                                            } else {
-                                                //报名失败
-                                                res.jsonp({
-                                                    error: "报名失败,很可能此考点已报满"
+                                                        });
                                                 });
-                                                return;
-                                            }
-                                        });
-                                });
+                                        } else {
+                                            res.jsonp({
+                                                error: "此考点已报满"
+                                            });
+                                        }
+                                    });
+                            }
                         });
                 }
             });
@@ -385,70 +373,72 @@ module.exports = function (app) {
     });
 
     app.get('/enroll/schoolgradesubjectcategory', function (req, res) {
-        EnrollProcessConfigure.get().then(function (configure) {
-            if (configure && (!configure.newStudentStatus)) {
-                res.jsonp({
-                    error: "没到报名时间呢！"
-                });
-            } else {
-                var objReturn = {};
-                var p0 = SchoolArea.getAllWithoutPage()
-                    .then(function (schools) {
-                        objReturn.schools = schools;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                if (configure && (!configure.newStudentStatus)) {
+                    res.jsonp({
+                        error: "没到报名时间呢！"
                     });
-                var p1 = Grade.getAllWithoutPage()
-                    .then(function (grades) {
-                        objReturn.grades = grades;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-                var p2 = Subject.getAllWithoutPage()
-                    .then(function (subjects) {
-                        objReturn.subjects = subjects;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-                var p3 = Category.getAllWithoutPage()
-                    .then(function (categorys) {
-                        objReturn.categorys = categorys;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-                var p4 = SchoolGradeRelation.getFilters({})
-                    .then(function (schoolGradeRelations) {
-                        objReturn.schoolGradeRelations = schoolGradeRelations;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-                var p5 = GradeSubjectRelation.getFilters({})
-                    .then(function (gradeSubjectRelations) {
-                        objReturn.gradeSubjectRelations = gradeSubjectRelations;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-                var p6 = GradeSubjectCategoryRelation.getFilters({})
-                    .then(function (gradeSubjectCategoryRelations) {
-                        objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-                Promise.all([p0, p1, p2, p3, p4, p5, p6]).then(function () {
-                        res.jsonp(objReturn);
-                    })
-                    .catch(function (err) {
-                        console.log('errored');
-                    });
-            }
-        });
+                } else {
+                    var objReturn = {};
+                    var p0 = SchoolArea.getFilters({})
+                        .then(function (schools) {
+                            objReturn.schools = schools;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    var p1 = Grade.getFilters({})
+                        .then(function (grades) {
+                            objReturn.grades = grades;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    var p2 = Subject.getFilters({})
+                        .then(function (subjects) {
+                            objReturn.subjects = subjects;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    var p3 = Category.getFilters({})
+                        .then(function (categorys) {
+                            objReturn.categorys = categorys;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    var p4 = SchoolGradeRelation.getFilters({})
+                        .then(function (schoolGradeRelations) {
+                            objReturn.schoolGradeRelations = schoolGradeRelations;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    var p5 = GradeSubjectRelation.getFilters({})
+                        .then(function (gradeSubjectRelations) {
+                            objReturn.gradeSubjectRelations = gradeSubjectRelations;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    var p6 = GradeSubjectCategoryRelation.getFilters({})
+                        .then(function (gradeSubjectCategoryRelations) {
+                            objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                    Promise.all([p0, p1, p2, p3, p4, p5, p6])
+                        .then(function () {
+                            res.jsonp(objReturn);
+                        })
+                        .catch(function (err) {
+                            console.log('errored');
+                        });
+                }
+            });
     });
 
     app.post('/enroll/changeclass/school', function (req, res) {
@@ -498,94 +488,93 @@ module.exports = function (app) {
     });
 
     app.get('/enroll/grade/all', function (req, res) {
-        Grade.getAllWithoutPage()
+        Grade.getFilters({})
             .then(function (grades) {
                 res.jsonp(grades);
-                return;
             })
             .catch(function (err) {
                 console.log('errored');
             });
     });
 
+    // 报名订单
     app.get('/enroll/order', checkLogin);
     app.get('/enroll/order', function (req, res) {
-        //req.query.classId studentId
-        TrainClass.get(req.query.classId).then(function (trainClass) {
-            //get history orders to check the class time
-            AdminEnrollTrain.getFiltersWithClassFilters({
-                yearId: global.currentYear._id.toJSON(),
-                studentId: req.query.studentId,
-                isSucceed: 1
-            }, {
-                "trainClasss.courseTime": trainClass.courseTime
-            }).then(function (existOrders) {
-                var isTimeDuplicated = null;
-                if (existOrders && existOrders.length > 0) {
-                    isTimeDuplicated = true;
-                }
-
-                if (trainClass.exams && trainClass.exams.length > 0) {
-                    //考试分数达到要求才能报名
-                    var pArray = [],
-                        minScore;
-                    trainClass.exams.forEach(function (exam) {
-                        minScore = exam.minScore;
-                        var p = AdminEnrollExam.getFilter({
-                                examId: exam.examId,
-                                studentId: req.query.studentId,
-                                isSucceed: 1
+        // req.query.classId studentId
+        TrainClass.getFilter({
+                _id: req.query.classId
+            })
+            .then(function (trainClass) {
+                // get history orders to check the class time
+                return model.db.sequelize.query("select count(0) as count from adminEnrollTrains O join trainClasss C \
+                        on O.trainId=C._id \
+                        where O.yearId=:yearId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
+                        C.courseTime=:courseTime", {
+                        replacements: {
+                            yearId: global.currentYear._id,
+                            studentId: req.query.studentId,
+                            courseTime: trainClass.courseTime
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(function (result) {
+                        var isTimeDuplicated = null;
+                        if (result && result[0] && result[0].count) {
+                            isTimeDuplicated = true;
+                        }
+                        return TrainClassExams.getFilter({
+                                trainClassId: trainClass._id
                             })
-                            .then(function (examOrder) {
-                                if (examOrder) {
-                                    var subjectScore = examOrder.scores.filter(function (score) {
-                                        return score.subjectId == trainClass.subjectId;
-                                    })[0];
-                                    if (subjectScore.score >= exam.minScore) {
-                                        return true;
-                                    }
+                            .then(function (exam) {
+                                if (exam) {
+                                    return model.db.sequelize.query("select count(0) as count from trainClassExams E left join trainClasss C\
+                                            on E.trainClassId=C._id left join adminEnrollExams M on E.examId=M.examId and M.isDeleted=false and M.isSucceed=1\
+                                            and M.studentId=:studentId left join adminEnrollExamScores S \
+                                            on M._id=S.examOrderId and C.subjectId=S.subjectId and S.isDeleted=false \
+                                            where E.trainClassId=:id and S.score>=E.minScore", {
+                                            replacements: {
+                                                studentId: req.query.studentId,
+                                                id: trainClass._id
+                                            },
+                                            type: model.db.sequelize.QueryTypes.SELECT
+                                        })
+                                        .then(function (scoreResult) {
+                                            if (scoreResult && scoreResult[0] && scoreResult[0].count) {
+                                                //达到最低分数
+                                                res.render('Client/enroll_class_order.html', {
+                                                    title: '课程报名',
+                                                    trainClass: trainClass,
+                                                    classId: req.query.classId,
+                                                    studentId: req.query.studentId,
+                                                    isTimeDuplicated: isTimeDuplicated
+                                                });
+                                            } else {
+                                                //没有达到最低分数要求
+                                                res.render('Client/enroll_class_order.html', {
+                                                    title: '课程报名',
+                                                    trainClass: trainClass,
+                                                    classId: req.query.classId,
+                                                    studentId: req.query.studentId,
+                                                    disability: 1
+                                                });
+                                            }
+                                        });
+                                } else {
+                                    //不需要依赖考试分数
+                                    res.render('Client/enroll_class_order.html', {
+                                        title: '课程报名',
+                                        trainClass: trainClass,
+                                        classId: req.query.classId,
+                                        studentId: req.query.studentId,
+                                        isTimeDuplicated: isTimeDuplicated
+                                    });
                                 }
                             });
-                        pArray.push(p);
                     });
-                    Promise.all(pArray).then(function (results) {
-                        if (results.some(function (result) {
-                                return result;
-                            })) {
-                            //达到最低分数
-                            res.render('Client/enroll_class_order.html', {
-                                title: '课程报名',
-                                trainClass: trainClass,
-                                classId: req.query.classId,
-                                studentId: req.query.studentId,
-                                isTimeDuplicated: isTimeDuplicated
-                            });
-                        } else {
-                            //没有达到最低分数要求
-                            res.render('Client/enroll_class_order.html', {
-                                title: '课程报名',
-                                trainClass: trainClass,
-                                classId: req.query.classId,
-                                studentId: req.query.studentId,
-                                disability: minScore
-                            });
-                        }
-                    });
-                } else {
-                    //不需要依赖考试分数
-                    res.render('Client/enroll_class_order.html', {
-                        title: '课程报名',
-                        trainClass: trainClass,
-                        classId: req.query.classId,
-                        studentId: req.query.studentId,
-                        isTimeDuplicated: isTimeDuplicated
-                    });
-                }
             });
-        });
     });
 
-    //原班报名订单确认
+    // TBD 原班报名订单确认
     app.get('/enroll/original/order', checkLogin);
     app.get('/enroll/original/order', function (req, res) {
         //req.query.classId studentId
@@ -769,6 +758,7 @@ module.exports = function (app) {
         });
     });
 
+    // TBD 支付订单
     app.post('/enroll/pay', checkJSONLogin);
     app.post('/enroll/pay', function (req, res) {
         AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
@@ -900,7 +890,7 @@ module.exports = function (app) {
             });
     });
 
-    //原班报名支付
+    // TBD 原班报名支付
     app.post('/enroll/original/pay', checkJSONLogin);
     app.post('/enroll/original/pay', function (req, res) {
         AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
@@ -1032,7 +1022,7 @@ module.exports = function (app) {
             });
     });
 
-    ///调班在报名完成后
+    /// TBD 调班在报名完成后
     app.post('/enroll/changeClass', checkJSONLogin);
     app.post('/enroll/changeClass', function (req, res) {
         ChangeEnd.get().then(function (changeEnd) {
@@ -1142,7 +1132,7 @@ module.exports = function (app) {
         });
     });
 
-    //原班升报课程报名-查询原班
+    // TBD 原班升报课程报名-查询原班
     app.post('/enroll/originalOrders', checkJSONLogin);
     app.post('/enroll/originalOrders', function (req, res) {
         EnrollProcessConfigure.get().then(function (configure) {
@@ -1209,12 +1199,15 @@ module.exports = function (app) {
     //获取单个订单信息
     app.post('/enroll/getStudent', checkJSONLogin);
     app.post('/enroll/getStudent', function (req, res) {
-        StudentInfo.get(req.body.studentId)
+        StudentInfo.getFilter({
+                _id: req.body.studentId
+            })
             .then(function (studentInfo) {
                 res.jsonp(studentInfo);
             });
     });
 
+    // TBD ....
     app.post('/enroll/getSchoolsAndOrder', checkJSONLogin);
     app.post('/enroll/getSchoolsAndOrder', function (req, res) {
         AdminEnrollTrain.get({
@@ -1316,16 +1309,17 @@ module.exports = function (app) {
 
     app.post('/enroll/isOriginalClassBegin', checkJSONLogin);
     app.post('/enroll/isOriginalClassBegin', function (req, res) {
-        EnrollProcessConfigure.get().then(function (configure) {
-            if (configure && (configure.oldStudentStatus || configure.oldStudentSwitch)) {
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                if (configure && (configure.oldStudentStatus || configure.oldStudentSwitch)) {
+                    res.jsonp({
+                        sucess: true
+                    });
+                    return;
+                }
                 res.jsonp({
-                    sucess: true
+                    error: "没到原班报名时间呢！"
                 });
-                return;
-            }
-            res.jsonp({
-                error: "没到原班报名时间呢！"
             });
-        });
     });
 };

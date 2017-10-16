@@ -2,6 +2,10 @@ var isNew = true;
 
 $(document).ready(function () {
     $("#left_btnScoreInput").addClass("active");
+
+    $("#selectModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
+    $("#selectModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
