@@ -26,7 +26,8 @@ module.exports = function (app) {
         SchoolArea.create({
             name: req.body.name,
             address: req.body.address,
-            sequence: req.body.sequence
+            sequence: req.body.sequence,
+            createdBy: req.session.admin._id
         }).then(function (schoolArea) {
             res.jsonp(schoolArea);
         });

@@ -26,7 +26,8 @@ module.exports = function (app) {
     app.post('/admin/subject/add', checkLogin);
     app.post('/admin/subject/add', function (req, res) {
         Subject.create({
-                name: req.body.name
+                name: req.body.name,
+                createdBy: req.session.admin._id
             })
             .then(function (subject) {
                 res.jsonp(subject);

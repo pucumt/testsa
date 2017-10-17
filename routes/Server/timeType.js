@@ -17,7 +17,8 @@ module.exports = function (app) {
     app.post('/admin/timeType/add', function (req, res) {
         TimeType.create({
                 name: req.body.name,
-                isChecked: true
+                isChecked: true,
+                createdBy: req.session.admin._id
             })
             .then(function (timeType) {
                 res.jsonp(timeType);

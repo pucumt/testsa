@@ -25,7 +25,8 @@ module.exports = function (app) {
     app.post('/admin/grade/add', function (req, res) {
         Grade.create({
             name: req.body.name,
-            sequence: req.body.sequence
+            sequence: req.body.sequence,
+            createdBy: req.session.admin._id
         }).then(function (grade) {
             res.jsonp(grade);
         });

@@ -17,7 +17,8 @@ module.exports = function (app) {
     app.post('/admin/weekType/add', function (req, res) {
         WeekType.create({
                 name: req.body.name,
-                isChecked: true
+                isChecked: true,
+                createdBy: req.session.admin._id
             })
             .then(function (weekType) {
                 res.jsonp(weekType);

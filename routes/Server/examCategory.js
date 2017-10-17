@@ -26,7 +26,8 @@ module.exports = function (app) {
     app.post('/admin/examCategory/add', checkLogin);
     app.post('/admin/examCategory/add', function (req, res) {
         ExamCategory.create({
-                name: req.body.name
+                name: req.body.name,
+                createdBy: req.session.admin._id
             })
             .then(function (examCategory) {
                 res.jsonp(examCategory);

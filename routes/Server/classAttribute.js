@@ -17,7 +17,8 @@ module.exports = function (app) {
     app.post('/admin/classAttribute/add', function (req, res) {
         ClassAttribute.create({
                 name: req.body.name,
-                address: req.body.address
+                address: req.body.address,
+                createdBy: req.session.admin._id
             })
             .then(function (classAttribute) {
                 res.jsonp(classAttribute);

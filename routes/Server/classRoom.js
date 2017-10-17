@@ -27,7 +27,8 @@ module.exports = function (app) {
                 name: req.body.name,
                 sCount: req.body.sCount,
                 schoolId: req.body.schoolId,
-                schoolArea: req.body.schoolArea
+                schoolArea: req.body.schoolArea,
+                createdBy: req.session.admin._id
             })
             .then(function (classRoom) {
                 res.jsonp(classRoom);

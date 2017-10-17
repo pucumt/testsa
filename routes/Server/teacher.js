@@ -40,7 +40,8 @@ module.exports = function (app) {
                 engName: req.body.engName,
                 mobile: req.body.mobile,
                 address: req.body.address,
-                password: md5.update("111111").digest('hex')
+                password: md5.update("111111").digest('hex'),
+                createdBy: req.session.admin._id
             })
             .then(function (teacher) {
                 res.jsonp(teacher);

@@ -26,7 +26,8 @@ module.exports = function (app) {
                 subjectId: req.body.subjectId,
                 subjectName: req.body.subjectName,
                 reducePrice: req.body.reducePrice,
-                reduceMax: req.body.reduceMax
+                reduceMax: req.body.reduceMax,
+                createdBy: req.session.admin._id
             })
             .then(function (coupon) {
                 res.jsonp(coupon);

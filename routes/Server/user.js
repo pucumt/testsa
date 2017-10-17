@@ -20,7 +20,8 @@ module.exports = function (app) {
                 password: req.body.password,
                 schoolId: req.body.schoolId,
                 schoolArea: req.body.schoolArea,
-                role: req.body.role
+                role: req.body.role,
+                createdBy: req.session.admin._id
             })
             .then(function (user) {
                 res.jsonp(user);

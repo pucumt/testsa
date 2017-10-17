@@ -27,7 +27,8 @@ module.exports = function (app) {
     app.post('/admin/category/add', function (req, res) {
         Category.create({
             name: req.body.name,
-            grade: req.body.grade
+            grade: req.body.grade,
+            createdBy: req.session.admin._id
         }).then(function (category) {
             res.jsonp(category);
         });

@@ -33,7 +33,8 @@ module.exports = function (app) {
                         sequence: req.body.sequence,
                         enrollCount: 0,
                         isWeixin: 0,
-                        courseContent: req.body.courseContent
+                        courseContent: req.body.courseContent,
+                        createdBy: req.session.admin._id
                     }, {
                         transaction: t1
                     })

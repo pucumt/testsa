@@ -125,8 +125,8 @@ module.exports = function (app) {
     });
 
     //examClassExamAreaId: examArea
-    app.post('/admin/adminEnrollExam/enroll2', checkLogin);
-    app.post('/admin/adminEnrollExam/enroll2', function (req, res) {
+    app.post('/admin/adminEnrollExam/enroll', checkLogin);
+    app.post('/admin/adminEnrollExam/enroll', function (req, res) {
         model.db.sequelize.query("select 1 from adminEnrollExams O join examClasss C \
                 on C._id=:id and C.isDeleted=false and O.examCategoryId=C.examCategoryId where O.studentId=:studentId and O.isDeleted=false", {
                 replacements: {
@@ -181,7 +181,8 @@ module.exports = function (app) {
                                                     examCategoryId: req.body.examCategoryId,
                                                     examCategoryName: req.body.examCategoryName,
                                                     examAreaId: examClassExamArea.examAreaId,
-                                                    examAreaName: examClassExamArea.examAreaName
+                                                    examAreaName: examClassExamArea.examAreaName,
+                                                    createdBy: req.session.admin._id
                                                 }, {
                                                     transaction: t1
                                                 });
@@ -242,7 +243,8 @@ module.exports = function (app) {
                             examCategoryId: req.body.examCategoryId,
                             examCategoryName: req.body.examCategoryName,
                             examAreaId: examClassExamArea.examAreaId,
-                            examAreaName: examClassExamArea.examAreaName
+                            examAreaName: examClassExamArea.examAreaName,
+                            createdBy: req.session.admin._id
                         }).then(function () {
                             res.jsonp({
                                 sucess: true

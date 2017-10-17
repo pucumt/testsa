@@ -1681,7 +1681,7 @@ module.exports = function (app) {
                         .then(function (lessonObject) {
                             if (lessonObject) {
                                 //找到书名拷贝音频
-                                copyAudio(lessonObject.bookId.toJSON(), lessonId, content[0]._id, uploadFile);
+                                copyAudio(lessonObject.bookId, lessonId, content[0]._id, uploadFile);
                                 res.jsonp({
                                     sucess: true
                                 });

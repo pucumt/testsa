@@ -84,7 +84,8 @@ module.exports = function (app) {
             schoolId: req.body.schoolId,
             schoolArea: req.body.schoolArea,
             isWeixin: 0,
-            enrollCount: 0
+            enrollCount: 0,
+            createdBy: req.session.admin._id
         };
         model.db.sequelize.transaction(function (t1) {
                 return TrainClass.create(option, {

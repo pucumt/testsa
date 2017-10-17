@@ -136,7 +136,7 @@ $("#btnEnroll").on("click", function (e) {
 
         var examArea = $('#enrollInfo #examAreas').val();
         //new enroll with multi areas
-        var postURI = "/admin/adminEnrollExam/enroll2",
+        var postURI = "/admin/adminEnrollExam/enroll",
             postObj = {
                 studentId: $('#enrollInfo #studentId').val(),
                 studentName: $('#enrollInfo #studentName').val(),

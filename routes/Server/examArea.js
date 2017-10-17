@@ -17,7 +17,8 @@ module.exports = function (app) {
     app.post('/admin/examArea/add', function (req, res) {
         ExamArea.create({
             name: req.body.name,
-            address: req.body.address
+            address: req.body.address,
+            createdBy: req.session.admin._id
         }).then(function (examArea) {
             res.jsonp(examArea);
         });

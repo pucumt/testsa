@@ -40,7 +40,8 @@ module.exports = function (app) {
     app.post('/admin/year/add', function (req, res) {
         var option = {
             name: req.body.name,
-            sequence: req.body.sequence
+            sequence: req.body.sequence,
+            createdBy: req.session.admin._id
         };
         if (req.body.iscurrent) {
             // clear and save, so use transaction
