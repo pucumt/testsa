@@ -26,7 +26,11 @@ Category.getFilter = function (filter) {
 Category.getFilters = function (filter) {
     filter.isDeleted = false;
     return Category.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -34,6 +38,10 @@ Category.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return Category.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

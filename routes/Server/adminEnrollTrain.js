@@ -576,7 +576,8 @@ module.exports = function (app) {
     app.post('/admin/adminEnrollTrain/changeClass', function (req, res) {
         AdminEnrollTrain.getFilter({
                 studentId: req.body.studentId,
-                trainId: req.body.trainId
+                trainId: req.body.trainId,
+                isSucceed: 1
             })
             .then(function (enrollTrain) {
                 if (enrollTrain) {

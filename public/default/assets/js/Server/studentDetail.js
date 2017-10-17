@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnStudent").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -13,10 +13,10 @@ $(document).ready(function() {
 /***----------studentInfo------------ */
 function resetDropDown(id) {
     $('#studentInfo').find("#grade option").remove();
-    selfAjax("get", "/admin/grade/getAll", null, function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function (data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(grade) {
+                data.forEach(function (grade) {
                     var select = "";
                     if (grade._id == id) {
                         select = "selected";
@@ -30,7 +30,7 @@ function resetDropDown(id) {
 
 function renderStudent() {
     var id = $("#id").val();
-    selfAjax("get", "/admin/studentInfo/" + id, null, function(data) {
+    selfAjax("get", "/admin/studentInfo/" + id, null, function (data) {
         if (data) {
             $("#studentInfo #studentName").val(data.name);
             $("#studentInfo #mobile").val(data.mobile);
@@ -48,7 +48,7 @@ function renderStudent() {
 };
 
 function renderAccount(id) {
-    selfAjax("get", "/admin/studentAccount/" + id, null, function(data) {
+    selfAjax("get", "/admin/studentAccount/" + id, null, function (data) {
         if (data) {
             $(".mainModal .panel-heading .account").text(data.name);
         }
@@ -86,11 +86,11 @@ function addValidation() {
     });
 };
 
-$("#studentInfo #btnSave").on("click", function(e) {
+$("#studentInfo #btnSave").on("click", function (e) {
     var validator = $('#studentInfo').data('formValidation').validate();
     if (validator.isValid()) {
         showConfirm("真的要保存" + $('#studentInfo #studentName').val() + "吗？");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             var postURI = "/admin/studentInfo/edit",
                 postObj = {
                     name: $('#studentInfo #studentName').val(),
@@ -106,7 +106,7 @@ $("#studentInfo #btnSave").on("click", function(e) {
                     gradeId: $('#studentInfo #grade').val(),
                     gradeName: $('#studentInfo #grade').find("option:selected").text(),
                 };
-            selfAjax("post", postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function (data) {
                 if (data.error) {
                     showAlert(data.error);
                 } else {
@@ -117,15 +117,15 @@ $("#studentInfo #btnSave").on("click", function(e) {
     }
 });
 
-$("#studentInfo #btnDelete").on("click", function(e) {
+$("#studentInfo #btnDelete").on("click", function (e) {
     showConfirm("真的要删除" + $('#studentInfo #studentName').val() + "吗？");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/studentInfo/delete", {
             id: $('#id').val()
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 showAlert("删除成功", null, true);
-                $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                     location.href = "/admin/studentsList";
                 });
             }
@@ -156,9 +156,9 @@ function searchClass(p) {
         },
         pStr = p ? "p=" + p : "";
     $classSelectBody.empty();
-    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function (data) {
         if (data && data.adminEnrollTrains.length > 0) {
-            data.adminEnrollTrains.forEach(function(trainOrder) {
+            data.adminEnrollTrains.forEach(function (trainOrder) {
                 $classSelectBody.append('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' + (trainOrder.fromId || "") + '</td><td>' + trainOrder.studentName +
                     '</td><td>' + trainOrder.trainName + '</td><td>' + trainOrder.yearName + '</td><td>' + trainOrder.totalPrice + '</td><td>' +
                     trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || "") + '</td><td>' + getPayway(trainOrder.payWay) +
@@ -177,9 +177,9 @@ function searchExam(p) {
         },
         pStr = p ? "p=" + p : "";
     $examSelectBody.empty();
-    selfAjax("post", "/admin/adminEnrollExam/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollExam/search?" + pStr, filter, function (data) {
         if (data && data.adminEnrollExams.length > 0) {
-            data.adminEnrollExams.forEach(function(examOrder) {
+            data.adminEnrollExams.forEach(function (examOrder) {
                 var button = (examOrder.isSucceed == 1 ? '<a id="btnDelete" class="btn btn-default">取消</a><a id="btnChange" class="btn btn-default">更新学生</a>' : '');
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' + examOrder.studentName +
                     '</td><td>' + examOrder.examName + '</td><td>' + getTrainOrderStatus(examOrder.isSucceed) +
@@ -194,21 +194,21 @@ function searchExam(p) {
     });
 };
 
-$('.content .examModal table tbody').on("click", "td #btnDelete", function(e) {
+$('.content .examModal table tbody').on("click", "td #btnDelete", function (e) {
     var obj = e.currentTarget;
     $(obj).attr("disabled", "disabled");
     var entity = $(obj).parents("tr").data("obj");
     showConfirm("确定要取消订单" + entity._id + "吗？");
 
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/adminEnrollExam/cancel", {
             id: entity._id,
             examId: entity.examId,
             examAreaId: entity.examAreaId
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 showAlert("删除成功", null, true);
-                $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                     location.href = "/admin/studentDetail/" + $('#id').val();
                 });
             }
@@ -218,21 +218,21 @@ $('.content .examModal table tbody').on("click", "td #btnDelete", function(e) {
     e.stopPropagation();
 });
 
-$('.content .examModal table tbody').on("click", "td #btnChange", function(e) {
+$('.content .examModal table tbody').on("click", "td #btnChange", function (e) {
     var obj = e.currentTarget;
     $(obj).attr("disabled", "disabled");
     var entity = $(obj).parents("tr").data("obj");
     showConfirm("确定要更新订单" + entity._id + "吗？");
 
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/adminEnrollExam/changeStudent", {
             id: entity._id,
             studentId: $('#id').val(),
             studentName: $('#studentName').val()
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 showAlert("修改成功", null, true);
-                $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+                $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                     location.href = "/admin/studentDetail/" + $('#id').val();
                 });
             }
@@ -248,9 +248,9 @@ function searchCoupon(p) {
         },
         pStr = p ? "p=" + p : "";
     $couponSelectBody.empty();
-    selfAjax("post", "/admin/couponAssignList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponAssignList/search?" + pStr, filter, function (data) {
         if (data && data.couponAssigns.length > 0) {
-            data.couponAssigns.forEach(function(coupon) {
+            data.couponAssigns.forEach(function (coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
                 $couponSelectBody.append('<tr id=' + coupon._id + '><td>' + coupon.couponName + '</td><td>' + dateStr +
                     '</td><td>' + coupon.gradeName + '</td><td>' + coupon.subjectName + '</td><td>' + (coupon.isUsed ? "已使用" : "未使用") + '</td><td>' + coupon.reducePrice + '</td></tr>');
@@ -263,12 +263,12 @@ function searchCoupon(p) {
 };
 
 function setPaingNextPre(modal, searchFuc) {
-    $(modal + " .paging .prepage").off("click").on("click", function(e) {
+    $(modal + " .paging .prepage").off("click").on("click", function (e) {
         var page = parseInt($(modal + " #page").val()) - 1;
         searchFuc(page);
     });
 
-    $(modal + " .paging .nextpage").off("click").on("click", function(e) {
+    $(modal + " .paging .nextpage").off("click").on("click", function (e) {
         var page = parseInt($(modal + " #page").val()) + 1;
         searchFuc(page);
     });
@@ -276,7 +276,7 @@ function setPaingNextPre(modal, searchFuc) {
 //------------end------------
 
 
-$(".examModal #gridBody").on("click", "tr", function(e) {
+$(".examModal #gridBody").on("click", "tr", function (e) {
     //need change later
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");

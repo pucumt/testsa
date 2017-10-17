@@ -144,7 +144,7 @@ const TrainClass = db.defineModel('trainClasss', {
     } //指定结束课程
 });
 module.exports = TrainClass;
-// TBD 分数依赖部分比较复杂，需要重新处理
+// 分数依赖部分比较复杂，需要重新处理
 
 
 //读取用户信息
@@ -158,7 +158,11 @@ TrainClass.getFilter = function (filter) {
 TrainClass.getFilters = function (filter) {
     filter.isDeleted = false;
     return TrainClass.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -166,6 +170,10 @@ TrainClass.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return TrainClass.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

@@ -25,7 +25,11 @@ WeekType.getFilter = function (filter) {
 WeekType.getFilters = function (filter) {
     filter.isDeleted = false;
     return WeekType.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -33,6 +37,10 @@ WeekType.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return WeekType.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

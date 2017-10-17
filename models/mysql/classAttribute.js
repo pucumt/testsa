@@ -22,7 +22,11 @@ ClassAttribute.getFilter = function (filter) {
 ClassAttribute.getFilters = function (filter) {
     filter.isDeleted = false;
     return ClassAttribute.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -30,6 +34,10 @@ ClassAttribute.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ClassAttribute.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

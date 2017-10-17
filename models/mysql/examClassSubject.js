@@ -19,8 +19,6 @@ const ExamClassSubject = db.defineModel('examClassSubjects', {
 });
 module.exports = ExamClassSubject;
 
-// TBD 科目信息应该放到另外一张表
-
 ExamClassSubject.getFilter = function (filter) {
     filter.isDeleted = false;
     return ExamClassSubject.findOne({
@@ -31,7 +29,11 @@ ExamClassSubject.getFilter = function (filter) {
 ExamClassSubject.getFilters = function (filter) {
     filter.isDeleted = false;
     return ExamClassSubject.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -39,6 +41,10 @@ ExamClassSubject.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ExamClassSubject.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

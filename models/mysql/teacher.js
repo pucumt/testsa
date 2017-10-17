@@ -38,7 +38,11 @@ Teacher.getFilter = function (filter) {
 Teacher.getFilters = function (filter) {
     filter.isDeleted = false;
     return Teacher.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -46,6 +50,10 @@ Teacher.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return Teacher.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

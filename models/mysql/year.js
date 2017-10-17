@@ -29,7 +29,12 @@ Year.getFilter = function (filter) {
 Year.getFilters = function (filter) {
     filter.isDeleted = false;
     return Year.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -37,6 +42,11 @@ Year.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return Year.findAndCountAll({
         'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

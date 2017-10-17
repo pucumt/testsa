@@ -25,7 +25,11 @@ TimeType.getFilter = function (filter) {
 TimeType.getFilters = function (filter) {
     filter.isDeleted = false;
     return TimeType.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -33,6 +37,10 @@ TimeType.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return TimeType.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

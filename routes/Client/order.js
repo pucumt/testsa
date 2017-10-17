@@ -42,7 +42,7 @@ module.exports = function (app) {
             });
     });
 
-    // TBD need test the function
+    // need test the function
     app.post('/personalCenter/exam/all', checkJSONLogin);
     app.post('/personalCenter/exam/all', function (req, res) {
         var currentUser = req.session.user;
@@ -50,7 +50,7 @@ module.exports = function (app) {
                      O.createdDate, C.examDate\
                     from studentInfos S join adminEnrollExams O \
                     on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 \
-                    join examClasss C on O.examId=C._id where S.isDeleted=false and S.accountId=:accountId", {
+                    join examClasss C on O.examId=C._id and C.isDeleted=false where S.isDeleted=false and S.accountId=:accountId", {
                 replacements: {
                     yearId: global.currentYear._id,
                     accountId: currentUser._id

@@ -56,7 +56,7 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
         type: db.BOOLEAN,
         defaultValue: false
     } // 隐报不占用名额
-    // TBD 成绩最好单独放到一个表里，根据关系数据库的特点，数据逻辑都要修改
+    // 成绩最好单独放到一个表里，根据关系数据库的特点，数据逻辑都要修改
     // orderDate 和 CancelDate 一并处理掉？
     // 创建和删除的逻辑最好也增加下
 });
@@ -75,7 +75,8 @@ AdminEnrollExam.getFilters = function (filter) {
     return AdminEnrollExam.findAll({
         'where': filter,
         order: [
-            ['createdDate', 'DESC']
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
         ]
     });
 };
@@ -85,7 +86,8 @@ AdminEnrollExam.getFiltersWithPage = function (page, filter) {
     return AdminEnrollExam.findAndCountAll({
         'where': filter,
         order: [
-            ['createdDate', 'DESC']
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
         ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize

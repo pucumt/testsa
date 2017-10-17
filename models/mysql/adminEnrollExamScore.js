@@ -38,7 +38,11 @@ AdminEnrollExamScore.getFilter = function (filter) {
 AdminEnrollExamScore.getFilters = function (filter) {
     filter.isDeleted = false;
     return AdminEnrollExamScore.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
+        ]
     });
 };
 
@@ -46,6 +50,10 @@ AdminEnrollExamScore.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return AdminEnrollExamScore.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

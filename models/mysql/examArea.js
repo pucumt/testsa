@@ -25,7 +25,11 @@ ExamArea.getFilter = function (filter) {
 ExamArea.getFilters = function (filter) {
     filter.isDeleted = false;
     return ExamArea.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -33,6 +37,10 @@ ExamArea.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ExamArea.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

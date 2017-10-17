@@ -21,7 +21,6 @@ const TrainClassExams = db.defineModel('trainClassExams', {
     }
 });
 module.exports = TrainClassExams;
-// TBD 分数依赖部分比较复杂，需要重新处理
 
 //读取用户信息
 TrainClassExams.getFilter = function (filter) {
@@ -34,7 +33,11 @@ TrainClassExams.getFilter = function (filter) {
 TrainClassExams.getFilters = function (filter) {
     filter.isDeleted = false;
     return TrainClassExams.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -42,6 +45,10 @@ TrainClassExams.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return TrainClassExams.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

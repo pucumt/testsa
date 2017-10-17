@@ -1,42 +1,42 @@
-$(document).ready(function() {
-    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
+$(document).ready(function () {
+    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function (e) {
         //back to order form
         location.href = "/personalCenter/order";
     });
 
-    $(".enroll.personalCenter .changeClass .trainclass").on("click", function(e) {
+    $(".enroll.personalCenter .changeClass .trainclass").on("click", function (e) {
         //open class list form
         $(".enroll.personalCenter").hide();
         $(".enroll-filter").show();
         $("#Enroll-select").hide();
     });
 
-    $("#Enroll-select.changeClass .title .glyphicon-menu-left").on("click", function(e) {
+    $("#Enroll-select.changeClass .title .glyphicon-menu-left").on("click", function (e) {
         //close class list form
         $("#Enroll-select").hide();
         $(".enroll.personalCenter").show();
     });
 
-    $("#Enroll-select.changeClass .filter").on("click", function(e) {
+    $("#Enroll-select.changeClass .filter").on("click", function (e) {
         //click filter
         $(".enroll-filter").show();
         $("#Enroll-select").hide();
     });
 
-    $(".enroll-filter .glyphicon-remove-circle").on("click", function(e) {
+    $(".enroll-filter .glyphicon-remove-circle").on("click", function (e) {
         //close filter
         $("#Enroll-select").show();
         $(".enroll-filter").hide();
     });
 
-    $(".enroll-filter .btn-search").on("click", function(e) {
+    $(".enroll-filter .btn-search").on("click", function (e) {
         //search classes
         loadData();
         $("#Enroll-select").show();
         $(".enroll-filter").hide();
     });
 
-    $("#Enroll-select.changeClass ul.exam-list").on("click", "li", function(e) {
+    $("#Enroll-select.changeClass ul.exam-list").on("click", "li", function (e) {
         //select new class
         var obj = e.currentTarget;
         var entity = $(obj).data("obj");
@@ -46,7 +46,7 @@ $(document).ready(function() {
         $("#Enroll-select").hide();
     });
 
-    $("#btnChangeClass").on("click", function(e) {
+    $("#btnChangeClass").on("click", function (e) {
         //select new class
         if ($(".orderList .changeClass .trainclass .name").text() == "" || $(".orderList .changeClass .trainclass #newClassId").val() == "") {
             $(".enroll.personalCenter").hide();
@@ -58,13 +58,13 @@ $(document).ready(function() {
                 return;
             }
             showConfirm("确定要调班吗？");
-            $('#confirmModal #btnConfirmSave').on("click", function() {
+            $('#confirmModal #btnConfirmSave').off("click").on("click", function () {
                 $("#btnChangeClass").attr("disabled", "disabled");
                 selfAjax("post", "/enroll/changeClass", {
                     orderId: $("#orderId").val(),
                     trainId: $(".orderList .changeClass .trainclass #newClassId").val(),
                     originalUrl: "/personalCenter/changeClass/id/" + $("#orderId").val()
-                }, function(data) {
+                }, function (data) {
                     $("#btnChangeClass").removeAttr("disabled");
                     if (data) {
                         if (data.notLogin) {
@@ -88,20 +88,20 @@ $(document).ready(function() {
 function renderfilter() {
     selfAjax("post", "/enroll/changeclass/school", {
         gradeId: $("#gradeId").val()
-    }, function(data) {
+    }, function (data) {
         if (data) {
             if (data.schools.length > 0) {
-                data.schools.forEach(function(school) {
+                data.schools.forEach(function (school) {
                     $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
                 });
             }
             if (data.weekTypes.length > 0) {
-                data.weekTypes.forEach(function(weekType) {
+                data.weekTypes.forEach(function (weekType) {
                     $(".enroll-filter #drpDateSpan").append("<option>" + weekType.name + "</option>");
                 });
             }
             if (data.timeTypes.length > 0) {
-                data.timeTypes.forEach(function(timeType) {
+                data.timeTypes.forEach(function (timeType) {
                     $(".enroll-filter #drpTimeSpan").append("<option>" + timeType.name + "</option>");
                 });
             }
@@ -120,11 +120,11 @@ function loadData() {
         subjectId: $("#subjectId").val(),
         categoryId: $("#categoryId").val(),
         timespan: $("#drpDateSpan").val() // + $("#drpTimeSpan").val()
-    }, function(data) {
+    }, function (data) {
         if (data) {
             if (data.classs.length > 0) {
                 var d = $(document.createDocumentFragment());
-                data.classs.forEach(function(trainclass) {
+                data.classs.forEach(function (trainclass) {
                     d.append(generateLi(trainclass));
                 });
                 $selectBody.append(d);

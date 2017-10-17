@@ -1,13 +1,13 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnTrainOrder").addClass("active");
 });
 
 var payWay = "0";
-$("#btnPay").on("click", function(e) {
+$("#btnPay").on("click", function (e) {
     var id = $("#order").data("obj");
-    $(":input[name='payWay']").each(function(index) {
+    $(":input[name='payWay']").each(function (index) {
         if (this.checked) {
             payWay = $(this).val();
         }
@@ -23,15 +23,15 @@ $("#btnPay").on("click", function(e) {
     }
 });
 
-$("#btnConfirmSave").on("click", function(e) {
+$("#btnConfirmSave").on("click", function (e) {
     var id = $("#order").data("obj");
     selfAjax("post", "/admin/adminEnrollTrain/pay", {
         id: id,
         payWay: payWay
-    }, function(data) {
+    }, function (data) {
         if (data.sucess) {
             showAlert("支付成功");
-            $("#confirmModal .modal-footer .btn-default").on("click", function(e) {
+            $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                 location.href = "/admin/trainOrderList";
             });
         } else {

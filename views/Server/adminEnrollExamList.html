@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollExamSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollExamSetting.html" %} {% endblock
+%} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -26,9 +27,9 @@
                         <div class="form-group">
                             <label for="sex" class="control-label">性别:</label>
                             <select name="sex" id="sex" class="form-control">
-                            <option value="0">男</option>
-                            <option value="1">女</option>
-                        </select>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -71,10 +72,11 @@
                             <div class="btn-group">
                                 <input type="hidden" class="form-control" name="studentId" id="studentId">
                                 <input type="text" maxlength="30" readonly class="form-control" name="studentName" id="studentName">
-                                <button type="button" id="panel_btnStudent" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
+                                <button type="button" id="panel_btnStudent" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -88,9 +90,9 @@
                         <div class="form-group">
                             <label for="sex" class="control-label">性别:</label>
                             <select name="sex" disabled id="sex" class="form-control">
-                            <option value="0">男</option>
-                            <option value="1">女</option>
-                        </select>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -103,10 +105,11 @@
                             <div class="btn-group">
                                 <input type="hidden" class="form-control" name="examId" id="examId">
                                 <input type="text" readonly class="form-control" name="examName" id="examName">
-                                <button type="button" id="panel_btnExam" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
+                                <button type="button" id="panel_btnExam" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -143,7 +146,9 @@
     <div class="modal-dialog modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="selectModalLabel">选择</h4>
             </div>
             <div class="modal-body">
@@ -195,7 +200,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -209,5 +216,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/adminEnrollExam.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminEnrollExam.js?v=1.000"></script>
 {% endblock %}

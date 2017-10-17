@@ -981,7 +981,7 @@ module.exports = function (app) {
         var filter = {
             isDeleted: false,
             isSucceed: 1,
-            yearId: global.currentYear._id.toJSON(),
+            yearId: global.currentYear._id,
             isPayed: true
         };
 
@@ -1667,7 +1667,8 @@ module.exports = function (app) {
                 },
                 order: [
                     ['sequence'],
-                    ['createdDate']
+                    ['createdDate'],
+                    ['_id']
                 ],
                 offset: parseInt(req.body.number)
             })
@@ -1680,7 +1681,7 @@ module.exports = function (app) {
                         .then(function (lessonObject) {
                             if (lessonObject) {
                                 //找到书名拷贝音频
-                                copyAudio(lessonObject.bookId.toJSON(), lessonId, content[0]._id.toJSON(), uploadFile);
+                                copyAudio(lessonObject.bookId.toJSON(), lessonId, content[0]._id, uploadFile);
                                 res.jsonp({
                                     sucess: true
                                 });
@@ -1690,7 +1691,8 @@ module.exports = function (app) {
                                     error: "沒有找到该书！"
                                 });
                             }
-                        }).catch(function () {
+                        })
+                        .catch(function () {
                             res.jsonp({
                                 error: "拷贝音频出错！"
                             });

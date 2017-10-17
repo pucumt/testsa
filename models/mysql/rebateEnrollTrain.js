@@ -49,7 +49,11 @@ RebateEnrollTrain.getFilter = function (filter) {
 RebateEnrollTrain.getFilters = function (filter) {
     filter.isDeleted = false;
     return RebateEnrollTrain.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -57,6 +61,10 @@ RebateEnrollTrain.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return RebateEnrollTrain.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

@@ -66,7 +66,7 @@ const ExamClass = db.defineModel('examClasss', {
 });
 module.exports = ExamClass;
 
-// TBD 科目信息应该放到另外一张表
+// 科目信息应该放到另外一张表
 
 ExamClass.getFilter = function (filter) {
     filter.isDeleted = false;
@@ -78,7 +78,11 @@ ExamClass.getFilter = function (filter) {
 ExamClass.getFilters = function (filter) {
     filter.isDeleted = false;
     return ExamClass.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -86,6 +90,10 @@ ExamClass.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ExamClass.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

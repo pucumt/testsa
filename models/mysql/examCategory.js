@@ -21,7 +21,11 @@ ExamCategory.getFilter = function (filter) {
 ExamCategory.getFilters = function (filter) {
     filter.isDeleted = false;
     return ExamCategory.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -29,6 +33,10 @@ ExamCategory.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ExamCategory.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

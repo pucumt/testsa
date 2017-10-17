@@ -79,7 +79,8 @@ AbsentStudents.getFiltersWithPage = function (page, filter) {
     return AbsentStudents.findAndCountAll({
         'where': filter,
         order: [
-            ['createdDate', 'DESC']
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
         ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize

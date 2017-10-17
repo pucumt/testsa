@@ -22,7 +22,11 @@ Subject.getFilter = function (filter) {
 Subject.getFilters = function (filter) {
     filter.isDeleted = false;
     return Subject.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -30,6 +34,10 @@ Subject.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return Subject.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

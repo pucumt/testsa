@@ -28,7 +28,12 @@ SchoolArea.getFilter = function (filter) {
 SchoolArea.getFilters = function (filter) {
     filter.isDeleted = false;
     return SchoolArea.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -36,6 +41,11 @@ SchoolArea.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return SchoolArea.findAndCountAll({
         'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

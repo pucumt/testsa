@@ -42,7 +42,11 @@ StudentLessonScore.getFilter = function (filter) {
 StudentLessonScore.getFilters = function (filter) {
     filter.isDeleted = false;
     return StudentLessonScore.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -50,6 +54,10 @@ StudentLessonScore.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return StudentLessonScore.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

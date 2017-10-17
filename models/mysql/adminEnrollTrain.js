@@ -120,7 +120,8 @@ AdminEnrollTrain.getFilters = function (filter) {
     return AdminEnrollTrain.findAll({
         'where': filter,
         order: [
-            ['createdDate', 'DESC']
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
         ]
     });
 };
@@ -130,14 +131,15 @@ AdminEnrollTrain.getFiltersWithPage = function (page, filter) {
     return AdminEnrollTrain.findAndCountAll({
         'where': filter,
         order: [
-            ['createdDate', 'DESC']
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
         ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });
 };
 
-// TBD 年度保存模块再看情况处理
+// 年度保存模块再看情况处理
 
 // AdminEnrollTrain.save = function (option) {
 //     if (!option.yearId) {

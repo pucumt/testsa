@@ -34,7 +34,11 @@ OrderFromBank.getFilter = function (filter) {
 OrderFromBank.getFilters = function (filter) {
     filter.isDeleted = false;
     return OrderFromBank.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -42,6 +46,10 @@ OrderFromBank.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return OrderFromBank.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

@@ -34,7 +34,11 @@ EnrollProcessConfigure.getFilter = function (filter) {
 EnrollProcessConfigure.getFilters = function (filter) {
     filter.isDeleted = false;
     return EnrollProcessConfigure.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -42,6 +46,10 @@ EnrollProcessConfigure.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return EnrollProcessConfigure.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

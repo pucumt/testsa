@@ -209,9 +209,8 @@ module.exports = function (app) {
             });
     });
 
-    // TBD
-    app.post('/admin/adminEnrollExam/hideEnroll2', checkLogin);
-    app.post('/admin/adminEnrollExam/hideEnroll2', function (req, res) {
+    app.post('/admin/adminEnrollExam/hideEnroll', checkLogin);
+    app.post('/admin/adminEnrollExam/hideEnroll', function (req, res) {
         model.db.sequelize.query("select 1 from adminEnrollExams O join examClasss C \
         on C._id=:id and C.isDeleted=false and O.examCategoryId=C.examCategoryId where O.studentId=:studentId and O.isDeleted=false", {
                 replacements: {

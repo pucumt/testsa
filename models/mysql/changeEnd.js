@@ -21,7 +21,11 @@ ChangeEnd.getFilter = function (filter) {
 ChangeEnd.getFilters = function (filter) {
     filter.isDeleted = false;
     return ChangeEnd.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -29,6 +33,10 @@ ChangeEnd.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ChangeEnd.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

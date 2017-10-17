@@ -45,7 +45,11 @@ GradeSubjectCategoryRelation.getFilter = function (filter) {
 GradeSubjectCategoryRelation.getFilters = function (filter) {
     filter.isDeleted = false;
     return GradeSubjectCategoryRelation.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -53,6 +57,10 @@ GradeSubjectCategoryRelation.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return GradeSubjectCategoryRelation.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

@@ -24,7 +24,12 @@ Grade.getFilter = function (filter) {
 Grade.getFilters = function (filter) {
     filter.isDeleted = false;
     return Grade.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -32,6 +37,11 @@ Grade.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return Grade.findAndCountAll({
         'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

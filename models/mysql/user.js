@@ -42,7 +42,11 @@ User.getFilter = function (filter) {
 User.getFilters = function (filter) {
     filter.isDeleted = false;
     return User.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -50,6 +54,10 @@ User.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return User.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

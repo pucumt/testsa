@@ -6,7 +6,7 @@ var db = mongoose.connection,
 var lessonSchema = new mongoose.Schema({
     name: String,
     bookId: ObjectId,
-    bookName: String, //TBD
+    bookName: String, //uselesss
     createdBy: String,
     createdDate: {
         type: Date,

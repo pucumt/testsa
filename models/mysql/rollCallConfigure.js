@@ -29,7 +29,11 @@ RollCallConfigure.getFilter = function (filter) {
 RollCallConfigure.getFilters = function (filter) {
     filter.isDeleted = false;
     return RollCallConfigure.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -37,6 +41,10 @@ RollCallConfigure.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return RollCallConfigure.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

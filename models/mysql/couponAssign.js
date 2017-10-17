@@ -68,7 +68,11 @@ CouponAssign.getFilter = function (filter) {
 CouponAssign.getFilters = function (filter) {
     filter.isDeleted = false;
     return CouponAssign.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -76,6 +80,10 @@ CouponAssign.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return CouponAssign.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

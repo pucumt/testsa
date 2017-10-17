@@ -26,7 +26,11 @@ ExamRoom.getFilter = function (filter) {
 ExamRoom.getFilters = function (filter) {
     filter.isDeleted = false;
     return ExamRoom.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -34,6 +38,10 @@ ExamRoom.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return ExamRoom.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

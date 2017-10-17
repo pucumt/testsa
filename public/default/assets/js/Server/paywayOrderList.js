@@ -103,7 +103,7 @@ $("#myModal #btnSave").on("click", function (e) {
         $('#myModal').modal('hide');
         if (data && data.sucess) {
             showAlert("修改成功！");
-            $('#confirmModal .modal-footer .btn-default').on("click", function (e) {
+            $('#confirmModal .modal-footer .btn-default').off("click").on("click", function (e) {
                 refreshPage();
             });
         } else {

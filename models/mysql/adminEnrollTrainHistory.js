@@ -114,7 +114,11 @@ AdminEnrollTrainHistory.getFilter = function (filter) {
 AdminEnrollTrainHistory.getFilters = function (filter) {
     filter.isDeleted = false;
     return AdminEnrollTrainHistory.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
+        ]
     });
 };
 
@@ -122,12 +126,16 @@ AdminEnrollTrainHistory.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return AdminEnrollTrainHistory.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate', 'DESC'],
+            ['_id', 'DESC']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });
 };
 
-// TBD 也要查看下具体逻辑，看看能不能去掉一些重复字段
+// 也要查看下具体逻辑，看看能不能去掉一些重复字段
 
 // AdminEnrollTrainHistory.save = function (option) {
 //     if (!option.yearId) {

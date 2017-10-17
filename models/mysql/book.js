@@ -26,7 +26,12 @@ Book.getFilter = function (filter) {
 Book.getFilters = function (filter) {
     filter.isDeleted = false;
     return Book.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -34,6 +39,11 @@ Book.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return Book.findAndCountAll({
         'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

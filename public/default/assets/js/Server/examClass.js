@@ -437,7 +437,7 @@ $(".toolbar #btnPublishAll").on("click", function (e) {
             }, function (data) {
                 if (data.sucess) {
                     showAlert("发布成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
+                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchExams(page);
                     });
@@ -457,7 +457,7 @@ $(".toolbar #btnStopAll").on("click", function (e) {
             }, function (data) {
                 if (data.sucess) {
                     showAlert("停用成功！");
-                    $("#confirmModal .modal-footer .btn-default").on("click", function (e) {
+                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         searchExams(page);
                     });

@@ -33,7 +33,11 @@ SchoolGradeRelation.getFilter = function (filter) {
 SchoolGradeRelation.getFilters = function (filter) {
     filter.isDeleted = false;
     return SchoolGradeRelation.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -41,6 +45,10 @@ SchoolGradeRelation.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return SchoolGradeRelation.findAndCountAll({
         'where': filter,
+        order: [
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

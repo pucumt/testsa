@@ -37,7 +37,12 @@ LessonContent.getFilter = function (filter) {
 LessonContent.getFilters = function (filter) {
     filter.isDeleted = false;
     return LessonContent.findAll({
-        'where': filter
+        'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ]
     });
 };
 
@@ -45,6 +50,11 @@ LessonContent.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return LessonContent.findAndCountAll({
         'where': filter,
+        order: [
+            ['sequence'],
+            ['createdDate'],
+            ['_id']
+        ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });
