@@ -1,8 +1,8 @@
-$(document).ready(function() {
+$(document).ready(function () {
     renderfilter();
     $("#page").val(1);
     $(".enroll-filter .btn-search")
-        .on("click", function(e) {
+        .on("click", function (e) {
             $('.enroll .exam-list').empty();
             loadData();
             $('.enroll-filter').hide();
@@ -10,18 +10,18 @@ $(document).ready(function() {
         });
 
     $(".enroll .pageTitle .filter")
-        .on("click", function(e) {
+        .on("click", function (e) {
             $('.enroll-filter').show();
             $('.container.enroll').hide();
         });
 
     $(".enroll-filter .glyphicon-remove-circle")
-        .on("click", function(e) {
+        .on("click", function (e) {
             $(".enroll-filter").hide();
             $('.container.enroll').show();
         });
 
-    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function(e) {
+    $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/enrolloriginalclass";
     });
 });
@@ -29,15 +29,15 @@ $(document).ready(function() {
 function renderfilter() {
     selfAjax("post", "/enroll/getSchoolsAndOrder", {
         orderId: $("#orderId").val()
-    }, function(data) {
+    }, function (data) {
         if (data) {
             if (data.schools.length > 0) {
-                data.schools.forEach(function(school) {
+                data.schools.forEach(function (school) {
                     $(".enroll-filter #drpSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
                 });
             }
             if (data.categories.length > 0) {
-                data.categories.forEach(function(category) {
+                data.categories.forEach(function (category) {
                     $(".enroll-filter #drpCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
                 });
             }
@@ -74,10 +74,10 @@ function loadData(p) {
             subjectId: $('.enroll-filter #drpSubject').val(),
             categoryId: $('.enroll-filter #drpCategory').val()
         };
-    selfAjax("post", "/enroll/originalclass/switch?" + pStr, filter, function(data) {
+    selfAjax("post", "/enroll/originalclass/switch?" + pStr, filter, function (data) {
         if (data && data.classs.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.classs.forEach(function(trainclass) {
+            data.classs.forEach(function (trainclass) {
                 d.append(generateLi(trainclass));
             });
             $selectBody.append(d);
@@ -114,18 +114,18 @@ function generateLi(trainclass) {
     $infoContainer.append($('<div>上课地点：' + trainclass.schoolArea + (trainclass.classRoomName || ' (待定)') + '室</div>'));
     $infoContainer.append($('<div>培训费：' + trainclass.trainPrice + '元</div>'));
     $infoContainer.append($('<div>教材费：' + trainclass.materialPrice + '元</div>'));
-    $infoContainer.append($('<div>合计：' + (trainclass.trainPrice + trainclass.materialPrice).toFixed(2) + '元</div>'));
+    $infoContainer.append($('<div>合计：' + (parseFloat(trainclass.trainPrice) + parseFloat(trainclass.materialPrice)).toFixed(2) + '元</div>'));
     $infoContainer.append($('<div class="enroll-info"><button type="button" class="btn btn-primary btn-xs">报名</button></div>'));
     //$infoContainer.append($('<div>' + trainclass.address + '</div>'));
     return $li;
 };
 
-$("#btnMore").on("click", function(e) {
+$("#btnMore").on("click", function (e) {
     var page = parseInt($("#page").val()) + 1;
     loadData(page);
 });
 
-$selectBody.on("click", "li", function(e) {
+$selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
     location.href = location.href = "/enroll/originalclass/id/" + entity._id + "/student/" + $('#studentId').val() + "?orderId=" + $("#orderId").val();

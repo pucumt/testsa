@@ -182,7 +182,7 @@ module.exports = function (app) {
                     var payParas = {
                         out_trade_no: order._id,
                         body: order.trainName,
-                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
+                        total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100,
                         openId: openId,
                         time_expire: moment().add(20, 'minute').format("YYYYMMDDHHmmss")
                     };
@@ -202,7 +202,7 @@ module.exports = function (app) {
                     var payParas = {
                         out_trade_no: order._id,
                         body: order.trainName,
-                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
+                        total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100,
                         openId: openId
                     };
                     payHelper.pay(payParas, res);
@@ -220,7 +220,7 @@ module.exports = function (app) {
                     var payParas = {
                         out_trade_no: order._id,
                         body: order.trainName,
-                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100,
+                        total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100,
                         openId: openId
                     };
                     payHelper.aliPay(payParas, res);

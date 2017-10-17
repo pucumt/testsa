@@ -497,6 +497,56 @@ module.exports = function (app) {
             });
     });
 
+    function checkEnroll(studentId, trainClass, fnYes, fnNo, fnNoNeed) {
+        return model.db.sequelize.query("select count(0) as count from adminEnrollTrains O join trainClasss C \
+                    on O.trainId=C._id \
+                    where O.yearId=:yearId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
+                    C.courseTime=:courseTime", {
+                replacements: {
+                    yearId: global.currentYear._id,
+                    studentId: studentId,
+                    courseTime: trainClass.courseTime
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (result) {
+                var isTimeDuplicated = null;
+                if (result && result[0] && result[0].count) {
+                    isTimeDuplicated = true;
+                }
+                return TrainClassExams.getFilter({
+                        trainClassId: trainClass._id
+                    })
+                    .then(function (exam) {
+                        if (exam) {
+                            return model.db.sequelize.query("select count(0) as count from trainClassExams E left join trainClasss C\
+                                        on E.trainClassId=C._id left join adminEnrollExams M on E.examId=M.examId and M.isDeleted=false and M.isSucceed=1\
+                                        and M.studentId=:studentId left join adminEnrollExamScores S \
+                                        on M._id=S.examOrderId and C.subjectId=S.subjectId and S.isDeleted=false \
+                                        where E.trainClassId=:id and S.score>=E.minScore", {
+                                    replacements: {
+                                        studentId: studentId,
+                                        id: trainClass._id
+                                    },
+                                    type: model.db.sequelize.QueryTypes.SELECT
+                                })
+                                .then(function (scoreResult) {
+                                    if (scoreResult && scoreResult[0] && scoreResult[0].count) {
+                                        // 达到最低分数
+                                        fnYes(isTimeDuplicated);
+                                    } else {
+                                        //没有达到最低分数要求
+                                        fnNo();
+                                    }
+                                });
+                        } else {
+                            //不需要依赖考试分数
+                            fnNoNeed(isTimeDuplicated);
+                        }
+                    });
+            });
+    };
+
     // 报名订单
     app.get('/enroll/order', checkLogin);
     app.get('/enroll/order', function (req, res) {
@@ -505,231 +555,76 @@ module.exports = function (app) {
                 _id: req.query.classId
             })
             .then(function (trainClass) {
-                // get history orders to check the class time
-                return model.db.sequelize.query("select count(0) as count from adminEnrollTrains O join trainClasss C \
-                        on O.trainId=C._id \
-                        where O.yearId=:yearId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
-                        C.courseTime=:courseTime", {
-                        replacements: {
-                            yearId: global.currentYear._id,
+                checkEnroll(req.query.studentId, trainClass, function (isTimeDuplicated) {
+                        res.render('Client/enroll_class_order.html', {
+                            title: '课程报名',
+                            trainClass: trainClass,
+                            classId: req.query.classId,
                             studentId: req.query.studentId,
-                            courseTime: trainClass.courseTime
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
+                            isTimeDuplicated: isTimeDuplicated
+                        });
+                    },
+                    function () {
+                        res.render('Client/enroll_class_order.html', {
+                            title: '课程报名',
+                            trainClass: trainClass,
+                            classId: req.query.classId,
+                            studentId: req.query.studentId,
+                            disability: 1
+                        });
+                    },
+                    function (isTimeDuplicated) {
+                        res.render('Client/enroll_class_order.html', {
+                            title: '课程报名',
+                            trainClass: trainClass,
+                            classId: req.query.classId,
+                            studentId: req.query.studentId,
+                            isTimeDuplicated: isTimeDuplicated
+                        });
+                    }
+                );
+            });
+    });
+
+    // 原班报名订单确认
+    app.get('/enroll/original/order', checkLogin);
+    app.get('/enroll/original/order', function (req, res) {
+        //req.query.classId studentId
+        TrainClass.getFilter({
+                _id: req.query.classId
+            })
+            .then(function (trainClass) {
+                AdminEnrollTrain.getFilter({
+                        trainId: trainClass.fromClassId,
+                        studentId: req.query.studentId,
+                        isSucceed: 1
                     })
-                    .then(function (result) {
-                        var isTimeDuplicated = null;
-                        if (result && result[0] && result[0].count) {
-                            isTimeDuplicated = true;
-                        }
-                        return TrainClassExams.getFilter({
-                                trainClassId: trainClass._id
-                            })
-                            .then(function (exam) {
-                                if (exam) {
-                                    return model.db.sequelize.query("select count(0) as count from trainClassExams E left join trainClasss C\
-                                            on E.trainClassId=C._id left join adminEnrollExams M on E.examId=M.examId and M.isDeleted=false and M.isSucceed=1\
-                                            and M.studentId=:studentId left join adminEnrollExamScores S \
-                                            on M._id=S.examOrderId and C.subjectId=S.subjectId and S.isDeleted=false \
-                                            where E.trainClassId=:id and S.score>=E.minScore", {
-                                            replacements: {
-                                                studentId: req.query.studentId,
-                                                id: trainClass._id
-                                            },
-                                            type: model.db.sequelize.QueryTypes.SELECT
-                                        })
-                                        .then(function (scoreResult) {
-                                            if (scoreResult && scoreResult[0] && scoreResult[0].count) {
-                                                //达到最低分数
-                                                res.render('Client/enroll_class_order.html', {
-                                                    title: '课程报名',
-                                                    trainClass: trainClass,
-                                                    classId: req.query.classId,
-                                                    studentId: req.query.studentId,
-                                                    isTimeDuplicated: isTimeDuplicated
-                                                });
-                                            } else {
-                                                //没有达到最低分数要求
-                                                res.render('Client/enroll_class_order.html', {
-                                                    title: '课程报名',
-                                                    trainClass: trainClass,
-                                                    classId: req.query.classId,
-                                                    studentId: req.query.studentId,
-                                                    disability: 1
-                                                });
-                                            }
-                                        });
-                                } else {
-                                    //不需要依赖考试分数
-                                    res.render('Client/enroll_class_order.html', {
+                    .then(function (order) {
+                        if (order) {
+                            // 有原班，可以继续报名
+                            checkEnroll(req.query.studentId, trainClass, function (isTimeDuplicated) {
+                                    res.render('Client/enroll_originalclass_order.html', {
                                         title: '课程报名',
                                         trainClass: trainClass,
                                         classId: req.query.classId,
                                         studentId: req.query.studentId,
-                                        isTimeDuplicated: isTimeDuplicated
+                                        originalOrder: 1,
+                                        isTimeDuplicated: isTimeDuplicated,
+                                        orderId: req.query.orderId
                                     });
-                                }
-                            });
-                    });
-            });
-    });
-
-    // TBD 原班报名订单确认
-    app.get('/enroll/original/order', checkLogin);
-    app.get('/enroll/original/order', function (req, res) {
-        //req.query.classId studentId
-        TrainClass.get(req.query.classId).then(function (trainClass) {
-            AdminEnrollTrain.getFilter({
-                    trainId: trainClass.fromClassId,
-                    studentId: req.query.studentId,
-                    isSucceed: 1
-                })
-                .then(function (order) {
-                    if (order) {
-                        //有原班，可以继续报名
-                        //get history orders to check the class time
-                        AdminEnrollTrain.getFiltersWithClassFilters({
-                            yearId: global.currentYear._id.toJSON(),
-                            studentId: req.query.studentId,
-                            isSucceed: 1
-                        }, {
-                            "trainClasss.courseTime": trainClass.courseTime
-                        }).then(function (existOrders) {
-                            var isTimeDuplicated = null;
-                            if (existOrders && existOrders.length > 0) {
-                                isTimeDuplicated = true;
-                            }
-
-                            if (trainClass.exams && trainClass.exams.length > 0) {
-                                var pArray = [],
-                                    minScore;
-                                trainClass.exams.forEach(function (exam) {
-                                    minScore = exam.minScore;
-                                    var p = AdminEnrollExam.getFilter({
-                                            examId: exam.examId,
-                                            studentId: req.query.studentId,
-                                            isSucceed: 1
-                                        })
-                                        .then(function (examOrder) {
-                                            if (examOrder) {
-                                                var subjectScore = examOrder.scores.filter(function (score) {
-                                                    return score.subjectId == trainClass.subjectId;
-                                                })[0];
-                                                if (subjectScore.score >= exam.minScore) {
-                                                    return true;
-                                                }
-                                            }
-                                        });
-                                    pArray.push(p);
-                                });
-                                Promise.all(pArray).then(function (results) {
-                                    if (results.some(function (result) {
-                                            return result;
-                                        })) {
-                                        //达到分数，可以报名
-                                        res.render('Client/enroll_originalclass_order.html', {
-                                            title: '课程报名',
-                                            trainClass: trainClass,
-                                            classId: req.query.classId,
-                                            studentId: req.query.studentId,
-                                            originalOrder: 1,
-                                            isTimeDuplicated: isTimeDuplicated,
-                                            orderId: req.query.orderId
-                                        });
-                                    } else {
-                                        //未到分数线，不能报名
-                                        res.render('Client/enroll_originalclass_order.html', {
-                                            title: '课程报名',
-                                            trainClass: trainClass,
-                                            classId: req.query.classId,
-                                            studentId: req.query.studentId,
-                                            disability: minScore,
-                                            originalOrder: 1,
-                                            orderId: req.query.orderId
-                                        });
-                                    }
-                                });
-                            } else {
-                                //没有考试依赖，可以报名
-                                res.render('Client/enroll_originalclass_order.html', {
-                                    title: '课程报名',
-                                    trainClass: trainClass,
-                                    classId: req.query.classId,
-                                    studentId: req.query.studentId,
-                                    originalOrder: 1,
-                                    isTimeDuplicated: isTimeDuplicated,
-                                    orderId: req.query.orderId
-                                });
-                            }
-                        });
-                    } else {
-                        //没有原班
-                        if (req.query.orderId) {
-                            //调班报名
-                            //get history orders to check the class time
-                            AdminEnrollTrain.getFiltersWithClassFilters({
-                                yearId: global.currentYear._id.toJSON(),
-                                studentId: req.query.studentId,
-                                isSucceed: 1
-                            }, {
-                                "trainClasss.courseTime": trainClass.courseTime
-                            }).then(function (existOrders) {
-                                var isTimeDuplicated = null;
-                                if (existOrders && existOrders.length > 0) {
-                                    isTimeDuplicated = true;
-                                }
-
-                                if (trainClass.exams && trainClass.exams.length > 0) {
-                                    var pArray = [],
-                                        minScore;
-                                    trainClass.exams.forEach(function (exam) {
-                                        minScore = exam.minScore;
-                                        var p = AdminEnrollExam.getFilter({
-                                                examId: exam.examId,
-                                                studentId: req.query.studentId,
-                                                isSucceed: 1
-                                            })
-                                            .then(function (examOrder) {
-                                                if (examOrder) {
-                                                    var subjectScore = examOrder.scores.filter(function (score) {
-                                                        return score.subjectId == trainClass.subjectId;
-                                                    })[0];
-                                                    if (subjectScore.score >= exam.minScore) {
-                                                        return true;
-                                                    }
-                                                }
-                                            });
-                                        pArray.push(p);
+                                },
+                                function () {
+                                    res.render('Client/enroll_originalclass_order.html', {
+                                        title: '课程报名',
+                                        trainClass: trainClass,
+                                        classId: req.query.classId,
+                                        studentId: req.query.studentId,
+                                        disability: 1,
+                                        originalOrder: 1,
+                                        orderId: req.query.orderId
                                     });
-                                    Promise.all(pArray).then(function (results) {
-                                        if (results.some(function (result) {
-                                                return result;
-                                            })) {
-                                            //达到分数，可以报名
-                                            res.render('Client/enroll_originalclass_order.html', {
-                                                title: '课程报名',
-                                                trainClass: trainClass,
-                                                classId: req.query.classId,
-                                                studentId: req.query.studentId,
-                                                originalOrder: 1,
-                                                isTimeDuplicated: isTimeDuplicated,
-                                                orderId: req.query.orderId
-                                            });
-                                        } else {
-                                            //未到分数线，不能报名
-                                            res.render('Client/enroll_originalclass_order.html', {
-                                                title: '课程报名',
-                                                trainClass: trainClass,
-                                                classId: req.query.classId,
-                                                studentId: req.query.studentId,
-                                                disability: minScore,
-                                                originalOrder: 1,
-                                                orderId: req.query.orderId
-                                            });
-                                        }
-                                    });
-                                } else {
-                                    //没有考试依赖，可以报名
+                                },
+                                function (isTimeDuplicated) {
                                     res.render('Client/enroll_originalclass_order.html', {
                                         title: '课程报名',
                                         trainClass: trainClass,
@@ -740,28 +635,69 @@ module.exports = function (app) {
                                         orderId: req.query.orderId
                                     });
                                 }
-                            });
+                            );
                         } else {
-                            //不能报名
-                            res.render('Client/enroll_originalclass_order.html', {
-                                title: '课程报名',
-                                trainClass: trainClass,
-                                classId: req.query.classId,
-                                studentId: req.query.studentId,
-                                notOriginal: 1,
-                                originalOrder: 1,
-                                orderId: req.query.orderId
-                            });
+                            // 没有原班
+                            if (req.query.orderId) {
+                                // 调班报名
+                                checkEnroll(req.query.studentId, trainClass, function (isTimeDuplicated) {
+                                        res.render('Client/enroll_originalclass_order.html', {
+                                            title: '课程报名',
+                                            trainClass: trainClass,
+                                            classId: req.query.classId,
+                                            studentId: req.query.studentId,
+                                            originalOrder: 1,
+                                            isTimeDuplicated: isTimeDuplicated,
+                                            orderId: req.query.orderId
+                                        });
+                                    },
+                                    function () {
+                                        res.render('Client/enroll_originalclass_order.html', {
+                                            title: '课程报名',
+                                            trainClass: trainClass,
+                                            classId: req.query.classId,
+                                            studentId: req.query.studentId,
+                                            disability: minScore,
+                                            originalOrder: 1,
+                                            orderId: req.query.orderId
+                                        });
+                                    },
+                                    function (isTimeDuplicated) {
+                                        res.render('Client/enroll_originalclass_order.html', {
+                                            title: '课程报名',
+                                            trainClass: trainClass,
+                                            classId: req.query.classId,
+                                            studentId: req.query.studentId,
+                                            originalOrder: 1,
+                                            isTimeDuplicated: isTimeDuplicated,
+                                            orderId: req.query.orderId
+                                        });
+                                    }
+                                );
+                            } else {
+                                // 不能报名
+                                res.render('Client/enroll_originalclass_order.html', {
+                                    title: '课程报名',
+                                    trainClass: trainClass,
+                                    classId: req.query.classId,
+                                    studentId: req.query.studentId,
+                                    notOriginal: 1,
+                                    originalOrder: 1,
+                                    orderId: req.query.orderId
+                                });
+                            }
                         }
-                    }
-                });
-        });
+                    });
+            });
     });
 
-    // TBD 支付订单
+    // 支付订单
     app.post('/enroll/pay', checkJSONLogin);
     app.post('/enroll/pay', function (req, res) {
-        AdminEnrollTrain.getByStudentAndClass(req.body.studentId, req.body.classId)
+        AdminEnrollTrain.getFilter({
+                studentId: req.body.studentId,
+                trainId: req.body.classId
+            })
             .then(function (enrollTrain) {
                 if (enrollTrain) {
                     res.jsonp({
@@ -769,17 +705,15 @@ module.exports = function (app) {
                     });
                     return;
                 }
-                TrainClass.enroll(req.body.classId)
-                    .then(function (resultClass) {
-                        if (resultClass && resultClass.ok && resultClass.nModified == 1) {
-                            //报名成功
-                            TrainClass.get(req.body.classId).then(function (trainClass) {
-                                if (trainClass.enrollCount == trainClass.totalStudentCount) {
-                                    TrainClass.full(req.body.classId);
-                                    //updated to full
-                                }
-
-                                StudentInfo.get(req.body.studentId).then(function (student) {
+                TrainClass.getFilter({
+                        _id: req.body.classId
+                    })
+                    .then(function (trainClass) {
+                        if (trainClass.enrollCount < trainClass.totalStudentCount) {
+                            StudentInfo.getFilter({
+                                    _id: req.body.studentId
+                                })
+                                .then(function (student) {
                                     var coupon = req.body.coupon,
                                         price, p;
                                     if (coupon) {
@@ -787,104 +721,162 @@ module.exports = function (app) {
                                             price = Math.round(trainClass.trainPrice * student.discount) / 100;
                                             p = Promise.resolve(price);
                                         } else {
-                                            p = CouponAssign.get(coupon).then(function (assign) {
-                                                if (assign) {
-                                                    price = trainClass.trainPrice - assign.reducePrice;
-                                                    return price > 0 ? price : 0;
-                                                } else {
-                                                    return Coupon.get(coupon).then(function (couponObject) {
-                                                        if (couponObject) {
-                                                            price = trainClass.trainPrice - couponObject.reducePrice;
-                                                            return price > 0 ? price : 0;
-                                                        } else {
-                                                            return trainClass.trainPrice;
-                                                        }
-                                                    })
-                                                }
-                                            });
+                                            p = CouponAssign.getFilter({
+                                                    _id: coupon
+                                                })
+                                                .then(function (assign) {
+                                                    if (assign) {
+                                                        // 真实优惠券
+                                                        price = trainClass.trainPrice - assign.reducePrice;
+                                                        return price > 0 ? price : 0;
+                                                    } else {
+                                                        // 小升初满减
+                                                        return Coupon.getFilter({
+                                                                _id: coupon
+                                                            })
+                                                            .then(function (couponObject) {
+                                                                if (couponObject) {
+                                                                    price = trainClass.trainPrice - couponObject.reducePrice;
+                                                                    return price > 0 ? price : 0;
+                                                                } else {
+                                                                    return trainClass.trainPrice;
+                                                                }
+                                                            })
+                                                    }
+                                                });
                                         }
                                     } else {
                                         p = Promise.resolve(trainClass.trainPrice);
                                     }
                                     p.then(function (totalPrice) {
-                                        var adminEnrollTrain = new AdminEnrollTrain({
-                                            studentId: student._id,
-                                            studentName: student.name,
-                                            mobile: student.mobile,
-                                            trainId: trainClass._id,
-                                            trainName: trainClass.name,
-                                            trainPrice: trainClass.trainPrice,
-                                            materialPrice: trainClass.materialPrice,
-                                            discount: (student.discount | 100),
-                                            totalPrice: totalPrice.toFixed(2),
-                                            realMaterialPrice: trainClass.materialPrice,
-                                            attributeId: trainClass.attributeId,
-                                            attributeName: trainClass.attributeName,
-                                            isSucceed: 1,
-                                            payWay: req.body.payWay,
-                                            yearId: trainClass.yearId,
-                                            yearName: trainClass.yearName,
-                                            schoolId: trainClass.schoolId,
-                                            schoolArea: trainClass.schoolArea
-                                        });
-                                        adminEnrollTrain.save()
-                                            .then(function (enrollExam) {
-                                                //修改优惠券状态
-                                                if (coupon && coupon != "0") {
-                                                    CouponAssign.get(coupon)
-                                                        .then(function (couponAssign) {
-                                                            if (couponAssign) {
-                                                                CouponAssign.use(coupon, enrollExam._id);
-                                                                res.jsonp({
-                                                                    orderId: enrollExam._id
-                                                                });
-                                                                return;
-                                                            } else {
-                                                                //报名3科减
-                                                                Coupon.get(coupon)
-                                                                    .then(function (coupon) {
-                                                                        var couponAssign = new CouponAssign({
-                                                                            couponId: coupon._id,
-                                                                            couponName: coupon.name,
-                                                                            gradeId: coupon.gradeId,
-                                                                            gradeName: coupon.gradeName,
-                                                                            subjectId: coupon.subjectId,
-                                                                            subjectName: coupon.subjectName,
-                                                                            reducePrice: coupon.reducePrice,
-                                                                            couponStartDate: coupon.couponStartDate,
-                                                                            couponEndDate: coupon.couponEndDate,
-                                                                            studentId: req.body.studentId,
-                                                                            studentName: student.name,
-                                                                            isUsed: true,
-                                                                            orderId: enrollExam._id,
-                                                                            createdBy: req.session.user._id
-                                                                        });
-                                                                        couponAssign.save().then(function (couponAssign) {
-                                                                            res.jsonp({
-                                                                                orderId: enrollExam._id
+                                        // 1. 修改报名人数
+                                        // 2. 如果报满修改字段为满员 (may useless)
+                                        // 3. 添加新订单
+                                        model.db.sequelize.transaction(function (t1) {
+                                                return TrainClass.update({
+                                                        enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                                                    }, {
+                                                        where: {
+                                                            _id: req.body.classId,
+                                                            enrollCount: model.db.sequelize.literal('`enrollCount`<`totalStudentCount`')
+                                                        },
+                                                        transaction: t1
+                                                    })
+                                                    .then(function (updateResult) {
+                                                        if (updateResult && updateResult[0]) {
+                                                            return AdminEnrollTrain.create({
+                                                                    studentId: student._id,
+                                                                    studentName: student.name,
+                                                                    mobile: student.mobile,
+                                                                    trainId: trainClass._id,
+                                                                    trainName: trainClass.name,
+                                                                    trainPrice: trainClass.trainPrice,
+                                                                    materialPrice: trainClass.materialPrice,
+                                                                    discount: (student.discount | 100),
+                                                                    totalPrice: totalPrice.toFixed(2),
+                                                                    realMaterialPrice: trainClass.materialPrice,
+                                                                    attributeId: trainClass.attributeId,
+                                                                    attributeName: trainClass.attributeName,
+                                                                    isSucceed: 1,
+                                                                    payWay: req.body.payWay,
+                                                                    yearId: trainClass.yearId,
+                                                                    yearName: trainClass.yearName,
+                                                                    schoolId: trainClass.schoolId,
+                                                                    schoolArea: trainClass.schoolArea
+                                                                }, {
+                                                                    transaction: t1
+                                                                })
+                                                                .then(order => {
+                                                                    if (req.body.coupon && req.body.coupon != "0") {
+                                                                        // 假定是优惠券的ID而不是分配好的优惠券
+                                                                        return Coupon.getFilter({
+                                                                                _id: req.body.coupon
+                                                                            })
+                                                                            .then(coupon => {
+                                                                                if (coupon) { // 报名3科减
+                                                                                    return CouponAssign.create({
+                                                                                            couponId: coupon._id,
+                                                                                            couponName: coupon.name,
+                                                                                            gradeId: coupon.gradeId,
+                                                                                            gradeName: coupon.gradeName,
+                                                                                            subjectId: coupon.subjectId,
+                                                                                            subjectName: coupon.subjectName,
+                                                                                            reducePrice: coupon.reducePrice,
+                                                                                            couponStartDate: coupon.couponStartDate,
+                                                                                            couponEndDate: coupon.couponEndDate,
+                                                                                            studentId: req.body.studentId,
+                                                                                            studentName: student.name,
+                                                                                            isUsed: true,
+                                                                                            orderId: order._id,
+                                                                                            createdBy: req.session.user._id
+                                                                                        })
+                                                                                        .then(assign => {
+                                                                                            return order;
+                                                                                        });
+                                                                                } else {
+                                                                                    // 分配好的优惠券, couponId 就是assignId
+                                                                                    return CouponAssign.getFilter({
+                                                                                            _id: req.body.coupon,
+                                                                                            studentId: req.body.studentId,
+                                                                                            isDeleted: false,
+                                                                                            isUsed: false
+                                                                                        })
+                                                                                        .then(function (couponAssign) {
+                                                                                            if (couponAssign) {
+                                                                                                // 优惠券就是真实未使用的
+                                                                                                return CouponAssign.update({
+                                                                                                        isUsed: true,
+                                                                                                        deletedBy: req.session.user._id,
+                                                                                                        orderId: order._id
+                                                                                                    }, {
+                                                                                                        where: {
+                                                                                                            _id: couponAssign._id
+                                                                                                        },
+                                                                                                        transaction: t1
+                                                                                                    })
+                                                                                                    .then(result => {
+                                                                                                        return order;
+                                                                                                    });
+                                                                                            } else {
+                                                                                                // 优惠券状态更改,报名失败
+                                                                                                throw new Error("优惠券状态发生更改");
+                                                                                            }
+                                                                                        });
+                                                                                }
                                                                             });
-                                                                            return;
-                                                                        });
-                                                                    });
-                                                            }
-                                                        });
-
-                                                } else {
-                                                    res.jsonp({
-                                                        orderId: enrollExam._id
+                                                                    } else {
+                                                                        return order;
+                                                                    }
+                                                                });
+                                                        } else {
+                                                            return {
+                                                                error: "报名失败,很可能此课程已报满"
+                                                            };
+                                                        }
                                                     });
+                                            })
+                                            .then(function (order) {
+                                                if (order.error) {
+                                                    res.jsonp(order);
                                                     return;
                                                 }
+
+                                                res.jsonp({
+                                                    orderId: order._id
+                                                });
+                                            })
+                                            .catch(function (err) {
+                                                res.jsonp({
+                                                    error: "报名失败"
+                                                });
                                             });
                                     });
                                 });
-                            });
+
                         } else {
-                            //报名失败
                             res.jsonp({
-                                error: "报名失败,很可能报满"
+                                error: "此课程已报满"
                             });
-                            return;
                         }
                     });
             });
@@ -1132,68 +1124,46 @@ module.exports = function (app) {
         });
     });
 
-    // TBD 原班升报课程报名-查询原班
+    // 原班升报课程报名-查询原班
     app.post('/enroll/originalOrders', checkJSONLogin);
     app.post('/enroll/originalOrders', function (req, res) {
-        EnrollProcessConfigure.get().then(function (configure) {
-            if (configure && (configure.oldStudentStatus || configure.oldStudentSwitch)) {
-                var currentUser = req.session.user;
-                return Year.getFilter({
-                        sequence: (global.currentYear.sequence - 1)
-                    })
-                    .then(function (year) {
-                        if (year) {
-                            StudentInfo.getFilters({
-                                accountId: currentUser._id
-                            }).then(function (students) {
-                                var parray = [];
-                                students.forEach(function (student) {
-                                    var filter = {
-                                        studentId: student._id.toJSON(),
-                                        isSucceed: 1,
-                                        isDeleted: {
-                                            $ne: true
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                if (configure && (configure.oldStudentStatus || configure.oldStudentSwitch)) {
+                    var currentUser = req.session.user;
+                    return Year.getFilter({
+                            sequence: (global.currentYear.sequence - 1)
+                        })
+                        .then(function (year) {
+                            // 查找上一年度的课程订单
+                            if (year) {
+                                return model.db.sequelize.query("select O._id as orderId, O.studentId, O.studentName, O.trainId, O.trainName\
+                                            from studentInfos S join adminEnrollTrains O \
+                                            on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId\
+                                            where S.accountId=:accountId and S.isDeleted=false", {
+                                        replacements: {
+                                            yearId: year._id,
+                                            accountId: currentUser._id
                                         },
-                                        yearId: year._id.toJSON()
-                                    };
-
-                                    var p = AdminEnrollTrain.getFilters(filter)
-                                        .then(function (trains) {
-                                            var orders = [];
-                                            trains.forEach(function (train) {
-                                                orders.push({
-                                                    orderId: train._id,
-                                                    studentId: student._id,
-                                                    studentName: train.studentName,
-                                                    trainId: train.trainId,
-                                                    trainName: train.trainName
-                                                });
-                                            });
-                                            return orders;
+                                        type: model.db.sequelize.QueryTypes.SELECT
+                                    })
+                                    .then(orders => {
+                                        res.jsonp({
+                                            orders: orders,
+                                            config: configure
                                         });
-                                    parray.push(p);
-                                });
-                                Promise.all(parray).then(function (results) {
-                                    var orders = [];
-                                    results.forEach(function (trains) {
-                                        if (trains) {
-                                            orders = orders.concat(trains);
-                                        }
                                     });
-                                    res.jsonp({
-                                        orders: orders,
-                                        config: configure
-                                    });
-                                    return;
+                            } else {
+                                res.jsonp({
+                                    error: "没有上一年度！"
                                 });
-                            });
-                        }
-                    });
-            }
-            res.jsonp({
-                error: "没到原班报名时间呢！"
+                            }
+                        });
+                }
+                res.jsonp({
+                    error: "没到原班报名时间呢！"
+                });
             });
-        });
     });
 
     //获取单个订单信息
@@ -1207,14 +1177,16 @@ module.exports = function (app) {
             });
     });
 
-    // TBD ....
+    // 调班filter
     app.post('/enroll/getSchoolsAndOrder', checkJSONLogin);
     app.post('/enroll/getSchoolsAndOrder', function (req, res) {
-        AdminEnrollTrain.get({
+        AdminEnrollTrain.getFilter({
                 _id: req.body.orderId
             })
             .then(function (order) {
-                TrainClass.get(order.trainId)
+                TrainClass.getFilter({
+                        _id: order.trainId
+                    })
                     .then(function (trainClass) {
                         var objReturn = {
                             schoolId: trainClass.schoolId,
@@ -1238,19 +1210,22 @@ module.exports = function (app) {
                                         objReturn.schools = schools;
                                     });
                             });
-                        var p2 = EnrollProcessConfigure.get()
+                        var p2 = EnrollProcessConfigure.getFilter({})
                             .then(function (configure) {
                                 var pGrade;
                                 if (configure.isGradeUpgrade) {
                                     //getNextGrade
-                                    pGrade = Grade.get(trainClass.gradeId)
+                                    pGrade = Grade.getFilter({
+                                            _id: trainClass.gradeId
+                                        })
                                         .then(function (curGrade) {
                                             return Grade.getFilter({
-                                                sequence: curGrade.sequence + 1
-                                            }).then(function (nextGrade) {
-                                                objReturn.gradeId = nextGrade._id;
-                                                objReturn.gradeName = nextGrade.name;
-                                            });
+                                                    sequence: curGrade.sequence + 1
+                                                })
+                                                .then(function (nextGrade) {
+                                                    objReturn.gradeId = nextGrade._id;
+                                                    objReturn.gradeName = nextGrade.name;
+                                                });
                                         }); //是否升年级
                                 } else {
                                     //getCurrentGrade

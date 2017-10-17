@@ -548,7 +548,7 @@ module.exports = function (app) {
         //                                         out_refund_no: rebateRecord._id,
         //                                         out_trade_no: (order.baseId || order._id),
         //                                         refund_fee: rebateRecord.rebateTotalPrice * 100,
-        //                                         total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0) + (order.rebatePrice || 0)) * 100
+        //                                         total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0) + (order.rebatePrice || 0)) * 100
         //                                     };
         //                                     payHelper.jsRebate(payParas, res);
         //                                     res.jsonp({
@@ -730,7 +730,7 @@ module.exports = function (app) {
                     var payParas = {
                         out_trade_no: order._id,
                         body: order.trainName,
-                        total_fee: ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100
+                        total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100
                     };
                     payHelper.pay(payParas, res);
                     return;
@@ -778,7 +778,7 @@ module.exports = function (app) {
                                     _id: orderId
                                 })
                                 .then(function (order) {
-                                    var orderFee = ((order.totalPrice || 0) + (order.realMaterialPrice || 0)) * 100;
+                                    var orderFee = ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100;
                                     if (orderFee.toString() == (result.total_fee + "")) {
                                         // wechat online, zhifubao is wrong
                                         AdminEnrollTrain.update({
