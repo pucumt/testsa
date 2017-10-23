@@ -692,6 +692,6 @@ AdminEnrollTrain.batchUpdate = function (filter, option) {
 AdminEnrollTrain.rawAll = function (page) {
     page = page || 1;
     return adminEnrollTrainModel.find()
-        .skip((page - 1) * 5000)
-        .limit(5000);
+        .skip((page - 1) * 2000)
+        .limit(2000);
 };
