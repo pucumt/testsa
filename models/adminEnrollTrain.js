@@ -680,6 +680,13 @@ AdminEnrollTrain.batchUpdate = function (filter, option) {
         multi: true
     }).exec();
 };
+AdminEnrollTrain.rawAll = function (page) {
+    page = page || 1;
+    return adminEnrollTrainModel.find()
+        .skip((page - 1) * 2000)
+        .limit(2000);
+};
+
 // return qry.out("temps").exec().then(function() {
 //         return mongoose.model('temp', new mongoose.Schema({
 //             studentId: String,
@@ -688,10 +695,3 @@ AdminEnrollTrain.batchUpdate = function (filter, option) {
 //             collection: 'temps'
 //         })).find();
 //     });
-
-AdminEnrollTrain.rawAll = function (page) {
-    page = page || 1;
-    return adminEnrollTrainModel.find()
-        .skip((page - 1) * 2000)
-        .limit(2000);
-};
