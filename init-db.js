@@ -56,7 +56,7 @@ function step2(i) {
                     if (newObj.superCategoryId) {
                         newObj.superCategoryId = newObj.superCategoryId.toJSON();
                     }
-                    if (newObj.payWay) {
+                    if (newObj.payWay && newObj.payWay === null) {
                         delete newObj.payWay;
                     }
                 }
@@ -168,7 +168,9 @@ function step2(i) {
 function step3() {
     console.log("begin step 3 adminEnrollTrain... ");
     var mongoObj = require(`./models/adminEnrollTrain.js`);
-
+    // mongoObj.sync({
+    //     force: true
+    // });
     function rawPage(page) {
         page = page || 1;
         return mongoObj.rawAll(page)
@@ -201,7 +203,7 @@ function step3() {
                     if (newObj.superCategoryId) {
                         newObj.superCategoryId = newObj.superCategoryId.toJSON();
                     }
-                    if (newObj.payWay) {
+                    if (newObj.payWay === null) {
                         delete newObj.payWay;
                     }
                     tmpArray.push(newObj);
@@ -256,7 +258,7 @@ function step4() {
                     delete newObj.discount;
                 }
 
-                if (newObj.payWay) {
+                if (newObj.payWay === null) {
                     delete newObj.payWay;
                 }
                 tmpArray.push(newObj);
@@ -297,9 +299,6 @@ function step5() {
                         delete newObj.discount;
                     }
 
-                    if (newObj.payWay) {
-                        delete newObj.payWay;
-                    }
                     if (newObj.bookId) {
                         newObj.bookId = newObj.bookId.toJSON();
                     }
@@ -624,34 +623,53 @@ function step10() {
         });
 };
 
-step1().then(function () {
-        try {
-            return step2();
-        } catch (err) {
-            console.log(err);
-        }
-    })
-    .then(function () {
-        return step3();
-    })
-    .then(function () {
-        return step4();
-    })
-    .then(function () {
-        return step5();
-    })
-    .then(function () {
-        return step6();
-    })
-    .then(function () {
-        return step7();
-    })
-    .then(function () {
-        return step8();
-    })
-    .then(function () {
-        return step9();
-    })
-    .then(function () {
-        return step10();
-    });
+function toRun() {
+    model.adminEnrollTrain.sync({
+            force: true
+        })
+        .then(function () {
+            return step3();
+        })
+        .then(function () {
+            return model.adminEnrollTrainHistory.sync({
+                force: true
+            });
+        })
+        .then(function () {
+            return step4();
+        });
+};
+
+toRun();
+
+// step1().then(function () {
+//         try {
+//             return step2();
+//         } catch (err) {
+//             console.log(err);
+//         }
+//     })
+//     .then(function () {
+//         return step3();
+//     })
+//     .then(function () {
+//         return step4();
+//     })
+//     .then(function () {
+//         return step5();
+//     })
+//     .then(function () {
+//         return step6();
+//     })
+//     .then(function () {
+//         return step7();
+//     })
+//     .then(function () {
+//         return step8();
+//     })
+//     .then(function () {
+//         return step9();
+//     })
+//     .then(function () {
+//         return step10();
+//     });
