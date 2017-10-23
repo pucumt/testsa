@@ -23,7 +23,11 @@ function step2(i) {
     if ("adminEnrollTrain" == name || "adminEnrollTrainHistory" == name ||
         "trainClass" == name || "trainClassExams" == name ||
         "examClass" == name || "examClassSubject" == name ||
-        "adminEnrollExam" == name || "adminEnrollExamScore" == name) {
+        "adminEnrollExam" == name || "adminEnrollExamScore" == name ||
+
+        "absentClass" == name || "couponAssign" == name ||
+        "studentInfo" == name) {
+        //also failed: step3 step5 step7.score
         i++;
         console.log(i + "..." + name + ".............finished!");
         return step2(i);
@@ -129,7 +133,7 @@ function step2(i) {
                         }
                     })
                     .catch(function (err) {
-                        throw new Error(err);
+                        throw new Error("error " + name);
                     });
             }
 
@@ -274,70 +278,85 @@ function step5() {
     console.log("begin step 5 trainClass ... ");
     var mongoObj = require(`./models/trainClass.js`);
 
-    return mongoObj.rawAll()
-        .then(function (entities) {
-            if (entities.length == 0) {
-                return;
-            }
-
-            var tmpArray = [],
-                classExamArray = [];
-            entities.forEach(function (obj) {
-                var newObj = obj.toJSON();
-                newObj._id = newObj._id.toJSON();
-
-                // handle student discount
-                if (newObj.discount === null) {
-                    delete newObj.discount;
+    function rawPage(page) {
+        page = page || 1;
+        return mongoObj.rawAll(page)
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
                 }
 
-                if (newObj.payWay) {
-                    delete newObj.payWay;
-                }
-                if (newObj.bookId) {
-                    newObj.bookId = newObj.bookId.toJSON();
-                }
-                if (newObj.teacherId) {
-                    newObj.teacherId = newObj.teacherId.toJSON();
-                } else if (newObj.teacherId === null) {
-                    delete newObj.teacherId;
-                }
+                var tmpArray = [],
+                    classExamArray = [];
+                entities.forEach(function (obj) {
+                    var newObj = obj.toJSON();
+                    newObj._id = newObj._id.toJSON();
 
-                if (newObj.exams && newObj.exams.length > 0) {
-                    newObj.exams
-                        .forEach(function (exam) {
-                            classExamArray.push({
-                                _id: exam._id.toJSON(),
-                                trainClassId: newObj._id,
-                                examId: exam.examId,
-                                examName: exam.examName,
-                                minScore: exam.minScore
+                    // handle student discount
+                    if (newObj.discount === null) {
+                        delete newObj.discount;
+                    }
+
+                    if (newObj.payWay) {
+                        delete newObj.payWay;
+                    }
+                    if (newObj.bookId) {
+                        newObj.bookId = newObj.bookId.toJSON();
+                    }
+                    if (newObj.teacherId) {
+                        newObj.teacherId = newObj.teacherId.toJSON();
+                    } else if (newObj.teacherId === null) {
+                        delete newObj.teacherId;
+                    }
+
+                    if (newObj.exams && newObj.exams.length > 0) {
+                        newObj.exams
+                            .forEach(function (exam) {
+                                classExamArray.push({
+                                    _id: exam._id.toJSON(),
+                                    trainClassId: newObj._id,
+                                    examId: exam.examId,
+                                    examName: exam.examName,
+                                    minScore: exam.minScore
+                                });
                             });
-                        });
-                    delete newObj.exams;
-                }
+                        delete newObj.exams;
+                    }
 
-                tmpArray.push(newObj);
+                    tmpArray.push(newObj);
+                });
+
+                return model["trainClass"].bulkCreate(tmpArray)
+                    .then(function () {
+                        console.log("step 5 trainClass .............finished!");
+                        return model["trainClassExams"].bulkCreate(classExamArray)
+                            .then(function () {
+                                console.log("step 5 trainClassExams .............finished!");
+                                return rawPage(page + 1);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                                throw new Error(err);
+                            });
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                        throw new Error(err);
+                    });
             });
 
-            return model["trainClass"].bulkCreate(tmpArray)
-                .then(function () {
-                    mongoObj = null;
-                    console.log("step 5 trainClass .............finished!");
-                    return model["trainClassExams"].bulkCreate(classExamArray)
-                        .then(function () {
-                            console.log("step 5 trainClassExams .............finished!");
-                        })
-                        .catch(function (err) {
-                            console.log(err);
-                            throw new Error(err);
-                        });
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    throw new Error(err);
-                });
+    };
+
+    return rawPage(1)
+        .then(function () {
+            mongoObj = null;
+            console.log("step 5 trainClass real.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
         });
+
+
 };
 
 // handle examclass and  subjects
@@ -398,61 +417,210 @@ function step7() {
     console.log("begin step 7 adminEnrollExam ... ");
     var mongoObj = require(`./models/adminEnrollExam.js`);
 
-    return mongoObj.rawAll()
-        .then(function (entities) {
-            if (entities.length == 0) {
-                return;
-            }
+    function rawPage(page) {
+        page = page || 1;
+        return mongoObj.rawAll(page)
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
 
-            var tmpArray = [],
-                scoreArray = [],
-                x = 0;
-            entities.forEach(function (obj) {
-                var newObj = obj.toJSON();
-                x++;
-                newObj._id = newObj._id.toJSON();
-                if (newObj.mobile === null) {
-                    delete newObj.mobile;
-                }
-                newObj.createdDate = newObj.orderDate;
-                if (newObj.CancelDate) {
-                    newObj.deletedDate = newObj.CancelDate;
-                }
-                if (newObj.scores && newObj.scores.length > 0) {
-                    newObj.scores
-                        .forEach(function (score) {
-                            scoreArray.push({
-                                _id: x + score._id.toJSON(),
-                                examOrderId: newObj._id,
-                                subjectId: score.subjectId,
-                                subjectName: score.subjectName,
-                                score: score.score,
-                                report: score.report
+                var tmpArray = [],
+                    scoreArray = [],
+                    x = 0;
+                entities.forEach(function (obj) {
+                    var newObj = obj.toJSON();
+                    x++;
+                    newObj._id = newObj._id.toJSON();
+                    if (newObj.mobile === null) {
+                        delete newObj.mobile;
+                    }
+                    newObj.createdDate = newObj.orderDate;
+                    if (newObj.CancelDate) {
+                        newObj.deletedDate = newObj.CancelDate;
+                    }
+                    if (newObj.scores && newObj.scores.length > 0) {
+                        newObj.scores
+                            .forEach(function (score) {
+                                scoreArray.push({
+                                    _id: x + score._id.toJSON(),
+                                    examOrderId: newObj._id,
+                                    subjectId: score.subjectId,
+                                    subjectName: score.subjectName,
+                                    score: score.score,
+                                    report: score.report
+                                });
                             });
-                        });
-                    delete newObj.scores;
-                }
+                        delete newObj.scores;
+                    }
 
-                tmpArray.push(newObj);
+                    tmpArray.push(newObj);
+                });
+
+                return model["adminEnrollExam"].bulkCreate(tmpArray)
+                    .then(function () {
+                        console.log("step 7 adminEnrollExam .............finished!");
+                        return model["adminEnrollExamScore"].bulkCreate(scoreArray)
+                            .then(function () {
+                                console.log("step 7 adminEnrollExamScore .............finished!");
+                                return rawPage(page + 1);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                                throw new Error(err);
+                            });
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                        throw new Error(err);
+                    });
             });
 
-            return model["adminEnrollExam"].bulkCreate(tmpArray)
-                .then(function () {
-                    mongoObj = null;
-                    console.log("step 7 adminEnrollExam .............finished!");
-                    return model["adminEnrollExamScore"].bulkCreate(scoreArray)
-                        .then(function () {
-                            console.log("step 7 adminEnrollExamScore .............finished!");
-                        })
-                        .catch(function (err) {
-                            console.log(err);
-                            throw new Error(err);
-                        });
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    throw new Error(err);
+    };
+
+    return rawPage(1)
+        .then(function () {
+            mongoObj = null;
+            console.log("step 7 adminEnrollExam.............real finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+};
+
+// absentClass
+function step8() {
+    console.log("begin step 8 absentClass... ");
+    var mongoObj = require(`./models/absentClass.js`);
+
+    function rawPage(page) {
+        page = page || 1;
+        return mongoObj.rawAll(page)
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [];
+                entities.forEach(function (obj) {
+                    var newObj = obj.toJSON();
+                    newObj._id = newObj._id.toJSON();
+
+                    // handle student discount
+                    if (newObj.discount === null) {
+                        delete newObj.discount;
+                    }
+
+                    tmpArray.push(newObj);
                 });
+
+                return model["absentClass"].bulkCreate(tmpArray)
+                    .then(function () {
+                        return rawPage(page + 1);
+                    })
+                    .catch(function (err) {
+                        throw new Error(err);
+                    });
+            });
+    };
+
+    return rawPage(1)
+        .then(function () {
+            mongoObj = null;
+            console.log("step 8 absentClass.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+};
+
+// couponAssign
+function step9() {
+    console.log("begin step 9 couponAssign... ");
+    var mongoObj = require(`./models/couponAssign.js`);
+
+    function rawPage(page) {
+        page = page || 1;
+        return mongoObj.rawAll(page)
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [];
+                entities.forEach(function (obj) {
+                    var newObj = obj.toJSON();
+                    newObj._id = newObj._id.toJSON();
+
+                    if (newObj.orderId === null) {
+                        delete newObj.orderId;
+                    }
+
+                    tmpArray.push(newObj);
+                });
+
+                return model["couponAssign"].bulkCreate(tmpArray)
+                    .then(function () {
+                        return rawPage(page + 1);
+                    })
+                    .catch(function (err) {
+                        throw new Error(err);
+                    });
+            });
+    };
+
+    return rawPage(1)
+        .then(function () {
+            mongoObj = null;
+            console.log("step 9 couponAssign.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+};
+
+// studentInfo
+function step10() {
+    console.log("begin step 10 studentInfo... ");
+    var mongoObj = require(`./models/studentInfo.js`);
+
+    function rawPage(page) {
+        page = page || 1;
+        return mongoObj.rawAll(page)
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [];
+                entities.forEach(function (obj) {
+                    var newObj = obj.toJSON();
+                    newObj._id = newObj._id.toJSON();
+
+                    if (newObj.discount === null) {
+                        delete newObj.discount;
+                    }
+
+                    tmpArray.push(newObj);
+                });
+
+                return model["studentInfo"].bulkCreate(tmpArray)
+                    .then(function () {
+                        return rawPage(page + 1);
+                    })
+                    .catch(function (err) {
+                        throw new Error(err);
+                    });
+            });
+    };
+
+    return rawPage(1)
+        .then(function () {
+            mongoObj = null;
+            console.log("step 10 studentInfo.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
         });
 };
 
@@ -477,4 +645,13 @@ step1().then(function () {
     })
     .then(function () {
         return step7();
+    })
+    .then(function () {
+        return step8();
+    })
+    .then(function () {
+        return step9();
+    })
+    .then(function () {
+        return step10();
     });

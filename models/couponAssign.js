@@ -188,6 +188,9 @@ CouponAssign.batchUpdate = function (filter, option) {
     }).exec();
 };
 
-CouponAssign.rawAll = function () {
-    return couponAssignModel.find();
+CouponAssign.rawAll = function (page) {
+    page = page || 1;
+    return couponAssignModel.find()
+        .skip((page - 1) * 500)
+        .limit(500);
 };

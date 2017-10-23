@@ -109,6 +109,9 @@ AbsentClass.recover = function (filter) {
     }).exec();
 };
 
-AbsentClass.rawAll = function () {
-    return absentClassModel.find();
+AbsentClass.rawAll = function (page) {
+    page = page || 1;
+    return absentClassModel.find()
+        .skip((page - 1) * 500)
+        .limit(500);
 };

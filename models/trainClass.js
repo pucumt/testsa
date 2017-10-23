@@ -433,6 +433,9 @@ TrainClass.min100 = function (id) {
     }).exec();
 };
 
-TrainClass.rawAll = function () {
-    return trainClassModel.find();
+TrainClass.rawAll = function (page) {
+    page = page || 1;
+    return trainClassModel.find()
+        .skip((page - 1) * 500)
+        .limit(500);
 };

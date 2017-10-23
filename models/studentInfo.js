@@ -199,6 +199,9 @@ StudentInfo.updateUserInfo = function (filter, option) {
     }).exec();
 };
 
-StudentInfo.rawAll = function () {
-    return studentInfoModel.find();
+StudentInfo.rawAll = function (page) {
+    page = page || 1;
+    return studentInfoModel.find()
+        .skip((page - 1) * 500)
+        .limit(500);
 };

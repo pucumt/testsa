@@ -197,6 +197,9 @@ AdminEnrollExam.updateUserInfo = function (filter, option) {
     }).exec();
 };
 
-AdminEnrollExam.rawAll = function () {
-    return adminEnrollExamModel.find();
+AdminEnrollExam.rawAll = function (page) {
+    page = page || 1;
+    return adminEnrollExamModel.find()
+        .skip((page - 1) * 500)
+        .limit(500);
 };
