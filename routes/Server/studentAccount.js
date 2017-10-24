@@ -215,4 +215,36 @@ module.exports = function (app) {
                 return;
             });
     });
+
+    app.post('/app/login', function (req, res) {
+        //生成密码的 md5 值
+        var md5 = crypto.createHash('md5'),
+            password = md5.update(req.body.password).digest('hex');
+        //检查用户是否存在
+        StudentAccount.getFilter({
+                name: req.body.name
+            })
+            .then(function (user) {
+                if (!user) {
+                    res.jsonp({
+                        error: "没有找到用户"
+                    });
+                    return;
+                }
+                //检查密码是否一致
+                if (user.password != password) {
+                    res.jsonp({
+                        error: "密码不正确"
+                    });
+                    return;
+                }
+
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function (err) {
+                //error to handle
+            });
+    });
 }

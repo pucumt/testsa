@@ -1191,36 +1191,34 @@ module.exports = function (app) {
         var data = [
             ['学生', '电话', '订单', '课程', '校区', '年级', '科目', '退费', '退费日期']
         ];
-        RebateEnrollTrain.getFilters({})
-            .then(function (rebates) {
-                var pArray = [];
-                rebates.forEach(function (rebate) {
-                    var p = AdminEnrollTrain.getFilter({
-                            _id: rebate.trainOrderId
-                        })
-                        .then(function (order) {
-                            return TrainClass.getFilter({
-                                    _id: order.trainId
-                                })
-                                .then(function (originalClass) {
-                                    var singleInfo = [order.studentName, order.mobile, order._id, order.trainName, originalClass.schoolArea, originalClass.gradeName, originalClass.subjectName, rebate.rebatePrice, rebate.createDate];
-                                    data.push(singleInfo);
-                                });
-                        });
-                    pArray.push(p);
-                });
-                Promise.all(pArray)
-                    .then(function () {
-                        var buffer = xlsx.build([{
-                                name: "退费情况",
-                                data: data
-                            }]),
-                            fileName = '全部退费列表' + '.xlsx';
-                        fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
-                        res.jsonp({
-                            sucess: true
-                        });
+        var p = model.db.sequelize.query("select S.name as studentName, S.mobile, O._id, C.name, C.schoolArea, C.gradeName, C.subjectName, \
+        R.rebateTotalPrice, R.createdDate from rebateEnrollTrains R join adminEnrollTrains O \
+        on O._id=R.trainOrderId \
+        join studentInfos S on O.studentId=S._id \
+        join trainClasss C on O.trainId=C._id \
+        where R.isDeleted=false and O.yearId=:yearId", {
+                replacements: {
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                if (orders && orders.length > 0) {
+                    orders.forEach(function (order) {
+                        var singleInfo = [order.studentName, order.mobile, order._id, order.name, order.schoolArea, order.gradeName, order.subjectName, order.rebateTotalPrice, order.createdDate];
+                        data.push(singleInfo);
                     });
+                }
+
+                var buffer = xlsx.build([{
+                        name: "退费情况",
+                        data: data
+                    }]),
+                    fileName = '全部退费列表' + '.xlsx';
+                fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
