@@ -1192,7 +1192,7 @@ module.exports = function (app) {
             ['学生', '电话', '订单', '课程', '校区', '年级', '科目', '退费', '退费日期']
         ];
         var p = model.db.sequelize.query("select S.name as studentName, S.mobile, O._id, C.name, C.schoolArea, C.gradeName, C.subjectName, \
-        R.rebateTotalPrice, R.createdDate from rebateEnrollTrains R join adminEnrollTrains O \
+        R.rebateTotalPrice, DATE_ADD(R.createdDate,INTERVAL 8 HOUR) as createdDate from rebateEnrollTrains R join adminEnrollTrains O \
         on O._id=R.trainOrderId \
         join studentInfos S on O.studentId=S._id \
         join trainClasss C on O.trainId=C._id \

@@ -624,19 +624,47 @@ function step10() {
 };
 
 function toRun() {
-    model.adminEnrollTrain.sync({
-            force: true
-        })
-        .then(function () {
-            return step3();
-        })
-        .then(function () {
-            return model.adminEnrollTrainHistory.sync({
-                force: true
+    console.log("begin to recover rebate date... ");
+    var mongoObj = require(`./models/rebateEnrollTrain.js`);
+
+    function rawPage(page) {
+        page = page || 1;
+        return mongoObj.rawAll(page)
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [];
+                entities.forEach(function (obj) {
+                    var p = model.rebateEnrollTrain.update({
+                        createdDate: obj.createDate
+                    }, {
+                        where: {
+                            _id: obj._id.toJSON()
+                        }
+                    });
+                    tmpArray.push(p);
+                });
+
+                return Promise.all(tmpArray)
+                    .then(function () {
+                        return rawPage(page + 1);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                        throw new Error(err);
+                    });
             });
-        })
+    };
+
+    return rawPage(1)
         .then(function () {
-            return step4();
+            mongoObj = null;
+            console.log("step recover rebate date.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
         });
 };
 
