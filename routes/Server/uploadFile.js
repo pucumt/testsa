@@ -978,47 +978,36 @@ module.exports = function (app) {
         var data = [
             ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
         ];
-        var filter = {
-            isDeleted: false,
-            isSucceed: 1,
-            yearId: global.currentYear._id,
-            isPayed: true
-        };
 
-        var p = AdminEnrollTrain.getFiltersWithClass(filter)
-            .then(function (orders) {
-                if (orders.length > 0) {
-                    var PArray = [];
+        var p = model.db.sequelize.query("select O.studentName, S.mobile, S.School, S.className, S.sex, DATE_ADD(O.createdDate,INTERVAL 8 HOUR) as createdDate,\
+        C.subjectName, C.schoolArea, C.name, C.courseTime, C.gradeName, O.totalPrice, O.realMaterialPrice, O.rebatePrice, O.payWay, O.comment \
+        from adminEnrollTrains O \
+        join studentInfos S on O.studentId=S._id \
+        join trainClasss C on O.trainId=C._id \
+        where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId", {
+                replacements: {
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                if (orders && orders.length > 0) {
                     orders.forEach(function (order) {
-                        var Px = StudentInfo.get(order.studentId)
-                            .then(function (student) {
-                                if (student) {
-                                    return getOrderPayway(order)
-                                        .then(function (way) {
-                                            var newClass = order.trainClasss[0] || {};
-                                            var singleInfo = [student.name, student.mobile, student.School, student.className, (student.sex ? "女" : "男"), order.orderDate, newClass.subjectName, newClass.schoolArea, newClass.name, newClass.courseTime, newClass.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, way, order.comment];
-                                            data.push(singleInfo);
-                                        });
-                                } else {
-                                    data.push([order.studentId, order._id, order.orderDate, order.trainId]);
-                                }
-                            });
-                        PArray.push(Px);
+                        var singleInfo = [order.studentName, order.mobile, order.School, order.className, (order.sex ? "女" : "男"), order.createdDate, order.subjectName, order.schoolArea, order.name, order.courseTime, order.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, getPayway(order.payWay), order.comment];
+                        data.push(singleInfo);
                     });
-                    return Promise.all(PArray);
                 }
+
+                var buffer = xlsx.build([{
+                        name: "报名情况",
+                        data: data
+                    }]),
+                    fileName = '报名情况5' + '.xlsx';
+                fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
+                res.jsonp({
+                    sucess: true
+                });
             });
-        p.then(function () {
-            var buffer = xlsx.build([{
-                    name: "报名情况",
-                    data: data
-                }]),
-                fileName = '报名情况5' + '.xlsx';
-            fs.writeFileSync(path.join(serverPath, "../public/downloads/", fileName), buffer, 'binary');
-            res.jsonp({
-                sucess: true
-            });
-        });
     });
 
     // 导出所有课程情况
