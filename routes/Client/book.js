@@ -193,8 +193,8 @@ module.exports = function (app) {
             });
     };
 
-    app.post('/book/lesson/score', checkLogin);
-    app.post('/book/lesson/score', function (req, res) {
+    // app.post('/book/lesson/score', checkLogin);
+    app.post('/app/score', function (req, res) {
         StudentLesson.getFilter({
                 lessonId: req.body.lessonId,
                 studentId: req.body.studentId
@@ -247,4 +247,50 @@ module.exports = function (app) {
             }
         });
     };
+
+
+    app.post('/app/lessonList', function (req, res) {
+        if (!req.body.studentId) {
+            res.jsonp({
+                error: "信息不正确"
+            });
+            return;
+        }
+
+        var filter = {
+            bookId: req.body.bookId
+        };
+        if (req.body.minLesson) {
+            filter.sequence = {
+                $lte: req.body.maxLesson,
+                $gte: req.body.minLesson
+            };
+        }
+        Lesson.getFilters(filter)
+            .then(function (result) {
+                res.jsonp(result);
+            });
+    });
+
+    app.post('/app/contents', function (req, res) {
+        if (!req.body.studentId) {
+            res.jsonp({
+                error: "信息不正确"
+            });
+            return;
+        }
+        model.db.sequelize.query("select C._id, S.score, C.contentType, C.name, C.duration \
+        from lessonContents C left join studentLessonScores S  \
+        on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
+        where  C.isDeleted=false order by C.contentType, C.sequence", {
+                replacements: {
+                    studentId: req.body.studentId,
+                    lessonId: req.body.lessonId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(contents => {
+                res.jsonp(contents);
+            });
+    });
 }

@@ -289,4 +289,28 @@ module.exports = function (app) {
                 }
             });
     });
+
+    app.post('/app/list', function (req, res) {
+        if (!req.body.studentId) {
+            res.jsonp({
+                error: "信息不正确"
+            });
+            return;
+        }
+
+        model.db.sequelize.query("select C.bookId, B.name, C.minLesson, C.maxLesson \
+        from adminEnrollTrains O join trainClasss C \
+        on C._id=O.trainId \
+        join books B on C.bookId=B._id \
+        where O.studentId=:studentId and O.yearId=:yearId and O.isDeleted=false and O.isSucceed=1 ", {
+                replacements: {
+                    studentId: req.body.studentId,
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(books => {
+                res.jsonp(books);
+            });
+    });
 }
