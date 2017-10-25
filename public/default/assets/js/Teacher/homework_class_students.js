@@ -122,8 +122,8 @@ function generateLi(student) {
     if (student.stuLesson) {
         var stuLesson = student.stuLesson;
         $infoContainer.append($('<div style="">单词:{0}({1}/{2})&nbsp;句子:{3}({4}/{5})&nbsp;课文:{6}</div>'
-            .format(stuLesson.wordAve, stuLesson.wordProcess, student.wordCount, stuLesson.sentAve,
-                stuLesson.sentProcess, student.sentCount, stuLesson.paragraphAve)));
+            .format(stuLesson.wordAve, stuLesson.wordProcess, student.wordCount || 0, stuLesson.sentAve,
+                stuLesson.sentProcess, student.sentCount || 0, stuLesson.paragraphAve)));
     }
     return $li;
 };

@@ -1,39 +1,5 @@
 var audioUrl = new Array();
-window.iPanel = new _17kouyu.IPanel({
-    mode: 2,
-    appKey: "17KouyuTestAppKey",
-    secretKey: "17KouyuTestSecretKey",
-    //showFlash:false,
-    data: {
-        audioUrl: "", //标准音频URL
-        //duration: 5000, //传入参数手动设置录音时长
-        serverParams: { // 录音服务参数
-            coreType: "sent.eval", // 选择内核sent.eval
-            refText: "Where are you from", // 参考文本
-            attachAudioUrl: 1, // 获取音频下载地址
-            userId: "guest" // 用户id
-        }
-    },
-    onBeforeRecord: function () { // 录音之前需要清除评分，可以在这里设置录音参数
-    },
-    onScore: function (data) { // 评分成功需要显示评分结果
-    },
-    onScoreError: function (errorType) { //评分失败的显示 "TIMEOUT", "NO_DATA", ErrorID
-    },
-    onBeforePlay: function (e) {
-        var index = $(e).attr('audioIndex');
-        console.info(index);
-        if (audioUrl[index]) {
-            iPanel.params.data.audioUrl = audioUrl[index];
-            if (index == 1) {
-                $("#iPanel").find(".toReplay").addClass("process");
-            }
-        }
-    },
-    onAfterPlay: function (e) {
-        $("#iPanel").find(".toReplay").removeClass("process");
-    }
-});
+window.iPanel = null;
 
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
@@ -171,18 +137,23 @@ $wordBody.on('show.bs.collapse', function (e) {
     } else {
         audioUrl[1] = undefined;
     }
-    iPanel.setData({
-        audioUrl: audioUrl[0],
-        serverParams: {
-            coreType: coreType(content),
-            refText: content.name,
-            userId: "guest"
-        }
-    });
+    document.getElementById("recordAudio").src = audioUrl[1];
+    // iPanel.setData({
+    //     audioUrl: audioUrl[0],
+    //     serverParams: {
+    //         coreType: coreType(content),
+    //         refText: content.name,
+    //         userId: "guest"
+    //     }
+    // });
 
     if (content.score || content.score == 0) {
         $("#iPanel").find(".toReplay i").attr('data-content', content.score);
         $("#iPanel").find(".toReplay").addClass("score");
+        $("#iPanel").find(".toReplay").off("click")
+            .on("click", function (e) {
+                document.getElementById("recordAudio").play();
+            });
     } else {
         $("#iPanel").find(".toReplay").removeClass("score");
     }

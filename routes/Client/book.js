@@ -118,8 +118,7 @@ module.exports = function (app) {
                             contentId: req.body.wordId,
                             contentType: req.body.contentType,
                             score: req.body.score,
-                            contentRecord: req.body.recordId,
-                            createdBy: req.session.user._id
+                            contentRecord: req.body.recordId
                         })
                         .then(function (result) {
                             if (result) {
@@ -229,6 +228,7 @@ module.exports = function (app) {
     });
 
     function saveRecord(studentId, recordId, scoreId) {
+        //return;
         var folder = path.join(process.cwd(), '/public/uploads/scores/' + studentId + '/');
         fs.stat(folder, function (err, stats) {
             if (err) {
