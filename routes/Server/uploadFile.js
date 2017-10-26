@@ -294,6 +294,7 @@ module.exports = function (app) {
         }
     };
 
+    // last column 20: yearName
     function createNewClass(data, adminId) {
         var option = {
             name: data[0].trim(),
