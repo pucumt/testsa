@@ -104,13 +104,16 @@ module.exports = function (app) {
                     saveRecord(req.body.studentId, req.body.recordId, score._id);
 
                     return StudentLessonScore.update({
-                        score: req.body.score,
-                        contentRecord: req.body.recordId
-                    }, {
-                        where: {
-                            _id: score._id
-                        }
-                    });
+                            score: req.body.score,
+                            contentRecord: req.body.recordId
+                        }, {
+                            where: {
+                                _id: score._id
+                            }
+                        })
+                        .then(function () {
+                            return score._id;
+                        });
                 } else {
                     return StudentLessonScore.create({
                             lessonId: req.body.lessonId,
@@ -207,21 +210,28 @@ module.exports = function (app) {
                                 if (studentLesson) {
                                     //关系已经存在
                                     return StudentLesson.update(option, {
-                                        where: {
-                                            _id: studentLesson._id
-                                        }
-                                    });
+                                            where: {
+                                                _id: studentLesson._id
+                                            }
+                                        })
+                                        .then(function () {
+                                            return scoreResult;
+                                        });
                                 } else {
                                     //关系未存在
                                     option.studentId = req.body.studentId;
                                     option.lessonId = req.body.lessonId;
-                                    return StudentLesson.create(option);
+                                    return StudentLesson.create(option)
+                                        .then(function () {
+                                            return scoreResult;
+                                        });
                                 }
                             });
                     })
-                    .then(function () {
+                    .then(function (scoreResult) {
                         res.jsonp({
-                            sucess: true
+                            sucess: true,
+                            scoreId: (scoreResult._id || scoreResult)
                         });
                     });
             });
@@ -279,7 +289,7 @@ module.exports = function (app) {
             });
             return;
         }
-        model.db.sequelize.query("select C._id, S.score, C.contentType, C.name, C.duration \
+        model.db.sequelize.query("select C._id, S.score, S.scoreId, C.contentType, C.name, C.duration \
         from lessonContents C left join studentLessonScores S  \
         on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
         where  C.isDeleted=false order by C.contentType, C.sequence", {
