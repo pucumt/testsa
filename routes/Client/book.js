@@ -292,7 +292,7 @@ module.exports = function (app) {
         model.db.sequelize.query("select C._id, S.score, S._id as scoreId, C.contentType, C.name, C.duration \
         from lessonContents C left join studentLessonScores S  \
         on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
-        where  C.isDeleted=false order by C.contentType, C.sequence", {
+        where  C.isDeleted=false order by C.contentType, C.sequence, C.createdDate, C._id", {
                 replacements: {
                     studentId: req.body.studentId,
                     lessonId: req.body.lessonId
