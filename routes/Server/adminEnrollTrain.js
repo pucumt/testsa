@@ -601,9 +601,16 @@ module.exports = function (app) {
                     return;
                 }
                 AdminEnrollTrain.getFilter({
-                        _id: req.body.oldOrderId
+                        _id: req.body.oldOrderId,
+                        isSucceed: 1
                     })
                     .then(function (oldOrder) {
+                        if (!oldOrder) {
+                            res.jsonp({
+                                error: "订单已经被处理，不能重复处理"
+                            });
+                            return;
+                        }
                         // 1. 新班报名修改名额
                         // 2. 新班设置是否满员-- 可能没必要
                         // 3. 添加新订单
@@ -687,7 +694,8 @@ module.exports = function (app) {
     app.get('/admin/changeClassDetail/:id', function (req, res) {
         // req.params.id
         AdminEnrollTrain.getFilter({
-                _id: req.params.id
+                _id: req.params.id,
+                isSucceed: 1 // 防止刷新重新操作
             })
             .then(function (order) {
                 res.render('Server/changeClassDetail.html', {
