@@ -623,7 +623,7 @@ function step10() {
         });
 };
 
-function toRun() {
+function rebateRun() {
     console.log("begin to recover rebate date... ");
     var mongoObj = require(`./models/rebateEnrollTrain.js`);
 
@@ -638,7 +638,6 @@ function toRun() {
                 var tmpArray = [];
                 entities.forEach(function (obj) {
                     var p = model.rebateEnrollTrain.update({
-                        createdDate: obj.createDate,
                         originalPrice: obj.originalPrice,
                         originalMaterialPrice: obj.originalMaterialPrice,
                         rebateTotalPrice: obj.rebateTotalPrice,
@@ -670,6 +669,56 @@ function toRun() {
         })
         .catch(function (err) {
             console.log(err);
+        });
+};
+
+function orderHistoryRun() {
+    console.log("begin to order history... ");
+    var mongoObj = require(`./models/adminEnrollTrainHistory.js`);
+
+    function rawPage() {
+        return mongoObj.rawAll()
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [];
+                entities.forEach(function (obj) {
+                    var p = model.adminEnrollTrainHistory.update({
+                        totalPrice: obj.totalPrice,
+                        realMaterialPrice: obj.realMaterialPrice,
+                        rebatePrice: obj.rebatePrice
+                    }, {
+                        where: {
+                            _id: obj._id.toJSON()
+                        }
+                    });
+                    tmpArray.push(p);
+                });
+
+                return Promise.all(tmpArray)
+                    .catch(function (err) {
+                        console.log(err);
+                        throw new Error(err);
+                    });
+            });
+    };
+
+    return rawPage()
+        .then(function () {
+            mongoObj = null;
+            console.log("step order history.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+};
+
+function toRun() {
+    return rebateRun()
+        .then(function () {
+            return orderHistoryRun();
         });
 };
 
