@@ -18,7 +18,7 @@ const OrderFromBank = db.defineModel('orderFromBanks', {
         defaultValue: ''
     }, // zhifubao or weixin
     trainPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }
 });

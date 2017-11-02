@@ -53,11 +53,11 @@ const TrainClass = db.defineModel('trainClasss', {
         defaultValue: 0
     }, //共多少课时
     trainPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     },
     materialPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     },
     teacherId: {

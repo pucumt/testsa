@@ -638,7 +638,12 @@ function toRun() {
                 var tmpArray = [];
                 entities.forEach(function (obj) {
                     var p = model.rebateEnrollTrain.update({
-                        createdDate: obj.createDate
+                        createdDate: obj.createDate,
+                        originalPrice: obj.originalPrice,
+                        originalMaterialPrice: obj.originalMaterialPrice,
+                        rebateTotalPrice: obj.rebateTotalPrice,
+                        rebatePrice: obj.rebatePrice,
+                        rebateMaterialPrice: obj.rebateMaterialPrice
                     }, {
                         where: {
                             _id: obj._id.toJSON()

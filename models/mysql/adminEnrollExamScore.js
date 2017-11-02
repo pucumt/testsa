@@ -17,7 +17,7 @@ const AdminEnrollExamScore = db.defineModel('adminEnrollExamScores', {
         defaultValue: ''
     },
     score: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     },
     report: {

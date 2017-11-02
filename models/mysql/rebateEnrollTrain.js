@@ -9,23 +9,23 @@ const RebateEnrollTrain = db.defineModel('rebateEnrollTrains', {
         defaultValue: ''
     },
     originalPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //原来价格
     originalMaterialPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //原来教材费价格
     rebateTotalPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //总退费
     rebatePrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //培训费退费
     rebateMaterialPrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //教材费退费
     comment: {

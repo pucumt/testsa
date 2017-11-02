@@ -37,7 +37,7 @@ const CouponAssign = db.defineModel('couponAssigns', {
         defaultValue: ''
     },
     reducePrice: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     },
     couponStartDate: {

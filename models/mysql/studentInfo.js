@@ -36,7 +36,7 @@ const StudentInfo = db.defineModel('studentInfos', {
         defaultValue: ""
     },
     discount: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 100
     }, // 原始购买打折(特价课程除外)
     gradeId: {

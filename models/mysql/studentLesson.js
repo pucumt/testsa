@@ -17,7 +17,7 @@ const StudentLesson = db.defineModel('studentLessons', {
         defaultValue: 0
     }, //单词进度
     wordAve: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //单词平均分
     sentProcess: {
@@ -25,11 +25,11 @@ const StudentLesson = db.defineModel('studentLessons', {
         defaultValue: 0
     }, //句子进度
     sentAve: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     }, //句子平均分
     paragraphAve: {
-        type: db.DECIMAL,
+        type: db.DECIMAL(10, 2),
         defaultValue: 0
     } //课文平均分
 });
