@@ -715,10 +715,128 @@ function orderHistoryRun() {
         });
 };
 
+function orderRebatePrice() {
+    console.log("begin to order rebate  ... ");
+    var mongoObj = require(`./models/adminEnrollTrain.js`);
+
+    function rawPage() {
+        return mongoObj.rawRebate()
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [],
+                    rebateCount = 0;
+                entities.forEach(function (obj) {
+                    var p = model.adminEnrollTrain.findOne({
+                            'where': {
+                                _id: obj._id.toJSON()
+                            }
+                        })
+                        .then(order => {
+                            if (Math.abs(order.rebatePrice - obj.rebatePrice) < 1) {
+                                return model.adminEnrollTrain.update({
+                                    rebatePrice: obj.rebatePrice
+                                }, {
+                                    where: {
+                                        _id: obj._id.toJSON()
+                                    }
+                                });
+                            } else {
+                                rebateCount++;
+                            }
+                        })
+                    tmpArray.push(p);
+                });
+
+                return Promise.all(tmpArray)
+                    .then(function () {
+                        console.log(rebateCount);
+                    })
+                    .catch(function (err) {
+                        console.log(err, rebateCount);
+                        throw new Error(err);
+                    });
+            });
+    };
+
+    return rawPage()
+        .then(function () {
+            mongoObj = null;
+            console.log("step order rebate.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+};
+
+
+function ordertotalPrice() {
+    console.log("begin to order totalPrice  ... ");
+    var mongoObj = require(`./models/adminEnrollTrain.js`);
+
+    function rawPage() {
+        return mongoObj.rawTotal()
+            .then(function (entities) {
+                if (entities.length == 0) {
+                    return;
+                }
+
+                var tmpArray = [],
+                    rebateCount = 0;
+                entities.forEach(function (obj) {
+                    var p = model.adminEnrollTrain.findOne({
+                            'where': {
+                                _id: obj._id.toJSON()
+                            }
+                        })
+                        .then(order => {
+                            if (Math.abs(order.totalPrice - obj.totalPrice) < 1) {
+                                return model.adminEnrollTrain.update({
+                                    totalPrice: obj.totalPrice
+                                }, {
+                                    where: {
+                                        _id: obj._id.toJSON()
+                                    }
+                                });
+                            } else {
+                                rebateCount++;
+                            }
+                        })
+                    tmpArray.push(p);
+                });
+
+                return Promise.all(tmpArray)
+                    .then(function () {
+                        console.log(rebateCount);
+                    })
+                    .catch(function (err) {
+                        console.log(err, rebateCount);
+                        throw new Error(err);
+                    });
+            });
+    };
+
+    return rawPage()
+        .then(function () {
+            mongoObj = null;
+            console.log("step order totalPrice.............finished!");
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+};
+
 function toRun() {
     return rebateRun()
         .then(function () {
             return orderHistoryRun();
+        }).then(function () {
+            return orderRebatePrice();
+        })
+        .then(function () {
+            return ordertotalPrice();
         });
 };
 

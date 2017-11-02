@@ -686,6 +686,20 @@ AdminEnrollTrain.rawAll = function (page) {
         .skip((page - 1) * 2000)
         .limit(2000);
 };
+AdminEnrollTrain.rawRebate = function () {
+    return adminEnrollTrainModel.find({
+        $where: function () {
+            return this.rebatePrice.toString().indexOf(".") >= 0
+        }
+    });
+};
+AdminEnrollTrain.rawTotal = function () {
+    return adminEnrollTrainModel.find({
+        $where: function () {
+            return this.totalPrice.toString().indexOf(".") >= 0
+        }
+    });
+};
 
 // return qry.out("temps").exec().then(function() {
 //         return mongoose.model('temp', new mongoose.Schema({
