@@ -289,12 +289,45 @@ module.exports = function (app) {
             });
             return;
         }
-        model.db.sequelize.query("select C._id, S.score, S._id as scoreId, C.contentType, C.name, C.duration \
+
+        var sql = "select C._id, S.score, S._id as scoreId, C.contentType, C.name, C.duration \
         from lessonContents C left join studentLessonScores S  \
         on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
-        where  C.isDeleted=false order by C.contentType, C.sequence, C.createdDate, C._id", {
+        where  C.isDeleted=false and ";
+        switch (req.body.contentType) {
+            case 0:
+                sql += " C.contentType in [0, 2] ";
+                break;
+            default:
+                sql += " C.contentType=:contentType ";
+                break;
+        }
+        sql += " order by C.contentType, C.sequence, C.createdDate, C._id";
+
+        model.db.sequelize.query(sql, {
                 replacements: {
                     studentId: req.body.studentId,
+                    lessonId: req.body.lessonId,
+                    contentType: req.body.contentType
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(contents => {
+                res.jsonp(contents);
+            });
+    });
+
+    app.post('/app/contentTypes', function (req, res) {
+        if (!req.body.studentId) {
+            res.jsonp({
+                error: "信息不正确"
+            });
+            return;
+        }
+        model.db.sequelize.query("select distinct contentType \
+        from lessonContents  \
+        where lessonId=:lessonId and isDeleted=false order by contentType", {
+                replacements: {
                     lessonId: req.body.lessonId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
