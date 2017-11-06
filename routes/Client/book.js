@@ -295,8 +295,8 @@ module.exports = function (app) {
         on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
         where  C.isDeleted=false and ";
         switch (req.body.contentType) {
-            case 0:
-                sql += " C.contentType in [0, 2] ";
+            case "0":
+                sql += " C.contentType in (0, 2) ";
                 break;
             default:
                 sql += " C.contentType=:contentType ";
