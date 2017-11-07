@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -42,10 +43,11 @@
                                 <input type="hidden" class="form-control" name="schoolId" id="schoolId" value={{order.schoolId}}>
                                 <input type="hidden" class="form-control" name="schoolArea" id="schoolArea" value={{order.schoolArea}}>
                                 <input type="text" maxlength="30" readonly class="form-control" name="trainName" id="trainName" value={{order.trainName}}>
-                                <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
+                                <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -66,19 +68,19 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="discount" class="control-label">折扣(%):</label>
-                            <input type="text" maxlength="10" class="form-control" name="discount" id="discount" value={{ order.discount }}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="discount" id="discount" value={{ order.discount }}>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="totalPrice" class="control-label">实际培训费:</label>
-                            <input type="text" maxlength="10" class="form-control" name="totalPrice" id="totalPrice" value={{order.totalPrice}}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="totalPrice" id="totalPrice" value={{order.totalPrice}}>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="realMaterialPrice" class="control-label">实际教材费:</label>
-                            <input type="text" maxlength="10" class="form-control" name="realMaterialPrice" id="realMaterialPrice" value={{order.realMaterialPrice}}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="realMaterialPrice" id="realMaterialPrice" value={{order.realMaterialPrice}}>
                         </div>
                     </div>
                 </div>
@@ -116,7 +118,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="selectModalLabel">选择</h4>
             </div>
             <div class="modal-body">
@@ -168,7 +172,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">

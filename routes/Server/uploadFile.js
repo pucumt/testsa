@@ -171,7 +171,7 @@ module.exports = function (app) {
             .then(function (existOrder) {
                 if (!existOrder) {
                     return OrderFromBank.create({
-                            orderDate: score[0].substr(1),
+                            createdDate: score[0].substr(1),
                             orderId: score[8].substr(1),
                             machine: score[5].substr(1), // qr or online
                             payType: score[10].substr(1), // zhifubao or weixin
@@ -1235,7 +1235,7 @@ module.exports = function (app) {
                                         _id: order.trainId
                                     })
                                     .then(function (originalClass) {
-                                        var singleInfo = [order.studentName, order.mobile, order._id, order.orderDate, order.trainName, originalClass.schoolArea, originalClass.gradeName, originalClass.subjectName, order.rebatePrice];
+                                        var singleInfo = [order.studentName, order.mobile, order._id, order.createdDate, order.trainName, originalClass.schoolArea, originalClass.gradeName, originalClass.subjectName, order.rebatePrice];
                                         data.push(singleInfo);
                                     });
                             }

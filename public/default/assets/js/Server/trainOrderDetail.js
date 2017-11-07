@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnTrainOrder").addClass("active");
     $("#btnReturn").attr("href", "/admin/trainOrderList");
 
@@ -9,13 +9,15 @@ $(document).ready(function() {
 
 //------------search funfunction
 function renderOrderDetail() {
-    selfAjax("post", "/admin/adminEnrollTrain/getorder", { id: $("#id").val() }, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/getorder", {
+        id: $("#id").val()
+    }, function (data) {
         if (data) {
             if (!data.error) {
                 $(".mainModal #studentId").val(data.studentId);
                 $(".mainModal #studentName").val(data.studentName);
                 $(".mainModal .trainName").html(data.trainName);
-                $(".mainModal .orderDate").html(moment(data.orderDate).format("YYYY-MM-DD HH:mm"));
+                $(".mainModal .orderDate").html(moment(data.createdDate).format("YYYY-MM-DD HH:mm"));
                 $(".mainModal .totalPrice").html(data.totalPrice);
                 $(".mainModal .realMaterialPrice").html(data.realMaterialPrice);
                 $(".mainModal .rebatePrice").html(data.rebatePrice);
@@ -31,13 +33,13 @@ function renderOrderDetail() {
 //------------end
 
 
-$(".mainModal #btnSave").on("click", function(e) {
+$(".mainModal #btnSave").on("click", function (e) {
     var postURI = "/admin/adminEnrollTrain/changecomment",
         postObj = {
             id: $("#id").val(),
             comment: $.trim($('.mainModal #comment').val())
         };
-    selfAjax("post", postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function (data) {
         if (data.sucess) {
             location.href = location.href;
         } else {
@@ -46,14 +48,14 @@ $(".mainModal #btnSave").on("click", function(e) {
     });
 });
 
-$(".mainModal #btnChangeStudent").on("click", function(e) {
+$(".mainModal #btnChangeStudent").on("click", function (e) {
     var postURI = "/admin/adminEnrollTrain/changeStudent",
         postObj = {
             id: $("#id").val(),
             studentId: $(".mainModal #studentId").val(),
             studentName: $(".mainModal #studentName").val()
         };
-    selfAjax("post", postURI, postObj, function(data) {
+    selfAjax("post", postURI, postObj, function (data) {
         if (data.sucess) {
             location.href = location.href;
         } else {
@@ -76,9 +78,9 @@ function openStudent(p) {
     $selectHeader.empty();
     $selectBody.empty();
     $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function (data) {
         if (data && data.studentInfos.length > 0) {
-            data.studentInfos.forEach(function(student) {
+            data.studentInfos.forEach(function (student) {
                 student.School = "";
                 student.className = "";
                 var sex = student.sex ? "女" : "男";
@@ -87,7 +89,7 @@ function openStudent(p) {
                 $tr.data("obj", student);
                 $selectBody.append($tr);
             });
-            setSelectEvent($selectBody, function(entity) {
+            setSelectEvent($selectBody, function (entity) {
                 $('.mainModal #studentName').val(entity.name); //
                 $('.mainModal #studentId').val(entity._id); //
                 $('#selectModal').modal('hide');
@@ -96,12 +98,15 @@ function openStudent(p) {
         $("#selectModal #total").val(data.total);
         $("#selectModal #page").val(data.page);
         setPaging("#selectModal", data);
-        $('#selectModal').modal({ backdrop: 'static', keyboard: false });
+        $('#selectModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
     });
 };
 
 var openEntity = "student";
-$("#panel_btnStudent").on("click", function(e) {
+$("#panel_btnStudent").on("click", function (e) {
     openEntity = "student";
     $('#selectModal .modal-dialog').removeClass("modal-lg");
     $selectSearch.empty();
@@ -115,16 +120,16 @@ $("#panel_btnStudent").on("click", function(e) {
 });
 
 
-$("#selectModal #InfoSearch").on("click", "#btnSearch", function(e) {
+$("#selectModal #InfoSearch").on("click", "#btnSearch", function (e) {
     openStudent();
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     openStudent(page);
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     openStudent(page);
 });

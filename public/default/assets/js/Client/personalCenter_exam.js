@@ -1,27 +1,29 @@
 var newStudent = true,
     editStudent;
 
-$(document).ready(function() {
-    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
+$(document).ready(function () {
+    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/personalCenter";
     });
     loadOrders();
 
-    $(".enroll.personalCenter .orderList ul").on("click", "#btnDetail", function(e) {
+    $(".enroll.personalCenter .orderList ul").on("click", "#btnDetail", function (e) {
         GotoDetail(e);
     });
 
-    $(".enroll.personalCenter .orderList ul").on("click", "li .title", function(e) {
+    $(".enroll.personalCenter .orderList ul").on("click", "li .title", function (e) {
         GotoDetail(e);
     });
 
-    $(".enroll.personalCenter .orderList ul").on("click", "#btnCancel", function(e) {
+    $(".enroll.personalCenter .orderList ul").on("click", "#btnCancel", function (e) {
         CancelOrder(e);
     });
 });
 
 function loadOrders() {
-    selfAjax("post", "/personalCenter/exam/all", { originalUrl: "/personalCenter/exam" }, function(data) {
+    selfAjax("post", "/personalCenter/exam/all", {
+        originalUrl: "/personalCenter/exam"
+    }, function (data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -43,7 +45,7 @@ function renderOrders(orders) {
     if (orders.length > 0) {
         var d = $(document.createDocumentFragment());
         // d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
-        orders.forEach(function(order) {
+        orders.forEach(function (order) {
             var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
                 status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '',
                 cancelButton = '';
@@ -52,7 +54,7 @@ function renderOrders(orders) {
             }
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
-                moment(order.orderDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
+                moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
                 order.className + '</div><div class="price">' + cancelButton + '<button type="button" id="btnDetail" class="btn btn-primary btn-xs pull-right">详情</button>' + status + '</div></div></li>');
         });
         $ul.append(d);
@@ -70,19 +72,19 @@ function CancelOrder(e) {
         $li = curObj.parents("li"),
         orderId = $li.attr("orderId");
     $("#bgBack").show();
-    showConfirm("确定要取消测试" + orderId + "吗？", null, function() {
+    showConfirm("确定要取消测试" + orderId + "吗？", null, function () {
         $("#bgBack").hide();
     });
 
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         curObj.attr("disabled", "disabled");
         selfAjax("post", "/cancel/exam", {
             id: orderId,
             originalUrl: "/personalCenter/exam"
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 $li.remove();
-                showAlert("取消成功", null, function() {
+                showAlert("取消成功", null, function () {
                     $("#bgBack").hide();
                 });
             }

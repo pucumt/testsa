@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnPeopleCount").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
 
@@ -19,13 +19,13 @@ function searchOrder(p) {
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
-    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function (data) {
         $selectBody.empty();
         if (data && data.adminEnrollTrains.length > 0) {
-            data.adminEnrollTrains.forEach(function(trainOrder) {
+            data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr><td class="id">' + trainOrder._id + '</td><td>' +
                     trainOrder.trainName + '</td><td>' + trainOrder.studentName + '</td><td>' + getTrainOrderStatus(trainOrder.isSucceed) +
-                    '</td><td>' + moment(trainOrder.orderDate).format("YYYY-MM-DD HH:mm") + '</td><td>' + getPayway(trainOrder.payWay) + '</td></tr>');
+                    '</td><td>' + moment(trainOrder.createdDate).format("YYYY-MM-DD HH:mm") + '</td><td>' + getPayway(trainOrder.payWay) + '</td></tr>');
                 $selectBody.append($tr);
             });
         }
@@ -35,16 +35,16 @@ function searchOrder(p) {
     });
 };
 
-$("#InfoSearch #btnSearch").on("click", function(e) {
+$("#InfoSearch #btnSearch").on("click", function (e) {
     searchOrder();
 });
 
-$("#selectModal .paging .prepage").on("click", function(e) {
+$("#selectModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) - 1;
     searchOrder(page);
 });
 
-$("#selectModal .paging .nextpage").on("click", function(e) {
+$("#selectModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#selectModal #page").val()) + 1;
     searchOrder(page);
 });
