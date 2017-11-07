@@ -27,6 +27,9 @@ const StudentLessonScore = db.defineModel('studentLessonScores', {
     score: {
         type: db.DECIMAL(10, 2),
         defaultValue: 0
+    },
+    scoreResult: {
+        type: db.TEXT
     }
 });
 module.exports = StudentLessonScore;

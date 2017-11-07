@@ -103,10 +103,14 @@ module.exports = function (app) {
                     //save record
                     saveRecord(req.body.studentId, req.body.recordId, score._id);
 
-                    return StudentLessonScore.update({
-                            score: req.body.score,
-                            contentRecord: req.body.recordId
-                        }, {
+                    var option = {
+                        score: req.body.score,
+                        contentRecord: req.body.recordId
+                    };
+                    if (req.body.contentType == "0") {
+                        option.scoreResult = req.body.scoreResult;
+                    }
+                    return StudentLessonScore.update(option, {
                             where: {
                                 _id: score._id
                             }
@@ -115,14 +119,18 @@ module.exports = function (app) {
                             return score._id;
                         });
                 } else {
-                    return StudentLessonScore.create({
-                            lessonId: req.body.lessonId,
-                            studentId: req.body.studentId,
-                            contentId: req.body.wordId,
-                            contentType: req.body.contentType,
-                            score: req.body.score,
-                            contentRecord: req.body.recordId
-                        })
+                    var option = {
+                        lessonId: req.body.lessonId,
+                        studentId: req.body.studentId,
+                        contentId: req.body.wordId,
+                        contentType: req.body.contentType,
+                        score: req.body.score,
+                        contentRecord: req.body.recordId
+                    };
+                    if (req.body.contentType == "0") {
+                        option.scoreResult = req.body.scoreResult;
+                    }
+                    return StudentLessonScore.create(option)
                         .then(function (result) {
                             if (result) {
                                 //save record
