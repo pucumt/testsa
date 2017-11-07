@@ -202,6 +202,7 @@ $("#myModal #btnOfflineRebate").off("click").on("click", function (e) {
                 originalPrice: $('#myModal #totalPrice').val(),
                 price: $('#myModal #price').val(),
                 materialPrice: $('#myModal #materialPrice').val(),
+                payWay: $('#myModal #payWay').val(),
                 comment: $('#myModal #comment').val()
             };
         selfAjax("post", postURI, postObj, function (data) {

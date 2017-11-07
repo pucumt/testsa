@@ -104,6 +104,14 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/admin/rebatewayOrderList', checkLogin);
+    app.get('/admin/rebatewayOrderList', function (req, res) {
+        res.render('Server/rebatewayOrderList.html', {
+            title: '>退款方式修改',
+            user: req.session.admin
+        });
+    });
+
     app.get('/admin/upgradeList', checkLogin);
     app.get('/admin/upgradeList', function (req, res) {
         res.render('Server/upgradeList.html', {
@@ -516,6 +524,7 @@ module.exports = function (app) {
                     originalPrice: req.body.originalPrice,
                     rebateTotalPrice: price + materialPrice,
                     rebatePrice: req.body.price,
+                    rebateWay: req.body.payWay,
                     rebateMaterialPrice: req.body.materialPrice,
                     comment: req.body.comment,
                     createdBy: req.session.admin._id
@@ -644,6 +653,9 @@ module.exports = function (app) {
                                             fromId: req.body.oldOrderId,
                                             comment: req.body.comment,
                                             isPayed: true,
+                                            rebatePrice: oldOrder.rebatePrice,
+                                            superCategoryId: oldOrder.superCategoryId,
+                                            superCategoryName: oldOrder.superCategoryName,
                                             payWay: oldOrder.payWay,
                                             createdBy: req.session.admin._id,
                                             baseId: (oldOrder.baseId || oldOrder._id),

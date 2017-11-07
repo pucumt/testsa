@@ -28,6 +28,7 @@
 
     adminEnrollExam = require('./adminEnrollExam.js'),
     adminEnrollTrain = require('./adminEnrollTrain.js'),
+    rebateEnrollTrain = require('./rebateEnrollTrain.js'),
 
     studentAccount = require('./studentAccount.js'),
     studentInfo = require('./studentInfo.js'),
@@ -90,6 +91,7 @@ module.exports = function (app) {
     //enroll
     adminEnrollExam(app);
     adminEnrollTrain(app);
+    rebateEnrollTrain(app);
 
     //student
     studentAccount(app);

@@ -128,7 +128,7 @@ $("#btnEnroll").on("click", function (e) {
             if (data && data.sucess) {
                 showAlert("调班成功");
                 $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
-                    location.href = "/admin/trainOrderList";
+                    location.href = "/admin/rebateOrderList";
                 });
             } else {
                 showAlert(data.error);

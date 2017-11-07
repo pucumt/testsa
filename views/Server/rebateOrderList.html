@@ -83,6 +83,7 @@
             </div>
             <div class="modal-body">
                 <form>
+                    <div style="color:red; margin-bottom:15px; font-weight:bold;">退费为正数，补交费用为负数</div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -126,6 +127,22 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="payWay" class="control-label">退款方式:</label>
+                                <select name="payWay" id="payWay" class="form-control">
+                                    <option value="0">现金</option>
+                                    <option value="1">刷卡</option>
+                                    <option value="2">转账</option>
+                                    <option value="8">支付宝</option>
+                                    <option value="9">微信</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-24">
                             <div class="form-group">
                                 <label for="comment" class="control-label">备注:</label>
@@ -164,5 +181,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/rebateOrderList.js?v=1.007"></script>
+<script type="text/javascript" src="/default/assets/js/Server/rebateOrderList.js?v=1.008"></script>
 {% endblock %}
