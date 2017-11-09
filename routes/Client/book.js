@@ -344,4 +344,60 @@ module.exports = function (app) {
                 res.jsonp(contents);
             });
     });
+
+    app.post('/app/contentTypes2', function (req, res) {
+        if (!req.body.studentId) {
+            res.jsonp({
+                error: "信息不正确"
+            });
+            return;
+        }
+
+        model.db.sequelize.query("select contentType, count(0) as count from lessonContents where lessonId=:lessonId and isDeleted=false group by contentType", {
+                replacements: {
+                    lessonId: req.body.lessonId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (countResult) {
+                //总数 countResult
+                var lessonCount = {};
+                if (countResult && countResult.length > 0) {
+                    countResult.forEach(function (result) {
+                        switch (result.contentType) {
+                            case 1:
+                                lessonCount.wordCount = result.count;
+                                break;
+                            case 2:
+                                lessonCount.sentCount = result.count;
+                                break;
+                            default:
+                                lessonCount.isPara = true;
+                                break;
+                        }
+                    });
+                } else {
+                    res.jsonp({
+                        error: "还没有课文呢"
+                    });
+                    return;
+                }
+
+
+                StudentLesson.getFilter({
+                        lessonId: req.body.lessonId,
+                        studentId: req.body.studentId
+                    })
+                    .then(function (stuLesson) {
+                        if (stuLesson) {
+                            res.jsonp({
+                                stuLesson: stuLesson.toJSON(),
+                                wordCount: lessonCount.wordCount,
+                                sentCount: lessonCount.sentCount,
+                                isPara: lessonCount.isPara
+                            });
+                        }
+                    });
+            });
+    });
 }
