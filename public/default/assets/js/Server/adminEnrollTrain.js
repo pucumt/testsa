@@ -276,7 +276,8 @@ function openTrain(p) {
             grade: $("#selectModal #InfoSearch #grade").val(),
             subject: $("#selectModal #InfoSearch #subject").val(),
             category: $("#selectModal #InfoSearch #category").val(),
-            // yearId: $("#selectModal #InfoSearch #searchYear").val()
+            schoolId: $("#selectModal #InfoSearch #schoolArea").val(),
+            yearId: $("#selectModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();

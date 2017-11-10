@@ -581,6 +581,9 @@ module.exports = function (app) {
         if (req.body.school) {
             filter.schoolArea = req.body.school;
         }
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
         if (req.body.gradeName) {
             filter.gradeName = req.body.gradeName;
         }

@@ -184,7 +184,9 @@ function openTrain(p) {
             name: $("#selectModal #InfoSearch #trainName").val(),
             grade: $("#selectModal #InfoSearch #grade").val(),
             subject: $("#selectModal #InfoSearch #subject").val(),
-            category: $("#selectModal #InfoSearch #category").val()
+            category: $("#selectModal #InfoSearch #category").val(),
+            schoolId: $("#selectModal #InfoSearch #schoolArea").val(),
+            yearId: $("#selectModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
@@ -253,7 +255,7 @@ $("#panel_btnTrain").on("click", function (e) {
         '<label for="schoolArea" class="control-label">校区:</label>' +
         '<select name="schoolArea" id="schoolArea" class="form-control"></select></div><div class="form-group">' +
         '<label for="searchYear" class="control-label">年度:</label>' +
-        '<select name="searchYear" id="searchYear" class="form-control"></select></div></div>' +
+        '<select name="searchYear" id="searchYear" disabled class="form-control"></select></div></div>' +
         '<div class="col-md-4"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     renderGradeSubjectCategory(openTrain);
 });
@@ -303,17 +305,47 @@ function renderGradeSubjectCategory(callback) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function (grade) {
-                    $("#selectModal #InfoSearch #grade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
+                    var select = "";
+                    if ($("#gradeId").val() == grade._id) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #grade").append("<option value='" + grade._id + "' " + select + ">" + grade.name + "</option>");
                 });
             }
             if (data.subjects && data.subjects.length > 0) {
                 data.subjects.forEach(function (subject) {
-                    $("#selectModal #InfoSearch #subject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
+                    var select = "";
+                    if ($("#subjectId").val() == subject._id) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #subject").append("<option value='" + subject._id + "' " + select + ">" + subject.name + "</option>");
                 });
             }
             if (data.categorys && data.categorys.length > 0) {
                 data.categorys.forEach(function (category) {
-                    $("#selectModal #InfoSearch #category").append("<option value='" + category._id + "'>" + category.name + "</option>");
+                    var select = "";
+                    if ($("#categoryId").val() == category._id) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #category").append("<option value='" + category._id + "' " + select + ">" + category.name + "</option>");
+                });
+            }
+            if (data.schools && data.schools.length > 0) {
+                data.schools.forEach(function (school) {
+                    var select = "";
+                    if ($("#SchoolId").val() == school._id) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #schoolArea").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
+                });
+            }
+            if (data.years && data.years.length > 0) {
+                data.years.forEach(function (year) {
+                    var select = "";
+                    if ($("#yearId").val() == year._id) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
                 });
             }
             callback();

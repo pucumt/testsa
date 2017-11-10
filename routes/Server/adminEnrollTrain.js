@@ -221,117 +221,121 @@ module.exports = function (app) {
                     });
                     return;
                 }
-
-                // 1. 修改报名人数
-                // 2. 如果报满修改字段为满员 (may useless)
-                // 3. 添加新订单
-                model.db.sequelize.transaction(function (t1) {
-                        return TrainClass.update({
-                                enrollCount: model.db.sequelize.literal('`enrollCount`+1')
-                            }, {
-                                where: {
-                                    _id: req.body.trainId
-                                },
-                                transaction: t1
+                TrainClass.getFilter({
+                        _id: req.body.trainId
+                    })
+                    .then(trainClass => {
+                        // 1. 修改报名人数
+                        // 2. 如果报满修改字段为满员 (may useless)
+                        // 3. 添加新订单
+                        model.db.sequelize.transaction(function (t1) {
+                                return TrainClass.update({
+                                        enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                                    }, {
+                                        where: {
+                                            _id: req.body.trainId
+                                        },
+                                        transaction: t1
+                                    })
+                                    .then(function () {
+                                        if (global) {
+                                            return AdminEnrollTrain.create({
+                                                    studentId: req.body.studentId,
+                                                    studentName: req.body.studentName,
+                                                    mobile: req.body.mobile,
+                                                    trainId: req.body.trainId,
+                                                    trainName: req.body.trainName,
+                                                    attributeId: req.body.attributeId,
+                                                    attributeName: req.body.attributeName,
+                                                    trainPrice: req.body.trainPrice,
+                                                    materialPrice: req.body.materialPrice,
+                                                    discount: req.body.discount,
+                                                    totalPrice: req.body.totalPrice,
+                                                    realMaterialPrice: req.body.realMaterialPrice,
+                                                    comment: req.body.comment,
+                                                    createdBy: req.session.admin._id,
+                                                    schoolId: req.body.schoolId,
+                                                    schoolArea: req.body.schoolArea,
+                                                    yearId: trainClass.yearId,
+                                                    yearName: trainClass.yearName
+                                                }, {
+                                                    transaction: t1
+                                                })
+                                                .then(order => {
+                                                    if (req.body.couponId) {
+                                                        // 假定是优惠券的ID而不是分配好的优惠券
+                                                        return Coupon.getFilter({
+                                                                _id: req.body.couponId
+                                                            })
+                                                            .then(coupon => {
+                                                                if (coupon) { // 报名3科减
+                                                                    return CouponAssign.create({
+                                                                            couponId: coupon._id,
+                                                                            couponName: coupon.name,
+                                                                            gradeId: coupon.gradeId,
+                                                                            gradeName: coupon.gradeName,
+                                                                            subjectId: coupon.subjectId,
+                                                                            subjectName: coupon.subjectName,
+                                                                            reducePrice: coupon.reducePrice,
+                                                                            couponStartDate: coupon.couponStartDate,
+                                                                            couponEndDate: coupon.couponEndDate,
+                                                                            studentId: req.body.studentId,
+                                                                            studentName: req.body.studentName,
+                                                                            isUsed: true,
+                                                                            orderId: order._id,
+                                                                            createdBy: req.session.admin._id
+                                                                        })
+                                                                        .then(assign => {
+                                                                            return order;
+                                                                        });
+                                                                } else {
+                                                                    // 分配好的优惠券, couponId 就是assignId
+                                                                    return CouponAssign.getFilter({
+                                                                            _id: req.body.couponId,
+                                                                            studentId: req.body.studentId,
+                                                                            isDeleted: false,
+                                                                            isUsed: false
+                                                                        })
+                                                                        .then(function (couponAssign) {
+                                                                            if (couponAssign) {
+                                                                                // 优惠券就是真实未使用的
+                                                                                return CouponAssign.update({
+                                                                                        isUsed: true,
+                                                                                        orderId: order._id
+                                                                                    }, {
+                                                                                        where: {
+                                                                                            _id: couponAssign._id
+                                                                                        },
+                                                                                        transaction: t1
+                                                                                    })
+                                                                                    .then(result => {
+                                                                                        return order;
+                                                                                    });
+                                                                            } else {
+                                                                                // 优惠券状态更改,报名失败
+                                                                                throw new Error("优惠券状态发生更改");
+                                                                            }
+                                                                        });
+                                                                }
+                                                            });
+                                                    } else {
+                                                        return order;
+                                                    }
+                                                });
+                                        }
+                                    });
                             })
-                            .then(function () {
-                                if (global) {
-                                    return AdminEnrollTrain.create({
-                                            studentId: req.body.studentId,
-                                            studentName: req.body.studentName,
-                                            mobile: req.body.mobile,
-                                            trainId: req.body.trainId,
-                                            trainName: req.body.trainName,
-                                            attributeId: req.body.attributeId,
-                                            attributeName: req.body.attributeName,
-                                            trainPrice: req.body.trainPrice,
-                                            materialPrice: req.body.materialPrice,
-                                            discount: req.body.discount,
-                                            totalPrice: req.body.totalPrice,
-                                            realMaterialPrice: req.body.realMaterialPrice,
-                                            comment: req.body.comment,
-                                            createdBy: req.session.admin._id,
-                                            schoolId: req.body.schoolId,
-                                            schoolArea: req.body.schoolArea,
-                                            yearId: global.currentYear._id,
-                                            yearName: global.currentYear.name
-                                        }, {
-                                            transaction: t1
-                                        })
-                                        .then(order => {
-                                            if (req.body.couponId) {
-                                                // 假定是优惠券的ID而不是分配好的优惠券
-                                                return Coupon.getFilter({
-                                                        _id: req.body.couponId
-                                                    })
-                                                    .then(coupon => {
-                                                        if (coupon) { // 报名3科减
-                                                            return CouponAssign.create({
-                                                                    couponId: coupon._id,
-                                                                    couponName: coupon.name,
-                                                                    gradeId: coupon.gradeId,
-                                                                    gradeName: coupon.gradeName,
-                                                                    subjectId: coupon.subjectId,
-                                                                    subjectName: coupon.subjectName,
-                                                                    reducePrice: coupon.reducePrice,
-                                                                    couponStartDate: coupon.couponStartDate,
-                                                                    couponEndDate: coupon.couponEndDate,
-                                                                    studentId: req.body.studentId,
-                                                                    studentName: req.body.studentName,
-                                                                    isUsed: true,
-                                                                    orderId: order._id,
-                                                                    createdBy: req.session.admin._id
-                                                                })
-                                                                .then(assign => {
-                                                                    return order;
-                                                                });
-                                                        } else {
-                                                            // 分配好的优惠券, couponId 就是assignId
-                                                            return CouponAssign.getFilter({
-                                                                    _id: req.body.couponId,
-                                                                    studentId: req.body.studentId,
-                                                                    isDeleted: false,
-                                                                    isUsed: false
-                                                                })
-                                                                .then(function (couponAssign) {
-                                                                    if (couponAssign) {
-                                                                        // 优惠券就是真实未使用的
-                                                                        return CouponAssign.update({
-                                                                                isUsed: true,
-                                                                                orderId: order._id
-                                                                            }, {
-                                                                                where: {
-                                                                                    _id: couponAssign._id
-                                                                                },
-                                                                                transaction: t1
-                                                                            })
-                                                                            .then(result => {
-                                                                                return order;
-                                                                            });
-                                                                    } else {
-                                                                        // 优惠券状态更改,报名失败
-                                                                        throw new Error("优惠券状态发生更改");
-                                                                    }
-                                                                });
-                                                        }
-                                                    });
-                                            } else {
-                                                return order;
-                                            }
-                                        });
-                                }
+                            .then(function (order) {
+                                res.jsonp({
+                                    sucess: true,
+                                    orderId: order._id
+                                });
+                            })
+                            .catch(function (err) {
+                                res.jsonp({
+                                    error: "报名失败"
+                                });
                             });
-                    })
-                    .then(function (order) {
-                        res.jsonp({
-                            sucess: true,
-                            orderId: order._id
-                        });
-                    })
-                    .catch(function (err) {
-                        res.jsonp({
-                            error: "报名失败"
-                        });
                     });
             });
     };
@@ -661,8 +665,8 @@ module.exports = function (app) {
                                             baseId: (oldOrder.baseId || oldOrder._id),
                                             schoolId: req.body.schoolId,
                                             schoolArea: req.body.schoolArea,
-                                            yearId: global.currentYear._id,
-                                            yearName: global.currentYear.name
+                                            yearId: oldOrder.yearId,
+                                            yearName: oldOrder.yearName
                                         }, {
                                             transaction: t1
                                         }).then(order => {
@@ -710,13 +714,21 @@ module.exports = function (app) {
                 isSucceed: 1 // 防止刷新重新操作
             })
             .then(function (order) {
-                res.render('Server/changeClassDetail.html', {
-                    title: '>调班管理',
-                    user: req.session.admin,
-                    order: order
-                });
+                TrainClass.getFilter({
+                        _id: order.trainId
+                    })
+                    .then(trainClass => {
+                        var orderResult = order.toJSON();
+                        orderResult.gradeId = trainClass.gradeId;
+                        orderResult.subjectId = trainClass.subjectId;
+                        orderResult.categoryId = trainClass.categoryId;
+                        res.render('Server/changeClassDetail.html', {
+                            title: '>调班管理',
+                            user: req.session.admin,
+                            order: orderResult
+                        });
+                    });
             })
-
     });
 
     app.get('/admin/payList/:id', checkLogin);
