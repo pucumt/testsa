@@ -157,9 +157,7 @@ module.exports = function (app) {
                         if (scoreResult._id) {
                             //new;
                             if (isExist) {
-                                option.$inc = {
-                                    wordProcess: 1
-                                };
+                                option.wordProcess = model.db.sequelize.literal('`wordProcess`+1');
                             } else {
                                 option.wordProcess = 1;
                             }
@@ -172,9 +170,7 @@ module.exports = function (app) {
                         if (scoreResult._id) {
                             //new;
                             if (isExist) {
-                                option.$inc = {
-                                    sentProcess: 1
-                                };
+                                option.sentProcess = model.db.sequelize.literal('`sentProcess`+1');
                             } else {
                                 option.sentProcess = 1;
                             }
