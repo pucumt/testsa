@@ -129,6 +129,8 @@ module.exports = function (app) {
                     };
                     if (req.body.contentType == "0") {
                         option.scoreResult = req.body.scoreResult;
+                    } else {
+                        option.scoreResult = "";
                     }
                     return StudentLessonScore.create(option)
                         .then(function (result) {
@@ -137,6 +139,9 @@ module.exports = function (app) {
                                 saveRecord(req.body.studentId, req.body.recordId, result._id);
                             }
                             return result;
+                        })
+                        .catch(ex => {
+                            console.log(ex);
                         });
                 }
             });
@@ -388,6 +393,12 @@ module.exports = function (app) {
                         if (stuLesson) {
                             res.jsonp({
                                 stuLesson: stuLesson.toJSON(),
+                                wordCount: lessonCount.wordCount,
+                                sentCount: lessonCount.sentCount,
+                                isPara: lessonCount.isPara
+                            });
+                        } else {
+                            res.jsonp({
                                 wordCount: lessonCount.wordCount,
                                 sentCount: lessonCount.sentCount,
                                 isPara: lessonCount.isPara
