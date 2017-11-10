@@ -249,6 +249,11 @@ $("#panel_btnTrain").on("click", function (e) {
         '<div class="form-group"><label for="grade" class="control-label">年级:</label><select name="grade" id="grade" class="form-control"></select></div>' +
         '<div class="form-group"><label for="subject" class="control-label">科目:</label><select name="subject" id="subject" class="form-control"></select></div>' +
         '<div class="form-group"><label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div></div>' +
+        '<div class="col-md-20" style="margin-top: 10px;"><div class="form-group">' +
+        '<label for="schoolArea" class="control-label">校区:</label>' +
+        '<select name="schoolArea" id="schoolArea" class="form-control"></select></div><div class="form-group">' +
+        '<label for="searchYear" class="control-label">年度:</label>' +
+        '<select name="searchYear" id="searchYear" class="form-control"></select></div></div>' +
         '<div class="col-md-4"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     renderGradeSubjectCategory(openTrain);
 });
@@ -294,7 +299,7 @@ function renderGradeSubjectCategory(callback) {
     $('#selectModal #InfoSearch').find("#grade option").remove();
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
-    selfAjax("get", "/admin/trainClass/gradesubjectcategoryyear", {}, function (data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategoryschoolyear", {}, function (data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function (grade) {

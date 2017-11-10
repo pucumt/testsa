@@ -347,7 +347,11 @@ $("#panel_btnTrain").on("click", function (e) {
         '<div class="form-group"><label for="grade" class="control-label">年级:</label><select name="grade" id="grade" class="form-control"></select></div>' +
         '<div class="form-group" style="width:190px;"><label for="subject" class="control-label">科目:</label><select name="subject" id="subject" class="form-control"></select></div>' +
         '<div class="form-group"><label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div></div>' +
-        // '<div class="form-group"><label for="searchYear" class="control-label">年度:</label><select name="searchYear" id="searchYear" class="form-control"></select></div></div>' +
+        '<div class="col-md-20" style="margin-top: 10px;"><div class="form-group">' +
+        '<label for="schoolArea" class="control-label">校区:</label>' +
+        '<select name="schoolArea" id="schoolArea" class="form-control"></select></div><div class="form-group">' +
+        '<label for="searchYear" class="control-label">年度:</label>' +
+        '<select name="searchYear" id="searchYear" class="form-control"></select></div></div>' +
         '<div class="col-md-4" style=""><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     renderGradeSubjectCategoryYear(openTrain);
 });
@@ -509,7 +513,7 @@ function renderGradeSubjectCategoryYear(callback) {
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
     // $('#selectModal #InfoSearch').find("#searchYear option").remove();
-    selfAjax("get", "/admin/trainClass/gradesubjectcategoryyear", null, function (data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategoryschoolyear", null, function (data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
                 data.grades.forEach(function (grade) {
@@ -526,16 +530,24 @@ function renderGradeSubjectCategoryYear(callback) {
                     $("#selectModal #InfoSearch #category").append("<option value='" + category._id + "'>" + category.name + "</option>");
                 });
             }
-
-            // if (data.years && data.years.length > 0) {
-            //     data.years.forEach(function(year) {
-            //         var select = "";
-            //         if (year.isCurrentYear) {
-            //             select = "selected";
-            //         }
-            //         $("#selectModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
-            //     });
-            // }
+            if (data.schools && data.schools.length > 0) {
+                data.schools.forEach(function (school) {
+                    var select = "";
+                    if ($("#adminSchoolId").val() == school._id) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #schoolArea").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
+                });
+            }
+            if (data.years && data.years.length > 0) {
+                data.years.forEach(function (year) {
+                    var select = "";
+                    if (year.isCurrentYear) {
+                        select = "selected";
+                    }
+                    $("#selectModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
+                });
+            }
             callback();
         }
     });

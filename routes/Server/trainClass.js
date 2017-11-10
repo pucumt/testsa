@@ -6,6 +6,7 @@ var model = require("../../model.js"),
     Grade = model.grade,
     Subject = model.subject,
     Category = model.category,
+    SchoolArea = model.schoolArea,
     ExamCategory = model.examCategory,
     ExamClass = model.examClass,
     ClassAttribute = model.classAttribute,
@@ -307,8 +308,8 @@ module.exports = function (app) {
             });
     });
 
-    app.get('/admin/trainClass/gradesubjectcategoryyear', checkLogin);
-    app.get('/admin/trainClass/gradesubjectcategoryyear', function (req, res) {
+    app.get('/admin/trainClass/gradesubjectcategoryschoolyear', checkLogin);
+    app.get('/admin/trainClass/gradesubjectcategoryschoolyear', function (req, res) {
         var objReturn = {};
         var p1 = Grade.getFilters({})
             .then(function (grades) {
@@ -338,7 +339,14 @@ module.exports = function (app) {
             .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p3, p4])
+        var p5 = SchoolArea.getFilters({})
+            .then(schools => {
+                objReturn.schools = schools;
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+        Promise.all([p1, p2, p3, p4, p5])
             .then(function () {
                 res.jsonp(objReturn);
             })
