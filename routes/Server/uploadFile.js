@@ -994,7 +994,7 @@ module.exports = function (app) {
             .then(orders => {
                 if (orders && orders.length > 0) {
                     orders.forEach(function (order) {
-                        var singleInfo = [order.studentName, order.mobile, order.School, order.className, (order.sex ? "女" : "男"), order.createdDate, order.subjectName, order.schoolArea, order.name, order.courseTime, order.gradeName, order.totalPrice, order.realMaterialPrice, order.rebatePrice, getPayway(order.payWay), order.comment];
+                        var singleInfo = [order.studentName, order.mobile, order.School, order.className, (order.sex ? "女" : "男"), order.createdDate, order.subjectName, order.schoolArea, order.name, order.courseTime, order.gradeName, parseFloat(order.totalPrice), parseFloat(order.realMaterialPrice), parseFloat(order.rebatePrice), getPayway(order.payWay), order.comment];
                         data.push(singleInfo);
                     });
                 }
