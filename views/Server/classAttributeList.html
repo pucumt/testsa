@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -24,13 +25,16 @@
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+        <button id="btnStart" class="btn btn-default btn-sm">启用</button>
+        <button id="btnStop" class="btn btn-default btn-sm">停用</button>
     </div>
 </div>
 <div class="content mainModal">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:30%;">属性</th>
+                <th style="width:150px">属性</th>
+                <th style="width:200px">使用状态</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -48,7 +52,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body">
@@ -72,7 +78,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -86,5 +94,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/classAttribute.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/classAttribute.js?v=1.001"></script>
 {% endblock %}

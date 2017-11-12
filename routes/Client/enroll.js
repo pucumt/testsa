@@ -23,6 +23,7 @@ var model = require("../../model.js"),
     GradeSubjectCategoryRelation = model.gradeSubjectCategoryRelation,
     EnrollProcessConfigure = model.enrollProcessConfigure,
     Year = model.year,
+    ClassAttribute = model.classAttribute,
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
 
@@ -86,6 +87,9 @@ module.exports = function (app) {
         }
         if (req.body.categoryId) {
             filter.categoryId = req.body.categoryId;
+        }
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
         }
         //查询并返回第 page 页的 14 篇文章
         TrainClass.getFiltersWithPage(page, filter).then(function (result) {
@@ -375,7 +379,7 @@ module.exports = function (app) {
             });
     });
 
-    app.get('/enroll/schoolgradesubjectcategory', function (req, res) {
+    app.get('/enroll/schoolgradesubjectcategoryattribute', function (req, res) {
         EnrollProcessConfigure.getFilter({})
             .then(function (configure) {
                 if (configure && (!configure.newStudentStatus)) {
@@ -433,7 +437,16 @@ module.exports = function (app) {
                         .catch(function (err) {
                             console.log('errored');
                         });
-                    Promise.all([p0, p1, p2, p3, p4, p5, p6])
+                    var p7 = ClassAttribute.getFilters({
+                            isChecked: true // only checked attributes will show here.
+                        })
+                        .then(function (classAttributes) {
+                            objReturn.classAttributes = classAttributes;
+                        })
+                        .catch(err => {
+                            console.log('err');
+                        });
+                    Promise.all([p0, p1, p2, p3, p4, p5, p6, p7])
                         .then(function () {
                             res.jsonp(objReturn);
                         })

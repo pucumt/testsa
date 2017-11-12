@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnAttribute").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -9,9 +9,13 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
+var getButtons = function () {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
+};
+
+var getStatus = function (isChecked) {
+    return isChecked ? "启用" : "停用";
 };
 
 function search(p) {
@@ -20,10 +24,11 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/classAttributeList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/classAttributeList/search?" + pStr, filter, function (data) {
         if (data && data.classAttributes.length > 0) {
-            data.classAttributes.forEach(function(classAttribute) {
-                var $tr = $('<tr id=' + classAttribute._id + '><td>' + classAttribute.name + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+            data.classAttributes.forEach(function (classAttribute) {
+                var $tr = $('<tr id=' + classAttribute._id + '><td><span><input type="checkbox" name="classAttributeId" value=' + classAttribute._id + ' /></span>' + classAttribute.name + '</td><td>' +
+                    getStatus(classAttribute.isChecked) + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", classAttribute);
                 $mainSelectBody.append($tr);
             });
@@ -34,16 +39,16 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     search(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     search(page);
 });
@@ -57,7 +62,7 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
             // List of fields and their validation rules
             fields: {
@@ -79,7 +84,7 @@ function addValidation(callback) {
     }, 0);
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -87,10 +92,13 @@ $("#btnAdd").on("click", function(e) {
     $('#myModalLabel').text("新增属性");
     $('#name').val("");
     $('#address').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/classAttribute/add",
@@ -101,7 +109,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/classAttribute/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
@@ -117,7 +125,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -126,21 +134,65 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModalLabel').text("修改属性");
     $('#name').val(entity.name);
     $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗?");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/classAttribute/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 $(obj).parents()[2].remove();
                 showAlert("删除成功!");
             }
         });
     });
+});
+
+
+$("#btnStart").on("click", function (e) {
+    var trainIds = getAllCheckedIds($(".mainModal #gridBody [name='classAttributeId']"));
+    if (trainIds.length > 0) {
+        showConfirm("确定要启用吗?");
+        $("#btnConfirmSave").off("click").on("click", function (e) {
+            selfAjax("post", "/admin/classAttribute/startAll", {
+                ids: JSON.stringify(trainIds)
+            }, function (data) {
+                if (data.sucess) {
+                    showAlert("启用成功！");
+                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        search(page);
+                    });
+                }
+            });
+        });
+    }
+});
+
+$("#btnStop").on("click", function (e) {
+    var trainIds = getAllCheckedIds($(".mainModal #gridBody [name='classAttributeId']"));
+    if (trainIds.length > 0) {
+        showConfirm("确定要停用吗?");
+        $("#btnConfirmSave").off("click").on("click", function (e) {
+            selfAjax("post", "/admin/classAttribute/stopAll", {
+                ids: JSON.stringify(trainIds)
+            }, function (data) {
+                if (data.sucess) {
+                    showAlert("停用成功！");
+                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
+                        var page = parseInt($("#mainModal #page").val());
+                        search(page);
+                    });
+                }
+            });
+        });
+    }
 });

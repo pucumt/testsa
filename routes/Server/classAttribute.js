@@ -90,4 +90,40 @@ module.exports = function (app) {
             });
         });
     });
+
+    app.post('/admin/classAttribute/startAll', checkLogin);
+    app.post('/admin/classAttribute/startAll', function (req, res) {
+        ClassAttribute.update({
+                isChecked: true
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
+
+    app.post('/admin/classAttribute/stopAll', checkLogin);
+    app.post('/admin/classAttribute/stopAll', function (req, res) {
+        ClassAttribute.update({
+                isChecked: false
+            }, {
+                where: {
+                    _id: {
+                        $in: JSON.parse(req.body.ids)
+                    }
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
 }

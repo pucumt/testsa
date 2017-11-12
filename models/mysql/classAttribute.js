@@ -7,6 +7,10 @@ const ClassAttribute = db.defineModel('classAttributes', {
     name: {
         type: db.STRING(50),
         defaultValue: ""
+    },
+    isChecked: {
+        type: db.BOOLEAN,
+        defaultValue: true
     }
 });
 module.exports = ClassAttribute;
