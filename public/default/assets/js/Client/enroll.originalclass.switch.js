@@ -60,6 +60,14 @@ function renderfilter() {
                 $(".enroll-filter").show();
                 $('.container.enroll').hide();
             }
+
+            if (data.classAttributes.length > 0) {
+                data.classAttributes.forEach(function (classAttribute) {
+                    $(".enroll-filter #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+                });
+            } else {
+                $('.container.enroll-filter .attribute').hide();
+            }
         }
     });
 };
@@ -72,7 +80,8 @@ function loadData(p) {
             schoolId: $('.enroll-filter #drpSchool').val(),
             gradeId: $('.enroll-filter #drpGrade').val(),
             subjectId: $('.enroll-filter #drpSubject').val(),
-            categoryId: $('.enroll-filter #drpCategory').val()
+            categoryId: $('.enroll-filter #drpCategory').val(),
+            attributeId: $('.enroll-filter #drpAttribute').val()
         };
     selfAjax("post", "/enroll/originalclass/switch?" + pStr, filter, function (data) {
         if (data && data.classs.length > 0) {

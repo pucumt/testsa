@@ -106,7 +106,8 @@ module.exports = function (app) {
                 .then(function (year) {
                     global.currentYear = {
                         _id: req.body.id,
-                        name: req.body.name
+                        name: req.body.name,
+                        sequence: req.body.sequence
                     };
                     res.jsonp(year);
                 })

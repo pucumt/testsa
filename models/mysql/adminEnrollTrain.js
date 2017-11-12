@@ -25,27 +25,27 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         defaultValue: ''
     },
     trainPrice: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     },
     materialPrice: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     },
     discount: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 100
     },
     totalPrice: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     }, //实际培训费
     realMaterialPrice: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     }, //实际教材费
     rebatePrice: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     }, //退费
     isSucceed: {

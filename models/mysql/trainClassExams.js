@@ -16,7 +16,7 @@ const TrainClassExams = db.defineModel('trainClassExams', {
         defaultValue: ""
     },
     minScore: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     }
 });

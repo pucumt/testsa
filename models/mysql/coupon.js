@@ -38,11 +38,11 @@ const Coupon = db.defineModel('coupons', {
         defaultValue: ''
     },
     reducePrice: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     },
     reduceMax: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     }, // 随机优惠券的额度
     isPublished: {

@@ -25,7 +25,7 @@ const StudentLessonScore = db.defineModel('studentLessonScores', {
         defaultValue: 0
     }, //0 content 1 word 2 sentence
     score: {
-        type: db.DECIMAL(10, 2),
+        type: db.FLOAT,
         defaultValue: 0
     },
     scoreResult: {

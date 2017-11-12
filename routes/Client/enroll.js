@@ -165,7 +165,9 @@ module.exports = function (app) {
         if (req.body.categoryId) {
             filter.categoryId = req.body.categoryId;
         }
-
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
         //查询并返回第 page 页的 14 篇文章
         TrainClass.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
@@ -1388,8 +1390,16 @@ module.exports = function (app) {
                                         })
                                 });
                             });
-
-                        Promise.all([p1, p2]).then(function () {
+                        var p3 = ClassAttribute.getFilters({
+                                isChecked: true // only checked attributes will show here.
+                            })
+                            .then(function (classAttributes) {
+                                objReturn.classAttributes = classAttributes;
+                            })
+                            .catch(err => {
+                                console.log('err');
+                            });;
+                        Promise.all([p1, p2, p3]).then(function () {
                             res.jsonp(objReturn);
                         });
                     });

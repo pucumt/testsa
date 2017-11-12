@@ -85,6 +85,8 @@ function renderfilter() {
                 data.classAttributes.forEach(function (classAttribute) {
                     $(".enroll-filter #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
                 });
+            } else {
+                $('.container.enroll-filter .attribute').hide();
             }
         }
     });
