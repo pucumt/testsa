@@ -29,6 +29,8 @@
                 <li id="header_btnFinancial" role="presentation">财务管理</li>
                 <li id="header_btnBasic" role="presentation">基本设置</li>
                 <li id="header_btnEnrollExam" role="presentation">测试报名</li>
+                {% elif user.role==7 %}
+                <li id="header_btnFinancial" role="presentation">财务管理</li>
                 {% endif %}
                 
                 {% if (user.role == 0 or user.role == 7) %} 

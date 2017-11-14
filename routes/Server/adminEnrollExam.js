@@ -12,7 +12,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/adminEnrollExamList', checkLogin);
-    app.get('/admin/adminEnrollExamList', auth.checkSecure);
+    app.get('/admin/adminEnrollExamList', auth.checkSecure([0, 3]));
     app.get('/admin/adminEnrollExamList', function (req, res) {
         res.render('Server/adminEnrollExamList.html', {
             title: '>测试报名',

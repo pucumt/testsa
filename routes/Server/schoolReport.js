@@ -10,7 +10,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/schoolReportList', checkLogin);
-    app.get('/admin/schoolReportList', auth.checkSecure);
+    app.get('/admin/schoolReportList', auth.checkSecure([0, 7]));
     app.get('/admin/schoolReportList', function (req, res) {
         res.render('Server/schoolReportList.html', {
             title: '>校区金额报表',
