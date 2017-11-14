@@ -212,7 +212,7 @@ function openTrain(p) {
                 $('#enrollInfo #schoolId').val(entity.schoolId); //
                 $('#enrollInfo #schoolArea').val(entity.schoolArea); //
                 $('#selectModal').modal('hide');
-                setPrice();
+                // setPrice();
             });
         }
         $("#selectModal #total").val(data.total);
@@ -279,16 +279,16 @@ $("#selectModal .paging .nextpage").on("click", function (e) {
     }
 });
 
-function setPrice() {
-    var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
-        discount = (parseFloat($("#enrollInfo #discount").val()) || 100),
-        realPrice = (trainPrice * discount / 100).toFixed(2);
+// function setPrice() {
+//     var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
+//         discount = (parseFloat($("#enrollInfo #discount").val()) || 100),
+//         realPrice = (trainPrice * discount / 100).toFixed(2);
 
-    $("#enrollInfo #totalPrice").val(realPrice);
-};
+//     $("#enrollInfo #totalPrice").val(realPrice);
+// };
 
-$("#enrollInfo #trainPrice").on("change blur", setPrice);
-$("#enrollInfo #discount").on("change blur", setPrice);
+// $("#enrollInfo #trainPrice").on("change blur", setPrice);
+// $("#enrollInfo #discount").on("change blur", setPrice);
 
 function renderGradeSubjectCategory(callback) {
     $('#selectModal #InfoSearch').find("#grade option").remove();
