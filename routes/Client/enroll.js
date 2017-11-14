@@ -1190,6 +1190,7 @@ module.exports = function (app) {
                                                                                         .then(function () {
                                                                                             return AdminEnrollTrain.update({
                                                                                                 isSucceed: 9,
+                                                                                                cancelType: 1,
                                                                                                 deletedDate: new Date(),
                                                                                                 deletedBy: req.session.user._id
                                                                                             }, {

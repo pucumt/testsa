@@ -52,6 +52,10 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         type: db.INTEGER,
         defaultValue: 1
     }, //1 succeed, 9 canceled, 6 use soon
+    cancelType: {
+        type: db.INTEGER,
+        defaultValue: 0
+    }, //0 退课, 1 调课历史记录
     isPayed: {
         type: db.BOOLEAN,
         defaultValue: false

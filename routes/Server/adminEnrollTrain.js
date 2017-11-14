@@ -598,7 +598,7 @@ module.exports = function (app) {
         //     });
     });
 
-    // 调班
+    // 调班调班
     app.post('/admin/adminEnrollTrain/changeClass', checkLogin);
     app.post('/admin/adminEnrollTrain/changeClass', function (req, res) {
         AdminEnrollTrain.getFilter({
@@ -680,6 +680,7 @@ module.exports = function (app) {
                                             }).then(function () {
                                                 return AdminEnrollTrain.update({
                                                     isSucceed: 9,
+                                                    cancelType: 1,
                                                     deletedDate: new Date(),
                                                     deletedBy: req.session.admin._id
                                                 }, {
