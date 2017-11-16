@@ -12,6 +12,7 @@ $(document).ready(function () {
 
 function addValidation(callback) {
     $('#enrollInfo').formValidation({
+        declarative: false,
         // List of fields and their validation rules
         fields: {
             'studentName': {

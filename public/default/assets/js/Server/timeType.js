@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnTimeType").addClass("active");
 
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
@@ -11,12 +11,12 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
+var getButtons = function () {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
 
-var getStatus = function(isChecked) {
+var getStatus = function (isChecked) {
     return isChecked ? "启用" : "停用";
 };
 
@@ -26,9 +26,9 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/timeTypeList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/timeTypeList/search?" + pStr, filter, function (data) {
         if (data && data.timeTypes.length > 0) {
-            data.timeTypes.forEach(function(timeType) {
+            data.timeTypes.forEach(function (timeType) {
                 var $tr = $('<tr id=' + timeType._id + '><td><span><input type="checkbox" name="timeTypeId" value=' + timeType._id + ' /></span>' + timeType.name + '</td><td>' +
                     getStatus(timeType.isChecked) + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", timeType);
@@ -41,16 +41,16 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     search(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     search(page);
 });
@@ -64,8 +64,9 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'name': {
@@ -86,16 +87,19 @@ function addValidation(callback) {
     }, 0);
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
     $('#myModalLabel').text("新增");
     $('#name').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/timeType/add",
@@ -106,7 +110,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/timeType/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             search(page);
@@ -114,7 +118,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -123,17 +127,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModalLabel').text("修改");
     $('#name').val(entity.name);
     $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/timeType/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
@@ -143,17 +150,17 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
 });
 
 
-$("#btnStart").on("click", function(e) {
+$("#btnStart").on("click", function (e) {
     var trainIds = getAllCheckedIds($(".mainModal #gridBody [name='timeTypeId']"));
     if (trainIds.length > 0) {
         showConfirm("确定要启用吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/timeType/startAll", {
                 ids: JSON.stringify(trainIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("启用成功！");
-                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         search(page);
                     });
@@ -163,17 +170,17 @@ $("#btnStart").on("click", function(e) {
     }
 });
 
-$("#btnStop").on("click", function(e) {
+$("#btnStop").on("click", function (e) {
     var trainIds = getAllCheckedIds($(".mainModal #gridBody [name='timeTypeId']"));
     if (trainIds.length > 0) {
         showConfirm("确定要停用吗?");
-        $("#btnConfirmSave").off("click").on("click", function(e) {
+        $("#btnConfirmSave").off("click").on("click", function (e) {
             selfAjax("post", "/admin/timeType/stopAll", {
                 ids: JSON.stringify(trainIds)
-            }, function(data) {
+            }, function (data) {
                 if (data.sucess) {
                     showAlert("停用成功！");
-                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function(e) {
+                    $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
                         var page = parseInt($("#mainModal #page").val());
                         search(page);
                     });

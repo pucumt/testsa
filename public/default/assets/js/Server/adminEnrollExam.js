@@ -22,6 +22,7 @@ function resetScroll() {
 
 function addValidation(callback) {
     $('#studentInfo').formValidation({
+        declarative: false,
         // List of fields and their validation rules
         fields: {
             'studentName': {
@@ -72,6 +73,7 @@ function addValidation(callback) {
     });
 
     $('#enrollInfo').formValidation({
+        declarative: false,
         // List of fields and their validation rules
         fields: {
             'studentName': {

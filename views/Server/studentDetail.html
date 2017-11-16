@@ -1,7 +1,9 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock
+%} {% block main %}
 <div class="title">
     <h1>
-        {{ title }}><a href="/admin/studentsList">返回</a>
+        {{ title }}>
+        <a href="/admin/studentsList">返回</a>
     </h1>
     <input type="hidden" class="form-control" name="id" id="id" value={{id}}>
     <input type="hidden" class="form-control" name="accountId" id="accountId">
@@ -9,7 +11,9 @@
 <div class="content">
     <div class="panel panel-default mainModal">
         <div class="panel-heading">学生信息
-            <span style="margin-left: 100px;">账号(手机号):<span class="account"></span></span>
+            <span style="margin-left: 100px;">账号(手机号):
+                <span class="account"></span>
+            </span>
         </div>
         <div class="panel-body">
             <form id="studentInfo">
@@ -36,9 +40,9 @@
                         <div class="form-group">
                             <label for="sex" class="control-label">性别:</label>
                             <select name="sex" id="sex" class="form-control">
-                            <option value="0">男</option>
-                            <option value="1">女</option>
-                        </select>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -168,7 +172,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -182,6 +188,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/studentDetail.js?v=1.004"></script>
+<script type="text/javascript" src="/default/assets/js/Server/studentDetail.js?v=1.005"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

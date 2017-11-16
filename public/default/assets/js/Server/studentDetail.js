@@ -57,6 +57,7 @@ function renderAccount(id) {
 
 function addValidation() {
     $('#studentInfo').formValidation({
+        declarative: false,
         // List of fields and their validation rules
         fields: {
             'studentName': {

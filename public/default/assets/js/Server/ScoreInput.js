@@ -14,6 +14,7 @@ $(document).ready(function () {
 
 function addValidation() {
     $('#editfile').formValidation({
+        declarative: false,
         // List of fields and their validation rules
         fields: {
             'examName': {

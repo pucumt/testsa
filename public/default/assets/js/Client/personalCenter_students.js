@@ -1,13 +1,13 @@
 var newStudent = true,
     editStudent;
 
-$(document).ready(function() {
-    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
+$(document).ready(function () {
+    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/personalCenter";
     });
     loadStudents();
 
-    $("#Enroll-student #btnNewStudent").on("click", function(e) {
+    $("#Enroll-student #btnNewStudent").on("click", function (e) {
         destroy();
         addValidation();
         $("#Enroll-student-edit").show();
@@ -22,7 +22,7 @@ $(document).ready(function() {
         newStudent = true;
     });
 
-    $("#Enroll-student .student .student-list").on("click", "li .btn-edit", function(e) {
+    $("#Enroll-student .student .student-list").on("click", "li .btn-edit", function (e) {
         var obj = e.currentTarget;
         var entity = $(obj).parent().data("obj");
         editStudent = entity;
@@ -36,7 +36,7 @@ $(document).ready(function() {
         $('#studentInfo #sex').val(entity.sex ? 1 : 0);
         $('#studentInfo #School').val(entity.School);
         $('#studentInfo #className').val(entity.className);
-        resetDropDown(null, function() {
+        resetDropDown(null, function () {
             $('#studentInfo #grade').val(entity.gradeId);
         });
         newStudent = false;
@@ -45,12 +45,12 @@ $(document).ready(function() {
     });
 
 
-    $("#Enroll-student-edit .glyphicon").on("click", function(e) {
+    $("#Enroll-student-edit .glyphicon").on("click", function (e) {
         $("#Enroll-student-edit").hide();
         $("#Enroll-student").show();
     });
 
-    $("#Enroll-student-edit #btnSave").on("click", function(e) {
+    $("#Enroll-student-edit #btnSave").on("click", function (e) {
         var validator = $('#studentInfo').data('formValidation').validate();
         if (validator.isValid()) {
             $("#Enroll-student-edit #btnSave").attr("disabled", "disabled");
@@ -69,7 +69,7 @@ $(document).ready(function() {
                 postURI = "/studentInfo/edit";
                 postObj.id = editStudent._id;
             }
-            selfAjax("post", postURI, postObj, function(data) {
+            selfAjax("post", postURI, postObj, function (data) {
                 $("#Enroll-student-edit #btnSave").removeAttr("disabled");
                 if (data && data.error) {
                     showAlert(data.error);
@@ -95,7 +95,7 @@ $(document).ready(function() {
 function loadStudents() {
     selfAjax("post", "/enroll/students", {
         originalUrl: "/personalCenter/students"
-    }, function(data) {
+    }, function (data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
@@ -118,7 +118,7 @@ var $ul = $("#Enroll-student .student .student-list");
 function renderStudents(students) {
     if (students.length > 0) {
         var d = $(document.createDocumentFragment());
-        students.forEach(function(student) {
+        students.forEach(function (student) {
             var li = $('<li id=' + student._id + ' ><span class="name">' + student.name +
                 '</span><button type="button" style="margin-right:30px" class="btn btn-primary btn-edit btn-xs pull-right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑</button></li>');
             li.data("obj", student);
@@ -136,8 +136,9 @@ function destroy() {
 };
 
 function addValidation() {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#studentInfo').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'studentName': {
@@ -171,10 +172,10 @@ function addValidation() {
 
 function resetDropDown(id, callback) {
     $('#studentInfo').find("#grade option").remove();
-    selfAjax("get", "/enroll/grade/all", null, function(data) {
+    selfAjax("get", "/enroll/grade/all", null, function (data) {
         if (data) {
             if (data && data.length > 0) {
-                data.forEach(function(grade) {
+                data.forEach(function (grade) {
                     var select = "";
                     if (grade._id == id) {
                         select = "selected";

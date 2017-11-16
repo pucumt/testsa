@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnSchool").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -14,8 +14,9 @@ function destroy() {
 }
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'name': {
@@ -45,7 +46,7 @@ function addValidation(callback) {
     }, 0);
 }
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -53,10 +54,13 @@ $("#btnAdd").on("click", function(e) {
     $('#myModalLabel').text("新增校区");
     $('#name').val("");
     $('#address').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/schoolArea/add",
@@ -69,14 +73,14 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/schoolArea/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             location.href = location.href;
         });
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -88,17 +92,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#address').val(entity.address);
     $('#sequence').val(entity.sequence);
     $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/schoolArea/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
@@ -107,7 +114,7 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnReset", function(e) {
+$("#gridBody").on("click", "td .btnReset", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     location.href = "/admin/schoolArea/settings/" + entity._id;

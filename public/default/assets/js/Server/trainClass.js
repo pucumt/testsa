@@ -131,7 +131,8 @@ $("#mainModal .paging .nextpage").on("click", function (e) {
 function destroy() {
     var validator = $('#myModal').data('formValidation');
     if (validator) {
-        validator.resetForm().destroy();
+        validator.destroy();
+        validator = null;
     }
 };
 
@@ -141,6 +142,7 @@ function addValidation(callback) {
         if (!validator) {
             $('#myModal').formValidation({
                 framework: 'bootstrap',
+                declarative: false,
                 // Feedback icons
                 icon: {
                     valid: 'glyphicon glyphicon-ok',
@@ -396,6 +398,8 @@ $("#myModal #btnSave").on("click", function (e) {
             $('#myModal').modal('hide');
             var page = parseInt($("#mainModal #page").val());
             searchClass(page);
+
+            // destroy();
         });
     }
 });
@@ -419,7 +423,6 @@ function getAllExams() {
 $("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
-    addValidation();
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增课程");
     $('#myModal #name').val("");
@@ -440,6 +443,9 @@ $("#btnAdd").on("click", function (e) {
     // $('#minScore').val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
+    setTimeout(() => {
+        addValidation();
+    }, 0);
     $('#myModal').modal({
         backdrop: 'static',
         keyboard: false
@@ -449,7 +455,6 @@ $("#btnAdd").on("click", function (e) {
 $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
-    addValidation();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     $('#myModal #name').attr("disabled", "disabled");
@@ -488,6 +493,9 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
 
     $('#myModal #id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
+    setTimeout(() => {
+        addValidation();
+    }, 0);
     $('#myModal').modal({
         backdrop: 'static',
         keyboard: false

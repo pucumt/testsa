@@ -33,10 +33,12 @@
 <div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
 <div id="Enroll-select" style="display:none;">
     <div class="title">
-        学员确认<span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
+        学员确认
+        <span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
     </div>
     <div class="student">
-        <span class="name"></span><span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+        <span class="name"></span>
+        <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
         <input type="hidden" id="studentId" />
     </div>
     <div class="form-group examAreas">
@@ -49,7 +51,8 @@
 </div>
 <div id="Enroll-student" style="display:none; height: 100%;">
     <div class="title">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span><span class="title">学员</span>
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>
+        <span class="title">学员</span>
     </div>
     <div class="student">
         <ul class="student-list clearfix list-unstyled">
@@ -61,7 +64,8 @@
 </div>
 <div id="Enroll-student-edit" style="display:none; overflow: auto; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; z-index: 1000; transition: none 0.2s ease; opacity: 1;">
     <div class="title">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span><span class="title">新建</span>
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>
+        <span class="title">新建</span>
     </div>
     <div class="student">
         <form id="studentInfo">
@@ -72,9 +76,9 @@
             <div class="form-group">
                 <label for="sex" class="control-label">性别:</label>
                 <select name="sex" id="sex" class="form-control">
-                <option value="0">男</option>
-                <option value="1">女</option>
-            </select>
+                    <option value="0">男</option>
+                    <option value="1">女</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="School" class="control-label">学校(当前就读学校):</label>
@@ -112,6 +116,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.exam.detail.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.exam.detail.js?v=1.000"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}
