@@ -11,6 +11,9 @@ var model = require("../../model.js"),
     ExamClass = model.examClass,
     ClassAttribute = model.classAttribute,
     AdminEnrollTrain = model.adminEnrollTrain,
+    SchoolGradeRelation = model.schoolGradeRelation,
+    GradeSubjectRelation = model.gradeSubjectRelation,
+    GradeSubjectCategoryRelation = model.gradeSubjectCategoryRelation,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -346,7 +349,37 @@ module.exports = function (app) {
             .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p1, p2, p3, p4, p5])
+        var p6 = SchoolGradeRelation.getFilters({})
+            .then(function (schoolGradeRelations) {
+                objReturn.schoolGradeRelations = schoolGradeRelations;
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+        var p7 = GradeSubjectRelation.getFilters({})
+            .then(function (gradeSubjectRelations) {
+                objReturn.gradeSubjectRelations = gradeSubjectRelations;
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+        var p8 = GradeSubjectCategoryRelation.getFilters({})
+            .then(function (gradeSubjectCategoryRelations) {
+                objReturn.gradeSubjectCategoryRelations = gradeSubjectCategoryRelations;
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+        var p9 = ClassAttribute.getFilters({
+                isChecked: true // only checked attributes will show here.
+            })
+            .then(function (classAttributes) {
+                objReturn.classAttributes = classAttributes;
+            })
+            .catch(err => {
+                console.log('err');
+            });
+        Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9])
             .then(function () {
                 res.jsonp(objReturn);
             })
