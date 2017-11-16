@@ -62,6 +62,7 @@ function destroy() {
 function addValidation(callback) {
     setTimeout(function () {
         $('#myModal').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'name': {

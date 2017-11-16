@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnSubject").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -14,8 +14,9 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'name': {
@@ -36,17 +37,20 @@ function addValidation(callback) {
     }, 0);
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增科目");
     $('#name').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/subject/add",
@@ -57,7 +61,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/subject/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td><div class='btn-group'><a class='btn btn-default btnEdit'>编辑</a><a class='btn btn-default btnDelete'>删除</a></div></td></tr>");
@@ -73,7 +77,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -83,17 +87,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#myModalLabel').text("修改科目");
     $('#name').val(entity.name);
     $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/subject/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();

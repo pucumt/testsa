@@ -144,7 +144,7 @@ module.exports = function (app) {
                 classRoomId: req.body.classRoomId,
                 classRoomName: req.body.classRoomName,
                 schoolId: req.body.schoolId,
-                schoolArea: req.body.schoolAre
+                schoolArea: req.body.schoolArea
             },
             exams = JSON.parse(req.body.exams),
             toCreateExams = [],

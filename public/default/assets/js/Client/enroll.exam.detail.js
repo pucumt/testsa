@@ -200,6 +200,7 @@ function destroy() {
 function addValidation() {
     setTimeout(function () {
         $('#studentInfo').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'studentName': {

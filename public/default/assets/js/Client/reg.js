@@ -1,5 +1,6 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $('#loginForm').formValidation({
+        declarative: false,
         // List of fields and their validation rules
         fields: {
             name: {

@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnAdmin").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 //--begin search functions
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
+var getButtons = function () {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
@@ -21,11 +21,11 @@ function searchAdmins(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/adminList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/adminList/search?" + pStr, filter, function (data) {
         $mainSelectBody.empty();
         if (data && data.users.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.users.forEach(function(user) {
+            data.users.forEach(function (user) {
                 var buttons = getButtons();
                 if (user.name == "bfbadmin") {
                     buttons = "";
@@ -44,16 +44,16 @@ function searchAdmins(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     searchAdmins();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     searchAdmins(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     searchAdmins(page);
 });
@@ -66,7 +66,7 @@ function destroy() {
 }
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         var userValidator = {
             notEmpty: {
                 message: '用户名不能为空'
@@ -85,6 +85,7 @@ function addValidation(callback) {
             callback(userValidator);
         }
         $('#myModal').formValidation({
+                declarative: false,
                 // List of fields and their validation rules
                 fields: {
                     'user-name': {
@@ -106,7 +107,7 @@ function addValidation(callback) {
                     }
                 }
             })
-            .on('success.form.fv', function(e) {
+            .on('success.form.fv', function (e) {
                 // Prevent form submission
                 e.preventDefault();
                 addUser();
@@ -125,7 +126,7 @@ function addUser() {
         schoolId: $('#myModal #school').val(),
         schoolArea: $('#myModal #school').find("option:selected").text(),
         role: $("#myModal #role").val()
-    }, function(data) {
+    }, function (data) {
         $('#myModal').modal('hide');
         var page = parseInt($("#mainModal #page").val());
         searchAdmins(page);
@@ -134,9 +135,9 @@ function addUser() {
 
 function resetSchool(id) {
     $('#myModal').find("#school option").remove();
-    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(school) {
+            data.forEach(function (school) {
                 var select = "";
                 if (school._id == id) {
                     select = "selected";
@@ -147,14 +148,14 @@ function resetSchool(id) {
     });
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
-    addValidation(function(validator) {
+    addValidation(function (validator) {
         validator.remote = {
             message: '用户名已经存在',
             url: '/admin/user/find',
-            data: function(validator, $field, value) {
+            data: function (validator, $field, value) {
                 return {
                     username: $('#user-name').val()
                 };
@@ -167,28 +168,31 @@ $("#btnAdd").on("click", function(e) {
     $('#myModalLabel').text("新增管理员");
     $('#user-name').val("");
     $('#user-pwd').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation');
     validator.validate();
 });
 
-$("#btnChangeRole").on("click", function(e) {
+$("#btnChangeRole").on("click", function (e) {
     selfAjax("post", "/admin/user/setRole", {
         username: $('#user-name').val(),
         schoolId: $('#myModal #school').val(),
         schoolArea: $('#myModal #school').find("option:selected").text(),
         role: $("#myModal #role").val()
-    }, function(data) {
+    }, function (data) {
         $('#myModal').modal('hide');
         var page = parseInt($("#mainModal #page").val());
         searchAdmins(page);
     });
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     destroy();
     addValidation();
     isNew = false;
@@ -200,17 +204,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#user-pwd').val("");
     resetSchool(entity.schoolId);
     $("#myModal #role").val(entity.role);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/user/delete", {
             username: entity.name
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();

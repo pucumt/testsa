@@ -1,6 +1,6 @@
-$(document).ready(function()
-{
+$(document).ready(function () {
 	$('#regForm').formValidation({
+		declarative: false,
 		// List of fields and their validation rules
 		fields: {
 			name: {

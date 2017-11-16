@@ -42,6 +42,7 @@ $(document).ready(function () {
 function addValidation() {
     setTimeout(function () {
         $('#resetForm').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'oldPassword': {

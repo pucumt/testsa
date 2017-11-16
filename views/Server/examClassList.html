@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -55,7 +56,9 @@
     <div class="modal-dialog modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body">
@@ -89,7 +92,9 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="examCategoryName" class="control-label">测试类别:<span style="font-size: 10px;color: red;">(同类别只能报名一次)</span></label>
+                                <label for="examCategoryName" class="control-label">测试类别:
+                                    <span style="font-size: 10px;color: red;">(同类别只能报名一次)</span>
+                                </label>
                                 <select name="examCategoryName" id="examCategoryName" class="form-control"></select>
                             </div>
                         </div>
@@ -106,7 +111,10 @@
                         <div class="col-md-24">
                             <div class="form-group">
                                 <label class="control-label">考试科目:</label>
-                                <div class="subject"><label class="checkbox-inline"><input type="checkbox" > 1</label></div>
+                                <div class="subject">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox"> 1</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -141,7 +149,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -155,6 +165,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/examClass.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/examClass.js?v=1.003"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

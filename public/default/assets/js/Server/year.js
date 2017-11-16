@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnYear").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -14,8 +14,9 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'name': {
@@ -47,7 +48,7 @@ function addValidation(callback) {
     }, 0);
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -56,10 +57,13 @@ $("#btnAdd").on("click", function(e) {
     $('#name').val("");
     $('#sequence').val($("#total").val());
     $('#iscurrent').removeAttr('checked');
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/year/add",
@@ -72,7 +76,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/year/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 // var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + (data.isCurrentYear ? "当前年度" : "") + "</td><td>" + data.sequence +
@@ -87,7 +91,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -99,17 +103,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
     $('#sequence').val(entity.sequence);
     entity.isCurrentYear ? $('#iscurrent').prop('checked', true) : $('#iscurrent').removeAttr('checked');
     $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/year/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();

@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnCoupon").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -20,7 +20,7 @@ $(document).ready(function() {
 
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function(coupon) {
+var getButtons = function (coupon) {
     var assignButton = "";
     switch (coupon.category) {
         case "随机":
@@ -47,9 +47,9 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/couponList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/couponList/search?" + pStr, filter, function (data) {
         if (data && data.coupons.length > 0) {
-            data.coupons.forEach(function(coupon) {
+            data.coupons.forEach(function (coupon) {
                 var $tr = $('<tr id=' + coupon._id + '><td>' + coupon.name + '</td><td>' +
                     coupon.categoryName + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
                     moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' + coupon.gradeName + '</td><td>' +
@@ -64,16 +64,16 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
+$("#mainModal .paging .prepage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) - 1;
     search(page);
 });
 
-$("#mainModal .paging .nextpage").on("click", function(e) {
+$("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     search(page);
 });
@@ -87,8 +87,9 @@ function destroy() {
 };
 
 function addValidation(callback) {
-    setTimeout(function() {
+    setTimeout(function () {
         $('#myModal').formValidation({
+            declarative: false,
             // List of fields and their validation rules
             fields: {
                 'name': {
@@ -132,7 +133,7 @@ function addValidation(callback) {
     }, 0);
 };
 
-$("#btnAdd").on("click", function(e) {
+$("#btnAdd").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
@@ -146,11 +147,14 @@ $("#btnAdd").on("click", function(e) {
     $("#myModal #reduceMax").val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
     $("#myModal .reduceMax").hide();
 });
 
-$("#btnSave").on("click", function(e) {
+$("#btnSave").on("click", function (e) {
     var validator = $('#myModal').data('formValidation').validate();
     if (validator.isValid()) {
         var postURI = "/admin/coupon/add",
@@ -171,7 +175,7 @@ $("#btnSave").on("click", function(e) {
             postURI = "/admin/coupon/edit";
             postObj.id = $('#id').val();
         }
-        selfAjax("post", postURI, postObj, function(data) {
+        selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
             if (isNew) {
                 var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.categoryName + "</td><td>" +
@@ -197,7 +201,7 @@ $("#btnSave").on("click", function(e) {
     }
 });
 
-$("#gridBody").on("click", "td .btnEdit", function(e) {
+$("#gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
     addValidation();
@@ -216,17 +220,20 @@ $("#gridBody").on("click", "td .btnEdit", function(e) {
         attributeid: entity.category
     });
     $("#myModal").find(".modal-body").height($(window).height() - 189);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
-$("#gridBody").on("click", "td .btnDelete", function(e) {
+$("#gridBody").on("click", "td .btnDelete", function (e) {
     showConfirm("确定要删除吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/coupon/delete", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
                 $(obj).parents()[2].remove();
@@ -235,14 +242,14 @@ $("#gridBody").on("click", "td .btnDelete", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnPublish", function(e) {
+$("#gridBody").on("click", "td .btnPublish", function (e) {
     showConfirm("确定要发布吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/coupon/publish", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 showAlert("发布成功！");
                 var name = $('#' + entity._id + ' td:first-child');
@@ -255,14 +262,14 @@ $("#gridBody").on("click", "td .btnPublish", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnUnPublish", function(e) {
+$("#gridBody").on("click", "td .btnUnPublish", function (e) {
     showConfirm("确定要停用吗？");
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
+    $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/coupon/unpublish", {
             id: entity._id
-        }, function(data) {
+        }, function (data) {
             if (data.sucess) {
                 showAlert("停用成功！");
                 var name = $('#' + entity._id + ' td:first-child');
@@ -275,13 +282,13 @@ $("#gridBody").on("click", "td .btnUnPublish", function(e) {
     });
 });
 
-$("#gridBody").on("click", "td .btnAssign", function(e) {
+$("#gridBody").on("click", "td .btnAssign", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     location.href = "/admin/couponAssign/" + entity._id;
 });
 
-$("#gridBody").on("click", "td .btnCheck", function(e) {
+$("#gridBody").on("click", "td .btnCheck", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     location.href = "/admin/couponAssignList/" + entity._id;
@@ -297,10 +304,10 @@ function resetDropDown(objs) {
     $("#myModal #examCategoryName").append("<option value=''></option>");
     $("#myModal #category").append('<option value="固定">固定</option><option value="随机">随机</option>');
 
-    selfAjax("get", "/admin/trainClass/gradesubjectattribute", null, function(data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectattribute", null, function (data) {
         if (data) {
             if (data.grades && data.grades.length > 0) {
-                data.grades.forEach(function(grade) {
+                data.grades.forEach(function (grade) {
                     var select = "";
                     if (objs && grade._id == objs.gradeid) {
                         select = "selected";
@@ -309,7 +316,7 @@ function resetDropDown(objs) {
                 });
             }
             if (data.subjects && data.subjects.length > 0) {
-                data.subjects.forEach(function(subject) {
+                data.subjects.forEach(function (subject) {
                     var select = "";
                     if (objs && subject._id == objs.subjectid) {
                         select = "selected";
@@ -319,7 +326,7 @@ function resetDropDown(objs) {
             }
 
             if (data.attributes && data.attributes.length > 0) {
-                data.attributes.forEach(function(attribute) {
+                data.attributes.forEach(function (attribute) {
                     $("#myModal #category").append("<option  value='" + attribute._id + "'>" + attribute.name + "</option>");
                 });
                 if (objs && objs.attributeid) {
@@ -330,7 +337,7 @@ function resetDropDown(objs) {
     });
 };
 /**---------------dropdowns - end------------------- */
-$("#myModal #category").on("change blur", function() {
+$("#myModal #category").on("change blur", function () {
     if ($("#myModal #category").val() == "随机") {
         $("#myModal .reduceMax").show();
     } else {
