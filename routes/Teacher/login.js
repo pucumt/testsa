@@ -34,7 +34,11 @@ module.exports = function (app) {
                 }
                 //用户名密码都匹配后，将用户信息存入 session
                 req.session.teacher = user;
-                res.redirect(req.session.originalUrl ? req.session.originalUrl : '/Teacher/rollCallClasses'); //登陆成功后跳转到主页
+                if (req.body.type == "0") {
+                    res.redirect('/Teacher/personalCenter'); //登陆成功后跳转到主页
+                } else if (req.body.type == "1" && user.role == 1) {
+                    res.redirect('/Teacher/peopleCountList'); //登陆成功后跳转到主页 PC端
+                }
             });
     });
 }

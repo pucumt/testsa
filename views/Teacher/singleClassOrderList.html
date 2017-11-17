@@ -1,0 +1,85 @@
+{% extends "Teacher/partial/main.html" %} {% block left %} {% include "Teacher/partial/financialSetting.html" %} {% endblock
+%} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+        <input type="hidden" class="form-control" name="id" id="id" value={{ id }}>
+    </h1>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="studentName" class="control-label">学生:</label>
+                        <input type="text" maxlength="30" class="form-control" name="studentName" id="studentName">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="orderId" class="control-label">订单号:</label>
+                        <input type="text" maxlength="30" class="form-control" name="orderId" id="orderId">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="isSucceed" class="control-label">状态:</label>
+                        <select name="isSucceed" id="isSucceed" class="form-control">
+                            <option value="9">已取消</option>
+                            <option value="1">已报名</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="content">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:180px;">订单号</th>
+                <th>课程</th>
+                <th style="width:100px;">学生</th>
+                <th style="width:100px;">状态</th>
+                <th style="width:150px;">订单时间</th>
+                <th style="width:120px;">支付方式</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+<div id="selectModal">
+    <input type="hidden" id="total" value="0" />
+    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/Teacher/singleClassOrderList.js?v=1.00"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

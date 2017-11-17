@@ -23,7 +23,15 @@ const Teacher = db.defineModel('teachers', {
     role: {
         type: db.INTEGER,
         defaultValue: 0
-    } // 0 teacher, 1 team leader
+    }, // 0 teacher, 1 team leader
+    schoolId: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    subjectId: {
+        type: db.STRING(50),
+        defaultValue: ''
+    }
 });
 module.exports = Teacher;
 

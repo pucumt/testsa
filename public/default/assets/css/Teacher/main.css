@@ -31,6 +31,11 @@ footer,
     margin: 10px 25px;
 }
 
+.pc #loginForm {
+    width: 300px;
+    margin: 0 auto;
+}
+
 #loginForm .warning {
     color: red;
 }
@@ -290,9 +295,7 @@ footer,
     background-color: #e7e9ec;
 }
 
-.enroll.personalCenter .rollCall,
-.enroll.personalCenter .makeUp,
-.enroll.personalCenter .homework {
+.enroll.personalCenter .list {
     margin: 10px -15px;
     padding: 8px 15px;
     border-top: 1px solid #ccc;

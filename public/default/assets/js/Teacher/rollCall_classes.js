@@ -40,12 +40,16 @@ function generateLi(trainclass) {
 $selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    if ($("#type").val() == "r") {
-        location.href = "/Teacher/rollCall/students/" + entity._id;
-    } else if ($("#type").val() == "h") {
-        if (entity.bookId) {
-            // only redirect for class with book
-            location.href = "/Teacher/homework/students/" + entity._id;
-        }
+    switch ($("#type").val()) {
+        case "r":
+        case "s":
+            location.href = "/Teacher/rollCall/students/" + entity._id + "?type=" + $("#type").val();
+            break;
+        case "h":
+            if (entity.bookId) {
+                // only redirect for class with book
+                location.href = "/Teacher/homework/students/" + entity._id;
+            }
+            break;
     }
 });

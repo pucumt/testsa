@@ -1,0 +1,56 @@
+{% extends "Teacher/partial/main.html" %} {% block left %} {% include "Teacher/partial/financialSetting.html" %} {% endblock
+%} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="searchSchool" class="control-label">校区:</label>
+                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="searchCategory" class="control-label">难度:</label>
+                        <select name="searchCategory" id="searchCategory" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group clearfix">
+                        <label for="searchGrade" class="control-label pull-left">年级:</label>
+                        <select name="searchGrade" multiple="true" id="searchGrade" class="form-control pull-left"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:400px;">课程</th>
+                <th style="width:100px;">报名人数</th>
+                <th style="">总人数</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Teacher/peopleCountList.js?v=1.0"></script>
+{% endblock %}

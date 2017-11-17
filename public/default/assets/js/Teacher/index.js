@@ -36,7 +36,44 @@ $(document).ready(function () {
         hideConfirmForm();
     });
 
+    $("#header_btnFinancial").on("click", function (e) {
+        location.href = "/Teacher/peopleCountList";
+    });
 });
+
+window.getTrainOrderStatus = function (isSucceed) {
+    switch (isSucceed) {
+        case 1:
+            return "已报名"
+            break;
+        case 6:
+            return "已预存"
+            break;
+        case 9:
+            return "已取消"
+            break;
+    }
+};
+
+window.getPayway = function (way) {
+    switch (way) {
+        case 0:
+            return "现金";
+        case 1:
+            return "刷卡";
+        case 2:
+            return "转账";
+        case 8:
+            return "支付宝";
+        case 9:
+            return "微信";
+        case 6:
+            return "在线";
+        case 7:
+            return "在线";
+    }
+    return "";
+};
 
 window.loadingCount = 0; //loading计数
 window.selfAjax = function (method, url, filter) {

@@ -27,6 +27,10 @@ $(document).ready(function () {
         location.href = "/admin/yearList";
     });
 
+    $("#left_btnQuiz").on("click", function (e) {
+        location.href = "/admin/quizList";
+    });
+
     //课程设置相关
     $("#left_btnWeekType").on("click", function (e) {
         location.href = "/admin/weekType";

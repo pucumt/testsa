@@ -40,6 +40,8 @@ module.exports = function (app) {
                 engName: req.body.engName,
                 mobile: req.body.mobile,
                 address: req.body.address,
+                subjectId: req.body.subjectId,
+                role: (req.body.role == "true" ? 1 : 0),
                 password: md5.update("111111").digest('hex'),
                 createdBy: req.session.admin._id
             })
@@ -54,6 +56,8 @@ module.exports = function (app) {
                 name: req.body.name,
                 engName: req.body.engName,
                 mobile: req.body.mobile,
+                subjectId: req.body.subjectId,
+                role: (req.body.role == "true" ? 1 : 0),
                 address: req.body.address
             }, {
                 where: {

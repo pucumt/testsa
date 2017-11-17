@@ -11,6 +11,9 @@ $(document).ready(function () {
     $(".enroll.personalCenter .homework").on("click", function (e) {
         location.href = "/Teacher/rollCallClasses?type=h"; // 作业
     });
+    $(".enroll.personalCenter .score").on("click", function (e) {
+        location.href = "/Teacher/rollCallClasses?type=s";
+    });
     $("#btnExit").on("click", function (e) {
         location.href = "/Teacher/personalCenter/exit";
     });

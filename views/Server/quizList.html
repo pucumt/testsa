@@ -11,7 +11,7 @@
             <div class="row form-horizontal">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="Name" class="control-label">老师:</label>
+                        <label for="Name" class="control-label">名称:</label>
                         <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
                     </div>
                 </div>
@@ -25,18 +25,15 @@
 <div class="toolbar">
     <div class="toolbar-list">
         <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
-        <button id="btnBatchAdd" class="btn btn-default btn-sm">批量新增</button>
     </div>
 </div>
 <div class="content mainModal">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:100px">姓名</th>
-                <th style="width:100px">英文名</th>
-                <th style="width:150px">电话</th>
-                <th style="width:200px">地址</th>
-                <th>操作</th>
+                <th>名称</th>
+                <th>顺序</th>
+                <th style="width:120px;">操作</th>
             </tr>
         </thead>
         <tbody id="gridBody">
@@ -46,7 +43,8 @@
 <div id="mainModal">
     <input type="hidden" id="total" value="0" />
     <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
-</div> {% endblock %} {% block modal %}
+</div>
+{% endblock %} {% block modal %}
 <!-- Modal -->
 <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
@@ -60,28 +58,12 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">姓名:</label>
-                        <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                        <label for="name" class="control-label">名称:</label>
+                        <input type="text" maxlength="30" class="form-control" required name="name" id="name">
                     </div>
                     <div class="form-group">
-                        <label for="engName" class="control-label">英文名:</label>
-                        <input type="text" maxlength="30" class="form-control" name="engName" id="engName">
-                    </div>
-                    <div class="form-group">
-                        <label for="mobile" class="control-label">电话:</label>
-                        <input type="text" maxlength="30" class="form-control" name="mobile" id="mobile">
-                    </div>
-                    <div class="form-group">
-                        <label for="subject" class="control-label">科目:</label>
-                        <select name="subject" id="subject" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="isLeader" class="control-label">是否组长:</label>
-                        <input type="checkbox" name="isLeader" id="isLeader">
-                    </div>
-                    <div class="form-group">
-                        <label for="address" class="control-label">地址:</label>
-                        <textarea maxlength="100" rows="3" class="form-control" name="address" id="address"></textarea>
+                        <label for="sequence" class="control-label">顺序:</label>
+                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence" value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -104,7 +86,7 @@
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
-                确定要删除吗?
+                出错了?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -114,5 +96,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/teacher.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/quizList.js?v=1.0"></script>
 {% endblock %}

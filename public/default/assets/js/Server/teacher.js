@@ -6,6 +6,7 @@ $(document).ready(function () {
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
     search();
+    renderSearchSubjectDropDown();
 });
 
 //------------search funfunction
@@ -50,6 +51,17 @@ $("#mainModal .paging .nextpage").on("click", function (e) {
     search(page);
 });
 //------------end
+
+function renderSearchSubjectDropDown() {
+    $("#myModal #subject").append("<option value=''></option>");
+    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function (data) {
+        if (data && data.length > 0) {
+            data.forEach(function (subject) {
+                $("#myModal #subject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
+            });
+        };
+    });
+};
 
 function destroy() {
     var validator = $('#myModal').data('formValidation');
@@ -109,6 +121,8 @@ $("#btnAdd").on("click", function (e) {
     $('#myModal #engName').val("");
     $('#myModal #mobile').val("");
     $('#myModal #address').val("");
+    $("#myModal #subject").val("");
+    $('#myModal #isLeader').removeAttr('checked');
     $('#myModal').modal({
         backdrop: 'static',
         keyboard: false
@@ -127,7 +141,9 @@ $("#btnSave").on("click", function (e) {
                 name: $('#myModal #name').val(),
                 engName: $('#myModal #engName').val(),
                 mobile: $('#myModal #mobile').val(),
-                address: $('#myModal #address').val()
+                subjectId: $('#myModal #subject').val(),
+                address: $('#myModal #address').val(),
+                role: $('#myModal #isLeader').prop('checked')
             };
         if (!isNew) {
             postURI = "/admin/teacher/edit";
@@ -153,6 +169,8 @@ $("#gridBody").on("click", "td .btnEdit", function (e) {
     $('#myModal #engName').val(entity.engName);
     $('#myModal #mobile').val(entity.mobile);
     $('#myModal #address').val(entity.address);
+    $("#myModal #subject").val(entity.subjectId);
+    entity.role == 1 ? $('#myModal #isLeader').prop('checked', true) : $('#myModal #isLeader').removeAttr('checked');
     $('#myModal #id').val(entity._id);
     $('#myModal').modal({
         backdrop: 'static',
