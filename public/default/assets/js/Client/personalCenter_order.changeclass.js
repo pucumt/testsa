@@ -119,6 +119,7 @@ function loadData() {
         gradeId: $("#gradeId").val(),
         subjectId: $("#subjectId").val(),
         categoryId: $("#categoryId").val(),
+        attributeId: $("#attributeId").val(),
         timespan: $("#drpDateSpan").val() // + $("#drpTimeSpan").val()
     }, function (data) {
         if (data) {

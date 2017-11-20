@@ -119,6 +119,9 @@ module.exports = function (app) {
         if (req.body.categoryId) {
             filter.categoryId = req.body.categoryId;
         }
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
         if (req.body.timespan) {
             filter.courseTime = {
                 $like: `%${req.body.timespan.trim()}%`
