@@ -398,6 +398,7 @@ module.exports = function (app) {
     app.post('/admin/adminEnrollTrain/enrollwithcheck', checkScore);
     app.post('/admin/adminEnrollTrain/enrollwithcheck', enroll);
 
+    // 人为只能退班，不能真的取消
     app.post('/admin/adminEnrollTrain/cancel', checkLogin);
     app.post('/admin/adminEnrollTrain/cancel', function (req, res) {
         AdminEnrollTrain.getFilter({
@@ -410,7 +411,7 @@ module.exports = function (app) {
                     // 2. 取消订单
                     model.db.sequelize.transaction(function (t1) {
                         return AdminEnrollTrain.update({
-                                isSucceed: 9,
+                                isSucceed: 7,
                                 deletedBy: req.session.admin._id,
                                 deletedDate: new Date()
                             }, {

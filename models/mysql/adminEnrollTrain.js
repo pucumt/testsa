@@ -51,7 +51,7 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
     isSucceed: {
         type: db.INTEGER,
         defaultValue: 1
-    }, //1 succeed, 9 canceled, 6 use soon
+    }, //1 succeed, 9 canceled and not calculate, 6 use soon, 7 canceled but calculate partial money
     cancelType: {
         type: db.INTEGER,
         defaultValue: 0

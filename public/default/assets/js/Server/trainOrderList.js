@@ -44,7 +44,7 @@ function searchOrder(p) {
                     // buttons = '<a class="btn btn-default btnPreSave">预存</a>';
                 }
                 if (isSucceed == 1) {
-                    buttons += '<a class="btn btn-default btnDelete">取消</a>';
+                    buttons += '<a class="btn btn-default btnDelete">退班</a>';
                 }
                 return buttons;
             };
