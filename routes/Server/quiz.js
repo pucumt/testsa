@@ -6,7 +6,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/quizList', checkLogin);
-    app.get('/admin/quizList', auth.checkSecure([0]));
+    //app.get('/admin/quizList', auth.checkSecure([0]));
     app.get('/admin/quizList', function (req, res) {
         res.render('Server/quizList.html', {
             title: '>小测试名称列表',

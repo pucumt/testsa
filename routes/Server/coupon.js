@@ -6,6 +6,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/couponList', checkLogin);
+    app.get('/admin/couponList', auth.checkSecure([0, 7]));
     app.get('/admin/couponList', function (req, res) {
         res.render('Server/couponList.html', {
             title: '>优惠设置',

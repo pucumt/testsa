@@ -11,6 +11,9 @@ $(document).ready(function () {
     $("#header_btnFinancial").on("click", function (e) {
         location.href = "/admin/schoolReportList";
     });
+    $("#header_btnFinancial2").on("click", function (e) {
+        location.href = "/admin/peopleCountList";
+    });
     $("#header_btnBasic").on("click", function (e) {
         location.href = "/admin/schoolAreaList";
     });
@@ -22,6 +25,9 @@ $(document).ready(function () {
     });
     $("#header_btnBook").on("click", function (e) {
         location.href = "/admin/adminBookList";
+    });
+    $("#header_btnQuiz").on("click", function (e) {
+        location.href = "/admin/quizList";
     });
 });
 

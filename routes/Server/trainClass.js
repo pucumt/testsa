@@ -19,7 +19,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/trainClassList', checkLogin);
-    app.get('/admin/trainClassList', auth.checkSecure([0, 3]));
+    app.get('/admin/trainClassList', auth.checkSecure([0, 3, 7, 8]));
     app.get('/admin/trainClassList', function (req, res) {
         res.render('Server/trainClassList.html', {
             title: '>课程设置',

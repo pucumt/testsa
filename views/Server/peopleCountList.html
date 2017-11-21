@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock
+%} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -14,7 +15,7 @@
                         <select name="searchSchool" id="searchSchool" class="form-control"></select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 subject-container">
                     <div class="form-group">
                         <label for="searchSubject" class="control-label">科目:</label>
                         <select name="searchSubject" id="searchSubject" class="form-control"></select>

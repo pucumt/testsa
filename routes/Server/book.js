@@ -6,7 +6,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/adminBookList', checkLogin);
-    app.get('/admin/adminBookList', auth.checkSecure([0, 7]));
+    app.get('/admin/adminBookList', auth.checkSecure([11]));
     app.get('/admin/adminBookList', function (req, res) {
         res.render('Server/bookList.html', {
             title: '>课本列表',

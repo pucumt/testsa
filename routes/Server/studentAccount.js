@@ -8,7 +8,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/studentAccountList', checkLogin);
-    app.get('/admin/studentAccountList', auth.checkSecure([0, 3]));
+    app.get('/admin/studentAccountList', auth.checkSecure([0, 3, 7, 8]));
     app.get('/admin/studentAccountList', function (req, res) {
         res.render('Server/studentAccountList.html', {
             title: '>学生管理',

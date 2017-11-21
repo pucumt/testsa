@@ -8,8 +8,10 @@
     <!--<li role="presentation" class="block"></li>-->
     <li role="presentation" id="left_btnScoreInput">成绩录入</li>
     <!--<li role="presentation" id="left_btnScoreReport">成绩报告</li>-->
+    {% if user.role==0 or user.role==7%}
     <li role="presentation" class="block"></li>
     <li role="presentation" id="left_btnCoupon">优惠设置</li>
+    {% endif %}
     <li role="presentation" class="block"></li>
     <li role="presentation" id="left_btnUpgrade">学生升班</li>
 </ul>

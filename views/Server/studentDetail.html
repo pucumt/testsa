@@ -56,7 +56,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="discount" class="control-label">折扣(%):</label>
-                            <input type="text" maxlength="30" class="form-control" name="discount" id="discount">
+                            <input type="text" maxlength="30" {{ 'disabled' if user.role==3 }} class="form-control" name="discount" id="discount">
                         </div>
                     </div>
                     <div class="col-md-6">

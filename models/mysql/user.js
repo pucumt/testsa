@@ -19,7 +19,7 @@ const User = db.defineModel('users', {
     role: {
         type: db.INTEGER,
         defaultValue: 0
-    }, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 team leader
+    }, //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 market leader, 8 market member, 9 教管
     schoolId: {
         type: db.STRING(50),
         defaultValue: ''

@@ -18,7 +18,7 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.get('/admin/adminEnrollTrainList', checkLogin);
-    app.get('/admin/adminEnrollTrainList', auth.checkSecure([0, 3]));
+    app.get('/admin/adminEnrollTrainList', auth.checkSecure([0, 3, 7, 8]));
     app.get('/admin/adminEnrollTrainList', function (req, res) {
         res.render('Server/adminEnrollTrainList.html', {
             title: '>课程报名',

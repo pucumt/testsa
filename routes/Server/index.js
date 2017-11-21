@@ -51,6 +51,7 @@
 
 module.exports = function (app) {
     app.get('/admin', checkLogin)
+    app.get('/admin', auth.checkSecure([0, 3, 7, 8]));
     app.get('/admin', function (req, res) {
         res.render('Server/adminEnrollTrainList.html', {
             title: '主页',

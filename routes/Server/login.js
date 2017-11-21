@@ -5,8 +5,13 @@ var crypto = require('crypto'),
     checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
-    app.get('/admin/login', checkNotLogin);
+    // app.get('/admin/login', checkNotLogin);
     app.get('/admin/login', function (req, res) {
+        if (req.session.admin) {
+            req.session.admin = null;
+        } else if (req.session.adminRollCall) {
+            req.session.adminRollCall = null;
+        }
         res.render('Server/login.html', {
             title: '登录',
             user: req.session.admin
@@ -38,14 +43,13 @@ module.exports = function (app) {
                         req.session.adminRollCall = user;
                         res.redirect('/admin/adminRollCallList'); //登陆成功后跳转到主页
                         break;
-                    case 7:
+                    case 9:
                         req.session.admin = user;
-                        res.redirect('/admin/adminBookList'); //登陆成功后跳转到主页
-                        break
+                        res.redirect('/admin/peopleCountList'); //登陆成功后跳转到人数报表
+                        break;
                     default:
                         req.session.admin = user;
                         res.redirect('/admin/adminEnrollTrainList'); //登陆成功后跳转到主页
-
                 }
             })
             .catch(function (err) {

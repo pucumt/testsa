@@ -32,12 +32,19 @@ module.exports = function (app) {
                 if (user.password != password) {
                     return res.redirect('/Teacher/login?err=2'); //密码错误则跳转到登录页
                 }
-                //用户名密码都匹配后，将用户信息存入 session
-                req.session.teacher = user;
+                //用户名密码都匹配后，将用户信息存入 session                
                 if (req.body.type == "0") {
+                    req.session.teacher = user;
                     res.redirect('/Teacher/personalCenter'); //登陆成功后跳转到主页
-                } else if (req.body.type == "1" && user.role == 1) {
-                    res.redirect('/Teacher/peopleCountList'); //登陆成功后跳转到主页 PC端
+                } else if (req.body.type == "1") {
+                    req.session.admin = user;
+                    //登陆成功后跳转到主页 PC端
+                    if (user.role == 11) {
+                        res.redirect('/admin/peopleCountList');
+                    } else if (user.role == 20) {
+                        // 普通老师
+                        res.redirect('/admin/peopleCountList');
+                    }
                 }
             });
     });

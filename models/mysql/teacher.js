@@ -22,8 +22,8 @@ const Teacher = db.defineModel('teachers', {
     },
     role: {
         type: db.INTEGER,
-        defaultValue: 0
-    }, // 0 teacher, 1 team leader
+        defaultValue: 20
+    }, // 20 teacher, 11 team leader
     schoolId: {
         type: db.STRING(50),
         defaultValue: ''

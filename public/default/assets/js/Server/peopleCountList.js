@@ -1,6 +1,6 @@
 var isNew = true;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("#left_btnPeopleCount").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -18,13 +18,17 @@ $(document).ready(function() {
     renderSearchGradeDropDown();
     renderSearchSubjectDropDown();
     renderSearchCategoryDropDown();
+
+    if ($("#adminSubjectId").val()) {
+        $(".subject-container").hide();
+    }
 });
 
 //------------search funfunction
 function renderSearchSchoolDropDown() {
-    selfAjax("get", "/admin/schoolArea/all", null, function(data) {
+    selfAjax("get", "/admin/schoolArea/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(school) {
+            data.forEach(function (school) {
                 $(".mainModal #InfoSearch #searchSchool").append("<option value='" + school._id + "'>" + school.name + "</option>");
             });
         };
@@ -33,9 +37,9 @@ function renderSearchSchoolDropDown() {
 
 function renderSearchGradeDropDown() {
     // $(".mainModal #InfoSearch #searchGrade").append("<option value=''></option>");
-    selfAjax("get", "/admin/grade/getAll", null, function(data) {
+    selfAjax("get", "/admin/grade/getAll", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(grade) {
+            data.forEach(function (grade) {
                 $(".mainModal #InfoSearch #searchGrade").append("<option value='" + grade._id + "'>" + grade.name + "</option>");
             });
         };
@@ -44,10 +48,14 @@ function renderSearchGradeDropDown() {
 
 function renderSearchSubjectDropDown() {
     $(".mainModal #InfoSearch #searchSubject").append("<option value=''></option>");
-    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function(data) {
+    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(subject) {
-                $(".mainModal #InfoSearch #searchSubject").append("<option value='" + subject._id + "'>" + subject.name + "</option>");
+            data.forEach(function (subject) {
+                var selectStr = "";
+                if ($("#adminSubjectId").val() == subject._id) {
+                    selectStr = "selected";
+                }
+                $(".mainModal #InfoSearch #searchSubject").append("<option value='" + subject._id + "' " + selectStr + ">" + subject.name + "</option>");
             });
         };
     });
@@ -55,9 +63,9 @@ function renderSearchSubjectDropDown() {
 
 function renderSearchCategoryDropDown() {
     $(".mainModal #InfoSearch #searchCategory").append("<option value=''></option>");
-    selfAjax("get", "/admin/category/all", null, function(data) {
+    selfAjax("get", "/admin/category/all", null, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(category) {
+            data.forEach(function (category) {
                 $(".mainModal #InfoSearch #searchCategory").append("<option value='" + category._id + "'>" + category.name + "</option>");
             });
         };
@@ -76,9 +84,9 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/peopleCountList/search?" + pStr, filter, function(data) {
+    selfAjax("post", "/admin/peopleCountList/search?" + pStr, filter, function (data) {
         if (data && data.length > 0) {
-            data.forEach(function(schoolReport) {
+            data.forEach(function (schoolReport) {
                 var $tr = $('<tr ><td class="trainClass" id="' + schoolReport._id + '">' + schoolReport.name + '</td><td>' +
                     schoolReport.enrollCount + '</td><td>' +
                     schoolReport.totalStudentCount + '</td></tr>');
@@ -88,11 +96,11 @@ function search(p) {
     });
 };
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
+$(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 
-$(".mainModal #gridBody").on("click", "tr .trainClass", function(e) {
+$(".mainModal #gridBody").on("click", "tr .trainClass", function (e) {
     var id = $(e.currentTarget).attr("id");
     if (id) {
         location.href = "/admin/adminEnrollTrain/orderlist/" + id;
