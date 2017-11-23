@@ -35,8 +35,8 @@ var $mainSelectBody = $('.content.mainModal table tbody');
 
 function search(p) {
     var filter = {
-            startDate: $(".mainModal #InfoSearch #startDate").val(),
-            endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').format("YYYY-MM-DD"),
+            startDate: moment($(".mainModal #InfoSearch #startDate").val()).utcOffset(0).format("YYYY-MM-DD HH:mm:ss"),
+            endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').utcOffset(0).format("YYYY-MM-DD HH:mm:ss"),
             schoolId: $(".mainModal #InfoSearch #searchSchool").val()
         },
         pStr = p ? "p=" + p : "";
