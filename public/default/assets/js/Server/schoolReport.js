@@ -16,6 +16,8 @@ $(document).ready(function () {
 
     $("#startDate").datepicker("setDate", new Date());
     $("#endDate").datepicker("setDate", new Date());
+
+    renderAttribute();
 });
 
 //------------search funfunction
@@ -24,7 +26,8 @@ var $mainSelectBody = $('.content.mainModal table tbody');
 function search(p) {
     var filter = {
             startDate: moment($(".mainModal #InfoSearch #startDate").val()).utcOffset(0).format("YYYY-MM-DD HH:mm:ss"),
-            endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').utcOffset(0).format("YYYY-MM-DD HH:mm:ss")
+            endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').utcOffset(0).format("YYYY-MM-DD HH:mm:ss"),
+            attributeId: $("#InfoSearch #drpAttribute").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
@@ -43,3 +46,17 @@ $(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
     search();
 });
 //------------end
+
+function renderAttribute() {
+    selfAjax("post", "/admin/classAttribute/getChecked", null, function (data) {
+        if (data) {
+            if (data.length > 0) {
+                data.forEach(function (classAttribute) {
+                    $("#InfoSearch #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+                });
+            } else {
+                $('#InfoSearch .attribute').hide();
+            }
+        }
+    });
+};

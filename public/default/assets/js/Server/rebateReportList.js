@@ -29,6 +29,18 @@ function renderSearchSchoolDropDown() {
             });
         };
     });
+
+    selfAjax("post", "/admin/classAttribute/getChecked", null, function (data) {
+        if (data) {
+            if (data.length > 0) {
+                data.forEach(function (classAttribute) {
+                    $("#InfoSearch #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+                });
+            } else {
+                $('#InfoSearch .attribute').hide();
+            }
+        }
+    });
 };
 
 var $mainSelectBody = $('.content.mainModal table tbody');
@@ -37,7 +49,8 @@ function search(p) {
     var filter = {
             startDate: moment($(".mainModal #InfoSearch #startDate").val()).utcOffset(0).format("YYYY-MM-DD HH:mm:ss"),
             endDate: moment($(".mainModal #InfoSearch #endDate").val()).add(1, 'day').utcOffset(0).format("YYYY-MM-DD HH:mm:ss"),
-            schoolId: $(".mainModal #InfoSearch #searchSchool").val()
+            schoolId: $(".mainModal #InfoSearch #searchSchool").val(),
+            attributeId: $("#InfoSearch #drpAttribute").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();

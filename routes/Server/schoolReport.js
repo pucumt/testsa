@@ -61,16 +61,22 @@ module.exports = function (app) {
     // 校区金额报表
     app.post('/admin/schoolReportList/search', checkLogin);
     app.post('/admin/schoolReportList/search', function (req, res) {
-        model.db.sequelize.query("select C.schoolId as _id, C.schoolArea as name, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice \
+        var strSql = "select C.schoolId as _id, C.schoolArea as name, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice \
         from adminEnrollTrains O join trainClasss C \
         on O.trainId=C._id \
-        where O.isDeleted=false and O.isSucceed=1 \
-        and O.yearId=:yearId and O.createdDate between :startDate and :endDate \
-        group by C.schoolId, C.schoolArea", {
+        where O.isDeleted=false and O.isSucceed=1 ";
+        if (req.body.attributeId) {
+            strSql += " and C.attributeId=:attributeId ";
+        }
+        strSql += " and O.yearId=:yearId and O.createdDate between :startDate and :endDate \
+        group by C.schoolId, C.schoolArea";
+
+        model.db.sequelize.query(strSql, {
                 replacements: {
                     yearId: global.currentYear._id,
                     startDate: req.body.startDate,
-                    endDate: req.body.endDate
+                    endDate: req.body.endDate,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -110,7 +116,10 @@ module.exports = function (app) {
                             where O.isDeleted=false and O.isSucceed=1 \
                             and O.yearId=:yearId and O.createdDate between :startDate and :endDate ";
         if (req.body.schoolId) {
-            strQuery = strQuery + "and C.schoolId=:schoolId";
+            strQuery = strQuery + " and C.schoolId=:schoolId ";
+        }
+        if (req.body.attributeId) {
+            strQuery = strQuery + " and C.attributeId=:attributeId ";
         }
         strQuery = strQuery + " group by O.payWay ";
         model.db.sequelize.query(strQuery, {
@@ -118,7 +127,8 @@ module.exports = function (app) {
                     yearId: global.currentYear._id,
                     startDate: req.body.startDate,
                     endDate: req.body.endDate,
-                    schoolId: req.body.schoolId
+                    schoolId: req.body.schoolId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -135,15 +145,21 @@ module.exports = function (app) {
 
     app.post('/admin/rebateReportList/search', checkLogin);
     app.post('/admin/rebateReportList/search', function (req, res) {
-        model.db.sequelize.query("select C.subjectId as _id, C.subjectName as name, sum(R.rebateTotalPrice) as rebatePrice \
-                    from rebateenrolltrains R join adminEnrollTrains O on R.trainOrderId=O._id \
-                    join trainClasss C on O.trainId=C._id \
-                    where R.createdDate between :startDate and :endDate and C.schoolId=:schoolId \
-                    group by C.subjectId, C.subjectName", {
+        var strSql = "select C.subjectId as _id, C.subjectName as name, sum(R.rebateTotalPrice) as rebatePrice \
+            from rebateenrolltrains R join adminEnrollTrains O on R.trainOrderId=O._id \
+            join trainClasss C on O.trainId=C._id \
+            where R.createdDate between :startDate and :endDate and C.schoolId=:schoolId ";
+        if (req.body.attributeId) {
+            strQuery += " and C.attributeId=:attributeId ";
+        }
+        strSql += "group by C.subjectId, C.subjectName";
+
+        model.db.sequelize.query(strSql, {
                 replacements: {
                     startDate: req.body.startDate,
                     endDate: req.body.endDate,
-                    schoolId: req.body.schoolId
+                    schoolId: req.body.schoolId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })

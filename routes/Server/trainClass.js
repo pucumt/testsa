@@ -629,6 +629,9 @@ module.exports = function (app) {
         if (req.body.category) {
             filter.categoryId = req.body.category;
         }
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
         if (req.body.yearId) {
             filter.yearId = req.body.yearId;
         } else { //当前年度的课程
@@ -637,15 +640,16 @@ module.exports = function (app) {
             }
         }
 
-        TrainClass.getFiltersWithPage(page, filter).then(function (result) {
-            res.jsonp({
-                trainClasss: result.rows,
-                total: result.count,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+        TrainClass.getFiltersWithPage(page, filter)
+            .then(function (result) {
+                res.jsonp({
+                    trainClasss: result.rows,
+                    total: result.count,
+                    page: page,
+                    isFirstPage: (page - 1) == 0,
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+                });
             });
-        });
     });
 
     app.post('/admin/batchTrainClasspublish', checkLogin);

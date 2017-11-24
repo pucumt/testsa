@@ -91,6 +91,19 @@ module.exports = function (app) {
         });
     });
 
+    app.post('/admin/classAttribute/getChecked', checkLogin);
+    app.post('/admin/classAttribute/getChecked', function (req, res) {
+        ClassAttribute.getFilters({
+                isChecked: true // only checked attributes will show here.
+            })
+            .then(function (classAttributes) {
+                res.jsonp(classAttributes);
+            })
+            .catch(err => {
+                console.log('err');
+            });
+    });
+
     app.post('/admin/classAttribute/startAll', checkLogin);
     app.post('/admin/classAttribute/startAll', function (req, res) {
         ClassAttribute.update({

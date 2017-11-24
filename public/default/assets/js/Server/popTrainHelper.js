@@ -51,6 +51,7 @@ function openTrain(p) {
             subject: $("#selectModal #InfoSearch #subject").val(),
             category: $("#selectModal #InfoSearch #category").val(),
             schoolId: $("#selectModal #InfoSearch #schoolArea").val(),
+            attributeId: $('#selectModal #InfoSearch #searchAttribute').val(),
             yearId: $("#selectModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
