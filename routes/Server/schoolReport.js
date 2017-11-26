@@ -188,6 +188,10 @@ module.exports = function (app) {
         if (req.body.categoryId) {
             filter.categoryId = req.body.categoryId;
         }
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
+
         TrainClass.getFilters(filter)
             .then(function (trainClasses) {
                 if (trainClasses && trainClasses.length > 0) {
@@ -253,14 +257,18 @@ module.exports = function (app) {
                                                 var studentIds = orders.map(function (order) {
                                                     return order.studentId;
                                                 });
-
-                                                return model.db.sequelize.query("select count(0) as count \
-                                                        from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
-                                                        where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId and O.studentId in (:studentIds) and C.subjectId=:subjectId ", {
+                                                var strSql = "select count(0) as count \
+                                                    from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+                                                    where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId and O.studentId in (:studentIds) and C.subjectId=:subjectId ";
+                                                if (req.body.attributeId) {
+                                                    strSql += " and C.attributeId=:attributeId ";
+                                                }
+                                                return model.db.sequelize.query(strSql, {
                                                         replacements: {
                                                             yearId: global.currentYear._id,
                                                             subjectId: trainClass.subjectId,
-                                                            studentIds: studentIds
+                                                            studentIds: studentIds,
+                                                            attributeId: req.body.attributeId
                                                         },
                                                         type: model.db.sequelize.QueryTypes.SELECT
                                                     })
@@ -322,12 +330,16 @@ module.exports = function (app) {
         var strQuery = "select count(0) as count from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
             where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
         if (req.body.gradeId) {
-            strQuery = strQuery + " and C.gradeId=:gradeId";
+            strQuery = strQuery + " and C.gradeId=:gradeId ";
+        }
+        if (req.body.attributeId) {
+            strQuery = strQuery + " and C.attributeId=:attributeId ";
         }
         var p0 = model.db.sequelize.query(strQuery, {
                 replacements: {
                     yearId: global.currentYear._id,
-                    gradeId: req.body.gradeId
+                    gradeId: req.body.gradeId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -339,13 +351,17 @@ module.exports = function (app) {
             (select 1 from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
             where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
         if (req.body.gradeId) {
-            strQuery = strQuery + " and C.gradeId=:gradeId";
+            strQuery = strQuery + " and C.gradeId=:gradeId ";
+        }
+        if (req.body.attributeId) {
+            strQuery = strQuery + " and C.attributeId=:attributeId ";
         }
         strQuery = strQuery + " group by O.studentId) R ";
         var p1 = model.db.sequelize.query(strQuery, {
                 replacements: {
                     yearId: global.currentYear._id,
-                    gradeId: req.body.gradeId
+                    gradeId: req.body.gradeId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -357,13 +373,17 @@ module.exports = function (app) {
             (select count(0) as countChild from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
             where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId ";
         if (req.body.gradeId) {
-            strQuery = strQuery + " and C.gradeId=:gradeId";
+            strQuery = strQuery + " and C.gradeId=:gradeId ";
+        }
+        if (req.body.attributeId) {
+            strQuery = strQuery + " and C.attributeId=:attributeId ";
         }
         strQuery = strQuery + " group by O.studentId) R where R.countChild=2";
         var p2 = model.db.sequelize.query(strQuery, {
                 replacements: {
                     yearId: global.currentYear._id,
-                    gradeId: req.body.gradeId
+                    gradeId: req.body.gradeId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -377,11 +397,15 @@ module.exports = function (app) {
         if (req.body.gradeId) {
             strQuery = strQuery + " and C.gradeId=:gradeId";
         }
+        if (req.body.attributeId) {
+            strQuery = strQuery + " and C.attributeId=:attributeId ";
+        }
         strQuery = strQuery + " group by O.studentId) R where R.countChild=3";
         var p3 = model.db.sequelize.query(strQuery, {
                 replacements: {
                     yearId: global.currentYear._id,
-                    gradeId: req.body.gradeId
+                    gradeId: req.body.gradeId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -395,11 +419,15 @@ module.exports = function (app) {
         if (req.body.gradeId) {
             strQuery = strQuery + " and C.gradeId=:gradeId";
         }
+        if (req.body.attributeId) {
+            strQuery = strQuery + " and C.attributeId=:attributeId ";
+        }
         strQuery = strQuery + " group by O.studentId) R where R.countChild>3";
         var p4 = model.db.sequelize.query(strQuery, {
                 replacements: {
                     yearId: global.currentYear._id,
-                    gradeId: req.body.gradeId
+                    gradeId: req.body.gradeId,
+                    attributeId: req.body.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
