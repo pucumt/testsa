@@ -124,3 +124,9 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
         });
     });
 });
+
+$("#gridBody").on("click", "td .btnReset", function (e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/year/settings/" + entity._id;
+});

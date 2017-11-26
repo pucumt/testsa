@@ -15,6 +15,7 @@
     schoolGradeRelation = require('./schoolGradeRelation.js'),
     gradeSubjectRelation = require('./gradeSubjectRelation.js'),
     gradeSubjectCategoryRelation = require('./gradeSubjectCategoryRelation.js'),
+    yearAttributeRelation = require('./yearAttributeRelation.js'),
     quiz = require('./quiz.js'),
 
     trainClass = require('./trainClass.js'),
@@ -77,6 +78,7 @@ module.exports = function (app) {
     schoolGradeRelation(app);
     gradeSubjectRelation(app);
     gradeSubjectCategoryRelation(app);
+    yearAttributeRelation(app);
     quiz(app);
 
     category(app);

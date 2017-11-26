@@ -26,7 +26,7 @@ function search(p) {
         if (data && data.teachers.length > 0) {
             data.teachers.forEach(function (teacher) {
                 var $tr = $('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' + (teacher.engName || "") + '</td><td>' +
-                    teacher.mobile + '</td><td>' + (teacher.address || "") + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                    teacher.mobile + '</td><td>' + (teacher.role == 11 ? '是' : '否') + '</td><td>' + (teacher.address || "") + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", teacher);
                 $mainSelectBody.append($tr);
             });
