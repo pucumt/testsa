@@ -14,7 +14,11 @@ const Year = db.defineModel('years', {
     isCurrentYear: {
         type: db.BOOLEAN,
         defaultValue: false
-    }
+    },
+    calculateDate: {
+        type: db.DATE,
+        allowNull: true
+    } // 结算日期，只处理结算日期内正常的数据。默认为空
 });
 module.exports = Year;
 

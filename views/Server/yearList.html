@@ -17,6 +17,7 @@
                 <th style="width:200px;">年度</th>
                 <th style="width:150px;">状态</th>
                 <th style="width:150px;">顺序</th>
+                <th style="width:200px;">结算日期</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -31,6 +32,9 @@
                 </td>
                 <td>
                     {{ year.sequence }}
+                </td>
+                <td>
+                    {{ year.calculateDate }}
                 </td>
                 <td>
                     <div data-obj="{{ year|dump }}" class="btn-group">
@@ -70,6 +74,10 @@
                         <label for="iscurrent" class="control-label">是否当前年度:</label>
                         <input type="checkbox" name="iscurrent" id="iscurrent">
                     </div>
+                    <div class="form-group">
+                        <label for="calculateDate" class="control-label">结算日期:</label>
+                        <input type="text" maxlength="20" class="form-control" name="calculateDate" id="calculateDate">
+                    </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
             </div>
@@ -102,4 +110,5 @@
 </div>
 
 <script type="text/javascript" src="/default/assets/js/Server/year.js?v=1.004"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}
