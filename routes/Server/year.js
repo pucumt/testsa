@@ -41,6 +41,7 @@ module.exports = function (app) {
         var option = {
             name: req.body.name,
             sequence: req.body.sequence,
+            calculateDate: req.body.calculateDate,
             createdBy: req.session.admin._id
         };
         if (req.body.iscurrent) {
@@ -79,6 +80,7 @@ module.exports = function (app) {
         var option = {
             name: req.body.name,
             sequence: req.body.sequence,
+            calculateDate: req.body.calculateDate,
             isCurrentYear: false
         };
 

@@ -4,6 +4,11 @@ $(document).ready(function () {
     $("#left_btnYear").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+
+    $("#myModal #calculateDate").datepicker({
+        changeMonth: true,
+        dateFormat: "yy-mm-dd"
+    });
 });
 
 function destroy() {
@@ -56,6 +61,7 @@ $("#btnAdd").on("click", function (e) {
     $('#myModalLabel').text("新增年度");
     $('#name').val("");
     $('#sequence').val($("#total").val());
+    $("#myModal #calculateDate").val('');
     $('#iscurrent').removeAttr('checked');
     $('#myModal').modal({
         backdrop: 'static',
@@ -70,7 +76,8 @@ $("#btnSave").on("click", function (e) {
             postObj = {
                 name: $('#name').val(),
                 iscurrent: $('#iscurrent').prop('checked'),
-                sequence: $('#sequence').val()
+                sequence: $('#sequence').val(),
+                calculateDate: $("#myModal #calculateDate").val()
             };
         if (!isNew) {
             postURI = "/admin/year/edit";
@@ -101,6 +108,7 @@ $("#gridBody").on("click", "td .btnEdit", function (e) {
     $('#myModalLabel').text("修改年度");
     $('#name').val(entity.name);
     $('#sequence').val(entity.sequence);
+    $("#myModal #calculateDate").val(entity.calculateDate);
     entity.isCurrentYear ? $('#iscurrent').prop('checked', true) : $('#iscurrent').removeAttr('checked');
     $('#id').val(entity._id);
     $('#myModal').modal({

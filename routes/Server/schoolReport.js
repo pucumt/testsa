@@ -150,7 +150,7 @@ module.exports = function (app) {
             join trainClasss C on O.trainId=C._id \
             where R.createdDate between :startDate and :endDate and C.schoolId=:schoolId ";
         if (req.body.attributeId) {
-            strQuery += " and C.attributeId=:attributeId ";
+            strSql += " and C.attributeId=:attributeId ";
         }
         strSql += "group by C.subjectId, C.subjectName";
 

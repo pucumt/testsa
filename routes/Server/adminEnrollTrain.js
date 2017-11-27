@@ -410,52 +410,55 @@ module.exports = function (app) {
                     // 1. 修改课程人数
                     // 2. 取消订单
                     model.db.sequelize.transaction(function (t1) {
-                        return AdminEnrollTrain.update({
-                                isSucceed: 7,
-                                deletedBy: req.session.admin._id,
-                                deletedDate: new Date()
-                            }, {
-                                where: {
-                                    _id: req.body.id,
-                                    isSucceed: 1
-                                },
-                                transaction: t1
-                            })
-                            .then(function (updateResult) {
-                                if (updateResult && updateResult[0]) {
-                                    return TrainClass.update({
-                                            enrollCount: model.db.sequelize.literal('`enrollCount`-1')
-                                        }, {
-                                            where: {
-                                                _id: req.body.trainId
-                                            },
-                                            transaction: t1
-                                        })
-                                        .then(function () {
-                                            return CouponAssign.update({
-                                                isUsed: false
+                            return AdminEnrollTrain.update({
+                                    isSucceed: (order.isPayed ? 7 : 9),
+                                    deletedBy: req.session.admin._id,
+                                    deletedDate: new Date()
+                                }, {
+                                    where: {
+                                        _id: req.body.id,
+                                        isSucceed: 1
+                                    },
+                                    transaction: t1
+                                })
+                                .then(function (updateResult) {
+                                    if (updateResult && updateResult[0]) {
+                                        return TrainClass.update({
+                                                enrollCount: model.db.sequelize.literal('`enrollCount`-1')
                                             }, {
                                                 where: {
-                                                    orderId: req.body.id
+                                                    _id: req.body.trainId
                                                 },
                                                 transaction: t1
+                                            })
+                                            .then(function () {
+                                                return CouponAssign.update({
+                                                    isUsed: false
+                                                }, {
+                                                    where: {
+                                                        orderId: req.body.id
+                                                    },
+                                                    transaction: t1
+                                                });
                                             });
-                                        });
-                                }
-                            });
-                    }).then(function (order) {
-                        //send message to xingye
-                        payHelper.closeOrder(req.body.id);
+                                    }
+                                });
+                        })
+                        .then(function () {
+                            if (order.payWay == 6 || order.payWay == 7) {
+                                //send message to xingye
+                                payHelper.closeOrder(req.body.id);
+                            }
 
-                        res.jsonp({
-                            sucess: true,
-                            orderId: order._id
+                            res.jsonp({
+                                sucess: true,
+                                orderId: order._id
+                            });
+                        }).catch(function (err) {
+                            res.jsonp({
+                                error: "取消失败"
+                            });
                         });
-                    }).catch(function (err) {
-                        res.jsonp({
-                            error: "取消失败"
-                        });
-                    });
                 } else {
                     res.jsonp({
                         error: "取消失败，或许订单已经取消"
