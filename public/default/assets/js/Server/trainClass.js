@@ -661,7 +661,7 @@ function searchTeacher(p) {
     selfAjax("post", "/admin/teacher/search?" + pStr, filter, function (data) {
         if (data && data.teachers.length > 0) {
             data.teachers.forEach(function (teacher) {
-                var $tr = $('<tr><td>' + teacher.name + '</td></tr>');
+                var $tr = $('<tr><td>' + teacher.name + '&nbsp;(' + teacher.mobile + ')</td></tr>');
                 $tr.data("obj", teacher);
                 $selectBody.append($tr);
             });
