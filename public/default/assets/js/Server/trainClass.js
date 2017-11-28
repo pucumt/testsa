@@ -17,7 +17,7 @@ $(document).ready(function () {
         changeMonth: true,
         dateFormat: "yy-mm-dd"
     });
-    renderSearchYearDropDown(); //search class after get years
+    renderSearchYearSchoolDropDown(); //search class after get years
     $("#btnBatchAdd").on("click", function (e) {
         location.href = "/admin/batchTrainClass";
     });
@@ -42,15 +42,24 @@ $(document).ready(function () {
 });
 
 //------------search funfunction
-function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", null, function (data) {
-        if (data && data.length > 0) {
-            data.forEach(function (year) {
+function renderSearchYearSchoolDropDown() {
+    selfAjax("get", "/admin/trainClass/schoolyear", null, function (data) {
+        if (data.years && data.years.length > 0) {
+            data.years.forEach(function (year) {
                 var select = "";
                 if (year.isCurrentYear) {
                     select = "selected";
                 }
                 $(".mainModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
+            });
+        };
+        if (data.schools && data.schools.length > 0) {
+            data.schools.forEach(function (school) {
+                var select = "";
+                if ($("#adminSchoolId").val() == school._id) {
+                    select = "selected";
+                }
+                $("#InfoSearch #searchSchool").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
             });
         };
         searchClass();
@@ -85,8 +94,8 @@ var getClassStatus = function (isWeixin) {
 function searchClass(p) {
     var filter = {
             name: $.trim($(".mainModal #InfoSearch #className").val()),
-            school: $.trim($(".mainModal #InfoSearch #searchSchool").val()),
             gradeName: $.trim($(".mainModal #InfoSearch #searchGrade").val()),
+            schoolId: $("#InfoSearch #searchSchool").val(),
             yearId: $(".mainModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";

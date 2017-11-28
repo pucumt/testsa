@@ -3,18 +3,27 @@ var isNew = true;
 $(document).ready(function () {
     $("#left_btnTrainOrder").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
-    renderSearchYearDropDown(); //search orders after get years
+    renderSearchYearSchoolDropDown(); //search orders after get years
 });
 
-function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", {}, function (data) {
-        if (data && data.length > 0) {
-            data.forEach(function (year) {
+function renderSearchYearSchoolDropDown() {
+    selfAjax("get", "/admin/trainClass/schoolyear", {}, function (data) {
+        if (data.years && data.years.length > 0) {
+            data.years.forEach(function (year) {
                 var select = "";
                 if (year.isCurrentYear) {
                     select = "selected";
                 }
                 $("#InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
+            });
+        };
+        if (data.schools && data.schools.length > 0) {
+            data.schools.forEach(function (school) {
+                var select = "";
+                if ($("#adminSchoolId").val() == school._id) {
+                    select = "selected";
+                }
+                $("#InfoSearch #searchSchool").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
             });
         };
         searchOrder();
@@ -29,6 +38,7 @@ function searchOrder(p) {
             className: $("#InfoSearch #className").val(),
             isSucceed: $("#InfoSearch #isSucceed").val(),
             yearId: $("#InfoSearch #searchYear").val(),
+            schoolId: $("#InfoSearch #searchSchool").val(),
             orderId: $("#InfoSearch #orderId").val()
         },
         pStr = p ? "p=" + p : "";

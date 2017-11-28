@@ -388,6 +388,32 @@ module.exports = function (app) {
             });
     });
 
+    app.get('/admin/trainClass/schoolyear', checkLogin);
+    app.get('/admin/trainClass/schoolyear', function (req, res) {
+        var objReturn = {};
+        var p4 = Year.getFilters({})
+            .then(function (years) {
+                objReturn.years = years;
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+        var p5 = SchoolArea.getFilters({})
+            .then(schools => {
+                objReturn.schools = schools;
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+        Promise.all([p4, p5])
+            .then(function () {
+                res.jsonp(objReturn);
+            })
+            .catch(function (err) {
+                console.log('errored');
+            });
+    });
+
     app.get('/admin/trainClass/gradesubjectattribute', checkLogin);
     app.get('/admin/trainClass/gradesubjectattribute', function (req, res) {
         var objReturn = {};

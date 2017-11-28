@@ -9,19 +9,19 @@
     <div class="panel-body">
         <form id="InfoSearch">
             <div class="row form-horizontal">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="studentName" class="control-label">学生:</label>
                         <input type="text" maxlength="30" class="form-control" name="studentName" id="studentName">
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="className" class="control-label">课程:</label>
                         <input type="text" maxlength="30" class="form-control" name="className" id="className">
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="orderId" class="control-label">订单号:</label>
                         <input type="text" maxlength="32" class="form-control" name="orderId" id="orderId" value="{{ orderId }}">
@@ -38,10 +38,18 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+            </div>
+            <div class="row form-horizontal" style="margin-top: 10px;">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="searchYear" class="control-label">年度:</label>
                         <select name="searchYear" id="searchYear" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="searchSchool" class="control-label">校区:</label>
+                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
                     </div>
                 </div>
                 <div class="col-md-4">

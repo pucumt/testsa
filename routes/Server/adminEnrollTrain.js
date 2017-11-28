@@ -75,6 +75,9 @@ module.exports = function (app) {
         if (req.body.orderId) {
             filter._id = req.body.orderId;
         }
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
         AdminEnrollTrain.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
                 adminEnrollTrains: result.rows,
