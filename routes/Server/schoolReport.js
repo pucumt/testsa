@@ -5,6 +5,7 @@ var model = require("../../model.js"),
     TrainClass = model.trainClass,
     Subject = model.subject,
     Year = model.year,
+    YearAttributeRelation = model.yearAttributeRelation,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -219,91 +220,136 @@ module.exports = function (app) {
     // 留存报表
     app.post('/admin/compareLastList/search', checkLogin);
     app.post('/admin/compareLastList/search', function (req, res) {
-        Year.getFilter({
-                sequence: (global.currentYear.sequence - 1)
+        // 1. current Year with attribute
+        // 2. last Year with attribute
+        // 3. 不能 2 季度都有attribute
+        model.db.sequelize.query("select A._id, A.name from yearAttributeRelations R left join classAttributes A on R.attributeId=A._id and A.isDeleted=false \
+            where R.yearId=:yearId and R.isDeleted=false and A.name='春季班' ", {
+                replacements: {
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
             })
-            .then(function (year) {
-                if (year) {
-                    var list = [],
-                        filter = {
-                            schoolId: req.body.schoolId,
-                            yearId: year._id
-                        };
-                    if (req.body.gradeId) {
-                        filter.gradeId = req.body.gradeId;
-                    }
+            .then(currentYearRelations => {
+                model.db.sequelize.query("select Y._id, R.attributeId, DATE_SUB(Y.calculateDate,INTERVAL 8 HOUR) as calculateDate from years Y left join yearAttributeRelations R on Y._id=R.yearId and R.isDeleted=false\
+                 left join classAttributes A on R.attributeId=A._id and A.name='春季班' and A.isDeleted=false \
+                    where Y.sequence=:sequence and Y.isDeleted=false ", {
+                        replacements: {
+                            sequence: (global.currentYear.sequence - 1)
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(function (lastYearArray) {
+                        if (lastYearArray && lastYearArray.length > 0) {
+                            var lastYear = lastYearArray[0],
+                                list = [],
+                                filter = {
+                                    schoolId: req.body.schoolId,
+                                    yearId: lastYear._id,
+                                    createdDate: {
+                                        $lt: lastYear.calculateDate
+                                    }
+                                };
 
-                    if (req.body.subjectId) {
-                        filter.subjectId = req.body.subjectId;
-                    }
+                            if (req.body.gradeId) {
+                                filter.gradeId = req.body.gradeId;
+                            }
 
-                    if (req.body.name) {
-                        var reg = new RegExp(req.body.name, 'i')
-                        filter.name = {
-                            $regex: reg
-                        };
-                    }
-                    TrainClass.getFilters(filter)
-                        .then(function (trainClasses) {
-                            var pArray = [];
-                            if (trainClasses && trainClasses.length > 0) {
-                                trainClasses.forEach(function (trainClass) {
-                                    var p = AdminEnrollTrain.getFilters({
-                                            trainId: trainClass._id,
-                                            isSucceed: 1
-                                        })
-                                        .then(function (orders) {
-                                            if (orders && orders.length > 0) {
-                                                var studentIds = orders.map(function (order) {
-                                                    return order.studentId;
-                                                });
-                                                var strSql = "select count(0) as count \
-                                                    from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
-                                                    where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId and O.studentId in (:studentIds) and C.subjectId=:subjectId ";
-                                                if (req.body.attributeId) {
-                                                    strSql += " and C.attributeId=:attributeId ";
-                                                }
-                                                return model.db.sequelize.query(strSql, {
-                                                        replacements: {
-                                                            yearId: global.currentYear._id,
-                                                            subjectId: trainClass.subjectId,
-                                                            studentIds: studentIds,
-                                                            attributeId: req.body.attributeId
+                            if (req.body.subjectId) {
+                                filter.subjectId = req.body.subjectId;
+                            }
+
+                            if (req.body.name) {
+                                filter.name = {
+                                    $like: `%${req.body.name.trim()}%`
+                                };
+                            }
+                            var attributeId;
+                            if (currentYearRelations && currentYearRelations.length > 0) {
+                                // only check 春季班
+                                // get attributeId
+                                attributeId = currentYearRelations[0]._id;
+                            } else if (lastYear.attributeId) {
+                                filter.attributeId = lastYear.attributeId;
+                            }
+                            TrainClass.getFilters(filter)
+                                .then(function (trainClasses) {
+                                    var pArray = [];
+                                    if (trainClasses && trainClasses.length > 0) {
+                                        trainClasses.forEach(function (trainClass) {
+                                            var p = AdminEnrollTrain.getFilters({
+                                                    createdDate: {
+                                                        $lt: lastYear.calculateDate
+                                                    },
+                                                    trainId: trainClass._id,
+                                                    $or: [{
+                                                            isSucceed: 1
                                                         },
-                                                        type: model.db.sequelize.QueryTypes.SELECT
-                                                    })
-                                                    .then(function (result) {
-                                                        var count = (result && result[0] && result[0].count) || 0;
+                                                        {
+                                                            deletedDate: {
+                                                                $gt: lastYear.calculateDate
+                                                            }
+                                                        }
+                                                    ]
+                                                })
+                                                .then(function (orders) {
+                                                    if (orders && orders.length > 0) {
+                                                        var studentIds = orders.map(function (order) {
+                                                            return order.studentId;
+                                                        });
+                                                        var strSql = "select count(0) as count \
+                                                        from adminEnrollTrains O join trainClasss C on O.trainId=C._id and C.isDeleted=false \
+                                                        where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId and O.studentId in (:studentIds) and C.subjectId=:subjectId ";
+                                                        if (attributeId) {
+                                                            strSql += " and C.attributeId=:attributeId ";
+                                                        }
+                                                        return model.db.sequelize.query(strSql, {
+                                                                replacements: {
+                                                                    yearId: global.currentYear._id,
+                                                                    subjectId: trainClass.subjectId,
+                                                                    studentIds: studentIds,
+                                                                    attributeId: attributeId
+                                                                },
+                                                                type: model.db.sequelize.QueryTypes.SELECT
+                                                            })
+                                                            .then(function (result) {
+                                                                var count = (result && result[0] && result[0].count) || 0;
+                                                                list.push({
+                                                                    _id: trainClass._id,
+                                                                    name: trainClass.name,
+                                                                    gradeName: trainClass.gradeName,
+                                                                    teacherName: trainClass.teacherName,
+                                                                    originalCount: orders.length,
+                                                                    enrollCount: count,
+                                                                    enrollRatio: (orders.length > 0 ? (count * 100 / orders.length).toFixed(2) : 0)
+                                                                });
+                                                            });
+                                                    } else {
                                                         list.push({
                                                             _id: trainClass._id,
                                                             name: trainClass.name,
-                                                            gradeName: trainClass.gradeName,
-                                                            teacherName: trainClass.teacherName,
-                                                            originalCount: orders.length,
-                                                            enrollCount: count,
-                                                            enrollRatio: (orders.length > 0 ? (count * 100 / orders.length).toFixed(2) : 0)
+                                                            teacherName: "没找到学生",
+                                                            originalCount: 0,
+                                                            enrollCount: 0,
+                                                            enrollRatio: 0
                                                         });
-                                                    });
-                                            } else {
-                                                list.push({
-                                                    _id: trainClass._id,
-                                                    name: trainClass.name,
-                                                    teacherName: "没找到学生",
-                                                    originalCount: 0,
-                                                    enrollCount: 0,
-                                                    enrollRatio: 0
-                                                });
-                                            }
+                                                    }
 
+                                                });
+                                            pArray.push(p);
                                         });
-                                    pArray.push(p);
+                                    }
+                                    Promise.all(pArray).then(function () {
+                                        res.json(list);
+                                    });
                                 });
-                            }
-                            Promise.all(pArray).then(function () {
-                                res.json(list);
+
+                        } else {
+                            res.json({
+                                error: "没有上一年度"
                             });
-                        });
-                }
+                        }
+                    });
             });
     });
 

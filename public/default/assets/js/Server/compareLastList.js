@@ -8,7 +8,6 @@ $(document).ready(function () {
     renderSearchSchoolDropDown();
     renderSearchGradeDropDown();
     renderSearchSubjectDropDown();
-    renderAttribute();
 });
 
 //------------search funfunction
@@ -44,20 +43,6 @@ function renderSearchSubjectDropDown() {
     });
 };
 
-function renderAttribute() {
-    selfAjax("post", "/admin/classAttribute/getChecked", null, function (data) {
-        if (data) {
-            if (data.length > 0) {
-                data.forEach(function (classAttribute) {
-                    $("#InfoSearch #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
-                });
-            } else {
-                $('#InfoSearch .attribute').hide();
-            }
-        }
-    });
-};
-
 var $mainSelectBody = $('.content.mainModal table tbody');
 
 function search(p) {
@@ -66,8 +51,7 @@ function search(p) {
             schoolId: $(".mainModal #InfoSearch #searchSchool").val(),
             gradeId: $(".mainModal #InfoSearch #searchGrade").val(),
             subjectId: $(".mainModal #InfoSearch #searchSubject").val(),
-            categoryId: $(".mainModal #InfoSearch #searchCategory").val(),
-            attributeId: $("#InfoSearch #drpAttribute").val()
+            categoryId: $(".mainModal #InfoSearch #searchCategory").val()
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();

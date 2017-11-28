@@ -57,9 +57,8 @@ module.exports = function(app) {
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
         if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
-            filter.name = {
-                $regex: reg
+           filter.name = {
+                $like: `%${req.body.name.trim()}%`
             };
         }
 
