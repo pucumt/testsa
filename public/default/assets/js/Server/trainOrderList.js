@@ -3,11 +3,20 @@ var isNew = true;
 $(document).ready(function () {
     $("#left_btnTrainOrder").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
-    renderSearchYearSchoolDropDown(); //search orders after get years
+    renderSearchSchoolYearAttributeDropDown(); //search orders after get years
+
+    $(" #InfoSearch #searchYear")
+        .off("change")
+        .on("change", function (e) {
+            changeAttributes();
+        });
 });
 
-function renderSearchYearSchoolDropDown() {
-    selfAjax("get", "/admin/trainClass/schoolyear", {}, function (data) {
+var objFilters;
+
+function renderSearchSchoolYearAttributeDropDown() {
+    selfAjax("get", "/admin/trainClass/schoolyearattribute", {}, function (data) {
+        objFilters = data;
         if (data.years && data.years.length > 0) {
             data.years.forEach(function (year) {
                 var select = "";
@@ -26,8 +35,28 @@ function renderSearchYearSchoolDropDown() {
                 $("#InfoSearch #searchSchool").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
             });
         };
+        changeAttributes();
+
         searchOrder();
     });
+};
+
+
+function changeAttributes() {
+    $(' #InfoSearch #searchAttribute').find("option").remove();
+    if (objFilters.classAttributes.length > 0) {
+        var yearAttributeRelations = objFilters.classAttributes.filter(function (relation) {
+            return relation.yearId == $(" #InfoSearch #searchYear").val();
+        });
+        if (yearAttributeRelations.length > 0) {
+            $(' #InfoSearch .searchAttribute').show();
+            yearAttributeRelations.forEach(function (classAttribute) {
+                $(" #InfoSearch #searchAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+            });
+        } else {
+            $(' #InfoSearch .searchAttribute').hide();
+        }
+    }
 };
 
 var $selectBody = $('.content table tbody');
@@ -39,6 +68,7 @@ function searchOrder(p) {
             isSucceed: $("#InfoSearch #isSucceed").val(),
             yearId: $("#InfoSearch #searchYear").val(),
             schoolId: $("#InfoSearch #searchSchool").val(),
+            attributeId: $("#InfoSearch #searchAttribute").val(),
             orderId: $("#InfoSearch #orderId").val()
         },
         pStr = p ? "p=" + p : "";

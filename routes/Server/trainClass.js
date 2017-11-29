@@ -311,8 +311,8 @@ module.exports = function (app) {
             });
     });
 
-    app.get('/admin/trainClass/gradesubjectcategoryschoolyear', checkLogin);
-    app.get('/admin/trainClass/gradesubjectcategoryschoolyear', function (req, res) {
+    app.get('/admin/trainClass/gradesubjectcategoryschoolyearattribute', checkLogin);
+    app.get('/admin/trainClass/gradesubjectcategoryschoolyearattribute', function (req, res) {
         var objReturn = {};
         var p1 = Grade.getFilters({})
             .then(function (grades) {
@@ -370,8 +370,12 @@ module.exports = function (app) {
             .catch(function (err) {
                 console.log('errored');
             });
-        var p9 = ClassAttribute.getFilters({
-                isChecked: true // only checked attributes will show here.
+        var p9 = model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                replacements: {
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(function (classAttributes) {
                 objReturn.classAttributes = classAttributes;
@@ -388,8 +392,8 @@ module.exports = function (app) {
             });
     });
 
-    app.get('/admin/trainClass/schoolyear', checkLogin);
-    app.get('/admin/trainClass/schoolyear', function (req, res) {
+    app.get('/admin/trainClass/schoolyearattribute', checkLogin);
+    app.get('/admin/trainClass/schoolyearattribute', function (req, res) {
         var objReturn = {};
         var p4 = Year.getFilters({})
             .then(function (years) {
@@ -405,7 +409,20 @@ module.exports = function (app) {
             .catch(function (err) {
                 console.log('errored');
             });
-        Promise.all([p4, p5])
+        var p9 = model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                replacements: {
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (classAttributes) {
+                objReturn.classAttributes = classAttributes;
+            })
+            .catch(err => {
+                console.log('err');
+            });
+        Promise.all([p4, p5, p9])
             .then(function () {
                 res.jsonp(objReturn);
             })

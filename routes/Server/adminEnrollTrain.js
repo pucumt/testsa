@@ -47,48 +47,78 @@ module.exports = function (app) {
     app.post('/admin/adminEnrollTrain/search', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
+        var strSqlMiddle = " from adminEnrollTrains O join trainClasss C on O.trainId=C._id where O.isDeleted=false and C.isDeleted=false ",
+            strSql1 = "select count(0) as count ",
+            strSql2 = "select O.* ",
+            replacements = {};
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
         if (req.body.studentName && req.body.studentName.trim()) {
-            filter.studentName = {
-                $like: `%${req.body.studentName.trim()}%`
-            };
+            strSqlMiddle += " and O.studentName like :studentName ";
+            replacements.studentName = "%" + req.body.studentName.trim() + "%";
         }
         if (req.body.className) {
-            filter.trainName = req.body.className;
+            strSqlMiddle += " and O.trainName like :trainName ";
+            replacements.trainName = "%" + req.body.className.trim() + "%";
         }
         if (req.body.trainId) {
-            filter.trainId = req.body.trainId;
+            strSqlMiddle += " and O.trainId=:trainId ";
+            replacements.trainId = req.body.trainId;
         }
         if (req.body.isSucceed) {
-            filter.isSucceed = req.body.isSucceed;
+            strSqlMiddle += " and O.isSucceed=:isSucceed ";
+            replacements.isSucceed = req.body.isSucceed;
         }
         if (req.body.isPayed) {
-            filter.isPayed = (req.body.isPayed == "true" ? true : false);
+            strSqlMiddle += " and O.isPayed=:isPayed ";
+            replacements.isPayed = (req.body.isPayed == "true" ? true : false);
         }
         if (req.body.studentId) {
-            filter.studentId = req.body.studentId;
+            strSqlMiddle += " and O.studentId=:studentId ";
+            replacements.studentId = req.body.studentId;
         }
         if (req.body.yearId) {
-            filter.yearId = req.body.yearId;
+            strSqlMiddle += " and O.yearId=:yearId ";
+            replacements.yearId = req.body.yearId;
         }
         if (req.body.orderId) {
-            filter._id = req.body.orderId;
+            strSqlMiddle += " and O._id=:orderId ";
+            replacements.orderId = req.body.orderId;
         }
         if (req.body.schoolId) {
-            filter.schoolId = req.body.schoolId;
+            strSqlMiddle += " and O.schoolId=:schoolId ";
+            replacements.schoolId = req.body.schoolId;
         }
-        AdminEnrollTrain.getFiltersWithPage(page, filter).then(function (result) {
-            res.jsonp({
-                adminEnrollTrains: result.rows,
-                total: result.count,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
-            });
-        }).catch(err => {
+        if (req.body.attributeId) {
+            strSqlMiddle += " and C.attributeId=:attributeId ";
+            replacements.attributeId = req.body.attributeId;
+        }
+        var offset = ((page - 1) * pageSize);
+        strSql2 += strSqlMiddle + " LIMIT " + offset + ", " + pageSize;
+        strSql1 += strSqlMiddle;
 
-        });
+        model.db.sequelize.query(strSql1, {
+                replacements: replacements,
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (counts) {
+                if (counts && counts.length > 0) {
+                    var total = counts[0].count;
+                    model.db.sequelize.query(strSql2, {
+                            replacements: replacements,
+                            type: model.db.sequelize.QueryTypes.SELECT
+                        })
+                        .then(orders => {
+                            res.jsonp({
+                                adminEnrollTrains: orders,
+                                total: total,
+                                page: page,
+                                isFirstPage: (page - 1) == 0,
+                                isLastPage: (offset + orders.length) == total
+                            });
+                        });
+                }
+            });
     });
 
     app.get('/admin/rebateOrderList', checkLogin);

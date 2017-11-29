@@ -10,7 +10,7 @@ const YearAttributeRelation = db.defineModel('yearAttributeRelations', {
     },
     yearName: {
         type: db.STRING(50),
-        defaultValue: ''
+        defaultValue: '' // no value
     },
     attributeId: {
         type: db.STRING(50),
@@ -18,7 +18,7 @@ const YearAttributeRelation = db.defineModel('yearAttributeRelations', {
     },
     attributeName: {
         type: db.STRING(50),
-        defaultValue: ''
+        defaultValue: '' // no value
     }
 });
 module.exports = YearAttributeRelation;

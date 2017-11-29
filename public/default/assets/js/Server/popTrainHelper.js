@@ -19,6 +19,12 @@ function initTrainEvents() {
         .on("change", function (e) {
             changeCategories();
         });
+
+    $("#selectModal #InfoSearch #searchYear")
+        .off("change")
+        .on("change", function (e) {
+            changeAttributes();
+        });
 };
 
 function renderTrainSearchCriteria() {
@@ -32,11 +38,11 @@ function renderTrainSearchCriteria() {
         '<div class="form-group"><label for="grade" class="control-label">年级:</label><select name="grade" id="grade" class="form-control"></select></div>' +
         '<div class="form-group" style="width:190px;"><label for="subject" class="control-label">科目:</label><select name="subject" id="subject" class="form-control"></select></div></div>' +
         '<div class="col-md-20" style="margin-top:10px"><div class="form-group">' +
-        '<label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div><div class="form-group searchAttribute">' +
-        '<label for="searchAttribute" class="control-label">属性:</label>' +
-        '<select name="searchAttribute" id="searchAttribute" class="form-control"></select></div><div class="form-group">' +
+        '<label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div><div class="form-group">' +
         '<label for="searchYear" class="control-label">年度:</label>' +
-        '<select name="searchYear" id="searchYear" class="form-control"></select></div></div>' +
+        '<select name="searchYear" id="searchYear" class="form-control"></select></div><div class="form-group searchAttribute">' +
+        '<label for="searchAttribute" class="control-label">学季:</label>' +
+        '<select name="searchAttribute" id="searchAttribute" class="form-control"></select></div></div>' +
         '<div class="col-md-4" style=""><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     renderGradeSubjectCategoryYear(openTrain);
 
@@ -104,7 +110,7 @@ function renderGradeSubjectCategoryYear(callback) {
     $('#selectModal #InfoSearch').find("#subject option").remove();
     $('#selectModal #InfoSearch').find("#category option").remove();
     // $('#selectModal #InfoSearch').find("#searchYear option").remove();
-    selfAjax("get", "/admin/trainClass/gradesubjectcategoryschoolyear", null, function (data) {
+    selfAjax("get", "/admin/trainClass/gradesubjectcategoryschoolyearattribute", null, function (data) {
         if (data) {
             objFilters = data;
 
@@ -129,14 +135,7 @@ function renderGradeSubjectCategoryYear(callback) {
             changeGrades();
             changeSubjects();
             changeCategories();
-
-            if (data.classAttributes.length > 0) {
-                data.classAttributes.forEach(function (classAttribute) {
-                    $("#selectModal #InfoSearch #searchAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
-                });
-            } else {
-                $('#selectModal #InfoSearch .searchAttribute').hide();
-            }
+            changeAttributes();
 
             callback();
         }
@@ -190,5 +189,22 @@ function changeCategories() {
                 $("#selectModal #InfoSearch #category").append("<option value='" + category._id + "'>" + category.name + "</option>");
             }
         });
+    }
+};
+
+function changeAttributes() {
+    $('#selectModal #InfoSearch #searchAttribute').find("option").remove();
+    if (objFilters.classAttributes.length > 0) {
+        var yearAttributeRelations = objFilters.classAttributes.filter(function (relation) {
+            return relation.yearId == $("#selectModal #InfoSearch #searchYear").val();
+        });
+        if (yearAttributeRelations.length > 0) {
+            $('#selectModal #InfoSearch .searchAttribute').show();
+            yearAttributeRelations.forEach(function (classAttribute) {
+                $("#selectModal #InfoSearch #searchAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+            });
+        } else {
+            $('#selectModal #InfoSearch .searchAttribute').hide();
+        }
     }
 };

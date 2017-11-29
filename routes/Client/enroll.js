@@ -442,8 +442,12 @@ module.exports = function (app) {
                         .catch(function (err) {
                             console.log('errored');
                         });
-                    var p7 = ClassAttribute.getFilters({
-                            isChecked: true // only checked attributes will show here.
+                    var p7 = model.db.sequelize.query("select A._id, A.name from classAttributes A join yearAttributeRelations R \
+                        on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                            replacements: {
+                                yearId: global.currentYear._id
+                            },
+                            type: model.db.sequelize.QueryTypes.SELECT
                         })
                         .then(function (classAttributes) {
                             objReturn.classAttributes = classAttributes;
@@ -1394,15 +1398,19 @@ module.exports = function (app) {
                                         })
                                 });
                             });
-                        var p3 = ClassAttribute.getFilters({
-                                isChecked: true // only checked attributes will show here.
+                        var p3 = model.db.sequelize.query("select A._id, A.name from classAttributes A join yearAttributeRelations R \
+                                on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                                replacements: {
+                                    yearId: global.currentYear._id
+                                },
+                                type: model.db.sequelize.QueryTypes.SELECT
                             })
                             .then(function (classAttributes) {
                                 objReturn.classAttributes = classAttributes;
                             })
                             .catch(err => {
                                 console.log('err');
-                            });;
+                            });
                         Promise.all([p1, p2, p3]).then(function () {
                             res.jsonp(objReturn);
                         });
