@@ -8,7 +8,7 @@ var https = require('https'),
 function toxml(sendObject) {
     var keys = Object.getOwnPropertyNames(sendObject).sort();
     var xmlContent = "<xml>";
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
         xmlContent = xmlContent + "<" + key + "><![CDATA[" + sendObject[key] + "]]></" + key + ">"
     });
     xmlContent = xmlContent + "</xml>";
@@ -33,27 +33,36 @@ function myJSSubstr(body, sstart, sstop) {
     return resultBody;
 };
 
+function getPaySetting(schoolName) {
+    if (schoolName == "中南校区") {
+        return settings.pays.topublic;
+    } else {
+        return settings.pays.toprivate;
+    }
+};
+
 var Pay = {
-    pay: function(payParas, res) {
-        var sendObject = {
-            'body': payParas.body,
-            'mch_create_ip': settings.create_ip,
-            'mch_id': settings.mch_id,
-            'nonce_str': 'bfbeducation',
-            'notify_url': settings.notify_Url,
-            'out_trade_no': payParas.out_trade_no,
-            'service': 'pay.weixin.native',
-            'total_fee': payParas.total_fee
-        };
+    pay: function (payParas, res, schoolName) {
+        var paySetting = getPaySetting(schoolName),
+            sendObject = {
+                'body': payParas.body,
+                'mch_create_ip': settings.create_ip,
+                'mch_id': paySetting.mch_id,
+                'nonce_str': 'bfbeducation',
+                'notify_url': settings.notify_Url,
+                'out_trade_no': payParas.out_trade_no,
+                'service': 'pay.weixin.native',
+                'total_fee': payParas.total_fee
+            };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
             strPay = "";
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             var v = sendObject[key];
             if ("sign" != key && "key" != key) {
                 strPay = strPay + key + "=" + v + "&";
             }
         });
-        strPay = strPay + "key=" + settings.key;
+        strPay = strPay + "key=" + paySetting.key;
         var md5 = crypto.createHash('md5'),
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
@@ -65,8 +74,8 @@ var Pay = {
             method: 'POST'
         };
 
-        var reqPay = https.request(options, function(resPay) {
-            resPay.on('data', function(d) {
+        var reqPay = https.request(options, function (resPay) {
+            resPay.on('data', function (d) {
                 var body = d.toString(),
                     imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
 
@@ -76,32 +85,33 @@ var Pay = {
             });
         });
 
-        reqPay.on('error', function(e) {
+        reqPay.on('error', function (e) {
             console.error(e);
         });
         reqPay.write(data);
         reqPay.end();
     },
-    aliPay: function(payParas, res) {
-        var sendObject = {
-            'body': payParas.body,
-            'mch_create_ip': settings.create_ip,
-            'mch_id': settings.mch_id,
-            'nonce_str': 'bfbeducation',
-            'notify_url': settings.notify_Url,
-            'out_trade_no': payParas.out_trade_no,
-            'service': 'pay.alipay.native',
-            'total_fee': payParas.total_fee
-        };
+    aliPay: function (payParas, res, schoolName) {
+        var paySetting = getPaySetting(schoolName),
+            sendObject = {
+                'body': payParas.body,
+                'mch_create_ip': settings.create_ip,
+                'mch_id': paySetting.mch_id,
+                'nonce_str': 'bfbeducation',
+                'notify_url': settings.notify_Url,
+                'out_trade_no': payParas.out_trade_no,
+                'service': 'pay.alipay.native',
+                'total_fee': payParas.total_fee
+            };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
             strPay = "";
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             var v = sendObject[key];
             if ("sign" != key && "key" != key) {
                 strPay = strPay + key + "=" + v + "&";
             }
         });
-        strPay = strPay + "key=" + settings.key;
+        strPay = strPay + "key=" + paySetting.key;
         var md5 = crypto.createHash('md5'),
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
@@ -113,8 +123,8 @@ var Pay = {
             method: 'POST'
         };
 
-        var reqPay = https.request(options, function(resPay) {
-            resPay.on('data', function(d) {
+        var reqPay = https.request(options, function (resPay) {
+            resPay.on('data', function (d) {
                 var body = d.toString(),
                     imgCode = mysubstr(body, "<code_img_url><![CDATA[", "]]></code_img_url>");
 
@@ -124,36 +134,37 @@ var Pay = {
             });
         });
 
-        reqPay.on('error', function(e) {
+        reqPay.on('error', function (e) {
             console.error(e);
         });
         reqPay.write(data);
         reqPay.end();
     },
-    jsPay: function(payParas, res) {
+    jsPay: function (payParas, res, schoolName) {
         debugger;
-        var sendObject = {
-            'body': payParas.body,
-            'mch_create_ip': settings.create_ip,
-            'mch_id': settings.mch_id,
-            'nonce_str': 'bfbeducation',
-            'notify_url': settings.notify_Url,
-            'out_trade_no': payParas.out_trade_no,
-            'service': 'pay.weixin.jspay',
-            'sub_appid': settings.AppID,
-            'sub_openid': payParas.openId,
-            'time_expire': payParas.time_expire,
-            'total_fee': payParas.total_fee
-        };
+        var paySetting = getPaySetting(schoolName),
+            sendObject = {
+                'body': payParas.body,
+                'mch_create_ip': settings.create_ip,
+                'mch_id': paySetting.mch_id,
+                'nonce_str': 'bfbeducation',
+                'notify_url': settings.notify_Url,
+                'out_trade_no': payParas.out_trade_no,
+                'service': 'pay.weixin.jspay',
+                'sub_appid': settings.AppID,
+                'sub_openid': payParas.openId,
+                'time_expire': payParas.time_expire,
+                'total_fee': payParas.total_fee
+            };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
             strPay = "";
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             var v = sendObject[key];
             if ("sign" != key && "key" != key) {
                 strPay = strPay + key + "=" + v + "&";
             }
         });
-        strPay = strPay + "key=" + settings.key;
+        strPay = strPay + "key=" + paySetting.key;
         var md5 = crypto.createHash('md5'),
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
@@ -163,7 +174,7 @@ var Pay = {
                 url: 'https://pay.swiftpass.cn:443/pay/gateway',
                 body: data
             },
-            function(error, response, body) {
+            function (error, response, body) {
                 debugger;
                 if (response.statusCode == 200) {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
@@ -185,27 +196,28 @@ var Pay = {
             }
         );
     },
-    jsRebate: function(payParas, res) {
+    jsRebate: function (payParas, res, schoolName) {
         debugger;
-        var sendObject = {
-            'mch_id': settings.mch_id, //--
-            'nonce_str': 'bfbeducation', //--
-            'op_user_id': settings.mch_id, //--
-            'out_refund_no': payParas.out_refund_no, //--
-            'out_trade_no': payParas.out_trade_no, //--
-            'refund_fee': payParas.refund_fee, //--
-            'service': 'unified.trade.refund', //--
-            'total_fee': payParas.total_fee //--
-        };
+        var paySetting = getPaySetting(schoolName),
+            sendObject = {
+                'mch_id': paySetting.mch_id, //--
+                'nonce_str': 'bfbeducation', //--
+                'op_user_id': paySetting.mch_id, //--
+                'out_refund_no': payParas.out_refund_no, //--
+                'out_trade_no': payParas.out_trade_no, //--
+                'refund_fee': payParas.refund_fee, //--
+                'service': 'unified.trade.refund', //--
+                'total_fee': payParas.total_fee //--
+            };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
             strPay = "";
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             var v = sendObject[key];
             if ("sign" != key && "key" != key) {
                 strPay = strPay + key + "=" + v + "&";
             }
         });
-        strPay = strPay + "key=" + settings.key;
+        strPay = strPay + "key=" + paySetting.key;
         var md5 = crypto.createHash('md5'),
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
@@ -215,7 +227,7 @@ var Pay = {
                 url: 'https://pay.swiftpass.cn:443/pay/gateway',
                 body: data
             },
-            function(error, response, body) {
+            function (error, response, body) {
                 debugger;
                 if (response.statusCode == 200) {
                     // 第三步 //3天后查询
@@ -226,23 +238,25 @@ var Pay = {
             }
         );
     },
-    getOpenId: function(res, id) {
+    getOpenId: function (res, id) {
         // 这是编码后的地址
         //"http%3A%2F%2Fwww.bfbeducation.com%2Fget_wx_access_token%2F"
         var return_uri = 'http%3A%2F%2Fwww.bfbeducation.com%2Fget_wx_access_token%2F' + id; // + router;
         var scope = 'snsapi_base';
         debugger;
-        res.jsonp({ url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + settings.AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=123#wechat_redirect' });
+        res.jsonp({
+            url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + settings.AppID + '&redirect_uri=' + return_uri + '&response_type=code&scope=' + scope + '&state=123#wechat_redirect'
+        });
         return;
         // res.redirect();
     },
-    wechatPay: function(req, res, callback) {
+    wechatPay: function (req, res, callback) {
         debugger;
         var code = req.query.code;
         request.get({
                 url: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + settings.AppID + '&secret=' + settings.AppSecret + '&code=' + code + '&grant_type=authorization_code',
             },
-            function(error, response, body) {
+            function (error, response, body) {
                 debugger;
                 if (response.statusCode == 200) {
                     // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
@@ -250,27 +264,31 @@ var Pay = {
                     var access_token = data.access_token;
                     callback(res, req.params.id, data.openid);
                 } else {
-                    res.jsonp({ error: "没有授权openID!" });
+                    res.jsonp({
+                        error: "没有授权openID!"
+                    });
                 }
             }
         );
     },
-    closeOrder: function(id) {
+    closeOrder: function (id, schoolName) {
+        var paySetting = getPaySetting(schoolName);
+
         var sendObject = {
-            'mch_id': settings.mch_id,
+            'mch_id': paySetting.mch_id,
             'nonce_str': 'bfbeducation',
             'out_trade_no': id,
             'service': 'unified.trade.close'
         };
         var keys = Object.getOwnPropertyNames(sendObject).sort(),
             strPay = "";
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             var v = sendObject[key];
             if ("sign" != key && "key" != key) {
                 strPay = strPay + key + "=" + v + "&";
             }
         });
-        strPay = strPay + "key=" + settings.key;
+        strPay = strPay + "key=" + paySetting.key;
         var md5 = crypto.createHash('md5'),
             sign = md5.update(strPay).digest('hex').toUpperCase();
         sendObject.sign = sign;
@@ -280,7 +298,7 @@ var Pay = {
                 url: 'https://pay.swiftpass.cn:443/pay/gateway',
                 body: data
             },
-            function(error, response, body) {
+            function (error, response, body) {
                 if (response.statusCode == 200) {} else {}
             }
         );

@@ -187,7 +187,7 @@ module.exports = function (app) {
                         time_expire: moment().add(20, 'minute').format("YYYYMMDDHHmmss")
                     };
                     //time_expire is new function, maybe there is something wrong
-                    payHelper.jsPay(payParas, res);
+                    payHelper.jsPay(payParas, res, order.schoolArea);
                 }
             });
     };
@@ -205,7 +205,7 @@ module.exports = function (app) {
                         total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100,
                         openId: openId
                     };
-                    payHelper.pay(payParas, res);
+                    payHelper.pay(payParas, res, order.schoolArea);
                 }
             });
     };
@@ -223,7 +223,7 @@ module.exports = function (app) {
                         total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100,
                         openId: openId
                     };
-                    payHelper.aliPay(payParas, res);
+                    payHelper.aliPay(payParas, res, order.schoolArea);
                 }
             });
     };

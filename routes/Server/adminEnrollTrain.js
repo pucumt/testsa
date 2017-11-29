@@ -450,7 +450,7 @@ module.exports = function (app) {
                         .then(function () {
                             if (order.payWay == 6 || order.payWay == 7) {
                                 //send message to xingye
-                                payHelper.closeOrder(req.body.id);
+                                payHelper.closeOrder(req.body.id, order.schoolArea);
                             }
 
                             res.jsonp({
@@ -584,7 +584,7 @@ module.exports = function (app) {
         //                                         refund_fee: rebateRecord.rebateTotalPrice * 100,
         //                                         total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0) + (order.rebatePrice || 0)) * 100
         //                                     };
-        //                                     payHelper.jsRebate(payParas, res);
+        //                                     payHelper.jsRebate(payParas, res, order.schoolArea);
         //                                     res.jsonp({
         //                                         sucess: true
         //                                     });
@@ -787,7 +787,7 @@ module.exports = function (app) {
                         body: order.trainName,
                         total_fee: ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100
                     };
-                    payHelper.pay(payParas, res);
+                    payHelper.pay(payParas, res, order.schoolArea);
                     return;
                 }
                 res.jsonp({
@@ -795,6 +795,14 @@ module.exports = function (app) {
                 });
             });
     });
+
+    function getPaySetting(schoolName) {
+        if (schoolName == "中南校区") {
+            return settings.pays.topublic;
+        } else {
+            return settings.pays.toprivate;
+        }
+    };
 
     // to be check in production
     app.post('/admin/pay/notify', function (req, res) {
@@ -815,24 +823,25 @@ module.exports = function (app) {
                 });
                 parseString(data, function (err, resultObject) {
                     var result = resultObject.xml;
-                    var keys = Object.getOwnPropertyNames(result).sort(),
-                        strResult = "";
-                    keys.forEach(function (key) {
-                        var v = result[key];
-                        if ("sign" != key && "key" != key) {
-                            strResult = strResult + key + "=" + v + "&";
-                        }
-                    });
-                    strResult = strResult + "key=" + settings.key;
-                    var md5 = crypto.createHash('md5'),
-                        sign = md5.update(strResult).digest('hex').toUpperCase();
-                    if (sign == (result.sign + "")) {
-                        if (parseInt(result.status + "") == 0 && parseInt(result.result_code + "") == 0) {
-                            var orderId = result.out_trade_no + "";
-                            AdminEnrollTrain.getFilter({
-                                    _id: orderId
-                                })
-                                .then(function (order) {
+                    var orderId = result.out_trade_no + "";
+                    AdminEnrollTrain.getFilter({
+                            _id: orderId
+                        })
+                        .then(function (order) {
+                            var paySetting = getPaySetting(order.schoolArea),
+                                keys = Object.getOwnPropertyNames(result).sort(),
+                                strResult = "";
+                            keys.forEach(function (key) {
+                                var v = result[key];
+                                if ("sign" != key && "key" != key) {
+                                    strResult = strResult + key + "=" + v + "&";
+                                }
+                            });
+                            strResult = strResult + "key=" + paySetting.key;
+                            var md5 = crypto.createHash('md5'),
+                                sign = md5.update(strResult).digest('hex').toUpperCase();
+                            if (sign == (result.sign + "")) {
+                                if (parseInt(result.status + "") == 0 && parseInt(result.result_code + "") == 0) {
                                     var orderFee = ((parseFloat(order.totalPrice) || 0) + (parseFloat(order.realMaterialPrice) || 0)) * 100;
                                     if (orderFee.toString() == (result.total_fee + "")) {
                                         // wechat online, zhifubao is wrong
@@ -851,13 +860,13 @@ module.exports = function (app) {
                                                 }
                                             });
                                     }
-                                });
-                        } else {
-                            res.end("failure1");
-                        }
-                    } else {
-                        res.end("failure2");
-                    }
+                                } else {
+                                    res.end("failure1");
+                                }
+                            } else {
+                                res.end("failure2");
+                            }
+                        });
                 });
             } catch (err) {}
         })
