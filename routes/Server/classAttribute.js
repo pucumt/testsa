@@ -93,8 +93,13 @@ module.exports = function (app) {
 
     app.post('/admin/classAttribute/getChecked', checkLogin);
     app.post('/admin/classAttribute/getChecked', function (req, res) {
-        ClassAttribute.getFilters({
-                isChecked: true // only checked attributes will show here.
+        // get currentYear attributes
+        model.db.sequelize.query("select A._id, A.name from classAttributes A join yearAttributeRelations R \
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                replacements: {
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(function (classAttributes) {
                 res.jsonp(classAttributes);
