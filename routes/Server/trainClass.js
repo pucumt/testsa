@@ -697,13 +697,18 @@ module.exports = function (app) {
 
     app.post('/admin/batchTrainClasspublish', checkLogin);
     app.post('/admin/batchTrainClasspublish', function (req, res) {
+        var filter = {
+            yearId: req.body.id,
+            schoolId: req.body.schoolId,
+            isDeleted: false
+        };
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
         TrainClass.update({
                 isWeixin: 1
             }, {
-                where: {
-                    yearId: req.body.id,
-                    isDeleted: false
-                }
+                where: filter
             })
             .then(function (result) {
                 res.jsonp({
@@ -719,13 +724,19 @@ module.exports = function (app) {
 
     app.post('/admin/batchTrainClassUnpublish', checkLogin);
     app.post('/admin/batchTrainClassUnpublish', function (req, res) {
+        var filter = {
+            yearId: req.body.id,
+            schoolId: req.body.schoolId,
+            isDeleted: false
+        };
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
+
         TrainClass.update({
                 isWeixin: 9
             }, {
-                where: {
-                    yearId: req.body.id,
-                    isDeleted: false
-                }
+                where: filter
             })
             .then(function (result) {
                 res.jsonp({
@@ -742,14 +753,17 @@ module.exports = function (app) {
     app.post('/admin/batchAdd100', checkLogin);
     app.post('/admin/batchAdd100', function (req, res) {
         var filter = {
-            yearId: req.body.id
+            yearId: req.body.id,
+            schoolId: req.body.schoolId
         };
         if (req.body.gradeId) {
             filter.gradeId = {
                 $ne: req.body.gradeId
             };
         }
-
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
         TrainClass.update({
                 trainPrice: model.db.sequelize.literal('`trainPrice`+100')
             }, {
@@ -770,14 +784,17 @@ module.exports = function (app) {
     app.post('/admin/batchMin100', checkLogin);
     app.post('/admin/batchMin100', function (req, res) {
         var filter = {
-            yearId: req.body.id
+            yearId: req.body.id,
+            schoolId: req.body.schoolId
         };
         if (req.body.gradeId) {
             filter.gradeId = {
                 $ne: req.body.gradeId
             };
         }
-
+        if (req.body.attributeId) {
+            filter.attributeId = req.body.attributeId;
+        }
         TrainClass.update({
                 trainPrice: model.db.sequelize.literal('`trainPrice`-100')
             }, {

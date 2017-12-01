@@ -49,12 +49,12 @@ function changeAttributes() {
             return relation.yearId == $(" #InfoSearch #searchYear").val();
         });
         if (yearAttributeRelations.length > 0) {
-            $(' #InfoSearch .searchAttribute').show();
+            $(' #InfoSearch .attribute').show();
             yearAttributeRelations.forEach(function (classAttribute) {
                 $(" #InfoSearch #searchAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
             });
         } else {
-            $(' #InfoSearch .searchAttribute').hide();
+            $(' #InfoSearch .attribute').hide();
         }
     }
 };

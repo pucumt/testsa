@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function () {
-    $("#btnAdmin").addClass("active");
+    $("#left_btnYear").addClass("active");
     search();
 });
 
