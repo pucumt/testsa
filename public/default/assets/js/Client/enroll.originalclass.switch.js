@@ -63,7 +63,9 @@ function renderfilter() {
 
             if (data.classAttributes.length > 0) {
                 data.classAttributes.forEach(function (classAttribute) {
-                    $(".enroll-filter #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+                    if (classAttribute.name != "寒假班") {
+                        $(".enroll-filter #drpAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
+                    }
                 });
             } else {
                 $('.container.enroll-filter .attribute').hide();
