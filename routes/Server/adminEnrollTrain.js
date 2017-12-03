@@ -94,7 +94,7 @@ module.exports = function (app) {
             replacements.attributeId = req.body.attributeId;
         }
         var offset = ((page - 1) * pageSize);
-        strSql2 += strSqlMiddle + " LIMIT " + offset + ", " + pageSize;
+        strSql2 += strSqlMiddle + " order by O.createdDate desc, O._id desc LIMIT " + offset + ", " + pageSize;
         strSql1 += strSqlMiddle;
 
         model.db.sequelize.query(strSql1, {
