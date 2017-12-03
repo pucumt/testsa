@@ -32,4 +32,5 @@ $(document).ready(function () {
     });
 
     $(".admin-header .menu-top #header_btnFinancial").addClass("active");
+    $(".admin-header .menu-top #header_btnFinancial2").addClass("active");
 });

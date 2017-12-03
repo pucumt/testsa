@@ -22,31 +22,31 @@
         <div class="logo pull-left">百分百</div>
         <div class="menu-top pull-left">
             <ul class="nav nav-pills">
-                {% if user.role < 9 %} 
-                <li id="header_btnEnroll" role="presentation">课程报名</li>
-                {% endif %} {% if user.role < 8 %} 
-                <li id="header_btnClass" role="presentation">课程管理</li>
-                {% endif %} {% if user.role < 9 %} 
-                <li id="header_btnStudent" role="presentation">学生管理</li>
-                {% endif %} {% if user.role < 10 and user.role != 8 %}
-                <li id="header_btnFinancial" role="presentation">财务管理</li>
-                {% endif %} 
-                {% if user.role == 9 or user.role == 11 %}
-                <li id="header_btnFinancial2" role="presentation">财务管理</li>
-                {% endif %} {% if user.role< 8 %} 
-                <li id="header_btnBasic" role="presentation">基本设置</li>
-                {% endif %} {% if user.role < 9 %} 
-                <li id="header_btnEnrollExam" role="presentation">测试报名</li>
-                {% endif %} {% if (user.role == 11) %}
-                <li id="header_btnQuiz" role="presentation">小测验</li>
-                <li id="header_btnBook" role="presentation">课本管理</li>
-                {% endif %}
+                {% if user.role
+                < 9 %} <li id="header_btnEnroll" role="presentation">课程报名</li>
+                    {% endif %} {% if user.role
+                    < 8 %} <li id="header_btnClass" role="presentation">课程管理</li>
+                        {% endif %} {% if user.role
+                        < 9 %} <li id="header_btnStudent" role="presentation">学生管理</li>
+                            {% endif %} {% if user.role
+                            < 10 and user.role !=8 %} <li id="header_btnFinancial" role="presentation">财务管理</li>
+                                {% endif %} {% if user.role == 9 or user.role == 11 %}
+                                <li id="header_btnFinancial2" role="presentation">财务管理</li>
+                                {% endif %} {% if user.role
+                                < 8 %} <li id="header_btnBasic" role="presentation">基本设置</li>
+                                    {% endif %} {% if user.role
+                                    < 9 %} <li id="header_btnEnrollExam" role="presentation">测试报名</li>
+                                        {% endif %} {% if (user.role == 11) %}
+                                        <li id="header_btnQuiz" role="presentation">小测验</li>
+                                        <li id="header_btnBook" role="presentation">课本管理</li>
+                                        {% endif %}
             </ul>
         </div>
         <div class="userinfo pull-right">
             用户: {{ user.name }}
             <a href="/admin/logout">退出</a>
             <input type="hidden" name="adminSchoolId" id="adminSchoolId" value="{{user.schoolId}}">
+            <input type="hidden" name="adminSubjectId" id="adminSubjectId" value="{{user.subjectId}}">
         </div>
     </div>
     <div class="admin-content">

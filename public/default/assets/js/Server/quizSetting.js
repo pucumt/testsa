@@ -6,5 +6,9 @@ $(document).ready(function () {
         location.href = "/admin/processLevelList";
     });
 
+    $("#left_btnQuizInput").on("click", function (e) {
+        location.href = "/admin/quizScoreList";
+    });
+
     $(".admin-header .menu-top #header_btnQuiz").addClass("active");
 });

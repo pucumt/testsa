@@ -35,5 +35,9 @@ $(document).ready(function () {
         location.href = "/admin/rollCallConfigureList";
     });
 
+    $("#left_btnProcessLevel").on("click", function (e) {
+        location.href = "/admin/ProcessLevelList";
+    });
+
     $(".admin-header .menu-top #header_btnClass").addClass("active");
 });

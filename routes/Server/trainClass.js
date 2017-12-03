@@ -14,6 +14,7 @@ var model = require("../../model.js"),
     SchoolGradeRelation = model.schoolGradeRelation,
     GradeSubjectRelation = model.gradeSubjectRelation,
     GradeSubjectCategoryRelation = model.gradeSubjectCategoryRelation,
+    RollCallConfigure = model.rollCallConfigure,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -836,6 +837,23 @@ module.exports = function (app) {
             })
             .then(function (exams) {
                 res.jsonp(exams);
+            });
+    });
+
+    app.post('/admin/trainClass/classesFromTeacher', checkLogin);
+    app.post('/admin/trainClass/classesFromTeacher', function (req, res) {
+        //debugger;
+        RollCallConfigure.getFilter({})
+            .then(function (configure) {
+                TrainClass.getFilters({
+                        teacherId: req.session.admin._id, // the admin is teacher 
+                        yearId: configure.yearId
+                    })
+                    .then(function (classs) {
+                        res.jsonp({
+                            classs: classs
+                        });
+                    });
             });
     });
 }

@@ -16,7 +16,9 @@
     gradeSubjectRelation = require('./gradeSubjectRelation.js'),
     gradeSubjectCategoryRelation = require('./gradeSubjectCategoryRelation.js'),
     yearAttributeRelation = require('./yearAttributeRelation.js'),
+
     quiz = require('./quiz.js'),
+    quizStudentScore = require('./quizStudentScore.js'),
 
     trainClass = require('./trainClass.js'),
     category = require('./category.js'),
@@ -27,6 +29,7 @@
     examClassExamArea = require('./examClassExamArea.js'),
     enrollProcessConfigure = require('./enrollProcessConfigure.js'),
     rollCallConfigure = require('./rollCallConfigure.js'),
+    subjectCategoryPLevelRelation = require('./subjectCategoryPLevelRelation.js'),
 
     adminEnrollExam = require('./adminEnrollExam.js'),
     adminEnrollTrain = require('./adminEnrollTrain.js'),
@@ -79,7 +82,6 @@ module.exports = function (app) {
     gradeSubjectRelation(app);
     gradeSubjectCategoryRelation(app);
     yearAttributeRelation(app);
-    quiz(app);
 
     category(app);
     subject(app);
@@ -92,6 +94,7 @@ module.exports = function (app) {
     examClassExamArea(app);
     enrollProcessConfigure(app);
     rollCallConfigure(app);
+    subjectCategoryPLevelRelation(app);
 
     //enroll
     adminEnrollExam(app);
@@ -118,4 +121,7 @@ module.exports = function (app) {
     // lessonWord(app);
     lessonContent(app);
     // lessonSentence(app);
+
+    quiz(app);
+    quizStudentScore(app);
 };
