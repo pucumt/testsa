@@ -443,7 +443,7 @@ module.exports = function (app) {
                             console.log('errored');
                         });
                     var p7 = model.db.sequelize.query("select A._id, A.name from classAttributes A join yearAttributeRelations R \
-                        on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                        on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId and A.isChecked=true", {
                             replacements: {
                                 yearId: global.currentYear._id
                             },
@@ -1399,7 +1399,7 @@ module.exports = function (app) {
                                 });
                             });
                         var p3 = model.db.sequelize.query("select A._id, A.name from classAttributes A join yearAttributeRelations R \
-                                on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+                                on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId and A.isChecked=true", {
                                 replacements: {
                                     yearId: global.currentYear._id
                                 },
