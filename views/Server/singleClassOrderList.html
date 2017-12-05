@@ -1,8 +1,10 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% if isTeacher==1 %} {% include "Server/partial/quizSetting.html"
+%} {% else %} {% include "Server/partial/financialSetting.html" %} {% endif %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
         <input type="hidden" class="form-control" name="id" id="id" value={{ id }}>
+        <input type="hidden" class="form-control" name="isTeacher" id="isTeacher" value={{ isTeacher }}>
     </h1>
 </div>
 <div class="panel panel-default">
@@ -63,7 +65,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -77,6 +81,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/singleClassOrderList.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/singleClassOrderList.js?v=1.001"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

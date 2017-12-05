@@ -43,7 +43,7 @@ module.exports = function (app) {
                         res.redirect('/admin/peopleCountList');
                     } else if (user.role == 20) {
                         // 普通老师
-                        res.redirect('/admin/peopleCountList');
+                        res.redirect('/admin/quizScoreList');
                     }
                 }
             });

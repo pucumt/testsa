@@ -27,7 +27,7 @@ $(document).ready(function () {
         location.href = "/admin/adminBookList";
     });
     $("#header_btnQuiz").on("click", function (e) {
-        location.href = "/admin/quizList";
+        location.href = "/admin/quizScoreList";
     });
 });
 

@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -43,6 +44,15 @@
                     </div>
                 </div>
             </div>
+            <div class="row form-horizontal">
+                <div class="col-md-24">
+                    <div class="form-group">
+                        <label style="width: 100px" for="openReg" class="control-label">开放注册(TBD):</label>
+                        <input style="width: 100px" type="text" maxlength="30" readonly class="form-control" name="openReg" id="openReg">
+                        <button type="button" id="btnOpenReg" class="btn btn-primary panelButton">开启</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -52,7 +62,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">

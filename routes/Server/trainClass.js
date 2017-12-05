@@ -856,4 +856,18 @@ module.exports = function (app) {
                     });
             });
     });
+
+    app.post('/admin/trainClass/classesFromTeacherOfcurrent', checkLogin);
+    app.post('/admin/trainClass/classesFromTeacherOfcurrent', function (req, res) {
+        //debugger;
+        TrainClass.getFilters({
+                teacherId: req.session.admin._id, // the admin is teacher 
+                yearId: global.currentYear._id
+            })
+            .then(function (classs) {
+                res.jsonp({
+                    classs: classs
+                });
+            });
+    });
 }

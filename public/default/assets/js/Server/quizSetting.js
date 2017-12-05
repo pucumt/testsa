@@ -2,8 +2,8 @@ $(document).ready(function () {
     $("#left_btnQuiz").on("click", function (e) {
         location.href = "/admin/quizList";
     });
-    $("#left_btnProcessLevel").on("click", function (e) {
-        location.href = "/admin/processLevelList";
+    $("#left_btnClassEnroll").on("click", function (e) {
+        location.href = "/admin/classEnrollList";
     });
 
     $("#left_btnQuizInput").on("click", function (e) {

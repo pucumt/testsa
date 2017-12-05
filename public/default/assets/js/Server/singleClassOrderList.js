@@ -1,7 +1,11 @@
 var isNew = true;
 
 $(document).ready(function () {
-    $("#left_btnPeopleCount").addClass("active");
+    if ($("#isTeacher").val() == 1) {
+        $("#left_btnClassEnroll").addClass("active");
+    } else {
+        $("#left_btnPeopleCount").addClass("active");
+    }
     $("#InfoSearch #isSucceed").val(1);
 
     searchOrder();

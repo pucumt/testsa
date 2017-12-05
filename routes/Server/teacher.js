@@ -134,4 +134,23 @@ module.exports = function (app) {
                 });
             });
     });
+
+    app.get('/admin/classEnrollList', checkLogin);
+    app.get('/admin/classEnrollList', function (req, res) {
+        res.render('Server/classEnrollList.html', {
+            title: '>课程报名情况',
+            user: req.session.admin
+        });
+    });
+
+    // same page with report people count detail
+    app.get('/admin/teacher/orderlist/:id', checkLogin);
+    app.get('/admin/teacher/orderlist/:id', function (req, res) {
+        res.render('Server/singleClassOrderList.html', {
+            title: '>课程详细订单',
+            user: req.session.admin,
+            id: req.params.id,
+            isTeacher: 1
+        });
+    });
 }
