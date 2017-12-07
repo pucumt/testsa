@@ -43,6 +43,14 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/admin/changeSchoolList', checkLogin);
+    app.get('/admin/changeSchoolList', function (req, res) {
+        res.render('Server/changeSchoolList.html', {
+            title: '>跨校区调班',
+            user: req.session.admin
+        });
+    });
+
     app.get('/admin/peopleCountList', checkLogin);
     app.get('/admin/peopleCountList', function (req, res) {
         res.render('Server/peopleCountList.html', {
@@ -223,6 +231,27 @@ module.exports = function (app) {
                         });
                     });
             });
+    });
+
+
+    app.post('/admin/changeSchoolList/search', checkLogin);
+    app.post('/admin/changeSchoolList/search', function (req, res) {
+        //判断是否是第一页，并把请求的页数转换成 number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+        //查询并返回第 page 页的 20 篇文章
+        var filter = {
+            cancelType: 2
+        };
+
+        AdminEnrollTrain.getFiltersWithPage(page, filter).then(function (result) {
+            res.jsonp({
+                adminEnrollTrains: result.rows,
+                total: result.count,
+                page: page,
+                isFirstPage: (page - 1) == 0,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+            });
+        });
     });
 
     app.post('/admin/peopleCountList/search', checkLogin);

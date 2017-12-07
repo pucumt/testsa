@@ -15,6 +15,10 @@ $(document).ready(function () {
         location.href = "/admin/rebateDetailList";
     });
 
+    $("#left_btnChangeSchool").on("click", function (e) {
+        location.href = "/admin/changeSchoolList";
+    });
+
     $("#left_btnPeopleCount").on("click", function (e) {
         location.href = "/admin/peopleCountList";
     });

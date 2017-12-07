@@ -715,9 +715,13 @@ module.exports = function (app) {
                                                 },
                                                 transaction: t1
                                             }).then(function () {
+                                                var cancelType = 1;
+                                                if (oldOrder.schoolId != req.body.schoolId) {
+                                                    cancelType = 2; // 跨校区调班
+                                                }
                                                 return AdminEnrollTrain.update({
                                                     isSucceed: 9,
-                                                    cancelType: 1,
+                                                    cancelType: cancelType,
                                                     deletedDate: new Date(),
                                                     deletedBy: req.session.admin._id
                                                 }, {

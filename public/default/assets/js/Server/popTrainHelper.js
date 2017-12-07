@@ -113,11 +113,11 @@ function renderGradeSubjectCategoryYear(callback) {
     selfAjax("get", "/admin/trainClass/gradesubjectcategoryschoolyearattribute", null, function (data) {
         if (data) {
             objFilters = data;
-
+            var curSchoolId = $("#oldSchoolId").val() || $("#adminSchoolId").val();
             if (data.schools && data.schools.length > 0) {
                 data.schools.forEach(function (school) {
                     var select = "";
-                    if ($("#adminSchoolId").val() == school._id) {
+                    if (curSchoolId == school._id) {
                         select = "selected";
                     }
                     $("#selectModal #InfoSearch #schoolArea").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
@@ -126,15 +126,29 @@ function renderGradeSubjectCategoryYear(callback) {
             if (data.years && data.years.length > 0) {
                 data.years.forEach(function (year) {
                     var select = "";
-                    if (year.isCurrentYear) {
+                    if ($("#oldYearId").val() && $("#oldYearId").val() == year._id) {
+                        select = "selected";
+                    } else if (year.isCurrentYear) {
                         select = "selected";
                     }
                     $("#selectModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
                 });
             }
             changeGrades();
+            if ($("#oldGradeId").val()) {
+                $("#selectModal #InfoSearch #grade").val($("#oldGradeId").val());
+            }
+
             changeSubjects();
+            if ($("#oldSubjectId").val()) {
+                $("#selectModal #InfoSearch #subject").val($("#oldSubjectId").val());
+            }
+
             changeCategories();
+            if ($("#oldCategoryId").val()) {
+                $("#selectModal #InfoSearch #category").val($("#oldCategoryId").val());
+            }
+
             changeAttributes();
 
             callback();
