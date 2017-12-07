@@ -41,7 +41,7 @@ function renderTrainSearchCriteria() {
         '<label for="category" class="control-label">难度:</label><select name="category" id="category" class="form-control"></select></div><div class="form-group">' +
         '<label for="searchYear" class="control-label">年度:</label>' +
         '<select name="searchYear" id="searchYear" class="form-control"></select></div><div class="form-group searchAttribute">' +
-        '<label for="searchAttribute" class="control-label">学季:</label>' +
+        '<label for="searchAttribute" class="control-label">学期:</label>' +
         '<select name="searchAttribute" id="searchAttribute" class="form-control"></select></div></div>' +
         '<div class="col-md-4" style=""><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
     renderGradeSubjectCategoryYear(openTrain);

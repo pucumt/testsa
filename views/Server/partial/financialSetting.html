@@ -1,17 +1,18 @@
 <div class="title">财务报表</div>
 <ul class="nav nav-pills nav-stacked">
-    {% if user.role<9%} 
-    <li id="left_btnSchoolReport" role="presentation">校区金额报表</li>
-    <li id="left_btnPayWayReport" role="presentation">支付方式报表</li>
-    <li id="left_btnRebateReport" role="presentation">退费报表</li>
-    {% endif %}
-    <li id="left_btnPeopleCount" role="presentation">人数报表</li>
-    {% if user.role<9%} 
-    <li id="left_btngradeMone" role="presentation">小升初报名</li>
-    <li id="left_btnEnrollAggregate" role="presentation">报名情况统计</li>
-    <li id="left_btnOtherReport" role="presentation">其他情况统计</li>
-    {% endif %} {% if user.role==0 or user.role==7 or user.role==9%}
-    <li id="left_btnCompareLast" role="presentation">留存报表</li>
-    {% endif %}
+    {% if user.role
+    <9%} <li id="left_btnSchoolReport" role="presentation">校区金额报表</li>
+        <li id="left_btnPayWayReport" role="presentation">支付方式报表</li>
+        <li id="left_btnRebateReport" role="presentation">退费报表</li>
+        <li id="left_btnRebateDetail" role="presentation">退费详情</li>
+        {% endif %}
+        <li id="left_btnPeopleCount" role="presentation">人数报表</li>
+        {% if user.role
+        <9%} <li id="left_btngradeMone" role="presentation">小升初报名</li>
+            <li id="left_btnEnrollAggregate" role="presentation">报名情况统计</li>
+            <li id="left_btnOtherReport" role="presentation">其他情况统计</li>
+            {% endif %} {% if user.role==0 or user.role==7 or user.role==9%}
+            <li id="left_btnCompareLast" role="presentation">留存报表</li>
+            {% endif %}
 </ul>
-<script type="text/javascript" src="/default/assets/js/Server/financialSetting.js?v=1.001"></script>
+<script type="text/javascript" src="/default/assets/js/Server/financialSetting.js?v=1.002"></script>

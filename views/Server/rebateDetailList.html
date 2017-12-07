@@ -11,26 +11,20 @@
             <div class="row form-horizontal">
                 <div class="col-md-4">
                     <div class="form-group">
+                        <label for="startDate" class="control-label" style="width: 65px;">开始日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="startDate" id="startDate">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="endDate" class="control-label" style="width: 65px;">截至日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="endDate" id="endDate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
                         <label for="searchSchool" class="control-label">校区:</label>
                         <select name="searchSchool" id="searchSchool" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-4 subject-container">
-                    <div class="form-group">
-                        <label for="searchSubject" class="control-label">科目:</label>
-                        <select name="searchSubject" id="searchSubject" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="searchCategory" class="control-label">难度:</label>
-                        <select name="searchCategory" id="searchCategory" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group clearfix">
-                        <label for="searchGrade" class="control-label pull-left">年级:</label>
-                        <select name="searchGrade" multiple="true" id="searchGrade" class="form-control pull-left"></select>
                     </div>
                 </div>
                 <div class="col-md-4 attribute">
@@ -39,7 +33,7 @@
                         <select name="drpAttribute" id="drpAttribute" class="form-control"></select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
                 </div>
             </div>
@@ -54,15 +48,23 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:400px;">课程</th>
-                <th style="width:100px;">报名人数</th>
-                <th style="">总人数</th>
+                <th style="width:200px;">退款日期</th>
+                <th style="width:80px;">学生</th>
+                <th>课程</th>
+                <th style="width:160px;">校区</th>
+                <th style="width:100px;">已退费用</th>
+                <th style="width:80px;">支付方式</th>
             </tr>
         </thead>
         <tbody id="gridBody">
         </tbody>
     </table>
 </div>
+<div id="selectModal">
+    <input type="hidden" id="total" value="0" />
+    <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
+</div>
 {% endblock %} {% block modal %}
-<script type="text/javascript" src="/default/assets/js/Server/peopleCountList.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/rebateDetailList.js?v=1.0"></script>
 {% endblock %}

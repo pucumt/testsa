@@ -1179,10 +1179,10 @@ module.exports = function (app) {
     // 退费报表
     app.post('/admin/export/rebateAllList', function (req, res) {
         var data = [
-            ['学生', '电话', '订单', '课程', '校区', '年级', '科目', '退费', '退费日期']
+            ['学生', '电话', '订单', '课程', '校区', '年级', '科目', '退费', '退费日期', '退费方式']
         ];
         var p = model.db.sequelize.query("select S.name as studentName, S.mobile, O._id, C.name, C.schoolArea, C.gradeName, C.subjectName, \
-        R.rebateTotalPrice, DATE_ADD(R.createdDate,INTERVAL 8 HOUR) as createdDate from rebateEnrollTrains R join adminEnrollTrains O \
+        R.rebateTotalPrice, DATE_ADD(R.createdDate,INTERVAL 8 HOUR) as createdDate, R.rebateWay from rebateEnrollTrains R join adminEnrollTrains O \
         on O._id=R.trainOrderId \
         join studentInfos S on O.studentId=S._id \
         join trainClasss C on O.trainId=C._id \
@@ -1195,7 +1195,7 @@ module.exports = function (app) {
             .then(orders => {
                 if (orders && orders.length > 0) {
                     orders.forEach(function (order) {
-                        var singleInfo = [order.studentName, order.mobile, order._id, order.name, order.schoolArea, order.gradeName, order.subjectName, order.rebateTotalPrice, order.createdDate];
+                        var singleInfo = [order.studentName, order.mobile, order._id, order.name, order.schoolArea, order.gradeName, order.subjectName, order.rebateTotalPrice, order.createdDate, getPayway(order.rebateWay)];
                         data.push(singleInfo);
                     });
                 }

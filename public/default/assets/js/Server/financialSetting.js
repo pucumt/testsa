@@ -11,6 +11,10 @@ $(document).ready(function () {
         location.href = "/admin/rebateReportList";
     });
 
+    $("#left_btnRebateDetail").on("click", function (e) {
+        location.href = "/admin/rebateDetailList";
+    });
+
     $("#left_btnPeopleCount").on("click", function (e) {
         location.href = "/admin/peopleCountList";
     });

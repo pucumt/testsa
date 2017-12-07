@@ -35,6 +35,14 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/admin/rebateDetailList', checkLogin);
+    app.get('/admin/rebateDetailList', function (req, res) {
+        res.render('Server/rebateDetailList.html', {
+            title: '>退费详情',
+            user: req.session.admin
+        });
+    });
+
     app.get('/admin/peopleCountList', checkLogin);
     app.get('/admin/peopleCountList', function (req, res) {
         res.render('Server/peopleCountList.html', {
@@ -65,7 +73,7 @@ module.exports = function (app) {
         var strSql = "select C.schoolId as _id, C.schoolArea as name, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice \
         from adminEnrollTrains O join trainClasss C \
         on O.trainId=C._id \
-        where O.isDeleted=false and O.isSucceed=1 ";
+        where O.isDeleted=false and O.isPayed=true and (O.isSucceed=1 or O.isSucceed=7) ";
         if (req.body.attributeId) {
             strSql += " and C.attributeId=:attributeId ";
         }
@@ -111,10 +119,10 @@ module.exports = function (app) {
                     return "No payWay";
             }
         }
-        var strQuery = "select O.payWay, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice \
+        var strQuery = "select O.payWay, sum(O.totalPrice) as trainPrice, sum(O.realMaterialPrice) as materialPrice, sum(O.rebatePrice) as rebatePrice \
                             from adminEnrollTrains O join trainClasss C \
                             on O.trainId=C._id \
-                            where O.isDeleted=false and O.isSucceed=1 \
+                            where O.isDeleted=false and O.isPayed=true and O.fromId='' \
                             and O.yearId=:yearId and O.createdDate between :startDate and :endDate ";
         if (req.body.schoolId) {
             strQuery = strQuery + " and C.schoolId=:schoolId ";
@@ -136,7 +144,7 @@ module.exports = function (app) {
             .then(orders => {
                 if (orders && orders.length > 0) {
                     orders.forEach(function (order) {
-                        order.totalPrice = parseFloat(order.trainPrice) + parseFloat(order.materialPrice);
+                        order.totalPrice = parseFloat(order.trainPrice) + parseFloat(order.materialPrice) + parseFloat(order.rebatePrice);
                         order.name = getPayWay(order.payWay);
                     });
                 }
@@ -146,10 +154,10 @@ module.exports = function (app) {
 
     app.post('/admin/rebateReportList/search', checkLogin);
     app.post('/admin/rebateReportList/search', function (req, res) {
-        var strSql = "select C.subjectId as _id, C.subjectName as name, sum(R.rebateTotalPrice) as rebatePrice \
+        var strSql = "select C.subjectId as _id, C.subjectName as name, sum(R.rebateTotalPrice) as rebatePrice\
             from rebateenrolltrains R join adminEnrollTrains O on R.trainOrderId=O._id \
             join trainClasss C on O.trainId=C._id \
-            where R.createdDate between :startDate and :endDate and C.schoolId=:schoolId ";
+            where O.yearId=:yearId and R.createdDate between :startDate and :endDate and C.schoolId=:schoolId ";
         if (req.body.attributeId) {
             strSql += " and C.attributeId=:attributeId ";
         }
@@ -160,12 +168,60 @@ module.exports = function (app) {
                     startDate: req.body.startDate,
                     endDate: req.body.endDate,
                     schoolId: req.body.schoolId,
-                    attributeId: req.body.attributeId
+                    attributeId: req.body.attributeId,
+                    yearId: global.currentYear._id
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(orders => {
                 res.json(orders);
+            });
+    });
+
+    app.post('/admin/rebateDetailList/search', checkLogin);
+    app.post('/admin/rebateDetailList/search', function (req, res) {
+        var sql1 = "select count(0) as total ",
+            sql2 = "select R._id, R.rebateWay, O.studentName, O.trainName, O.schoolArea,  \
+        R.rebateTotalPrice, R.createdDate ",
+            sqlMiddle = "from rebateEnrollTrains R join adminEnrollTrains O \
+            on O._id=R.trainOrderId join trainClasss C on O.trainId=C._id \
+            where R.isDeleted=false and O.yearId=:yearId and R.createdDate between :startDate and :endDate and C.schoolId=:schoolId";
+        if (req.body.attributeId) {
+            sqlMiddle += " and C.attributeId=:attributeId ";
+        }
+        model.db.sequelize.query(sql1 + sqlMiddle, {
+                replacements: {
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate,
+                    schoolId: req.body.schoolId,
+                    attributeId: req.body.attributeId,
+                    yearId: global.currentYear._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(totalObj => {
+                var page = req.query.p ? parseInt(req.query.p) : 1;
+                sqlMiddle += " order by R.createdDate desc LIMIT " + ((page - 1) * pageSize) + "," + pageSize + " ";
+                model.db.sequelize.query(sql2 + sqlMiddle, {
+                        replacements: {
+                            startDate: req.body.startDate,
+                            endDate: req.body.endDate,
+                            schoolId: req.body.schoolId,
+                            attributeId: req.body.attributeId,
+                            yearId: global.currentYear._id
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(orders => {
+                        var total = totalObj[0].total;
+                        res.jsonp({
+                            adminEnrollTrains: orders,
+                            total: total,
+                            page: page,
+                            isFirstPage: (page - 1) == 0,
+                            isLastPage: ((page - 1) * pageSize + orders.length) == total
+                        });
+                    });
             });
     });
 
