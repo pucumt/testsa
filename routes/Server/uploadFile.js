@@ -977,11 +977,11 @@ module.exports = function (app) {
     // 导出所有报名订单
     app.post('/admin/export/classTemplate5', function (req, res) {
         var data = [
-            ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注']
+            ['姓名', '联系方式', '学生学校', '学生班级', '性别', '报名日期', '科目', '校区', '课程', '上课时间', '年级', '培训费', '教材费', '退费', '支付方式', '备注', '属性']
         ];
 
         var p = model.db.sequelize.query("select O.studentName, S.mobile, S.School, S.className, S.sex, DATE_ADD(O.createdDate,INTERVAL 8 HOUR) as createdDate,\
-        C.subjectName, C.schoolArea, C.name, C.courseTime, C.gradeName, O.totalPrice, O.realMaterialPrice, O.rebatePrice, O.payWay, O.comment \
+        C.subjectName, C.schoolArea, C.name, C.courseTime, C.gradeName, O.totalPrice, O.realMaterialPrice, O.rebatePrice, O.payWay, O.comment, C.attributeName \
         from adminEnrollTrains O \
         join studentInfos S on O.studentId=S._id \
         join trainClasss C on O.trainId=C._id \
@@ -994,7 +994,7 @@ module.exports = function (app) {
             .then(orders => {
                 if (orders && orders.length > 0) {
                     orders.forEach(function (order) {
-                        var singleInfo = [order.studentName, order.mobile, order.School, order.className, (order.sex ? "女" : "男"), order.createdDate, order.subjectName, order.schoolArea, order.name, order.courseTime, order.gradeName, parseFloat(order.totalPrice), parseFloat(order.realMaterialPrice), parseFloat(order.rebatePrice), getPayway(order.payWay), order.comment];
+                        var singleInfo = [order.studentName, order.mobile, order.School, order.className, (order.sex ? "女" : "男"), order.createdDate, order.subjectName, order.schoolArea, order.name, order.courseTime, order.gradeName, parseFloat(order.totalPrice), parseFloat(order.realMaterialPrice), parseFloat(order.rebatePrice), getPayway(order.payWay), order.comment, order.attributeName];
                         data.push(singleInfo);
                     });
                 }
