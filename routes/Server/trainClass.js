@@ -372,10 +372,8 @@ module.exports = function (app) {
                 console.log('errored');
             });
         var p9 = model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
-            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
-                replacements: {
-                    yearId: global.currentYear._id
-                },
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false ", {
+                replacements: {},
                 type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(function (classAttributes) {
@@ -411,10 +409,8 @@ module.exports = function (app) {
                 console.log('errored');
             });
         var p9 = model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
-            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
-                replacements: {
-                    yearId: global.currentYear._id
-                },
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false ", {
+                replacements: {},
                 type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(function (classAttributes) {
@@ -700,11 +696,13 @@ module.exports = function (app) {
     app.post('/admin/batchTrainClasspublish', function (req, res) {
         var filter = {
             yearId: req.body.id,
-            schoolId: req.body.schoolId,
             isDeleted: false
         };
         if (req.body.attributeId) {
             filter.attributeId = req.body.attributeId;
+        }
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
         }
         TrainClass.update({
                 isWeixin: 1
@@ -727,13 +725,14 @@ module.exports = function (app) {
     app.post('/admin/batchTrainClassUnpublish', function (req, res) {
         var filter = {
             yearId: req.body.id,
-            schoolId: req.body.schoolId,
             isDeleted: false
         };
         if (req.body.attributeId) {
             filter.attributeId = req.body.attributeId;
         }
-
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
+        }
         TrainClass.update({
                 isWeixin: 9
             }, {
@@ -754,8 +753,7 @@ module.exports = function (app) {
     app.post('/admin/batchAdd100', checkLogin);
     app.post('/admin/batchAdd100', function (req, res) {
         var filter = {
-            yearId: req.body.id,
-            schoolId: req.body.schoolId
+            yearId: req.body.id
         };
         if (req.body.gradeId) {
             filter.gradeId = {
@@ -764,6 +762,9 @@ module.exports = function (app) {
         }
         if (req.body.attributeId) {
             filter.attributeId = req.body.attributeId;
+        }
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
         }
         TrainClass.update({
                 trainPrice: model.db.sequelize.literal('`trainPrice`+100')
@@ -785,8 +786,7 @@ module.exports = function (app) {
     app.post('/admin/batchMin100', checkLogin);
     app.post('/admin/batchMin100', function (req, res) {
         var filter = {
-            yearId: req.body.id,
-            schoolId: req.body.schoolId
+            yearId: req.body.id
         };
         if (req.body.gradeId) {
             filter.gradeId = {
@@ -795,6 +795,9 @@ module.exports = function (app) {
         }
         if (req.body.attributeId) {
             filter.attributeId = req.body.attributeId;
+        }
+        if (req.body.schoolId) {
+            filter.schoolId = req.body.schoolId;
         }
         TrainClass.update({
                 trainPrice: model.db.sequelize.literal('`trainPrice`-100')

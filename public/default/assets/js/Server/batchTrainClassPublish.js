@@ -61,13 +61,10 @@ function renderSearchSchoolYearAttributeDropDown() {
                 $(".mainModal #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
             });
         };
+        $(".mainModal #searchSchool").append("<option value='' selected ></option>");
         if (data.schools && data.schools.length > 0) {
             data.schools.forEach(function (school) {
-                var select = "";
-                if ($("#adminSchoolId").val() == school._id) {
-                    select = "selected";
-                }
-                $(".mainModal #searchSchool").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
+                $(".mainModal #searchSchool").append("<option value='" + school._id + "' >" + school.name + "</option>");
             });
         };
         changeAttributes();

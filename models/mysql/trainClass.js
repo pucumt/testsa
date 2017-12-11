@@ -171,7 +171,7 @@ TrainClass.getFiltersWithPage = function (page, filter) {
     return TrainClass.findAndCountAll({
         'where': filter,
         order: [
-            ['createdDate'],
+            ['createdDate', 'DESC'],
             ['_id']
         ],
         offset: config.pageSize * (page - 1),

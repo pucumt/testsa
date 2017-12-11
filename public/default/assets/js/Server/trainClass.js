@@ -62,6 +62,7 @@ function renderSearchSchoolYearAttributeDropDown() {
                 $(".mainModal #InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
             });
         };
+        $("#InfoSearch #searchSchool").append("<option value='' ></option>");
         if (data.schools && data.schools.length > 0) {
             data.schools.forEach(function (school) {
                 var select = "";
@@ -495,7 +496,11 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
     destroy();
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    $('#myModal #name').attr("disabled", "disabled");
+    if (entity.enrollCount > 0) {
+        $('#myModal #name').attr("disabled", "disabled");
+    } else {
+        $('#name').removeAttr("disabled");
+    }
     $('#myModalLabel').text("修改课程");
     $('#myModal #name').val(entity.name);
     $('#myModal #trainPrice').val(entity.trainPrice);
