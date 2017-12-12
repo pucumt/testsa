@@ -137,7 +137,7 @@ module.exports = function (app) {
                 totalClassCount: req.body.totalClassCount, //共多少课时
                 trainPrice: req.body.trainPrice,
                 materialPrice: req.body.materialPrice,
-                teacherId: (req.body.teacherId || null),
+                teacherId: (req.body.teacherId || ''),
                 teacherName: req.body.teacherName,
                 attributeId: req.body.attributeId,
                 attributeName: req.body.attributeName,
