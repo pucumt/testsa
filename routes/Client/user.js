@@ -146,19 +146,22 @@ module.exports = function (app) {
                                                         category: trainClass.attributeId
                                                     })
                                                     .then(function (coupon) {
-                                                        assigns.push({
-                                                            _id: coupon._id,
-                                                            couponId: coupon._id,
-                                                            couponName: coupon.name,
-                                                            gradeId: coupon.gradeId,
-                                                            gradeName: coupon.gradeName,
-                                                            subjectId: coupon.subjectId,
-                                                            subjectName: coupon.subjectName,
-                                                            reducePrice: coupon.reducePrice,
-                                                            couponStartDate: coupon.couponStartDate,
-                                                            couponEndDate: coupon.couponEndDate,
-                                                            studentId: student._id
-                                                        });
+                                                        // check if attribute coupon exists
+                                                        if (coupon) {
+                                                            assigns.push({
+                                                                _id: coupon._id,
+                                                                couponId: coupon._id,
+                                                                couponName: coupon.name,
+                                                                gradeId: coupon.gradeId,
+                                                                gradeName: coupon.gradeName,
+                                                                subjectId: coupon.subjectId,
+                                                                subjectName: coupon.subjectName,
+                                                                reducePrice: coupon.reducePrice,
+                                                                couponStartDate: coupon.couponStartDate,
+                                                                couponEndDate: coupon.couponEndDate,
+                                                                studentId: student._id
+                                                            });
+                                                        }
                                                         res.jsonp({
                                                             student: student,
                                                             assigns: assigns
