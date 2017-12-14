@@ -294,7 +294,7 @@ module.exports = function (app) {
         }
     };
 
-    // last column 20: yearName
+    // last column 20: yearName, 23: teacher mobile
     function createNewClass(data, adminId) {
         var option = {
             name: data[0].trim(),
@@ -361,85 +361,103 @@ module.exports = function (app) {
                                                                             option.classRoomId = classRoom._id;
                                                                             option.classRoomName = classRoom.name;
                                                                         }
-                                                                        return SchoolArea.getFilter({
-                                                                                name: data[14].trim()
-                                                                            })
-                                                                            .then(function (school) {
-                                                                                if (school) {
-                                                                                    option.schoolId = school._id;
-                                                                                    option.schoolArea = school.name;
+                                                                        var pTeacher;
+                                                                        if (data[23] && data[23] != "") {
+                                                                            pTeacher = Teacher.getFilter({
+                                                                                mobile: data[23]
+                                                                            });
+                                                                        } else {
+                                                                            pTeacher = Promise.resolve();
+                                                                        }
+                                                                        return pTeacher.then(function (teacher) {
+                                                                                if (teacher) {
+                                                                                    option.teacherId = teacher._id;
+                                                                                    option.teacherName = teacher.name;
+                                                                                }
 
-                                                                                    var pExams, examArray = [];
-                                                                                    if (data[15] && data[15].trim() != "") {
-                                                                                        var pExamArray = [];
-                                                                                        var exams = data[15].split(",");
-                                                                                        exams.forEach(function (exam) {
-                                                                                            var examScore = exam.split(":");
-                                                                                            var pExamClass = ExamClass.getFilter({
-                                                                                                    name: examScore[0].trim()
-                                                                                                })
-                                                                                                .then(function (examClass) {
-                                                                                                    examArray.push({
-                                                                                                        examId: examClass._id,
-                                                                                                        examName: examClass.name,
-                                                                                                        minScore: examScore[1].trim()
-                                                                                                    });
+                                                                                return SchoolArea.getFilter({
+                                                                                        name: data[14].trim()
+                                                                                    })
+                                                                                    .then(function (school) {
+                                                                                        if (school) {
+                                                                                            option.schoolId = school._id;
+                                                                                            option.schoolArea = school.name;
+
+                                                                                            var pExams, examArray = [];
+                                                                                            if (data[15] && data[15].trim() != "") {
+                                                                                                var pExamArray = [];
+                                                                                                var exams = data[15].split(",");
+                                                                                                exams.forEach(function (exam) {
+                                                                                                    var examScore = exam.split(":");
+                                                                                                    var pExamClass = ExamClass.getFilter({
+                                                                                                            name: examScore[0].trim()
+                                                                                                        })
+                                                                                                        .then(function (examClass) {
+                                                                                                            examArray.push({
+                                                                                                                examId: examClass._id,
+                                                                                                                examName: examClass.name,
+                                                                                                                minScore: examScore[1].trim()
+                                                                                                            });
+                                                                                                        });
+                                                                                                    pExamArray.push(pExamClass);
                                                                                                 });
-                                                                                            pExamArray.push(pExamClass);
-                                                                                        });
-                                                                                        pExams = Promise.all(pExamArray);
-                                                                                    } else {
-                                                                                        pExams = Promise.all([]);
-                                                                                    }
-                                                                                    return pExams.then(function () {
-                                                                                        if (examArray.length > 0) {
-                                                                                            option.exams = examArray;
-                                                                                        }
-                                                                                        var pTrainClass;
-                                                                                        if (data[16] && data[16].trim() != "") {
-                                                                                            pTrainClass = TrainClass.getFilter({
-                                                                                                name: data[16].trim(),
-                                                                                                schoolArea: data[19].trim(),
-                                                                                                yearName: data[20].trim()
+                                                                                                pExams = Promise.all(pExamArray);
+                                                                                            } else {
+                                                                                                pExams = Promise.all([]);
+                                                                                            }
+                                                                                            return pExams.then(function () {
+                                                                                                if (examArray.length > 0) {
+                                                                                                    option.exams = examArray;
+                                                                                                }
+                                                                                                var pTrainClass;
+                                                                                                if (data[16] && data[16].trim() != "") {
+                                                                                                    pTrainClass = TrainClass.getFilter({
+                                                                                                        name: data[16].trim(),
+                                                                                                        schoolArea: data[19].trim(),
+                                                                                                        yearName: data[20].trim()
+                                                                                                    });
+                                                                                                } else {
+                                                                                                    pTrainClass = Promise.resolve();
+                                                                                                }
+                                                                                                return pTrainClass.then(function (trainClass) {
+                                                                                                    if (trainClass) {
+                                                                                                        option.fromClassId = trainClass._id;
+                                                                                                        option.fromClassName = trainClass.name;
+                                                                                                        option.isWeixin = 2;
+                                                                                                    } else if (data[16] && data[16].trim() != "") {
+                                                                                                        return failedAddStudentToClass("", "", data[0].trim(), "没找到原班");
+                                                                                                    }
+                                                                                                    // if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，保护期没有用上
+                                                                                                    //     option.protectedDate = (new Date(1900, 0, parseInt(data[17]) - 1));
+                                                                                                    // }
+                                                                                                    return TrainClass.getFilter({
+                                                                                                            name: data[0].trim(),
+                                                                                                            schoolArea: data[14].trim(),
+                                                                                                            yearName: data[1].trim()
+                                                                                                        })
+                                                                                                        .then(function (existTrainClass) {
+                                                                                                            if (existTrainClass) {
+                                                                                                                // update 
+                                                                                                                delete option.isWeixin;
+                                                                                                                return updateTrainClass(existTrainClass._id, option, adminId);
+                                                                                                            } else { // create
+                                                                                                                option.createdBy = adminId;
+                                                                                                                return TrainClass.create(option);
+                                                                                                            }
+                                                                                                        });
+
+                                                                                                });
                                                                                             });
                                                                                         } else {
-                                                                                            pTrainClass = Promise.resolve();
+                                                                                            return failedAddStudentToClass("", "", data[0].trim(), "没找到校区");
                                                                                         }
-                                                                                        return pTrainClass.then(function (trainClass) {
-                                                                                            if (trainClass) {
-                                                                                                option.fromClassId = trainClass._id;
-                                                                                                option.fromClassName = trainClass.name;
-                                                                                                option.isWeixin = 2;
-                                                                                            } else if (data[16] && data[16].trim() != "") {
-                                                                                                return failedAddStudentToClass("", "", data[0].trim(), "没找到原班");
-                                                                                            }
-                                                                                            // if (data[17] && data[17] != "") { //日期类型的处理比较麻烦，保护期没有用上
-                                                                                            //     option.protectedDate = (new Date(1900, 0, parseInt(data[17]) - 1));
-                                                                                            // }
-                                                                                            return TrainClass.getFilter({
-                                                                                                    name: data[0].trim(),
-                                                                                                    schoolArea: data[14].trim(),
-                                                                                                    yearName: data[1].trim()
-                                                                                                })
-                                                                                                .then(function (existTrainClass) {
-                                                                                                    if (existTrainClass) {
-                                                                                                        // update 
-                                                                                                        delete option.isWeixin;
-                                                                                                        return updateTrainClass(existTrainClass._id, option, adminId);
-                                                                                                    } else { // create
-                                                                                                        option.createdBy = adminId;
-                                                                                                        return TrainClass.create(option);
-                                                                                                    }
-                                                                                                });
-
-                                                                                        });
+                                                                                    })
+                                                                                    .catch(function () {
+                                                                                        return failedAddStudentToClass("", "", data[0].trim(), "没找到校区");
                                                                                     });
-                                                                                } else {
-                                                                                    return failedAddStudentToClass("", "", data[0].trim(), "没找到校区");
-                                                                                }
                                                                             })
                                                                             .catch(function () {
-                                                                                return failedAddStudentToClass("", "", data[0].trim(), "没找到校区");
+                                                                                return failedAddStudentToClass("", "", data[0].trim(), "没找到老师");
                                                                             });
                                                                     })
                                                                     .catch(function () {
