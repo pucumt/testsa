@@ -1259,14 +1259,19 @@ module.exports = function (app) {
                             sequence: (global.currentYear.sequence - 1)
                         })
                         .then(function (year) {
-                            // 查找上一年度的课程订单
+                            // 查找上一年度的课程订单 或者当前年度寒假订单
                             if (year) {
+                                // var strSwitch = "";
+                                // if (configure.oldStudentSwitch) {
+                                //     strSwitch = "or (O.yearId=:curYearId and attributeName='寒假班')";
+                                // }
                                 return model.db.sequelize.query("select O._id as orderId, O.studentId, O.studentName, O.trainId, O.trainName\
                                             from studentInfos S join adminEnrollTrains O \
-                                            on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId\
+                                            on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId \
                                             where S.accountId=:accountId and S.isDeleted=false", {
                                         replacements: {
                                             yearId: year._id,
+                                            curYearId: global.currentYear._id,
                                             accountId: currentUser._id
                                         },
                                         type: model.db.sequelize.QueryTypes.SELECT
