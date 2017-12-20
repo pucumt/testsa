@@ -692,6 +692,87 @@ module.exports = function (app) {
             });
     });
 
+    app.post('/admin/trainClassWithTeacher/search', checkLogin);
+    app.post('/admin/trainClassWithTeacher/search', function (req, res) {
+        //判断是否是第一页，并把请求的页数转换成 number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+
+        var strSqlMiddle = " from trainClasss C left join teachers T on C.teacherId=T._id where C.isDeleted=false ",
+            strSql1 = "select count(0) as count ",
+            strSql2 = "select C.*, T.engName ",
+            replacements = {};
+
+        var filter = {};
+        if (req.body.name && req.body.name.trim()) {
+            strSqlMiddle += " and C.name like :name ";
+            replacements.name = "%" + req.body.name.trim() + "%";
+        }
+        if (req.body.school) {
+            strSqlMiddle += " and C.schoolArea=:schoolArea ";
+            replacements.schoolArea = req.body.school;
+        }
+        if (req.body.schoolId) {
+            strSqlMiddle += " and C.schoolId=:schoolId ";
+            replacements.schoolId = req.body.schoolId;
+        }
+        if (req.body.gradeName) {
+            strSqlMiddle += " and C.gradeName=:gradeName ";
+            replacements.gradeName = req.body.gradeName;
+        }
+        if (req.body.grade) {
+            strSqlMiddle += " and C.gradeId=:gradeId ";
+            replacements.gradeId = req.body.grade;
+        }
+        if (req.body.subject) {
+            strSqlMiddle += " and C.subjectId=:subjectId ";
+            replacements.subjectId = req.body.subject;
+        }
+        if (req.body.category) {
+            strSqlMiddle += " and C.categoryId=:categoryId ";
+            replacements.categoryId = req.body.category;
+        }
+        if (req.body.attributeId) {
+            strSqlMiddle += " and C.attributeId=:attributeId ";
+            replacements.attributeId = req.body.attributeId;
+        }
+        if (req.body.yearId) {
+            strSqlMiddle += " and C.yearId=:yearId ";
+            replacements.yearId = req.body.yearId;
+        } else { //当前年度的课程
+            if (global.currentYear) {
+                strSqlMiddle += " and C.yearId=:yearId ";
+                replacements.yearId = global.currentYear._id;
+            }
+        }
+
+        var offset = ((page - 1) * pageSize);
+        strSql2 += strSqlMiddle + " order by C.createdDate desc, C._id desc LIMIT " + offset + ", " + pageSize;
+        strSql1 += strSqlMiddle;
+
+        model.db.sequelize.query(strSql1, {
+                replacements: replacements,
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (counts) {
+                if (counts && counts.length > 0) {
+                    var total = counts[0].count;
+                    model.db.sequelize.query(strSql2, {
+                            replacements: replacements,
+                            type: model.db.sequelize.QueryTypes.SELECT
+                        })
+                        .then(orders => {
+                            res.jsonp({
+                                trainClasss: orders,
+                                total: total,
+                                page: page,
+                                isFirstPage: (page - 1) == 0,
+                                isLastPage: (offset + orders.length) == total
+                            });
+                        });
+                }
+            });
+    });
+
     app.post('/admin/batchTrainClasspublish', checkLogin);
     app.post('/admin/batchTrainClasspublish', function (req, res) {
         var filter = {

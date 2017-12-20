@@ -63,8 +63,8 @@ function openTrain(p) {
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
     $selectBody.empty();
-    $selectHeader.append('<tr><th>课程名称</th><th width="240px">年级/科目/难度</th><th width="180px">校区</th><th width="140px">培训费/教材费</th><th width="100px">报名情况</th></tr>');
-    selfAjax("post", "/admin/trainClass/search?" + pStr, filter, function (data) {
+    $selectHeader.append('<tr><th>课程名称</th><th width="220px">年级/科目/难度</th><th width="170px">上课时间</th><th width="120px">老师</th><th width="110px">培训费/教材费</th><th width="80px">报名情况</th></tr>');
+    selfAjax("post", "/admin/trainClassWithTeacher/search?" + pStr, filter, function (data) {
         if (data && data.trainClasss.length > 0) {
             data.trainClasss.forEach(function (trainClass) {
                 trainClass.courseContent = "";
@@ -73,7 +73,8 @@ function openTrain(p) {
                     countStr = trainClass.enrollCount + '/' + trainClass.totalStudentCount;
                 var $tr = $('<tr><td>' + trainClass.name +
                     '</td><td>' + grade +
-                    '</td><td>' + trainClass.schoolArea +
+                    '</td><td>' + trainClass.courseTime +
+                    '</td><td>' + trainClass.teacherName + (trainClass.engName && ("/" + trainClass.engName)) +
                     '</td><td>' + price + '</td><td>' + countStr + '</td></tr>');
                 $tr.data("obj", trainClass);
                 $selectBody.append($tr);

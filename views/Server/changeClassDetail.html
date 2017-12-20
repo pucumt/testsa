@@ -156,17 +156,19 @@
                         </form>
                     </div>
                 </div>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>学生姓名</th>
-                            <th>电话号码</th>
-                            <th width="120px">性别</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div style="overflow-y: scroll; max-height:450px;">
+                    <table class="table table-striped" style="overflow-y: scroll;">
+                        <thead>
+                            <tr>
+                                <th>学生姓名</th>
+                                <th>电话号码</th>
+                                <th width="120px">性别</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
                 <input type="hidden" id="total" value="0" />
                 <input type="hidden" id="page" value="0" /> {% include "Server/partial/popuppaging.html" %}
             </div>
@@ -198,6 +200,6 @@
 </div>
 
 <script type="text/javascript" src="/default/assets/js/Server/changeClassDetail.js?v=1.004"></script>
-<script type="text/javascript" src="/default/assets/js/Server/popTrainHelper.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/popTrainHelper.js?v=1.000"></script>
 <script type="text/javascript" src="/default/assets/js/Server/popStudentHelper.js?v=1.0"></script>
 {% endblock %}
