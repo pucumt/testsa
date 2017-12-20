@@ -111,7 +111,7 @@ function getOrderId(payWay, callback) {
                 $("#pay-select").hide();
                 showAlert(data.error, null, function () {
                     $("#bgBack").hide();
-                    if ("你已经报过名了，将跳转到订单页!" == data.error) {
+                    if (data.error.indexOf("将跳转到订单页") > 0) {
                         location.href = "/personalCenter/order";
                     }
                 });

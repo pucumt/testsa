@@ -16,7 +16,8 @@
                         <div>
                             <h3>{{ trainClass.name }}</h3>
                         </div>
-                        <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString() }} 共 {{ trainClass.totalClassCount }}课时</div>
+                        <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString()
+                            }} 共 {{ trainClass.totalClassCount }}课时</div>
                         <div>上课时间：{{ trainClass.courseTime }} </div>
                         <div>上课地点：{{ trainClass.schoolArea }} {{ trainClass.classRoomName }} 室</div>
                         <div>培训费：{{ trainClass.trainPrice }}元 </div>
@@ -70,6 +71,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.003"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.004"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}
