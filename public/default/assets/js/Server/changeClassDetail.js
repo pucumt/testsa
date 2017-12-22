@@ -184,13 +184,21 @@ $("#selectModal .paging .nextpage").on("click", function (e) {
     }
 });
 
-// function setPrice() {
-//     var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
-//         discount = (parseFloat($("#enrollInfo #discount").val()) || 100),
-//         realPrice = (trainPrice * discount / 100).toFixed(2);
+function setPrice() {
+    // var trainPrice = parseFloat($("#enrollInfo #trainPrice").val()),
+    //     discount = (parseFloat($("#enrollInfo #discount").val()) || 100),
+    //     realPrice = (trainPrice * discount / 100).toFixed(2);
 
-//     $("#enrollInfo #totalPrice").val(realPrice);
-// };
+    // $("#enrollInfo #totalPrice").val(realPrice);
+};
+
+function renderCoupon() {
+
+};
+
+function renderAttributeCoupon() {
+
+}
 
 // $("#enrollInfo #trainPrice").on("change blur", setPrice);
 // $("#enrollInfo #discount").on("change blur", setPrice);

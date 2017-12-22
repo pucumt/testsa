@@ -18,7 +18,7 @@
                             <label for="studentName" class="control-label">姓名:</label>
                             <div class="btn-group">
                                 <input type="hidden" class="form-control" name="studentId" id="studentId" value={{order.studentId}}>
-                                <input type="text" maxlength="30" readonly class="form-control" name="studentName" id="studentName" value={{order.studentName}}>
+                                <input type="text" maxlength="30" readonly class="form-control" name="studentName" id="studentName" value='{{order.studentName}}'>
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                 <input type="hidden" class="form-control" name="oldSubjectId" id="oldSubjectId" value={{order.subjectId}}>
                                 <input type="hidden" class="form-control" name="categoryId" id="categoryId" value={{order.categoryId}}>
                                 <input type="hidden" class="form-control" name="oldCategoryId" id="oldCategoryId" value={{order.categoryId}}>
-                                <input type="text" maxlength="30" readonly class="form-control" name="trainName" id="trainName" value={{order.trainName}}>
+                                <input type="text" maxlength="30" readonly class="form-control" name="trainName" id="trainName" value='{{ order.trainName }}'>
                                 <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
                                     <span class="caret"></span>
@@ -77,19 +77,19 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="discount" class="control-label">折扣(%):</label>
-                            <input type="text" maxlength="10" class="form-control" readonly name="discount" id="discount" value={{ order.discount }}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="discount" id="discount" value='{{ order.discount }}'>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="totalPrice" class="control-label">实际培训费:</label>
-                            <input type="text" maxlength="10" class="form-control" readonly name="totalPrice" id="totalPrice" value={{order.totalPrice}}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="totalPrice" id="totalPrice" value='{{order.totalPrice}}'>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="realMaterialPrice" class="control-label">实际教材费:</label>
-                            <input type="text" maxlength="10" class="form-control" readonly name="realMaterialPrice" id="realMaterialPrice" value={{order.realMaterialPrice}}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="realMaterialPrice" id="realMaterialPrice" value='{{order.realMaterialPrice}}'>
                         </div>
                     </div>
                 </div>
@@ -97,13 +97,13 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="oldTotalPrice" class="control-label">订单培训费:</label>
-                            <input type="text" maxlength="10" class="form-control" readonly name="oldTotalPrice" id="oldTotalPrice" value={{order.totalPrice}}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="oldTotalPrice" id="oldTotalPrice" value='{{order.totalPrice}}'>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="totalPrice" class="control-label">已退费用:</label>
-                            <input type="text" maxlength="10" class="form-control" readonly name="rebatePrice" id="rebatePrice" value={{order.rebatePrice}}>
+                            <input type="text" maxlength="10" class="form-control" readonly name="rebatePrice" id="rebatePrice" value='{{order.rebatePrice}}'>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -199,7 +199,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/changeClassDetail.js?v=1.004"></script>
+<script type="text/javascript" src="/default/assets/js/Server/changeClassDetail.js?v=1.005"></script>
 <script type="text/javascript" src="/default/assets/js/Server/popTrainHelper.js?v=1.000"></script>
 <script type="text/javascript" src="/default/assets/js/Server/popStudentHelper.js?v=1.0"></script>
 {% endblock %}
