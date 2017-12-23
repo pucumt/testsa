@@ -1,0 +1,65 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock
+%} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="className" class="control-label">课程:</label>
+                        <input type="text" maxlength="30" class="form-control" name="className" id="className">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchSchool" class="control-label">校区:</label>
+                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchGrade" class="control-label">年级:</label>
+                        <select name="searchGrade" id="searchGrade" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchSubject" class="control-label">科目:</label>
+                        <select name="searchSubject" id="searchSubject" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:300px;">课程</th>
+                <th style="width:150px;">年级</th>
+                <th style="width:100px;">老师</th>
+                <th style="width:100px;">原班人数</th>
+                <th style="width:100px;">已报人数</th>
+                <th>续报率</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/Server/compareLastList.js?v=1.000"></script>
+{% endblock %}

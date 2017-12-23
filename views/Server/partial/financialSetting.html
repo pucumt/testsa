@@ -14,6 +14,9 @@
             <li id="left_btnOtherReport" role="presentation">其他情况统计</li>
             {% endif %} {% if user.role==0 or user.role==7 or user.role==9%}
             <li id="left_btnCompareLast" role="presentation">留存报表</li>
+            {% endif %} {% if user.role==0 %}
+            <li id="left_btnCompareGrade" class="hidden" role="presentation">年级留存</li>
+            <li id="left_btnCompareSchool" class="hidden" role="presentation">学校年级留存</li>
             {% endif %}
 </ul>
-<script type="text/javascript" src="/default/assets/js/Server/financialSetting.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/financialSetting.js?v=1.003"></script>

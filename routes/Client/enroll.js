@@ -716,17 +716,18 @@ module.exports = function (app) {
             });
     });
 
-    function checkIsSameClassExist(trainClass) {
+    function checkIsSameClassExist(trainClass, studentId) {
         var strSql = "select count(0) as count from adminEnrollTrains O join trainClasss C \
             on O.trainId = C._id where O.isDeleted=false and O.isPayed=true and O.isSucceed=1 \
             and C.yearId=:yearId and C.attributeId=:attributeId and C.categoryId=:categoryId \
-            and C.subjectId=:subjectId ";
+            and C.subjectId=:subjectId and O.studentId=:studentId ";
         return model.db.sequelize.query(strSql, {
             replacements: {
                 yearId: trainClass.yearId,
                 attributeId: trainClass.attributeId,
                 categoryId: trainClass.categoryId,
-                subjectId: trainClass.subjectId
+                subjectId: trainClass.subjectId,
+                studentId: studentId
             },
             type: model.db.sequelize.QueryTypes.SELECT
         });
@@ -752,9 +753,9 @@ module.exports = function (app) {
                     })
                     .then(function (trainClass) {
                         // 判断是否存在 同年度 同属性 同难度 同科目 的订单
-                        checkIsSameClassExist(trainClass)
+                        checkIsSameClassExist(trainClass, req.body.studentId)
                             .then(function (counts) {
-                                if (counts && counts.length > 0) {
+                                if (counts && counts.length > 0 && counts[0].count > 0) {
                                     // 不能重复报名同类课程
                                     res.jsonp({
                                         error: "你已经报过同类课程了，将跳转到订单页!"
@@ -956,9 +957,9 @@ module.exports = function (app) {
                     })
                     .then(function (trainClass) {
                         // 判断是否存在 同年度 同属性 同难度 同科目 的订单
-                        checkIsSameClassExist(trainClass)
+                        checkIsSameClassExist(trainClass, req.body.studentId)
                             .then(function (counts) {
-                                if (counts && counts.length > 0) {
+                                if (counts && counts.length > 0 && counts[0].count > 0) {
                                     // 不能重复报名同类课程
                                     res.jsonp({
                                         error: "你已经报过同类课程了，将跳转到订单页!"

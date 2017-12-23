@@ -31,6 +31,14 @@ $(document).ready(function () {
         location.href = "/admin/compareLastList";
     });
 
+    $("#left_btnCompareGrade").on("click", function (e) {
+        location.href = "/admin/compareGradeList";
+    });
+
+    $("#left_btnCompareSchool").on("click", function (e) {
+        location.href = "/admin/compareSchoolList";
+    });
+
     $("#left_btnEnrollAggregate").on("click", function (e) {
         location.href = "/admin/enrollAggregateList";
     });
