@@ -1238,8 +1238,9 @@ module.exports = function (app) {
         AdminEnrollTrain.getFilters({
                 isSucceed: 9,
                 isPayed: true,
-                fromId: null,
-                payWay: 6
+                fromId: '',
+                payWay: 6,
+                deletedBy: 'system'
             })
             .then(function (orders) {
                 var pArray = [];

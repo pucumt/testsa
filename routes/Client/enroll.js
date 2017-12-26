@@ -525,12 +525,13 @@ module.exports = function (app) {
     function checkEnroll(studentId, trainClass, fnYes, fnNo, fnNoNeed) {
         return model.db.sequelize.query("select count(0) as count from adminEnrollTrains O join trainClasss C \
                     on O.trainId=C._id \
-                    where O.yearId=:yearId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
+                    where O.yearId=:yearId and O.attributeId=:attributeId and O.studentId=:studentId and O.isDeleted=false and O.isSucceed=1 and \
                     C.courseTime=:courseTime", {
                 replacements: {
                     yearId: global.currentYear._id,
                     studentId: studentId,
-                    courseTime: trainClass.courseTime
+                    courseTime: trainClass.courseTime,
+                    attributeId: trainClass.attributeId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })

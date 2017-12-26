@@ -105,7 +105,7 @@ module.exports = function (app) {
                 deletedDate: new Date()
             }, {
                 where: {
-                    _id: req.body._id
+                    _id: req.body.id
                 }
             })
             .then(function () {
