@@ -1,0 +1,69 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/enrollSetting.html" %} {% endblock %}
+{% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="studentName" class="control-label">学生:</label>
+                        <input type="text" maxlength="30" class="form-control" name="studentName" id="studentName">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="content">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:180px;">订单号</th>
+                <th style="width:70px;">状态</th>
+                <th style="width:80px;">学生</th>
+                <th>课程</th>
+                <th style="width:160px;">校区</th>
+                <th style="width:70px;">培训费</th>
+                <th style="width:70px;">教材费</th>
+                <th style="width:100px;">实收培训费</th>
+                <th style="width:70px;">教材费</th>
+                <th style="width:80px;">已退金额</th>
+                <th style="width:100px;">操作</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/Server/wrongCancelList.js?v=1.0"></script>
+{% endblock %}

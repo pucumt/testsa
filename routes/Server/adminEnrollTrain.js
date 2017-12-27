@@ -121,6 +121,46 @@ module.exports = function (app) {
             });
     });
 
+    app.post('/admin/adminEnrollTrain/wrongcancellist', checkLogin);
+    app.post('/admin/adminEnrollTrain/wrongcancellist', function (req, res) {
+        var filter = {
+            isSucceed: 9,
+            isPayed: true,
+            fromId: '',
+            payWay: 6,
+            deletedBy: 'system'
+        };
+        if (req.body.studentName) {
+            filter.studentName = {
+                $like: `%${req.body.studentName.trim()}%`
+            };
+        }
+
+        AdminEnrollTrain.getFilters(filter)
+            .then(function (orders) {
+                res.jsonp(orders);
+            });
+    });
+
+    app.post('/admin/adminEnrollTrain/recover', checkLogin);
+    app.post('/admin/adminEnrollTrain/recover', function (req, res) {
+        AdminEnrollTrain.update({
+            isSucceed: 1
+        }, {
+            where: {
+                _id: req.body.id
+            }
+        }).then(result => {
+            res.jsonp({
+                sucess: true
+            });
+        }).catch(err => {
+            res.jsonp({
+                error: "更新出错了"
+            });
+        });
+    });
+
     app.get('/admin/rebateOrderList', checkLogin);
     app.get('/admin/rebateOrderList', function (req, res) {
         res.render('Server/rebateOrderList.html', {
@@ -166,6 +206,14 @@ module.exports = function (app) {
     app.get('/admin/changeClassList', function (req, res) {
         res.render('Server/changeClassList.html', {
             title: '>调班管理',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/wrongCancelList', checkLogin);
+    app.get('/admin/wrongCancelList', function (req, res) {
+        res.render('Server/wrongCancelList.html', {
+            title: '>已支付被取消订单',
             user: req.session.admin
         });
     });

@@ -51,6 +51,7 @@
                                 <input type="hidden" class="form-control" name="oldSubjectId" id="oldSubjectId" value={{order.subjectId}}>
                                 <input type="hidden" class="form-control" name="categoryId" id="categoryId" value={{order.categoryId}}>
                                 <input type="hidden" class="form-control" name="oldCategoryId" id="oldCategoryId" value={{order.categoryId}}>
+                                <input type="hidden" class="form-control" name="oldAttributeId" id="oldAttributeId" value={{order.attributeId}}>
                                 <input type="text" maxlength="30" readonly class="form-control" name="trainName" id="trainName" value='{{ order.trainName }}'>
                                 <button type="button" id="panel_btnTrain" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
@@ -200,6 +201,6 @@
 </div>
 
 <script type="text/javascript" src="/default/assets/js/Server/changeClassDetail.js?v=1.005"></script>
-<script type="text/javascript" src="/default/assets/js/Server/popTrainHelper.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/popTrainHelper.js?v=1.001"></script>
 <script type="text/javascript" src="/default/assets/js/Server/popStudentHelper.js?v=1.0"></script>
 {% endblock %}

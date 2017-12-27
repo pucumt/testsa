@@ -151,7 +151,9 @@ function renderGradeSubjectCategoryYear(callback) {
             }
 
             changeAttributes();
-
+            if ($("#oldAttributeId").val()) {
+                $("#selectModal #InfoSearch #searchAttribute").val($("#oldAttributeId").val());
+            }
             callback();
         }
     });

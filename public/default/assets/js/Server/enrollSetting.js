@@ -23,5 +23,9 @@ $(document).ready(function () {
         location.href = "/admin/changeClassList";
     });
 
+    $("#left_btnWrongCancel").on("click", function (e) {
+        location.href = "/admin/wrongCancelList";
+    });
+
     $(".admin-header .menu-top #header_btnEnroll").addClass("active");
 });
