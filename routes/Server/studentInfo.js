@@ -80,7 +80,9 @@ module.exports = function (app) {
                                         discount: req.body.discount,
                                         gradeId: req.body.gradeId,
                                         gradeName: req.body.gradeName,
-                                        accountId: accountId
+                                        accountId: accountId,
+                                        updatedDate: new Date(),
+                                        deletedBy: req.session.admin._id // use deletedby instead of updateby
                                     }, {
                                         where: {
                                             _id: req.body.id
