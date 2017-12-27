@@ -179,7 +179,7 @@ module.exports = function (app) {
     app.post('/admin/rebateReportList/search', checkLogin);
     app.post('/admin/rebateReportList/search', function (req, res) {
         var strSql = "select C.subjectId as _id, C.subjectName as name, sum(R.rebateTotalPrice) as rebatePrice\
-            from rebateenrolltrains R join adminEnrollTrains O on R.trainOrderId=O._id \
+            from rebateEnrollTrains R join adminEnrollTrains O on R.trainOrderId=O._id \
             join trainClasss C on O.trainId=C._id \
             where O.yearId=:yearId and R.createdDate between :startDate and :endDate and C.schoolId=:schoolId ";
         if (req.body.attributeId) {
