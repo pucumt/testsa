@@ -1014,7 +1014,8 @@ module.exports = function (app) {
                                                                 enrollCount: model.db.sequelize.literal('`enrollCount`+1')
                                                             }, {
                                                                 where: {
-                                                                    _id: req.body.classId
+                                                                    _id: req.body.classId,
+                                                                    enrollCount: model.db.sequelize.literal('`enrollCount`<`totalStudentCount`')
                                                                 },
                                                                 transaction: t1
                                                             })
