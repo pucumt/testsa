@@ -6,6 +6,12 @@ var model = require("../../model.js"),
     checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
+    app.get('/contact', function (req, res) {
+        res.render('Client/contact.html', {
+            title: '联系'
+        });
+    });
+
     app.get('/login', checkNotLogin);
     app.get('/login', function (req, res) {
         res.render('Client/login.html', {
