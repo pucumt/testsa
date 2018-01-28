@@ -38,6 +38,7 @@ module.exports = function (app) {
                 var option = {
                     yearId: req.body.yearId,
                     yearName: req.body.yearName,
+                    attributeId: req.body.attributeId,
                     sequence: req.body.sequence
                 }
                 RollCallConfigure.update(option, {
@@ -51,15 +52,26 @@ module.exports = function (app) {
 
     app.post('/admin/rollCallConfigureList/search', checkLogin);
     app.post('/admin/rollCallConfigureList/search', function (req, res) {
-        Year.getFilters({})
-            .then(function (years) {
-                RollCallConfigure.getFilter({})
-                    .then(function (configure) {
-                        res.jsonp({
-                            configure: configure,
-                            years: years
-                        });
+        model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
+        on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false ", {
+                replacements: {},
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (classAttributes) {
+                Year.getFilters({})
+                    .then(function (years) {
+                        RollCallConfigure.getFilter({})
+                            .then(function (configure) {
+                                res.jsonp({
+                                    configure: configure,
+                                    years: years,
+                                    classAttributes: classAttributes
+                                });
+                            });
                     });
+            })
+            .catch(err => {
+                console.log('err');
             });
     });
 }

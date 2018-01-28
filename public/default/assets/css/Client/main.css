@@ -318,6 +318,7 @@ footer,
 .enroll.personalCenter .coupon,
 .enroll.personalCenter .order,
 .enroll.personalCenter .exam,
+.enroll.personalCenter .bookTest,
 .enroll.personalCenter .randomCoupon,
 .enroll.personalCenter .originalClass {
     margin: 10px -15px;
@@ -492,6 +493,38 @@ footer,
 .lesson .panel-title .score {
     font-size: 14px;
     color: #286090;
+}
+
+.picker {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-top: 1px solid #eee;
+}
+
+.picker span {
+    line-height: 40px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.picker .process {
+    font-size: 14px;
+    color: #8e8e8e;
+    margin-left: 15px;
+}
+
+.picker .score {
+    margin-left: 15px;
+    color: #fff;
+    font-weight: bold;
+    height: 40px;
+    width: 60px;
+    background: #08c9ba;
+    border-radius: 50px;
+    display: inline-block;
+    text-align: center;
 }
 
 .iPanel .play.toReplay.score i:before {

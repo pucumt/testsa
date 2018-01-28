@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/classSetting.html" %} {% endblock %}
+{% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -8,12 +9,20 @@
     <div class="panel-body">
         <form id="InfoSearch">
             <div class="row form-horizontal">
-                <div class="col-md-24">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label style="width: 160px" for="newStudentStatus" class="control-label">点名系统课程的年度:</label>
                         <select style="width: 160px" name="drpYear" id="drpYear" class="form-control"></select>
-                        <button type="button" id="btnSave" class="btn btn-primary panelButton">保存</button>
                     </div>
+                </div>
+                <div class="col-md-4 attribute">
+                    <div class="form-group">
+                        <label for="searchAttribute" class="control-label">学期:</label>
+                        <select name="searchAttribute" id="searchAttribute" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" id="btnSave" class="btn btn-primary panelButton">保存</button>
                 </div>
             </div>
         </form>
@@ -25,7 +34,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -39,5 +50,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/rollCallConfigure.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/rollCallConfigure.js?v=1.000"></script>
 {% endblock %}

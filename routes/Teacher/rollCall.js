@@ -37,7 +37,8 @@ module.exports = function (app) {
             .then(function (configure) {
                 TrainClass.getFilters({
                         teacherId: req.session.teacher._id,
-                        yearId: configure.yearId
+                        yearId: configure.yearId,
+                        attributeId: configure.attributeId
                     })
                     .then(function (classs) {
                         res.jsonp({

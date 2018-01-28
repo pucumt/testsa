@@ -4,7 +4,14 @@ $(document).ready(function () {
     });
 
     loadData();
-    $(".pageTitle .title").text("选课程查作业");
+    switch ($("#type").val()) {
+        case "r":
+        case "s":
+            break;
+        case "h":
+            $(".pageTitle .title").text("选课程查作业");
+            break;
+    }
 });
 
 var $selectBody = $('.container.enroll .exam-list');

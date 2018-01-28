@@ -9,6 +9,7 @@ var model = require("../../model.js"),
     ClassRoom = model.classRoom,
     payHelper = require('../../util/payHelper.js'),
     ChangeEnd = model.changeEnd,
+    RollCallConfigure = model.rollCallConfigure,
     auth = require("./auth"),
     moment = require("moment"),
     checkLogin = auth.checkLogin,
@@ -37,6 +38,28 @@ module.exports = function (app) {
                                 order.courseStartDate = changeEnd.endDate;
                             });
                         }
+                        res.jsonp(orders);
+                    });
+            });
+    });
+
+    app.post('/personalCenter/bookOrder/all', checkJSONLogin);
+    app.post('/personalCenter/bookOrder/all', function (req, res) {
+        var currentUser = req.session.user;
+        RollCallConfigure.getFilter({})
+            .then(function (configure) {
+                return model.db.sequelize.query("select O.studentId, O.studentName, O._id, O.isPayed, O.trainName as className,\
+                        O.totalPrice, O.realMaterialPrice, O.createdDate, C.courseTime, C.bookId, C.minLesson, C.maxLesson, C.courseStartDate\
+                        from studentInfos S join adminEnrollTrains O \
+                        on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId \
+                        join trainClasss C on O.trainId=C._id where S.isDeleted=false and S.accountId=:accountId and C.subjectName='英语'", {
+                        replacements: {
+                            yearId: configure.yearId,
+                            accountId: currentUser._id
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(function (orders) {
                         res.jsonp(orders);
                     });
             });

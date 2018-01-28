@@ -6,6 +6,7 @@ var home = require('./home.js'),
     person = require('./person.js'),
     coupon = require('./coupon.js'),
     book = require('./book.js'),
+    signature = require('./signature.js'),
     reg = require('./reg.js');
 
 module.exports = function (app) {
@@ -17,5 +18,6 @@ module.exports = function (app) {
     person(app);
     order(app);
     coupon(app);
+    signature(app);
     book(app);
 };

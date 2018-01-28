@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
-        location.href = "/personalCenter/order";
+        location.href = "/personalCenter/bookTest";
     });
 
     $("#page").val(1);
@@ -81,6 +81,6 @@ $("#btnMore").on("click", function (e) {
 $selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
-    location.href = "/book/lesson/{0}?studentId={1}&minLesson={2}&maxLesson={3}"
+    location.href = "/book/lesson/category?id={0}&studentId={1}&minLesson={2}&maxLesson={3}"
         .format(entity._id, $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
 });

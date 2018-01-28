@@ -212,6 +212,15 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/personalCenter/bookTest', checkLogin);
+    app.get('/personalCenter/bookTest', function (req, res) {
+        var currentUser = req.session.user;
+        res.render('Client/personalCenter_bookTest.html', {
+            title: '课文订单',
+            user: req.session.user
+        });
+    });
+
     app.get('/personalCenter/exam', checkLogin);
     app.get('/personalCenter/exam', function (req, res) {
         var currentUser = req.session.user;

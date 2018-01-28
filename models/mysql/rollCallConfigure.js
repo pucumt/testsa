@@ -12,6 +12,10 @@ const RollCallConfigure = db.defineModel('rollCallConfigures', {
         type: db.STRING(50),
         defaultValue: ''
     },
+    attributeId: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0

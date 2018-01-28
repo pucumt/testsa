@@ -5,9 +5,15 @@
     </div>
     <div class="row">
         <div id="iPanel" class="iPanel hidden">
-            <button class="btn btn-app btn-primary btn-md play" audioIndex="0"><i class="fa bigger-160"></i></button>
-            <button class="btn btn-app btn-primary btn-md record"><i class="fa bigger-160"></i></button>
-            <button class="btn btn-app btn-primary btn-md play toReplay" audioIndex="1"><i class="fa bigger-160"></i></button>
+            <button class="btn btn-app btn-primary btn-md play" audioIndex="0">
+                <i class="fa bigger-160"></i>
+            </button>
+            <button class="btn btn-app btn-primary btn-md record">
+                <i class="fa bigger-160"></i>
+            </button>
+            <button class="btn btn-app btn-primary btn-md play toReplay" audioIndex="1">
+                <i class="fa bigger-160"></i>
+            </button>
             <div class="space"></div>
             <div style="height:15px">
                 <div class="recordProgressBar" style="width:200px;">
@@ -25,6 +31,6 @@
 <input type="hidden" id="bookId" value="{{ bookId }}" />
 <input type="hidden" id="minLesson" value="{{ minLesson }}" />
 <input type="hidden" id="maxLesson" value="{{ maxLesson }}" />
-<script type="text/javascript" src="https://sdk.17kouyu.com/jssdk/v3.0/iload.js"></script>
+<script src="http://api.chivoxapp.com/js/wx/AiEngine.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/default/assets/js/Client/book.lesson.detail.js?v=1.0"></script>
 {% endblock %}

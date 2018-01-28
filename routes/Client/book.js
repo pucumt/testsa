@@ -52,6 +52,26 @@ module.exports = function (app) {
         });
     });
 
+    // 成绩列表页 
+    app.get('/book/lesson/category', checkLogin);
+    app.get('/book/lesson/category', function (req, res) {
+        Lesson.getFilter({
+                _id: req.query.id
+            })
+            .then(function (lesson) {
+                res.render('Client/book_lesson_category.html', {
+                    title: '成绩单',
+                    user: req.session.user,
+                    lessonId: req.query.id,
+                    studentId: req.query.studentId,
+                    bookId: lesson.bookId,
+                    minLesson: req.query.minLesson,
+                    maxLesson: req.query.maxLesson
+                });
+            });
+    });
+
+    // 详细得分页
     app.get('/book/lesson/:id', checkLogin);
     app.get('/book/lesson/:id', function (req, res) {
         Lesson.getFilter({

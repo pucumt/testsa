@@ -1,52 +1,4 @@
 var audioUrl = new Array();
-window.iPanel = new _17kouyu.IPanel({
-    mode: 2,
-    appKey: "17KouyuTestAppKey",
-    secretKey: "17KouyuTestSecretKey",
-    //showFlash:false,
-    data: {
-        audioUrl: "", //标准音频URL
-        //duration: 5000, //传入参数手动设置录音时长
-        serverParams: { // 录音服务参数
-            coreType: "sent.eval", // 选择内核sent.eval
-            refText: "Where are you from", // 参考文本
-            attachAudioUrl: 1, // 获取音频下载地址
-            userId: "guest" // 用户id
-        }
-    },
-    onBeforeRecord: function () { // 录音之前需要清除评分，可以在这里设置录音参数
-        $("#iPanel").find(".toReplay i").attr('data-content', "");
-        $("#iPanel").find(".toReplay").removeClass("score");
-    },
-    onScore: function (data) { // 评分成功需要显示评分结果
-        var resultObj = new _17kouyu.SentEval(data),
-            score = resultObj.getOverall();
-        $("#iPanel").find(".toReplay i").attr('data-content', score);
-        $("#iPanel").find(".toReplay").addClass("score");
-        var content = $("#iPanel").parents(".panel").data("obj");
-        content.score = score;
-        setWordScore(content._id, content.contentType, score, data.recordId);
-        audioUrl[1] = "https://records.17kouyu.com/" + data.recordId + ".mp3";
-        //http://records.17kouyu.com/59a3807ccd5d44b5760be251.mp3//data.recordId
-    },
-    onScoreError: function (errorType) { //评分失败的显示 "TIMEOUT", "NO_DATA", ErrorID
-        var errorObj = _17kouyu.IStatusCode.get(errorType, "cn");
-        alert(errorObj.feedback);
-    },
-    onBeforePlay: function (e) {
-        var index = $(e).attr('audioIndex');
-        console.info(index);
-        if (audioUrl[index]) {
-            iPanel.params.data.audioUrl = audioUrl[index];
-            if (index == 1) {
-                $("#iPanel").find(".toReplay").addClass("process");
-            }
-        }
-    },
-    onAfterPlay: function (e) {
-        $("#iPanel").find(".toReplay").removeClass("process");
-    }
-});
 
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
@@ -54,7 +6,36 @@ $(document).ready(function () {
             .format($("#bookId").val(), $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
     });
 
+    // var curAudio = new Audio("http://www.w3school.com.cn/i/song.mp3");
+    // $('.btnPlay').click(function (e) {
+    //     curAudio.play();
+    // });
+
+    // $('.btnPause').click(function (e) {
+    //     curAudio.pause();
+    // });
+
     loadWord();
+
+    $.ajax({
+        url: "/signature/get", //微信官方签名方法
+        type: "GET",
+        success: function (data) {
+            data.debug = true;
+            data.jsApiList = ["startRecord", "stopRecord", "uploadVoice", "playVoice", "stopVoice"]; // 
+            wx.config(data); //完成接口注入权限验证配置
+            aiengine.aiengine_new({
+                url: "/signature/chiSign", //驰声签名方法
+                serverTimeout: 30,
+                success: function () {
+                    console.log("sucess");
+                },
+                fail: function (err) {
+                    console.log(err);
+                },
+            });
+        }
+    });
 });
 
 var $wordBody = $('.panel-group.wordlist');
@@ -170,37 +151,6 @@ var coreType = function (content) {
             return "sent.eval";
     }
 };
-
-$wordBody.on('show.bs.collapse', function (e) {
-    $("#iPanel").removeClass("hidden");
-
-    var obj = $(e.target),
-        content = obj.parent().data("obj");
-    obj.find("#panelContainer").append($("#iPanel"));
-    audioUrl[0] = "../../uploads/books/" + $("#bookId").val() + "/" + $('#lessonId').val() + "/" + content._id + ".mp3";
-    if (content.scoreId) {
-        audioUrl[1] = "../../uploads/scores/" + $("#studentId").val() + "/" + content.scoreId + ".mp3";
-    } else {
-        audioUrl[1] = undefined;
-    }
-    iPanel.setData({
-        audioUrl: audioUrl[0],
-        duration: content.duration || 0,
-        serverParams: {
-            coreType: coreType(content),
-            refText: content.name,
-            userId: "guest"
-        }
-    });
-
-    if (content.score || content.score == 0) {
-        $("#iPanel").find(".toReplay i").attr('data-content', content.score);
-        $("#iPanel").find(".toReplay").addClass("score");
-    } else {
-        $("#iPanel").find(".toReplay").removeClass("score");
-    }
-    $("#iPanel").find(".toReplay").removeClass("process");
-});
 
 function setWordScore(wordId, contentType, score, recordId) {
     //存储成绩和录音
