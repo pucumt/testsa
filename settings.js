@@ -16,10 +16,5 @@ module.exports = {
             mch_id: '101580055204', //101560037142
         }
     },
-    create_ip: '127.0.0.1',
-    notify_Url: 'https://www.bfbeducation.com/admin/pay/notify',
-    AppID: 'wxca435d4bf588644b',
-    AppSecret: 'c0e00d6f36f35819218032e18fa87a01',
-    dAppID: 'wx3fb37805a53a2cab',
-    dAppSecret: '8e9ea12fcab0cfbad378891410b9b589'
+    create_ip: '127.0.0.1'
 };
