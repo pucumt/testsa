@@ -23,6 +23,10 @@ $(document).ready(function () {
         success: function (data) {
             data.debug = true;
             data.jsApiList = ["startRecord", "stopRecord", "uploadVoice", "playVoice", "stopVoice"]; // 
+            wx.error(function (res) {
+                // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+                console.log(res);
+            });
             wx.config(data); //完成接口注入权限验证配置
             aiengine.aiengine_new({
                 url: "/signature/chiSign", //驰声签名方法
