@@ -70,10 +70,10 @@ function renderOrders(orders) {
             if (moment().isBefore(order.courseStartDate)) {
                 buttons += '<button type="button" id="btnChangeClass" style="margin-right: 10px;" class="btn btn-primary btn-xs">调班</button>';
             }
-            if (order.bookId) {
-                buttons += '<button type="button" bookId="' + order.bookId + '" minLesson="' + order.minLesson + '" maxLesson="' + order.maxLesson + '" studentId="' + order.studentId +
-                    '" id="btnOpenBook" style="margin-right: 10px;" class="btn btn-primary btn-xs">课程</button>';
-            }
+            // if (order.bookId) {
+            //     buttons += '<button type="button" bookId="' + order.bookId + '" minLesson="' + order.minLesson + '" maxLesson="' + order.maxLesson + '" studentId="' + order.studentId +
+            //         '" id="btnOpenBook" style="margin-right: 10px;" class="btn btn-primary btn-xs">课程</button>';
+            // }
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
                 moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div><div class="">上课时间:' +

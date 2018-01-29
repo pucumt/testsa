@@ -35,6 +35,7 @@ $(document).ready(function () {
 });
 
 function renderRandomCoupon() {
+    // 是否发布随机优惠券
     selfAjax("post", "/coupon/isRandomCouponExist", {
             originalUrl: "/personalCenter"
         },
@@ -51,6 +52,7 @@ function renderRandomCoupon() {
             }
         });
 
+    // 老生报名 是否开始
     selfAjax("post", "/enroll/isOriginalClassBegin", {
             originalUrl: "/personalCenter"
         },
@@ -62,6 +64,23 @@ function renderRandomCoupon() {
                 }
                 if (data.sucess) {
                     $(".enroll.personalCenter .originalClass").show();
+                    return;
+                }
+            }
+        });
+
+    // 是否有英语课程
+    selfAjax("post", "/enroll/isEnglishOrderExist", {
+            originalUrl: "/personalCenter"
+        },
+        function (data) {
+            if (data) {
+                if (data.notLogin) {
+                    location.href = "/login";
+                    return;
+                }
+                if (data.sucess) {
+                    $(".enroll.personalCenter .bookTest").show();
                     return;
                 }
             }

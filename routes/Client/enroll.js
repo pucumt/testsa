@@ -22,6 +22,7 @@ var model = require("../../model.js"),
     GradeSubjectRelation = model.gradeSubjectRelation,
     GradeSubjectCategoryRelation = model.gradeSubjectCategoryRelation,
     EnrollProcessConfigure = model.enrollProcessConfigure,
+    RollCallConfigure = model.rollCallConfigure,
     Year = model.year,
     ClassAttribute = model.classAttribute,
     checkLogin = auth.checkLogin,
@@ -1479,6 +1480,35 @@ module.exports = function (app) {
                 res.jsonp({
                     error: "没到原班报名时间呢！"
                 });
+            });
+    });
+
+    app.post('/enroll/isEnglishOrderExist', checkJSONLogin);
+    app.post('/enroll/isEnglishOrderExist', function (req, res) {
+        RollCallConfigure.getFilter({})
+            .then(function (configure) {
+                model.db.sequelize.query("select count(O._id) as count from adminEnrollTrains O join trainClasss C \
+                on O.trainId=C._id join studentInfos S on O.studentId=S._id \
+                where O.isSucceed=1 and O.isDeleted=false and O.yearId=:yearId and O.attributeId=:attributeId and C.isDeleted=false \
+                and C.subjectName='英语' and C.isDeleted=false and S.accountId=:accountId", {
+                        replacements: {
+                            yearId: configure.yearId,
+                            attributeId: configure.attributeId,
+                            accountId: req.session.user._id
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(function (orders) {
+                        if (orders[0] && orders[0].count > 0) {
+                            res.jsonp({
+                                sucess: true
+                            });
+                        } else {
+                            res.jsonp({
+                                error: "没有英语订单！"
+                            });
+                        }
+                    });
             });
     });
 };

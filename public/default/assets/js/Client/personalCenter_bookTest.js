@@ -43,11 +43,8 @@ function renderOrders(orders) {
         var d = $(document.createDocumentFragment());
         orders.forEach(function (order) {
             var price = (parseFloat(order.totalPrice) + parseFloat(order.realMaterialPrice)).toFixed(2),
-                status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>',
-                buttons = '<button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-primary btn-xs">详情</button>';
-            if (moment().isBefore(order.courseStartDate)) {
-                buttons += '<button type="button" id="btnChangeClass" style="margin-right: 10px;" class="btn btn-primary btn-xs">调班</button>';
-            }
+                status = '',
+                buttons = '';
             if (order.bookId) {
                 buttons += '<button type="button" bookId="' + order.bookId + '" minLesson="' + order.minLesson + '" maxLesson="' + order.maxLesson + '" studentId="' + order.studentId +
                     '" id="btnOpenBook" style="margin-right: 10px;" class="btn btn-primary btn-xs">课程</button>';

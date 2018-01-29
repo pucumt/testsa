@@ -50,11 +50,14 @@ module.exports = function (app) {
             .then(function (configure) {
                 return model.db.sequelize.query("select O.studentId, O.studentName, O._id, O.isPayed, O.trainName as className,\
                         O.totalPrice, O.realMaterialPrice, O.createdDate, C.courseTime, C.bookId, C.minLesson, C.maxLesson, C.courseStartDate\
-                        from studentInfos S join adminEnrollTrains O \
-                        on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId \
-                        join trainClasss C on O.trainId=C._id where S.isDeleted=false and S.accountId=:accountId and C.subjectName='英语'", {
+                        from  adminEnrollTrains O join studentInfos S \
+                        on S._id=O.studentId \
+                        join trainClasss C on O.trainId=C._id \
+                        where O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId and O.attributeId=:attributeId\
+                        and S.isDeleted=false and S.accountId=:accountId and C.subjectName='英语'", {
                         replacements: {
                             yearId: configure.yearId,
+                            attributeId: configure.attributeId,
                             accountId: currentUser._id
                         },
                         type: model.db.sequelize.QueryTypes.SELECT

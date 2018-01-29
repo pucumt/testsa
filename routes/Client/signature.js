@@ -29,13 +29,13 @@ module.exports = function (app) {
     app.get('/signature/get', function (req, res) {
         getToken(function (error, response, body) {
             debugger;
-            if (response.statusCode == 200) {
-                var data = JSON.parse(body);
+            var data = JSON.parse(body);
+            if (response.statusCode == 200 && (!data.errcode)) {
                 var access_token = data.access_token;
                 getticket(access_token, function (error, response, body) {
                     debugger;
-                    if (response.statusCode == 200) {
-                        var data = JSON.parse(body);
+                    var data = JSON.parse(body);
+                    if (response.statusCode == 200 && (!data.errcode)) {
                         var ticket = data.ticket,
                             timestamp = Date.parse(new Date()) / 1000,
                             url = 'http://bfbeducation.com/book/lesson/59b0ea4eba582520d58aeb38',

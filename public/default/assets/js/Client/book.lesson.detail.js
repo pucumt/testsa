@@ -21,6 +21,10 @@ $(document).ready(function () {
         url: "/signature/get", //微信官方签名方法
         type: "GET",
         success: function (data) {
+            if (data.error) {
+                console.log(data.error);
+                return;
+            }
             data.debug = true;
             data.jsApiList = ["startRecord", "stopRecord", "uploadVoice", "playVoice", "stopVoice"]; // 
             wx.error(function (res) {
