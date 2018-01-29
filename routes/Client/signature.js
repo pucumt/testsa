@@ -38,7 +38,7 @@ module.exports = function (app) {
                         var data = JSON.parse(body);
                         var ticket = data.ticket,
                             timestamp = Date.parse(new Date()) / 1000,
-                            url = 'http://localhost:2369/book/lesson/59b0ea4eba582520d58aeb38',
+                            url = 'http://bfbeducation.com/book/lesson/59b0ea4eba582520d58aeb38',
                             nonceStr = "qwertyuiop",
                             key = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url,
                             // sha1 = crypto.createHash('sha1'),
