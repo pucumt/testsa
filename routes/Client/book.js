@@ -86,7 +86,8 @@ module.exports = function (app) {
                     studentId: req.query.studentId,
                     bookId: lesson.bookId,
                     minLesson: req.query.minLesson,
-                    maxLesson: req.query.maxLesson
+                    maxLesson: req.query.maxLesson,
+                    curType: req.query.curType
                 });
             });
     });
