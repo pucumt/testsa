@@ -3,6 +3,8 @@ var model = require("../../model.js"),
     settings = model.db.config,
     sha1 = require('sha1'),
     auth = require("./auth"),
+    SystemConfigure = model.systemConfigure,
+    moment = require('moment'),
     checkLogin = auth.checkLogin,
     checkJSONLogin = auth.checkJSONLogin;
 
@@ -25,39 +27,85 @@ module.exports = function (app) {
         );
     };
 
-    app.get('/signature/get', checkLogin);
-    app.get('/signature/get', function (req, res) {
-        getToken(function (error, response, body) {
+    // use token to get ticket
+    function ticketFunc(access_token, res) {
+        getticket(access_token, function (error, response, body) {
             debugger;
             var data = JSON.parse(body);
             if (response.statusCode == 200 && (!data.errcode)) {
-                var access_token = data.access_token;
-                getticket(access_token, function (error, response, body) {
-                    debugger;
-                    var data = JSON.parse(body);
-                    if (response.statusCode == 200 && (!data.errcode)) {
-                        var ticket = data.ticket,
-                            timestamp = Date.parse(new Date()) / 1000,
-                            url = 'http://bfbeducation.com/book/lesson/59b0ea4eba582520d58aeb38',
-                            nonceStr = "qwertyuiop",
-                            key = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url,
-                            // sha1 = crypto.createHash('sha1'),
-                            signature = sha1(key); //.digest('hex')
-                        res.jsonp({
-                            appId: settings.dAppID,
-                            timestamp: timestamp,
-                            signature: signature,
-                            nonceStr: nonceStr
-                        });
-                    } else {
-                        res.jsonp({
-                            error: "没有授权getticket!"
-                        });
-                    }
+                var ticket = data.ticket,
+                    timestamp = Date.parse(new Date()) / 1000,
+                    url = 'http://bfbeducation.com/book/lesson/59b0ea4eba582520d58aeb38',
+                    nonceStr = "qwertyuiop",
+                    key = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url,
+                    // sha1 = crypto.createHash('sha1'),
+                    signature = sha1(key); //.digest('hex')
+                res.jsonp({
+                    appId: settings.dAppID,
+                    timestamp: timestamp,
+                    signature: signature,
+                    nonceStr: nonceStr
                 });
             } else {
                 res.jsonp({
-                    error: "没有授权token!"
+                    error: "没有授权getticket!"
+                });
+            }
+        });
+    };
+
+    // if isExist just need to update token
+    function saveToken(access_token, isExist) {
+        var jsonToken = {
+            token: access_token,
+            date: moment().format()
+        };
+        if (isExist) {
+            SystemConfigure.update({
+                value: JSON.stringify(jsonToken)
+            }, {
+                where: {
+                    "key": "token"
+                }
+            })
+        } else {
+            SystemConfigure.create({
+                "key": "token",
+                value: JSON.stringify(jsonToken)
+            });
+        }
+    };
+
+    app.get('/signature/get', checkLogin);
+    app.get('/signature/get', function (req, res) {
+        // check is time over 1 hour, 
+        SystemConfigure.getFilter({
+            "key": "token"
+        }).then(configures => {
+            var token = "";
+            if (configures) {
+                var jsonToken = JSON.parse(configures.value);
+                if (moment(jsonToken.date).add(1, "hours").isAfter(moment())) {
+                    ticketFunc(jsonToken.token, res);
+                    return;
+                }
+            }
+            if (token == "") {
+                getToken(function (error, response, body) {
+                    debugger;
+                    var data = JSON.parse(body);
+                    if (response.statusCode == 200 && (!data.errcode)) {
+                        var access_token = data.access_token;
+                        // save to db
+                        saveToken(access_token, configures);
+
+                        // get ticket and response to client
+                        ticketFunc(access_token, res);
+                    } else {
+                        res.jsonp({
+                            error: "没有授权token!"
+                        });
+                    }
                 });
             }
         });
