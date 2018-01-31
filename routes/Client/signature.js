@@ -28,16 +28,15 @@ module.exports = function (app) {
     };
 
     // use token to get ticket
-    function ticketFunc(access_token, res) {
+    function ticketFunc(access_token, req, res) {
         getticket(access_token, function (error, response, body) {
             debugger;
             var data = JSON.parse(body);
             if (response.statusCode == 200 && (!data.errcode)) {
                 var ticket = data.ticket,
                     timestamp = Date.parse(new Date()) / 1000,
-                    url = 'http://bfbeducation.com/book/lesson/59b0ea4eba582520d58aeb38',
                     nonceStr = "qwertyuiop",
-                    key = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url,
+                    key = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + req.body.clientUrl,
                     // sha1 = crypto.createHash('sha1'),
                     signature = sha1(key); //.digest('hex')
                 res.jsonp({
@@ -76,8 +75,8 @@ module.exports = function (app) {
         }
     };
 
-    app.get('/signature/get', checkLogin);
-    app.get('/signature/get', function (req, res) {
+    app.post('/signature/get', checkLogin);
+    app.post('/signature/get', function (req, res) {
         // check is time over 1 hour, 
         SystemConfigure.getFilter({
             "key": "token"
@@ -86,7 +85,7 @@ module.exports = function (app) {
             if (configures) {
                 var jsonToken = JSON.parse(configures.value);
                 if (moment(jsonToken.date).add(1, "hours").isAfter(moment())) {
-                    ticketFunc(jsonToken.token, res);
+                    ticketFunc(jsonToken.token, req, res);
                     return;
                 }
             }
@@ -100,7 +99,7 @@ module.exports = function (app) {
                         saveToken(access_token, configures);
 
                         // get ticket and response to client
-                        ticketFunc(access_token, res);
+                        ticketFunc(access_token, req, res);
                     } else {
                         res.jsonp({
                             error: "没有授权token!"

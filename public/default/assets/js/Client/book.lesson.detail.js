@@ -19,7 +19,10 @@ $(document).ready(function () {
 
     $.ajax({
         url: "/signature/get", //微信官方签名方法
-        type: "GET",
+        type: "POST",
+        data: {
+            clientUrl: location.href
+        },
         success: function (data) {
             if (data.error) {
                 console.log(data.error);
