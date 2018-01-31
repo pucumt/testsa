@@ -117,7 +117,7 @@ module.exports = function (app) {
             secretKey = "97a9221c21f636b10b14ba2d5d77d343",
             timestamp = (Date.parse(new Date()) / 1000).toString(),
             rawSignStr = [appKey, secretKey, timestamp],
-            signStr;
+            signStr = "";
 
         rawSignStr.sort()
             .forEach(x => {
