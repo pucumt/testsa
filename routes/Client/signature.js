@@ -125,11 +125,12 @@ module.exports = function (app) {
             });
         console.log(signStr);
         var signature = sha1(signStr);
-
-        res.jsonp({
+        var returnObj = {
             appId: appId,
             timestamp: timestamp,
             signature: signature
-        });
+        };
+        console.log(returnObj);
+        res.jsonp(returnObj);
     });
 };
