@@ -116,9 +116,15 @@ module.exports = function (app) {
             appKey = "151678364400002b",
             secretKey = "97a9221c21f636b10b14ba2d5d77d343",
             timestamp = Date.parse(new Date()) / 1000,
-            signStr = appKey + secretKey + timestamp,
-            // sha1 = crypto.createHash('sha1'),
-            signature = sha1(signStr);
+            rawSignStr = [appKey, secretKey, timestamp.toString()],
+            signStr;
+
+        rawSignStr.sort()
+            .forEach(x => {
+                signStr += x;
+            });
+
+        var signature = sha1(signStr);
 
         res.jsonp({
             appId: appId,
