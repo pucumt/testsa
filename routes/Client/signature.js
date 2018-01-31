@@ -115,8 +115,8 @@ module.exports = function (app) {
         var appId = settings.dAppID,
             appKey = "151678364400002b",
             secretKey = "97a9221c21f636b10b14ba2d5d77d343",
-            timestamp = Date.parse(new Date()) / 1000,
-            rawSignStr = [appKey, secretKey, timestamp.toString()],
+            timestamp = (Date.parse(new Date()) / 1000).toString(),
+            rawSignStr = [appKey, secretKey, timestamp],
             signStr;
 
         rawSignStr.sort()

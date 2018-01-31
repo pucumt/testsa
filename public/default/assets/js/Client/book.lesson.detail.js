@@ -1,19 +1,34 @@
-var audioUrl = new Array();
-
+var curAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/book/lesson/category?id={0}&studentId={1}&minLesson={2}&maxLesson={3}"
             .format($("#lessonId").val(), $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
     });
 
-    // var curAudio = new Audio("http://www.w3school.com.cn/i/song.mp3");
-    // $('.btnPlay').click(function (e) {
-    //     curAudio.play();
-    // });
+    curAudio.onended = function (e) {
+        if (curAudio.ctButton) {
+            curAudio.ctButton.text("原声");
+        }
+    };
 
-    // $('.btnPause').click(function (e) {
-    //     curAudio.pause();
-    // });
+    curAudio.onpause = function (e) {
+        if (curAudio.ctButton) {
+            curAudio.ctButton.text("原声");
+        }
+    };
+
+    $('.wordlist').on("click", ".buttons .toplay", function (e) {
+        pauseAll();
+
+        setTimeout(() => {
+            var word = $(e.target).parents(".panel").data("obj");
+            $(e.target).text("播放...");
+            curAudio.ctButton = $(e.target);
+            curAudio.src = "/uploads/books/{0}/{1}/{2}.mp3"
+                .format($('#bookId').val(), $('#lessonId').val(), word._id);
+            curAudio.play();
+        }, 0);
+    });
 
     loadWord();
 
@@ -49,6 +64,9 @@ $(document).ready(function () {
     });
 });
 
+function pauseAll() {
+    curAudio.pause();
+}
 var $wordBody = $('.panel-group.wordlist');
 
 function loadWord() {
@@ -98,10 +116,10 @@ function generatePanel(word) {
                         ' + (word.replaceName || word.name) + '&nbsp;<span class="score">' + (word.score || '') + '</span>\
                     </h4>\
                 </div>\
-                <div  class="flex-wrp buttons">\
-                    <button class="btn btn-default" bindtap="toplay">原声</button>\
-                    <button class="btn btn-default" bindtap="toRecord">录音</button>\
-                    <button class="btn btn-default" bindtap="toReplay">回放</button>\
+                <div class="flex-wrp buttons">\
+                    <button class="btn btn-default toplay">原声</button>\
+                    <button class="btn btn-default toRecord">录音</button>\
+                    <button class="btn btn-default toReplay">回放</button>\
                 </div>\
             </div>');
     panel.data("obj", word);
