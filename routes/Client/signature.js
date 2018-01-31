@@ -123,7 +123,7 @@ module.exports = function (app) {
             .forEach(x => {
                 signStr += x;
             });
-
+        console.log(signStr);
         var signature = sha1(signStr);
 
         res.jsonp({
