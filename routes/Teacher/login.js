@@ -6,7 +6,7 @@ var crypto = require('crypto'),
     checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
-    app.get('/Teacher/login', checkNotLogin);
+    // app.get('/Teacher/login', checkNotLogin);
     app.get('/Teacher/login', function (req, res) {
         res.render('Teacher/login.html', {
             title: '登录',
@@ -14,7 +14,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/Teacher/login', checkNotLogin);
+    // app.post('/Teacher/login', checkNotLogin);
     app.post('/Teacher/login', function (req, res) {
         //登录注册放在一起
         //生成密码的 md5 值

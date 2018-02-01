@@ -1,11 +1,13 @@
-var curAudio = new Audio(); // 音频播放器
+var curAudio = new Audio(),
+    rePlayAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/book/lesson/category?id={0}&studentId={1}&minLesson={2}&maxLesson={3}"
             .format($("#lessonId").val(), $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
     });
 
-    curAudio.onended = function (e) {
+    // -- audio functions
+    curAudio.onerror = function (e) {
         if (curAudio.ctButton) {
             curAudio.ctButton.text("原声");
         }
@@ -16,7 +18,20 @@ $(document).ready(function () {
             curAudio.ctButton.text("原声");
         }
     };
+    rePlayAudio.onerror = function (e) {
+        if (curAudio.ctButton) {
+            curAudio.ctButton.text("回放");
+        }
+    };
 
+    rePlayAudio.onpause = function (e) {
+        if (curAudio.ctButton) {
+            curAudio.ctButton.text("回放");
+        }
+    };
+    // end -- audio functions
+
+    // to play 原声
     $('.wordlist').on("click", ".buttons .toplay", function (e) {
         pauseAll();
 
@@ -30,6 +45,36 @@ $(document).ready(function () {
         }, 0);
     });
 
+    // 录音
+    $('.wordlist').on("click", ".buttons .toRecord", function (e) {
+        pauseAll();
+
+        var word = $(e.target).parents(".panel").data("obj");
+        request.refText = word.name;
+        startRecord(word);
+    });
+
+    // 回放
+    $('.wordlist').on("click", ".buttons .toReplay", function (e) {
+        pauseAll();
+
+        var word = $(e.target).parents(".panel").data("obj");
+        if (word.localId && wx) { // use wx
+            wx.playVoice({
+                localId: word.localId
+            });
+        } else {
+            // use audio
+            setTimeout(() => {
+                $(e.target).text("回放...");
+                rePlayAudio.ctButton = $(e.target);
+                rePlayAudio.src = "/uploads/scores/{0}/{1}.mp3"
+                    .format($('#studentId').val(), word.scoreId);
+                rePlayAudio.play();
+            }, 0);
+        }
+    });
+
     loadWord();
 
     $.ajax({
@@ -41,6 +86,10 @@ $(document).ready(function () {
         success: function (data) {
             if (data.error) {
                 console.log(data.error);
+                return;
+            }
+            if (!wx) {
+                // wx not loaded
                 return;
             }
             data.debug = true;
@@ -66,6 +115,7 @@ $(document).ready(function () {
 
 function pauseAll() {
     curAudio.pause();
+    rePlayAudio.pause();
 }
 var $wordBody = $('.panel-group.wordlist');
 
@@ -126,6 +176,36 @@ function generatePanel(word) {
     return panel;
 };
 
+var request = {
+    attachAudioUrl: 1,
+    coreType: "en.word.score",
+    rank: 100,
+    refText: "want"
+};
+
+function startRecord(obj) {
+    aiengine.aiengine_start({
+        isShowProgressTips: 0,
+        request: request,
+        success: function (res) {
+            // upload score
+            obj.score = res.result.overall;
+            obj.recordId = res.recordId;
+            var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
+
+            saveScore(obj, sentences);
+            console.log("sucess");
+        },
+        fail: function (err) {
+            console.log(err);
+        },
+        complete: function (res) {
+            obj.localId = res.localId || "";
+            console.log("complete");
+        }
+    });
+};
+
 // function generateContentPanel(word, score) {
 //     var panel = $('<div class="panel panel-default">\
 //                 <div class="panel-heading" role="tab" id="headingOne">\
@@ -159,17 +239,18 @@ function generatePanel(word) {
 //     }
 // };
 
-// function setWordScore(wordId, contentType, score, recordId) {
-//     //存储成绩和录音
-//     var filter = {
-//         wordId: wordId,
-//         score: score,
-//         recordId: recordId,
-//         contentType: contentType,
-//         lessonId: $("#lessonId").val(),
-//         studentId: $("#studentId").val()
-//     };
-//     selfAjax("post", "/book/lesson/score", filter, function (data) {
-//         // set vidio url TBD
-//     });
-// };
+function saveScore(word, sentences) {
+    //存储成绩和录音
+    var filter = {
+        studentId: $("#studentId").val(),
+        lessonId: $("#lessonId").val(),
+        wordId: word._id,
+        contentType: $("#curType").val(),
+        score: word.score,
+        recordId: word.recordId,
+        scoreResult: JSON.stringify(sentences)
+    };
+    selfAjax("post", "/app/score", filter, function (data) {
+        // show score
+    });
+};
