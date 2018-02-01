@@ -115,22 +115,22 @@ module.exports = function (app) {
         var appId = settings.dAppID,
             appKey = "151678364400002b",
             secretKey = "97a9221c21f636b10b14ba2d5d77d343",
-            timestamp = (Date.parse(new Date()) / 1000).toString(),
-            rawSignStr = [appKey, secretKey, timestamp],
+            timestamp = Date.parse(new Date()) / 1000,
+            rawSignStr = [appKey, secretKey, timestamp.toString()],
             signStr = "";
 
         rawSignStr.sort()
             .forEach(x => {
                 signStr += x;
             });
-        console.log(signStr);
+        // console.log(signStr);
         var signature = sha1(signStr);
         var returnObj = {
             'appId': appId,
             'timestamp': timestamp,
             'signature': signature
         };
-        console.log(returnObj);
+        // console.log(returnObj);
         res.jsonp(returnObj);
     });
 };
