@@ -49,18 +49,18 @@ $(document).ready(function () {
     // 录音
     $('.wordlist').on("click", ".buttons .toRecord", function (e) {
         var word = $(e.target).parents(".panel").data("obj");
-        if (aiengine.ctButton.parents(".panel").data("obj")._id == word._id) {
+        if (aiengine && aiengine.ctButton && aiengine.ctButton.parents(".panel").data("obj")._id == word._id) {
             // 1. 点击同一个button，如果已经停止，重新开始
             // 2. 如果没有停止，则仅仅停止
             if ($(e.target).text() == "停止") {
                 pauseAll();
                 return;
             } else {
-                pauseAll();
+                // pauseAll();
             }
         } else {
             // 3. 如果点击其他button，则停止上一个，开始下一个
-            pauseAll();
+            // pauseAll();
         }
 
         request.refText = word.name;
@@ -227,11 +227,15 @@ function startRecord(obj) {
 function stopRecord() {
     aiengine.aiengine_stop({
         success: function () {
-            aiengine.ctButton.text("录音");
+            if (aiengine.ctButton) {
+                aiengine.ctButton.text("录音");
+            }
             console.log("stop sucess!");
         },
         fail: function (err) {
-            aiengine.ctButton.text("出错");
+            if (aiengine.ctButton) {
+                aiengine.ctButton.text("出错");
+            }
             console.log("stop failed!");
         },
     });
