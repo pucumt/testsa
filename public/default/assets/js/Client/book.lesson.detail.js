@@ -18,6 +18,7 @@ $(document).ready(function () {
             curAudio.ctButton.text("原声");
         }
     };
+
     rePlayAudio.onerror = function (e) {
         if (curAudio.ctButton) {
             curAudio.ctButton.text("回放");
@@ -47,10 +48,24 @@ $(document).ready(function () {
 
     // 录音
     $('.wordlist').on("click", ".buttons .toRecord", function (e) {
-        pauseAll();
-
         var word = $(e.target).parents(".panel").data("obj");
+        if (aiengine.ctButton.parents(".panel").data("obj")._id == word._id) {
+            // 1. 点击同一个button，如果已经停止，重新开始
+            // 2. 如果没有停止，则仅仅停止
+            if ($(e.target).text() == "停止") {
+                pauseAll();
+                return;
+            } else {
+                pauseAll();
+            }
+        } else {
+            // 3. 如果点击其他button，则停止上一个，开始下一个
+            pauseAll();
+        }
+
         request.refText = word.name;
+        $(e.target).text("停止");
+        aiengine.ctButton = $(e.target);
         startRecord(word);
     });
 
@@ -59,10 +74,12 @@ $(document).ready(function () {
         pauseAll();
 
         var word = $(e.target).parents(".panel").data("obj");
-        if (word.localId && wx) { // use wx
-            wx.playVoice({
-                localId: word.localId
-            });
+        if (word.localId) { // use wx
+            if (wx) {
+                wx.playVoice({
+                    localId: word.localId
+                });
+            }
         } else {
             // use audio
             setTimeout(() => {
@@ -116,6 +133,7 @@ $(document).ready(function () {
 function pauseAll() {
     curAudio.pause();
     rePlayAudio.pause();
+    stopRecord();
 }
 var $wordBody = $('.panel-group.wordlist');
 
@@ -194,50 +212,30 @@ function startRecord(obj) {
             var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
 
             saveScore(obj, sentences);
-            console.log("sucess");
+            console.log("start sucess");
         },
         fail: function (err) {
             console.log(err);
         },
         complete: function (res) {
             obj.localId = res.localId || "";
-            console.log("complete");
+            console.log("start complete");
         }
     });
 };
 
-// function generateContentPanel(word, score) {
-//     var panel = $('<div class="panel panel-default">\
-//                 <div class="panel-heading" role="tab" id="headingOne">\
-//                     <h4 class="panel-title collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#' + word._id + '" aria-expanded="false" aria-controls="' + word._id + '">\
-//                     课文背诵&nbsp;<span class="score">' + (score && score.score && '({0})'.format(score.score) || '') + '</span>\
-//                     </h4>\
-//                 </div>\
-//                 <div id="' + word._id + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\
-//                     <div class="panel-body">\
-//                         <div id="panelContainer">\
-//                         </div>\
-//                     </div>\
-//                 </div>\
-//             </div>');
-//     panel.data("obj", word);
-//     if (score) {
-//         word.score = score.score;
-//         word.scoreId = score._id;
-//     }
-//     return panel;
-// };
-
-// var coreType = function (content) {
-//     switch (content.contentType) {
-//         case 0: //课文
-//             return "para.eval";
-//         case 1: //单词
-//             return "word.eval";
-//         case 2: //句子
-//             return "sent.eval";
-//     }
-// };
+function stopRecord() {
+    aiengine.aiengine_stop({
+        success: function () {
+            aiengine.ctButton.text("录音");
+            console.log("stop sucess!");
+        },
+        fail: function (err) {
+            aiengine.ctButton.text("出错");
+            console.log("stop failed!");
+        },
+    });
+}
 
 function saveScore(word, sentences) {
     //存储成绩和录音
