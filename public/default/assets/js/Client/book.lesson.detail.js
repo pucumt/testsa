@@ -207,7 +207,7 @@ function startRecord(obj) {
         request: request,
         success: function (res) {
             // upload score
-            $("#jsalert").val(JSON.stringify(res));
+            $("#jsalert").val("start Record sucess:" + JSON.stringify(res));
             obj.score = res.result.overall;
             obj.recordId = res.recordId;
             var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
@@ -216,7 +216,7 @@ function startRecord(obj) {
             console.log("start sucess");
         },
         fail: function (err) {
-            $("#jsalert").val(JSON.stringify(err));
+            $("#jsalert").val("start Record fail:" + JSON.stringify(err));
             console.log(err);
         },
         complete: function (res) {
@@ -232,12 +232,14 @@ function stopRecord() {
             if (aiengine.ctButton) {
                 aiengine.ctButton.text("录音");
             }
+            $("#jsalert").val("stop Record sucess");
             console.log("stop sucess!");
         },
         fail: function (err) {
             if (aiengine.ctButton) {
                 aiengine.ctButton.text("出错");
             }
+            $("#jsalert").val("stop Record fail:" + JSON.stringify(err));
             console.log("stop failed!");
         },
     });
