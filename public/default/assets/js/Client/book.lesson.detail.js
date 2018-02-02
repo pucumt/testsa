@@ -207,6 +207,7 @@ function startRecord(obj) {
         request: request,
         success: function (res) {
             // upload score
+            $("#jsalert").val(res.result);
             obj.score = res.result.overall;
             obj.recordId = res.recordId;
             var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
@@ -215,6 +216,7 @@ function startRecord(obj) {
             console.log("start sucess");
         },
         fail: function (err) {
+            $("#jsalert").val(err);
             console.log(err);
         },
         complete: function (res) {
