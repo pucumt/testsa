@@ -4,7 +4,7 @@
         <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span> {{ name }}
     </div>
     <div class="row">
-        <input class="form-control" maxlength="20" type="text" name="jsalert" id="jsalert" />
+        <textarea rows="3" name="jsalert" id="jsalert" cols="40"></textarea>
         <div id="iPanel" class="iPanel hidden">
             <button class="btn btn-app btn-primary btn-md play" audioIndex="0">
                 <i class="fa bigger-160"></i>
@@ -34,5 +34,5 @@
 <input type="hidden" id="maxLesson" value="{{ maxLesson }}" />
 <input type="hidden" id="curType" value="{{ curType }}" />
 <script src="http://api.chivoxapp.com/js/wx/AiEngine.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="/default/assets/js/Client/book.lesson.detail.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Client/book.lesson.detail.js?v=1.001"></script>
 {% endblock %}

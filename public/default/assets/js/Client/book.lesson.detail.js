@@ -1,4 +1,5 @@
 var curAudio = new Audio(),
+    log = "",
     rePlayAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
@@ -101,8 +102,11 @@ $(document).ready(function () {
             clientUrl: location.href
         },
         success: function (data) {
+            log = "get sign sucess; \r\n";
             if (data.error) {
                 console.log(data.error);
+                log += JSON.stringify(data) + "\r\n";
+                $("#jsalert").val(log);
                 return;
             }
             if (!wx) {
@@ -114,6 +118,8 @@ $(document).ready(function () {
             wx.error(function (res) {
                 // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
                 console.log(res);
+                log += JSON.stringify(res) + "\r\n";
+                $("#jsalert").val(log);
             });
             wx.config(data); //完成接口注入权限验证配置
             aiengine.aiengine_new({
@@ -121,9 +127,13 @@ $(document).ready(function () {
                 serverTimeout: 30,
                 success: function () {
                     console.log("sucess");
+                    log += "ai new sucess \r\n";
+                    $("#jsalert").val(log);
                 },
                 fail: function (err) {
                     console.log(err);
+                    log += JSON.stringify(err) + "\r\n";
+                    $("#jsalert").val(log);
                 },
             });
         }
@@ -207,7 +217,8 @@ function startRecord(obj) {
         request: request,
         success: function (res) {
             // upload score
-            $("#jsalert").val("start Record sucess:" + JSON.stringify(res));
+            log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
+            $("#jsalert").val(log);
             obj.score = res.result.overall;
             obj.recordId = res.recordId;
             var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
@@ -216,11 +227,14 @@ function startRecord(obj) {
             console.log("start sucess");
         },
         fail: function (err) {
-            $("#jsalert").val("start Record fail:" + JSON.stringify(err));
+            log += "start Record fail:" + JSON.stringify(err) + "\r\n";
+            $("#jsalert").val(log);
             console.log(err);
         },
         complete: function (res) {
             obj.localId = res.localId || "";
+            log += "start Record complete:" + JSON.stringify(res) + "\r\n";
+            $("#jsalert").val(log);
             console.log("start complete");
         }
     });
@@ -232,14 +246,16 @@ function stopRecord() {
             if (aiengine.ctButton) {
                 aiengine.ctButton.text("录音");
             }
-            $("#jsalert").val("stop Record sucess");
+            log += "stop Record sucess\r\n";
+            $("#jsalert").val(log);
             console.log("stop sucess!");
         },
         fail: function (err) {
             if (aiengine.ctButton) {
                 aiengine.ctButton.text("出错");
             }
-            $("#jsalert").val("stop Record fail:" + JSON.stringify(err));
+            log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
+            $("#jsalert").val(log);
             console.log("stop failed!");
         },
     });
