@@ -48,26 +48,36 @@ $(document).ready(function () {
     });
 
     // 录音
-    $('.wordlist').on("click", ".buttons .toRecord", function (e) {
-        var word = $(e.target).parents(".panel").data("obj");
-        if (aiengine && aiengine.ctButton && aiengine.ctButton.parents(".panel").data("obj")._id == word._id) {
-            // 1. 点击同一个button，如果已经停止，重新开始
-            // 2. 如果没有停止，则仅仅停止
-            if ($(e.target).text() == "停止") {
-                pauseAll();
-                return;
-            } else {
-                // pauseAll();
-            }
-        } else {
-            // 3. 如果点击其他button，则停止上一个，开始下一个
-            // pauseAll();
-        }
+    // $('.wordlist').on("click", ".buttons .toRecord", function (e) {
+    //     var word = $(e.target).parents(".panel").data("obj");
+    //     if (aiengine && aiengine.ctButton && aiengine.ctButton.parents(".panel").data("obj")._id == word._id) {
+    //         // 1. 点击同一个button，如果已经停止，重新开始
+    //         // 2. 如果没有停止，则仅仅停止
+    //         if ($(e.target).text() == "停止") {
+    //             pauseAll();
+    //             return;
+    //         } else {
+    //             // pauseAll();
+    //         }
+    //     } else {
+    //         // 3. 如果点击其他button，则停止上一个，开始下一个
+    //         // pauseAll();
+    //     }
 
-        request.refText = word.name;
+    //     request.refText = word.name;
+    //     $(e.target).text("停止");
+    //     aiengine.ctButton = $(e.target);
+    //     startRecord(word);
+    // });
+
+    $('.wordlist').on("touchstart", ".buttons .toRecord", function (e) {
         $(e.target).text("停止");
-        aiengine.ctButton = $(e.target);
-        startRecord(word);
+        startRecord();
+    });
+
+    $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
+        $(e.target).text("录音");
+        stopRecord();
     });
 
     // 回放
@@ -212,54 +222,89 @@ var request = {
 };
 
 function startRecord(obj) {
-    aiengine.aiengine_start({
-        isShowProgressTips: 0,
-        request: request,
-        success: function (res) {
-            // upload score
-            log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
+    wx.startRecord({
+        success: function () {
+            log += "start succeed: " + JSON.stringify(err) + "\r\n";
             $("#jsalert").val(log);
-            obj.score = res.result.overall;
-            obj.recordId = res.recordId;
-            var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
 
-            saveScore(obj, sentences);
-            console.log("start sucess");
+            wx.onVoiceRecordEnd({
+                // 录音时间超过一分钟没有停止的时候会执行 complete 回调
+                complete: function (res) {
+                    // alert('最多只能录制一分钟');
+                    var localId = res.localId;
+                    log += "start complete: " + JSON.stringify(err) + "\r\n";
+                    $("#jsalert").val(log);
+                }
+            });
         },
-        fail: function (err) {
-            log += "start Record fail:" + JSON.stringify(err) + "\r\n";
+        cancel: function () {
+            //alert('用户拒绝授权录音');
+            log += "start failed: " + JSON.stringify(err) + "\r\n";
             $("#jsalert").val(log);
-            console.log(err);
-        },
-        complete: function (res) {
-            obj.localId = res.localId || "";
-            log += "start Record complete:" + JSON.stringify(res) + "\r\n";
-            $("#jsalert").val(log);
-            console.log("start complete");
+            return false;
         }
     });
+    // aiengine.aiengine_start({
+    //     isShowProgressTips: 0,
+    //     request: request,
+    //     success: function (res) {
+    //         // upload score
+    //         log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
+    //         $("#jsalert").val(log);
+    //         obj.score = res.result.overall;
+    //         obj.recordId = res.recordId;
+    //         var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
+
+    //         saveScore(obj, sentences);
+    //         console.log("start sucess");
+    //     },
+    //     fail: function (err) {
+    //         log += "start Record fail:" + JSON.stringify(err) + "\r\n";
+    //         $("#jsalert").val(log);
+    //         console.log(err);
+    //     },
+    //     complete: function (res) {
+    //         obj.localId = res.localId || "";
+    //         log += "start Record complete:" + JSON.stringify(res) + "\r\n";
+    //         $("#jsalert").val(log);
+    //         console.log("start complete");
+    //     }
+    // });
 };
 
 function stopRecord() {
-    aiengine.aiengine_stop({
-        success: function () {
-            if (aiengine.ctButton) {
-                aiengine.ctButton.text("录音");
-            }
-            log += "stop Record sucess\r\n";
+    wx.stopRecord({
+        success: function (res) {
+            var localId = res.localId;
+            log += "stop succeed: " + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
-            console.log("stop sucess!");
         },
         fail: function (err) {
-            if (aiengine.ctButton) {
-                aiengine.ctButton.text("出错");
-            }
-            log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
+            console.log(err);
+            log += "stop failed: " + JSON.stringify(err) + "\r\n";
             $("#jsalert").val(log);
-            console.log("stop failed!");
-        },
+        }
     });
-}
+
+    // aiengine.aiengine_stop({
+    //     success: function () {
+    //         if (aiengine.ctButton) {
+    //             aiengine.ctButton.text("录音");
+    //         }
+    //         log += "stop Record sucess\r\n";
+    //         $("#jsalert").val(log);
+    //         console.log("stop sucess!");
+    //     },
+    //     fail: function (err) {
+    //         if (aiengine.ctButton) {
+    //             aiengine.ctButton.text("出错");
+    //         }
+    //         log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
+    //         $("#jsalert").val(log);
+    //         console.log("stop failed!");
+    //     },
+    // });
+};
 
 function saveScore(word, sentences) {
     //存储成绩和录音
