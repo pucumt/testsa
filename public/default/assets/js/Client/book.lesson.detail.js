@@ -1,5 +1,6 @@
 var curAudio = new Audio(),
     log = "",
+    localId,
     rePlayAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
@@ -35,16 +36,19 @@ $(document).ready(function () {
 
     // to play 原声
     $('.wordlist').on("click", ".buttons .toplay", function (e) {
-        pauseAll();
+        // $(e.target).text("录音");
+        stopRecord();
 
-        setTimeout(() => {
-            var word = $(e.target).parents(".panel").data("obj");
-            $(e.target).text("播放...");
-            curAudio.ctButton = $(e.target);
-            curAudio.src = "/uploads/books/{0}/{1}/{2}.mp3"
-                .format($('#bookId').val(), $('#lessonId').val(), word._id);
-            curAudio.play();
-        }, 0);
+        // pauseAll();
+
+        // setTimeout(() => {
+        //     var word = $(e.target).parents(".panel").data("obj");
+        //     $(e.target).text("播放...");
+        //     curAudio.ctButton = $(e.target);
+        //     curAudio.src = "/uploads/books/{0}/{1}/{2}.mp3"
+        //         .format($('#bookId').val(), $('#lessonId').val(), word._id);
+        //     curAudio.play();
+        // }, 0);
     });
 
     // 录音
@@ -70,37 +74,43 @@ $(document).ready(function () {
     //     startRecord(word);
     // });
 
-    $('.wordlist').on("touchstart", ".buttons .toRecord", function (e) {
-        $(e.target).text("停止");
+    $('.wordlist').on("click", ".buttons .toRecord", function (e) {
+        // $(e.target).text("停止");
         startRecord();
     });
 
-    $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
-        $(e.target).text("录音");
-        stopRecord();
-    });
+    // $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
+    //     $(e.target).text("录音");
+    //     stopRecord();
+    // });
 
     // 回放
     $('.wordlist').on("click", ".buttons .toReplay", function (e) {
-        pauseAll();
-
-        var word = $(e.target).parents(".panel").data("obj");
-        if (word.localId) { // use wx
-            if (wx) {
-                wx.playVoice({
-                    localId: word.localId
-                });
-            }
-        } else {
-            // use audio
-            setTimeout(() => {
-                $(e.target).text("回放...");
-                rePlayAudio.ctButton = $(e.target);
-                rePlayAudio.src = "/uploads/scores/{0}/{1}.mp3"
-                    .format($('#studentId').val(), word.scoreId);
-                rePlayAudio.play();
-            }, 0);
+        if (wx) {
+            wx.playVoice({
+                localId: localId
+            });
         }
+
+        // pauseAll();
+
+        // var word = $(e.target).parents(".panel").data("obj");
+        // if (word.localId) { // use wx
+        //     if (wx) {
+        //         wx.playVoice({
+        //             localId: word.localId
+        //         });
+        //     }
+        // } else {
+        //     // use audio
+        //     setTimeout(() => {
+        //         $(e.target).text("回放...");
+        //         rePlayAudio.ctButton = $(e.target);
+        //         rePlayAudio.src = "/uploads/scores/{0}/{1}.mp3"
+        //             .format($('#studentId').val(), word.scoreId);
+        //         rePlayAudio.play();
+        //     }, 0);
+        // }
     });
 
     loadWord();
@@ -231,7 +241,7 @@ function startRecord(obj) {
                 // 录音时间超过一分钟没有停止的时候会执行 complete 回调
                 complete: function (res) {
                     // alert('最多只能录制一分钟');
-                    var localId = res.localId;
+                    localId = res.localId;
                     log += "start complete: " + JSON.stringify(res) + "\r\n";
                     $("#jsalert").val(log);
                 }
@@ -275,7 +285,7 @@ function startRecord(obj) {
 function stopRecord() {
     wx.stopRecord({
         success: function (res) {
-            var localId = res.localId;
+            localId = res.localId;
             log += "stop succeed: " + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
         },
