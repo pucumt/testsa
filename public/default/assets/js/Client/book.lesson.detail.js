@@ -224,7 +224,7 @@ var request = {
 function startRecord(obj) {
     wx.startRecord({
         success: function () {
-            log += "start succeed: " + JSON.stringify(err) + "\r\n";
+            log += "start succeed: \r\n";
             $("#jsalert").val(log);
 
             wx.onVoiceRecordEnd({
@@ -232,14 +232,14 @@ function startRecord(obj) {
                 complete: function (res) {
                     // alert('最多只能录制一分钟');
                     var localId = res.localId;
-                    log += "start complete: " + JSON.stringify(err) + "\r\n";
+                    log += "start complete: " + JSON.stringify(res) + "\r\n";
                     $("#jsalert").val(log);
                 }
             });
         },
         cancel: function () {
             //alert('用户拒绝授权录音');
-            log += "start failed: " + JSON.stringify(err) + "\r\n";
+            log += "start failed: \r\n";
             $("#jsalert").val(log);
             return false;
         }
