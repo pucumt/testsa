@@ -43,7 +43,8 @@ module.exports = function (app) {
                     appId: settings.dAppID,
                     timestamp: timestamp,
                     signature: signature,
-                    nonceStr: nonceStr
+                    nonceStr: nonceStr,
+                    jsApiList: ["startRecord", "stopRecord", "uploadVoice", "playVoice", "stopVoice"]
                 });
             } else {
                 res.jsonp({

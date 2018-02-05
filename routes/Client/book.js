@@ -78,7 +78,7 @@ module.exports = function (app) {
                 _id: req.params.id
             })
             .then(function (lesson) {
-                res.render('Client/book_lesson_detail.html', {
+                res.render('Client/sample.html', {
                     title: '课文列表',
                     user: req.session.user,
                     name: lesson.name,
