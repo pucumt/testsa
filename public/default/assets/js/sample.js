@@ -1,15 +1,18 @@
 window.onload = function () {
-    document.body.addEventListener("touchstart", function () { });
-    document.body.addEventListener("click", function () { });
+    document.body.addEventListener("touchstart", function () {});
+    document.body.addEventListener("click", function () {});
     $.ajax({
-        url: "createsignature.php",
-        type: "GET",
+        url: "/signature/get",
+        type: "POST",
+        data: {
+            clientUrl: location.href
+        },
         success: function (data) {
             $("#wResult").show();
             $("#wMessageContainer").append("<h5>\u521B\u5EFA\u5FAE\u4FE1\u7B7E\u540D\uFF1A</h5>" + JSON.stringify(data) + "<br/><br/>");
             wx.config(data);
             aiengine.aiengine_new({
-                url: "signature.php",
+                url: "/signature/chiSign",
                 serverTimeout: 30,
                 success: function () {
                     $("#wMessageContainer").append("<h5>aiengine_new\u6210\u529F</h5><br/><br/>");
@@ -110,6 +113,7 @@ window.onload = function () {
     });
     var localId;
     var tHandle;
+
     function startRecord() {
         aiengine.aiengine_start({
             isShowProgressTips: 0,
@@ -126,8 +130,7 @@ window.onload = function () {
                         rtext += "<span class=\"color" + rank + "\">" + arr.char + "</span>";
                     });
                     rtext = request.refText + "&nbsp;&nbsp;[" + rtext + "]";
-                }
-                else if (request.coreType === "en.sent.score") {
+                } else if (request.coreType === "en.sent.score") {
                     $("#wFluency").html(res.result.fluency.overall);
                     $("#wIntegrity").html(res.result.integrity);
                     res.result.details.forEach(function (arr) {
@@ -135,8 +138,7 @@ window.onload = function () {
                         rtext += "<span class=\"color" + rank + "\" ";
                         rtext += ">" + arr.char + "</span>&nbsp;";
                     });
-                }
-                else if (request.coreType === "en.pred.exam") {
+                } else if (request.coreType === "en.pred.exam") {
                     $("#wFluency").html(res.result.fluency);
                     $("#wIntegrity").html(res.result.integrity);
                     res.result.details.forEach(function (arrs) {
@@ -161,6 +163,7 @@ window.onload = function () {
         });
     }
     var startTime;
+
     function stopRecord() {
         startTime = new Date().getTime();
         aiengine.aiengine_stop({
@@ -173,6 +176,7 @@ window.onload = function () {
             },
         });
     }
+
     function playVoice() {
         if (typeof localId === "string") {
             wx.playVoice({
@@ -180,6 +184,7 @@ window.onload = function () {
             });
         }
     }
+
     function stopVoice() {
         if (typeof localId === "string") {
             wx.stopVoice({
