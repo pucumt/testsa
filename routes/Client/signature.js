@@ -75,7 +75,7 @@ module.exports = function (app) {
         }
     };
 
-    app.post('/signature/get', checkLogin);
+    // app.post('/signature/get', checkLogin);
     app.post('/signature/get', function (req, res) {
         // check is time over 1 hour, 
         SystemConfigure.getFilter({

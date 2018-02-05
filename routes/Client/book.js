@@ -72,7 +72,7 @@ module.exports = function (app) {
     });
 
     // 详细得分页
-    app.get('/book/lesson/:id', checkLogin);
+    //app.get('/book/lesson/:id', checkLogin);
     app.get('/book/lesson/:id', function (req, res) {
         Lesson.getFilter({
                 _id: req.params.id
