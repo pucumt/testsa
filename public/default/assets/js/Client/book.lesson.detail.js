@@ -232,88 +232,88 @@ var request = {
 };
 
 function startRecord(obj) {
-    wx.startRecord({
-        success: function () {
-            log += "start succeed: \r\n";
-            $("#jsalert").val(log);
+    // wx.startRecord({
+    //     success: function () {
+    //         log += "start succeed: \r\n";
+    //         $("#jsalert").val(log);
 
-            wx.onVoiceRecordEnd({
-                // 录音时间超过一分钟没有停止的时候会执行 complete 回调
-                complete: function (res) {
-                    // alert('最多只能录制一分钟');
-                    localId = res.localId;
-                    log += "start complete: " + JSON.stringify(res) + "\r\n";
-                    $("#jsalert").val(log);
-                }
-            });
-        },
-        cancel: function () {
-            //alert('用户拒绝授权录音');
-            log += "start failed: \r\n";
-            $("#jsalert").val(log);
-            return false;
-        }
-    });
-    // aiengine.aiengine_start({
-    //     isShowProgressTips: 0,
-    //     request: request,
-    //     success: function (res) {
-    //         // upload score
-    //         log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
-    //         $("#jsalert").val(log);
-    //         obj.score = res.result.overall;
-    //         obj.recordId = res.recordId;
-    //         var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
-
-    //         saveScore(obj, sentences);
-    //         console.log("start sucess");
+    //         wx.onVoiceRecordEnd({
+    //             // 录音时间超过一分钟没有停止的时候会执行 complete 回调
+    //             complete: function (res) {
+    //                 // alert('最多只能录制一分钟');
+    //                 localId = res.localId;
+    //                 log += "start complete: " + JSON.stringify(res) + "\r\n";
+    //                 $("#jsalert").val(log);
+    //             }
+    //         });
     //     },
-    //     fail: function (err) {
-    //         log += "start Record fail:" + JSON.stringify(err) + "\r\n";
+    //     cancel: function () {
+    //         //alert('用户拒绝授权录音');
+    //         log += "start failed: \r\n";
     //         $("#jsalert").val(log);
-    //         console.log(err);
-    //     },
-    //     complete: function (res) {
-    //         obj.localId = res.localId || "";
-    //         log += "start Record complete:" + JSON.stringify(res) + "\r\n";
-    //         $("#jsalert").val(log);
-    //         console.log("start complete");
+    //         return false;
     //     }
     // });
+    aiengine.aiengine_start({
+        isShowProgressTips: 0,
+        request: request,
+        success: function (res) {
+            // upload score
+            log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
+            $("#jsalert").val(log);
+            // obj.score = res.result.overall;
+            // obj.recordId = res.recordId;
+            // var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
+
+            //saveScore(obj, sentences);
+            console.log("start sucess");
+        },
+        fail: function (err) {
+            log += "start Record fail:" + JSON.stringify(err) + "\r\n";
+            $("#jsalert").val(log);
+            console.log(err);
+        },
+        complete: function (res) {
+            localId = res.localId || "";
+            log += "start Record complete:" + JSON.stringify(res) + "\r\n";
+            $("#jsalert").val(log);
+            console.log("start complete");
+        }
+    });
 };
 
 function stopRecord() {
-    wx.stopRecord({
-        success: function (res) {
-            localId = res.localId;
-            log += "stop succeed: " + JSON.stringify(res) + "\r\n";
-            $("#jsalert").val(log);
-        },
-        fail: function (err) {
-            console.log(err);
-            log += "stop failed: " + JSON.stringify(err) + "\r\n";
-            $("#jsalert").val(log);
-        }
-    });
-
-    // aiengine.aiengine_stop({
-    //     success: function () {
-    //         if (aiengine.ctButton) {
-    //             aiengine.ctButton.text("录音");
-    //         }
-    //         log += "stop Record sucess\r\n";
+    // wx.stopRecord({
+    //     success: function (res) {
+    //         localId = res.localId;
+    //         log += "stop succeed: " + JSON.stringify(res) + "\r\n";
     //         $("#jsalert").val(log);
-    //         console.log("stop sucess!");
     //     },
     //     fail: function (err) {
-    //         if (aiengine.ctButton) {
-    //             aiengine.ctButton.text("出错");
-    //         }
-    //         log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
+    //         console.log(err);
+    //         log += "stop failed: " + JSON.stringify(err) + "\r\n";
     //         $("#jsalert").val(log);
-    //         console.log("stop failed!");
-    //     },
+    //     }
     // });
+
+    aiengine.aiengine_stop({
+        success: function () {
+            // if (aiengine.ctButton) {
+            //     aiengine.ctButton.text("录音");
+            // }
+            log += "stop Record sucess\r\n";
+            $("#jsalert").val(log);
+            console.log("stop sucess!");
+        },
+        fail: function (err) {
+            // if (aiengine.ctButton) {
+            //     aiengine.ctButton.text("出错");
+            // }
+            log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
+            $("#jsalert").val(log);
+            console.log("stop failed!");
+        },
+    });
 };
 
 function saveScore(word, sentences) {
