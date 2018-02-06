@@ -277,12 +277,12 @@ module.exports = function (app) {
                         console.error(err);
                         return;
                     }
-                    request('https://records.17kouyu.com/' + recordId + '.mp3')
+                    request('http://' + recordId)
                         .pipe(fs.createWriteStream(path.join(folder, scoreId + '.mp3')));
                 });
             } else {
                 //存在
-                request('https://records.17kouyu.com/' + recordId + '.mp3')
+                request('http://' + recordId)
                     .pipe(fs.createWriteStream(path.join(folder, scoreId + '.mp3')));
             }
         });

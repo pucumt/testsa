@@ -223,7 +223,7 @@ function startRecord(obj, panel) {
             log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
             obj.score = res.result.overall;
-            obj.recordId = res.recordId;
+            obj.recordId = res.audioUrl;
             var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
 
             saveScore(obj, sentences);
