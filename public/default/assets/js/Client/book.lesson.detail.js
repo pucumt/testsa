@@ -268,7 +268,7 @@ function startRecord(obj) {
             console.log(err);
         },
         complete: function (res) {
-            localId = res.localId || "";
+            obj.localId = res.localId || "";
             log += "start Record complete:" + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
             console.log("start complete");
