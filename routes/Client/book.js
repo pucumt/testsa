@@ -277,12 +277,12 @@ module.exports = function (app) {
                         console.error(err);
                         return;
                     }
-                    request(recordId)
+                    request('http://' + recordId)
                         .pipe(fs.createWriteStream(path.join(folder, scoreId + '.mp3')));
                 });
             } else {
                 //存在
-                request(recordId)
+                request('http://' + recordId)
                     .pipe(fs.createWriteStream(path.join(folder, scoreId + '.mp3')));
             }
         });
