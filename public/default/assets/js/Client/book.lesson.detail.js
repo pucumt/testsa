@@ -89,6 +89,8 @@ $(document).ready(function () {
         pauseAll();
 
         var word = $(e.target).parents(".panel").data("obj");
+        log += "回放：" + JSON.stringify(word) + "\r\n";
+        $("#jsalert").val(log);
         if (word.localId) { // use wx
             if (wx) {
                 wx.playVoice({
@@ -226,28 +228,6 @@ var request = {
 };
 
 function startRecord(obj) {
-    // wx.startRecord({
-    //     success: function () {
-    //         log += "start succeed: \r\n";
-    //         $("#jsalert").val(log);
-
-    //         wx.onVoiceRecordEnd({
-    //             // 录音时间超过一分钟没有停止的时候会执行 complete 回调
-    //             complete: function (res) {
-    //                 // alert('最多只能录制一分钟');
-    //                 localId = res.localId;
-    //                 log += "start complete: " + JSON.stringify(res) + "\r\n";
-    //                 $("#jsalert").val(log);
-    //             }
-    //         });
-    //     },
-    //     cancel: function () {
-    //         //alert('用户拒绝授权录音');
-    //         log += "start failed: \r\n";
-    //         $("#jsalert").val(log);
-    //         return false;
-    //     }
-    // });
     aiengine.aiengine_start({
         isShowProgressTips: 0,
         request: request,
@@ -255,8 +235,8 @@ function startRecord(obj) {
             // upload score
             log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
-            // obj.score = res.result.overall;
-            // obj.recordId = res.recordId;
+            obj.score = res.result.overall;
+            obj.recordId = res.recordId;
             // var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
 
             //saveScore(obj, sentences);
