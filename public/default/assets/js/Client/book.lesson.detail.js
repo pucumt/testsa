@@ -42,9 +42,6 @@ $(document).ready(function () {
 
     // to play 原声
     $('.wordlist').on("click", ".buttons .toplay", function (e) {
-        // $(e.target).text("录音");
-        // stopRecord();
-
         pauseAll();
 
         setTimeout(() => {
@@ -59,13 +56,14 @@ $(document).ready(function () {
 
     // 录音
     $('.wordlist').on("touchstart", ".buttons .toRecord", function (e) {
-        var word = $(e.target).parents(".panel").data("obj");
+        var panel = $(e.target).parents(".panel"),
+            word = panel.data("obj");
         // pauseAll();
 
         request.refText = word.name;
         $(e.target).text("录音...");
         // aiengine.ctButton = $(e.target);
-        startRecord(word);
+        startRecord(word, panel);
     });
 
     $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
@@ -73,19 +71,8 @@ $(document).ready(function () {
         stopRecord();
     });
 
-    // $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
-    //     $(e.target).text("录音");
-    //     stopRecord();
-    // });
-
     // 回放
     $('.wordlist').on("click", ".buttons .toReplay", function (e) {
-        // if (wx) {
-        //     wx.playVoice({
-        //         localId: localId
-        //     });
-        // }
-
         pauseAll();
 
         var word = $(e.target).parents(".panel").data("obj");
@@ -97,7 +84,7 @@ $(document).ready(function () {
                     localId: word.localId
                 });
             }
-        } else {
+        } else if (word.score) {
             // use audio
             setTimeout(() => {
                 $(e.target).text("回放...");
@@ -227,7 +214,7 @@ var request = {
     refText: "want"
 };
 
-function startRecord(obj) {
+function startRecord(obj, panel) {
     aiengine.aiengine_start({
         isShowProgressTips: 0,
         request: request,
@@ -237,10 +224,11 @@ function startRecord(obj) {
             $("#jsalert").val(log);
             obj.score = res.result.overall;
             obj.recordId = res.recordId;
-            // var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
+            var sentences = ($('#curType').val() == "0" && res.result.sentences); // word
 
-            //saveScore(obj, sentences);
+            saveScore(obj, sentences);
             console.log("start sucess");
+            panel.find(".wordlevel .title .score").text(obj.score);
         },
         fail: function (err) {
             log += "start Record fail:" + JSON.stringify(err) + "\r\n";
@@ -257,32 +245,13 @@ function startRecord(obj) {
 };
 
 function stopRecord() {
-    // wx.stopRecord({
-    //     success: function (res) {
-    //         localId = res.localId;
-    //         log += "stop succeed: " + JSON.stringify(res) + "\r\n";
-    //         $("#jsalert").val(log);
-    //     },
-    //     fail: function (err) {
-    //         console.log(err);
-    //         log += "stop failed: " + JSON.stringify(err) + "\r\n";
-    //         $("#jsalert").val(log);
-    //     }
-    // });
-
     aiengine.aiengine_stop({
         success: function () {
-            // if (aiengine.ctButton) {
-            //     aiengine.ctButton.text("录音");
-            // }
             log += "stop Record sucess\r\n";
             $("#jsalert").val(log);
             console.log("stop sucess!");
         },
         fail: function (err) {
-            // if (aiengine.ctButton) {
-            //     aiengine.ctButton.text("出错");
-            // }
             log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
             $("#jsalert").val(log);
             console.log("stop failed!");
