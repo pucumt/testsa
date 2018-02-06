@@ -3,6 +3,9 @@ var curAudio = new Audio(),
     localId,
     rePlayAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
+    document.body.addEventListener("touchstart", function () {});
+    document.body.addEventListener("click", function () {});
+
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/book/lesson/category?id={0}&studentId={1}&minLesson={2}&maxLesson={3}"
             .format($("#lessonId").val(), $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
@@ -37,46 +40,34 @@ $(document).ready(function () {
     // to play 原声
     $('.wordlist').on("click", ".buttons .toplay", function (e) {
         // $(e.target).text("录音");
-        stopRecord();
+        // stopRecord();
 
-        // pauseAll();
+        pauseAll();
 
-        // setTimeout(() => {
-        //     var word = $(e.target).parents(".panel").data("obj");
-        //     $(e.target).text("播放...");
-        //     curAudio.ctButton = $(e.target);
-        //     curAudio.src = "/uploads/books/{0}/{1}/{2}.mp3"
-        //         .format($('#bookId').val(), $('#lessonId').val(), word._id);
-        //     curAudio.play();
-        // }, 0);
+        setTimeout(() => {
+            var word = $(e.target).parents(".panel").data("obj");
+            $(e.target).text("播放...");
+            curAudio.ctButton = $(e.target);
+            curAudio.src = "/uploads/books/{0}/{1}/{2}.mp3"
+                .format($('#bookId').val(), $('#lessonId').val(), word._id);
+            curAudio.play();
+        }, 0);
     });
 
     // 录音
-    // $('.wordlist').on("click", ".buttons .toRecord", function (e) {
-    //     var word = $(e.target).parents(".panel").data("obj");
-    //     if (aiengine && aiengine.ctButton && aiengine.ctButton.parents(".panel").data("obj")._id == word._id) {
-    //         // 1. 点击同一个button，如果已经停止，重新开始
-    //         // 2. 如果没有停止，则仅仅停止
-    //         if ($(e.target).text() == "停止") {
-    //             pauseAll();
-    //             return;
-    //         } else {
-    //             // pauseAll();
-    //         }
-    //     } else {
-    //         // 3. 如果点击其他button，则停止上一个，开始下一个
-    //         // pauseAll();
-    //     }
+    $('.wordlist').on("touchstart", ".buttons .toRecord", function (e) {
+        var word = $(e.target).parents(".panel").data("obj");
+        pauseAll();
 
-    //     request.refText = word.name;
-    //     $(e.target).text("停止");
-    //     aiengine.ctButton = $(e.target);
-    //     startRecord(word);
-    // });
+        request.refText = word.name;
+        $(e.target).text("录音...");
+        aiengine.ctButton = $(e.target);
+        startRecord(word);
+    });
 
-    $('.wordlist').on("click", ".buttons .toRecord", function (e) {
-        // $(e.target).text("停止");
-        startRecord();
+    $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
+        $(e.target).text("录音");
+        stopRecord();
     });
 
     // $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
@@ -86,31 +77,31 @@ $(document).ready(function () {
 
     // 回放
     $('.wordlist').on("click", ".buttons .toReplay", function (e) {
-        if (wx) {
-            wx.playVoice({
-                localId: localId
-            });
-        }
-
-        // pauseAll();
-
-        // var word = $(e.target).parents(".panel").data("obj");
-        // if (word.localId) { // use wx
-        //     if (wx) {
-        //         wx.playVoice({
-        //             localId: word.localId
-        //         });
-        //     }
-        // } else {
-        //     // use audio
-        //     setTimeout(() => {
-        //         $(e.target).text("回放...");
-        //         rePlayAudio.ctButton = $(e.target);
-        //         rePlayAudio.src = "/uploads/scores/{0}/{1}.mp3"
-        //             .format($('#studentId').val(), word.scoreId);
-        //         rePlayAudio.play();
-        //     }, 0);
+        // if (wx) {
+        //     wx.playVoice({
+        //         localId: localId
+        //     });
         // }
+
+        pauseAll();
+
+        var word = $(e.target).parents(".panel").data("obj");
+        if (word.localId) { // use wx
+            if (wx) {
+                wx.playVoice({
+                    localId: word.localId
+                });
+            }
+        } else {
+            // use audio
+            setTimeout(() => {
+                $(e.target).text("回放...");
+                rePlayAudio.ctButton = $(e.target);
+                rePlayAudio.src = "/uploads/scores/{0}/{1}.mp3"
+                    .format($('#studentId').val(), word.scoreId);
+                rePlayAudio.play();
+            }, 0);
+        }
     });
 
     loadWord();
@@ -163,7 +154,7 @@ $(document).ready(function () {
 function pauseAll() {
     curAudio.pause();
     rePlayAudio.pause();
-    stopRecord();
+    // stopRecord();
 }
 var $wordBody = $('.panel-group.wordlist');
 

@@ -72,13 +72,13 @@ module.exports = function (app) {
     });
 
     // 详细得分页
-    //app.get('/book/lesson/:id', checkLogin);
+    app.get('/book/lesson/:id', checkLogin);
     app.get('/book/lesson/:id', function (req, res) {
         Lesson.getFilter({
                 _id: req.params.id
             })
             .then(function (lesson) {
-                res.render('Client/sample.html', {
+                res.render('Client/book_lesson_detail.html', {
                     title: '课文列表',
                     user: req.session.user,
                     name: lesson.name,

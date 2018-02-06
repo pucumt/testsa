@@ -84,14 +84,14 @@ module.exports = function (app) {
         }).then(configures => {
             var token = "";
             if (configures) {
-                // var jsonToken = JSON.parse(configures.value);
+                var jsonToken = JSON.parse(configures.value);
 
-                // // console.log(jsonToken);
+                // console.log(jsonToken);
 
-                // if (moment(jsonToken.date).add(1, "hours").isAfter(moment())) {
-                //     ticketFunc(jsonToken.token, req, res);
-                //     return;
-                // }
+                if (moment(jsonToken.date).add(1, "hours").isAfter(moment())) {
+                    ticketFunc(jsonToken.token, req, res);
+                    return;
+                }
             }
             if (token == "") {
                 getToken(function (error, response, body) {
