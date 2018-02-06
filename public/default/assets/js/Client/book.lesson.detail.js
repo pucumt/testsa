@@ -65,12 +65,12 @@ $(document).ready(function () {
         request.refText = word.name;
         $(e.target).text("录音...");
         // aiengine.ctButton = $(e.target);
-        //startRecord(word);
+        startRecord(word);
     });
 
     $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
         $(e.target).text("录音");
-        //stopRecord();
+        stopRecord();
     });
 
     // $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
@@ -109,49 +109,49 @@ $(document).ready(function () {
 
     loadWord();
 
-    // $.ajax({
-    //     url: "/signature/get", //微信官方签名方法
-    //     type: "POST",
-    //     data: {
-    //         clientUrl: location.href
-    //     },
-    //     success: function (data) {
-    //         log = "get sign sucess; \r\n";
-    //         if (data.error) {
-    //             console.log(data.error);
-    //             log += JSON.stringify(data) + "\r\n";
-    //             $("#jsalert").val(log);
-    //             return;
-    //         }
-    //         if (!wx) {
-    //             // wx not loaded
-    //             return;
-    //         }
-    //         // data.debug = true;
-    //         data.jsApiList = ["startRecord", "stopRecord", "uploadVoice", "playVoice", "stopVoice"]; // 
-    //         wx.error(function (res) {
-    //             // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-    //             console.log(res);
-    //             log += JSON.stringify(res) + "\r\n";
-    //             $("#jsalert").val(log);
-    //         });
-    //         wx.config(data); //完成接口注入权限验证配置
-    //         aiengine.aiengine_new({
-    //             url: "/signature/chiSign", //驰声签名方法
-    //             serverTimeout: 30,
-    //             success: function () {
-    //                 console.log("sucess");
-    //                 log += "ai new sucess \r\n";
-    //                 $("#jsalert").val(log);
-    //             },
-    //             fail: function (err) {
-    //                 console.log(err);
-    //                 log += JSON.stringify(err) + "\r\n";
-    //                 $("#jsalert").val(log);
-    //             },
-    //         });
-    //     }
-    // });
+    $.ajax({
+        url: "/signature/get", //微信官方签名方法
+        type: "POST",
+        data: {
+            clientUrl: location.href
+        },
+        success: function (data) {
+            log = "get sign sucess; \r\n";
+            if (data.error) {
+                console.log(data.error);
+                log += JSON.stringify(data) + "\r\n";
+                $("#jsalert").val(log);
+                return;
+            }
+            if (!wx) {
+                // wx not loaded
+                return;
+            }
+            // data.debug = true;
+            data.jsApiList = ["startRecord", "stopRecord", "uploadVoice", "playVoice", "stopVoice"]; // 
+            wx.error(function (res) {
+                // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+                console.log(res);
+                log += JSON.stringify(res) + "\r\n";
+                $("#jsalert").val(log);
+            });
+            wx.config(data); //完成接口注入权限验证配置
+            aiengine.aiengine_new({
+                url: "/signature/chiSign", //驰声签名方法
+                serverTimeout: 30,
+                success: function () {
+                    console.log("sucess");
+                    log += "ai new sucess \r\n";
+                    $("#jsalert").val(log);
+                },
+                fail: function (err) {
+                    console.log(err);
+                    log += JSON.stringify(err) + "\r\n";
+                    $("#jsalert").val(log);
+                },
+            });
+        }
+    });
 });
 
 function pauseAll() {
