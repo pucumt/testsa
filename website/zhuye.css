@@ -1,0 +1,136 @@
+body {
+    font-size: 14px;
+    font-weight: normal;
+    text-decoration: none;
+    font-family: 微软雅黑;
+    color: #222222;
+}
+
+.main {
+    width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.header {
+    height: 100px;
+}
+
+.footer {
+    height: 350px;
+    background: #282828;
+}
+
+.header .phone {
+    width: 250px;
+    position: absolute;
+    top: 14px;
+    right: 30px;
+    height: 58px;
+}
+
+.header .logo {
+    width: 250px;
+    position: absolute;
+    top: 14px;
+    left: 11px;
+    font-size: 32px;
+    color: rgb(196, 1, 1);
+}
+
+.header b {
+    color: rgb(196, 1, 1);
+    font-size: 23px;
+    top: 10px;
+    position: absolute;
+}
+
+.toolbar {
+    height: 50px;
+    background-color: #2b2b2b;
+}
+
+.toolbar .nav,
+.footer .nav {
+    width: 120px;
+    line-height: 50px;
+    color: rgb(234, 234, 234);
+    font-size: 16px;
+    display: inline-block;
+}
+
+.toolbar .nav span,
+.footer .nav span {
+    margin: 0 auto;
+}
+
+.content .main {
+    padding: 20px;
+}
+
+.nav1-content .desp {
+    width: 390px;
+}
+
+.nav1-content .image {
+    width: 390px;
+}
+
+.content .title {
+    font-size: 16px;
+    color: #c40000;
+}
+
+.content .title .span1 {
+    display: inline-block;
+    width: 10px;
+    height: 9px;
+    background-color: #c40000;
+}
+
+.nav1-content .title .span2 {
+    display: inline-block;
+    width: 290px;
+    height: 9px;
+    margin-left: 14px;
+    background: #f5f5f5;
+}
+
+.nav1-content .desp .cont {
+    margin-top: 10px;
+    color: #666666;
+    font-size: 15px;
+}
+
+.nav2-content .title .span2,
+.nav3-content .title .span2 {
+    display: inline-block;
+    width: 1060px;
+    height: 9px;
+    margin-left: 14px;
+    background: #f5f5f5;
+}
+
+.nav2-content .row {
+    margin-top: 30px;
+}
+
+.nav2-content .row .title .span2 {
+    display: inline-block;
+    width: 280px;
+    height: 9px;
+    margin-left: 14px;
+    background: #f5f5f5;
+}
+
+.nav2-content .row .detail div {
+    margin-bottom: 8px;
+}
+
+.nav2-content .row .out .title .span2 {
+    display: inline-block;
+    width: 180px;
+    height: 9px;
+    margin-left: 14px;
+    background: #f5f5f5;
+}

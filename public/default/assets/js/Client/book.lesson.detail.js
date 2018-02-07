@@ -1,6 +1,6 @@
 var curAudio = new Audio(),
     log = "",
-    localId,
+    request,
     rePlayAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
     document.oncontextmenu = function (e) {
@@ -59,8 +59,12 @@ $(document).ready(function () {
         var panel = $(e.target).parents(".panel"),
             word = panel.data("obj");
         // pauseAll();
+        if ($("#curType").val() == "0") {
+            request.refText.lm = word.name;
+        } else {
+            request.refText = word.name;
+        }
 
-        request.refText = word.name;
         $(e.target).text("录音...");
         // aiengine.ctButton = $(e.target);
         startRecord(word, panel);
@@ -207,11 +211,26 @@ function generatePanel(word) {
     return panel;
 };
 
-var request = {
-    attachAudioUrl: 1,
-    coreType: "en.word.score",
-    rank: 100,
-    refText: "want"
+function getRequest() {
+    if ($("#curType").val() == "0") {
+        request = {
+            attachAudioUrl: 1,
+            coreType: "en.pred.exam",
+            rank: 100,
+            refText: {　　　　
+                lm: "It was Sunday.", //必填，评分参考文本
+                qid: "PAPER-000005-QT-000002" //必填，考题ID　
+            },
+            precision: 0.5
+        };
+    } else {
+        request = {
+            attachAudioUrl: 1,
+            coreType: "en.sent.score",
+            rank: 100,
+            refText: "want"
+        };
+    }
 };
 
 function startRecord(obj, panel) {
