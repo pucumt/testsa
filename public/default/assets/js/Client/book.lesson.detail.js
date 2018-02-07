@@ -13,7 +13,7 @@ $(document).ready(function () {
         location.href = "/book/lesson/category?id={0}&studentId={1}&minLesson={2}&maxLesson={3}"
             .format($("#lessonId").val(), $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
     });
-
+    getRequest();
     // -- audio functions
     curAudio.onerror = function (e) {
         if (curAudio.ctButton) {
