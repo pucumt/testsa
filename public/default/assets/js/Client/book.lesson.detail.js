@@ -279,17 +279,17 @@ function stopRecord() {
 };
 
 function saveScore(word, sentences) {
-    //存储成绩和录音
-    var filter = {
-        studentId: $("#studentId").val(),
-        lessonId: $("#lessonId").val(),
-        wordId: word._id,
-        contentType: $("#curType").val(),
-        score: word.score,
-        recordId: word.recordId,
-        scoreResult: JSON.stringify(sentences)
-    };
-    selfAjax("post", "/app/score", filter, function (data) {
-        // show score
-    });
+    // //存储成绩和录音
+    // var filter = {
+    //     studentId: $("#studentId").val(),
+    //     lessonId: $("#lessonId").val(),
+    //     wordId: word._id,
+    //     contentType: $("#curType").val(),
+    //     score: word.score,
+    //     recordId: word.recordId,
+    //     scoreResult: JSON.stringify(sentences)
+    // };
+    // selfAjax("post", "/app/score", filter, function (data) {
+    //     // show score
+    // });
 };
