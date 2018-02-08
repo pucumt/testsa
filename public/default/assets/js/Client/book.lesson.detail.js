@@ -298,7 +298,10 @@ function startRecord(obj, panel) {
             obj.recordId = res.audioUrl;
             var sentences = ($('#curType').val() == "0" && res.result.details); // word
 
-            initParaDetails(sentences); // show sentence score
+            if (sentences) {
+                initParaDetails(sentences); // show sentence score
+            }
+
             saveScore(obj, sentences); // save score to db
             hideLoading();
             console.log("start sucess");
@@ -324,11 +327,10 @@ function startRecord(obj, panel) {
 function stopRecord() {
     aiengine.aiengine_stop({
         success: function () {
+            loading();
             log += "stop Record sucess\r\n";
             $("#jsalert").val(log);
             console.log("stop sucess!");
-
-            loading();
         },
         fail: function (err) {
             log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
