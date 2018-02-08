@@ -328,7 +328,7 @@ function stopRecord() {
             $("#jsalert").val(log);
             console.log("stop sucess!");
 
-            loading();
+            // loading();
         },
         fail: function (err) {
             log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
