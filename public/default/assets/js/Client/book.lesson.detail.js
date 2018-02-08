@@ -300,7 +300,7 @@ function startRecord(obj, panel) {
 
             initParaDetails(sentences); // show sentence score
             saveScore(obj, sentences); // save score to db
-
+            hideLoading();
             console.log("start sucess");
             panel.find(".wordlevel .title.mainTitle .score").text(obj.score); // set score to para
         },
@@ -308,7 +308,7 @@ function startRecord(obj, panel) {
             log += "start Record fail:" + JSON.stringify(err) + "\r\n";
             $("#jsalert").val(log);
             console.log(err);
-
+            hideLoading();
             showAlert("语音解析失败，请重新录音");
         },
         complete: function (res) {
@@ -316,7 +316,7 @@ function startRecord(obj, panel) {
             log += "start Record complete:" + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
             console.log("start complete");
-            hideLoading();
+
         }
     });
 };
@@ -328,7 +328,7 @@ function stopRecord() {
             $("#jsalert").val(log);
             console.log("stop sucess!");
 
-            // loading();
+            loading();
         },
         fail: function (err) {
             log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
