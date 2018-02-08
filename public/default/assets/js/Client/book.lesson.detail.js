@@ -107,7 +107,6 @@ $(document).ready(function () {
 });
 
 function loadAiengine() {
-    loading();
     $.ajax({
         url: "/signature/get", //微信官方签名方法
         type: "POST",
@@ -115,7 +114,6 @@ function loadAiengine() {
             clientUrl: location.href
         },
         success: function (data) {
-            loading();
             log = "get sign sucess; \r\n";
             if (data.error) {
                 console.log(data.error);
@@ -172,47 +170,49 @@ function loadWord() {
         studentId: $("#studentId").val(),
         contentType: $("#curType").val()
     };
-    selfAjax("post", "/app/contents", filter, function (data) {
-        if (data && data.length > 0) {
-            if ($("#curType").val() == "1") {
-                $wordBody.append('<div class="lesson-title">单词</div>');
-                var d = $(document.createDocumentFragment());
-                data.forEach(function (word) {
-                    d.append(generatePanel(word));
-                });
-                $wordBody.append(d);
-            }
-
-            if ($("#curType").val() == "2") {
-                $wordBody.append('<div class="lesson-title">句子</div>');
-                var d = $(document.createDocumentFragment());
-                data.forEach(function (word) {
-                    d.append(generatePanel(word));
-                });
-                $wordBody.append(d);
-            }
-
-            if ($("#curType").val() == "0") {
-                $wordBody.append('<div class="lesson-title">课文</div>');
-                if (data[0]) {
-                    pageData = data;
-
-                    data[0].replaceName = "分数：";
+    loading();
+    $.post("/app/contents", filter)
+        .then(function (data) {
+            if (data && data.length > 0) {
+                if ($("#curType").val() == "1") {
+                    $wordBody.append('<div class="lesson-title">单词</div>');
                     var d = $(document.createDocumentFragment());
-                    d.append(generatePanel(data[0]));
+                    data.forEach(function (word) {
+                        d.append(generatePanel(word));
+                    });
                     $wordBody.append(d);
+                }
 
-                    $sentenceBody = $("<div class='sentence'></div>");
-                    $wordBody.append($sentenceBody);
+                if ($("#curType").val() == "2") {
+                    $wordBody.append('<div class="lesson-title">句子</div>');
+                    var d = $(document.createDocumentFragment());
+                    data.forEach(function (word) {
+                        d.append(generatePanel(word));
+                    });
+                    $wordBody.append(d);
+                }
 
-                    if (data[0].scoreResult) {
-                        initParaDetails(data[0].scoreResult);
+                if ($("#curType").val() == "0") {
+                    $wordBody.append('<div class="lesson-title">课文</div>');
+                    if (data[0]) {
+                        pageData = data;
+
+                        data[0].replaceName = "分数：";
+                        var d = $(document.createDocumentFragment());
+                        d.append(generatePanel(data[0]));
+                        $wordBody.append(d);
+
+                        $sentenceBody = $("<div class='sentence'></div>");
+                        $wordBody.append($sentenceBody);
+
+                        if (data[0].scoreResult) {
+                            initParaDetails(data[0].scoreResult);
+                        }
                     }
                 }
             }
-        }
-        loadAiengine();
-    });
+            loadAiengine();
+        });
 };
 
 function generatePanel(word) {
@@ -349,7 +349,5 @@ function saveScore(word, sentences) {
         recordId: word.recordId,
         scoreResult: JSON.stringify(sentences)
     };
-    selfAjax("post", "/app/score", filter, function (data) {
-        // show score
-    });
+    $.post("/app/score", filter);
 };
