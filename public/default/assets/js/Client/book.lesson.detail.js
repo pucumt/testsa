@@ -104,8 +104,10 @@ $(document).ready(function () {
     });
 
     loadWord();
-    loading();
+});
 
+function loadAiengine() {
+    loading();
     $.ajax({
         url: "/signature/get", //微信官方签名方法
         type: "POST",
@@ -153,7 +155,7 @@ $(document).ready(function () {
             });
         }
     });
-});
+};
 
 function pauseAll() {
     curAudio.pause();
@@ -209,6 +211,7 @@ function loadWord() {
                 }
             }
         }
+        loadAiengine();
     });
 };
 
