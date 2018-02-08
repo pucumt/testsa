@@ -144,6 +144,8 @@ $(document).ready(function () {
                     console.log(err);
                     log += JSON.stringify(err) + "\r\n";
                     $("#jsalert").val(log);
+
+                    showAlert("语音引擎加载失败，请手动刷新");
                 },
             });
         }
@@ -300,6 +302,8 @@ function startRecord(obj, panel) {
             log += "start Record fail:" + JSON.stringify(err) + "\r\n";
             $("#jsalert").val(log);
             console.log(err);
+
+            showAlert("语音解析失败，请重新录音");
         },
         complete: function (res) {
             obj.localId = res.localId || "";
