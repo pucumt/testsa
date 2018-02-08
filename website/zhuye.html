@@ -6,6 +6,7 @@
     <title>南通百分百教育</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="zhuye.css?v=1.0">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -18,47 +19,51 @@
                 </b>
             </div>
             <div class="logo">
-                <b>南通百分百教育</b>
+                <img src="img/logo.png" width="100%" />
             </div>
         </div>
     </div>
     <div class="toolbar">
         <div class="main">
-            <div class="nav nav1">
+            <div class="nav nav1 active" nav="nav1-content">
                 <span>学校简介</span>
             </div>
-            <div class="nav nav2">
+            <div class="nav nav2" nav="nav2-content">
                 <span>联系我们</span>
             </div>
-            <div class="nav nav3">
+            <div class="nav nav3" nav="nav3-content">
                 <span>加入我们</span>
             </div>
-            <div class="nav nav4">
+            <div class="nav nav4" nav="nav4-content">
                 <span>咨询课程</span>
             </div>
         </div>
     </div>
     <div class="content">
         <div class="main nav1-content clearfix">
-            <div class="float-right desp">
-                <div class="title">学校简介
-                    <span class="span1"></span>
-                    <span class="span2"></span>
-                </div>
-                <div class="cont">
-                    <div>
-                        南通百分百学校由海归精英创立于2004年，经过十余年的发展，目前已成为南通教培行业领跑者。学校开设有幼儿英语启蒙，小学、初中、高中全科培优，雅思、托福、小学Wonders国际英语、初中生EIM国际英语等课程体系。
-                    </div>
-                    <div style="margin-top:15px;">
-                        我们的目标：专注本地教育，助力步步名校！
+            <div class="row">
+                <div class="col-lg-8">
+                    <div classs="image">
+                        <img src="img/home.png" width="100%" />
                     </div>
                 </div>
-            </div>
-            <div classs="image">
-                <img />
+                <div class="col-lg-4">
+                    <div class="title">学校简介
+                        <span class="span1"></span>
+                        <span class="span2"></span>
+                    </div>
+                    <div class="cont">
+                        <div>
+                            南通百分百学校由海归精英创立于2004年，经过十余年的发展，目前已成为南通教培行业领跑者。学校开设有幼儿英语启蒙，小学、初中、高中全科培优，雅思、托福、小学Wonders国际英语、初中生EIM国际英语等课程体系。
+                        </div>
+                        <div style="margin-top:15px;">
+                            我们的目标：专注本地教育，助力步步名校！
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="main nav2-content clearfix">
+        <div class="main nav2-content clearfix" style="display:none">
             <div class="title">联系我们
                 <span class="span1"></span>
                 <span class="span2"></span>
@@ -67,7 +72,6 @@
                 <div class="col-lg-4">
                     <div class="title">幼儿
                         <span class="span1"></span>
-                        <span class="span2"></span>
                     </div>
                     <div>
                         小浣熊校区：南大街鼎典大厦7楼 电话：85560001
@@ -76,7 +80,6 @@
                 <div class="col-lg-4">
                     <div class="title">小学
                         <span class="span1"></span>
-                        <span class="span2"></span>
                     </div>
                     <div class="detail">
                         <div>人民路金信校区：人民路金信大厦3楼 电话：85530001</div>
@@ -87,7 +90,6 @@
                 <div class="col-lg-4">
                     <div class="title">初中
                         <span class="span1"></span>
-                        <span class="span2"></span>
                     </div>
                     <div class="detail">
                         <div>长桥校区（初一）： 环城南路7号6楼 电话：66801668</div>
@@ -101,7 +103,6 @@
                 <div class="col-lg-4">
                     <div class="title">高中
                         <span class="span1"></span>
-                        <span class="span2"></span>
                     </div>
                     <div>
                         王府校区：王府大厦2号楼3楼 电话：85670001
@@ -110,18 +111,16 @@
                 <div class="col-lg-4 out">
                     <div class="title">出国（雅思/托福）
                         <span class="span1"></span>
-                        <span class="span2"></span>
                     </div>
                     <div>
                         王府校区：王府大厦2号楼3楼 电话：85670001
                     </div>
                 </div>
                 <div class="col-lg-4">
-
                 </div>
             </div>
         </div>
-        <div class="main nav3-content clearfix">
+        <div class="main nav3-content clearfix" style="display:none">
             <div class="title">加入我们
                 <span class="span1"></span>
                 <span class="span2"></span>
@@ -200,29 +199,118 @@
                 <div style="padding-left: 56px;">邹老师 18914397050</div>
             </div>
         </div>
-        <div class="main nav4-content clearfix">
+        <div class="main nav4-content clearfix" style="display:none">
             <div class="title">咨询课程
                 <span class="span1"></span>
                 <span class="span2"></span>
+            </div>
+            <div class="row" style="padding:20px 15px;">
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/幼小.png" />
+                    </div>
+                    <div>
+                        幼升小家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/一年级.png" />
+                    </div>
+                    <div>
+                        一年级家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/二年级.png" />
+                    </div>
+                    <div>
+                        二年级家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/三年级.png" />
+                    </div>
+                    <div>
+                        三年级家长交流群
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding:20px 15px;">
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/四年级.png" />
+                    </div>
+                    <div>
+                        四年级家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/五年级.png" />
+                    </div>
+                    <div>
+                        五年级家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/六年级.png" />
+                    </div>
+                    <div>
+                        六年级家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/初一.png" />
+                    </div>
+                    <div>
+                        初一家长交流群
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding:20px 15px;">
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/初二.png" />
+                    </div>
+                    <div>
+                        初二家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="">
+                        <img src="img/初三.png" />
+                    </div>
+                    <div>
+                        初三家长交流群
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                </div>
+                <div class="col-lg-3">
+                </div>
             </div>
         </div>
     </div>
     <div class="footer">
         <div class="main">
-            <div class="nav nav1">
-                <span>学校简介</span>
-            </div>
-            <div class="nav nav2">
-                <span>联系我们</span>
-            </div>
-            <div class="nav nav3">
-                <span>加入我们</span>
-            </div>
-            <div class="nav nav4">
-                <span>咨询课程</span>
-            </div>
         </div>
     </div>
+    <script language="javascript">
+        $(document).ready(function () {
+            $(".toolbar .main .nav").click(function (e) {
+                $(".toolbar .main .nav").removeClass("active");
+                $(e.currentTarget).addClass("active");
+
+                $(".content .main").hide();
+                $(".content .main." + $(e.currentTarget).attr("nav")).show();
+            });
+        });
+    </script>
 </body>
 
 </html>
