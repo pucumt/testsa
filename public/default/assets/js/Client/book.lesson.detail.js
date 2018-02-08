@@ -104,6 +104,7 @@ $(document).ready(function () {
     });
 
     loadWord();
+    loading();
 
     $.ajax({
         url: "/signature/get", //微信官方签名方法
@@ -112,6 +113,7 @@ $(document).ready(function () {
             clientUrl: location.href
         },
         success: function (data) {
+            loading();
             log = "get sign sucess; \r\n";
             if (data.error) {
                 console.log(data.error);
@@ -139,12 +141,13 @@ $(document).ready(function () {
                     console.log("sucess");
                     log += "ai new sucess \r\n";
                     $("#jsalert").val(log);
+                    hideLoading();
                 },
                 fail: function (err) {
                     console.log(err);
                     log += JSON.stringify(err) + "\r\n";
                     $("#jsalert").val(log);
-
+                    hideLoading();
                     showAlert("语音引擎加载失败，请手动刷新");
                 },
             });
