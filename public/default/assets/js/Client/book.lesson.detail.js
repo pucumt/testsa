@@ -233,6 +233,8 @@ function generateSentence(result, word) {
                 </div>\
                 <div class="flex-wrp buttons">\
                     <button class="btn btn-default toplay pull-right">原声</button>\
+                    <button class="btn btn-default toRecord" disabled="disabled">录音</button>\
+                    <button class="btn btn-default toReplay" disabled="disabled">回放</button>\
                 </div>\
             </div>');
     panel.data("obj", word);
