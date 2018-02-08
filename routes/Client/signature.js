@@ -30,7 +30,7 @@ module.exports = function (app) {
     // use token to get ticket
     function ticketFunc(access_token, req, res) {
         getticket(access_token, function (error, response, body) {
-            debugger;
+            // debugger;
             var data = JSON.parse(body);
             if (response.statusCode == 200 && (!data.errcode)) {
                 var ticket = data.ticket,
@@ -95,7 +95,7 @@ module.exports = function (app) {
             }
             if (token == "") {
                 getToken(function (error, response, body) {
-                    debugger;
+                    // debugger;
                     var data = JSON.parse(body);
                     if (response.statusCode == 200 && (!data.errcode)) {
                         var access_token = data.access_token;

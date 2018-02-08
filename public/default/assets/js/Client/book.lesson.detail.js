@@ -1,18 +1,21 @@
 var curAudio = new Audio(),
     log = "",
     request,
+    pageData,
     rePlayAudio = new Audio(); // 音频播放器
 $(document).ready(function () {
     document.oncontextmenu = function (e) {
         //或者return false;
         e.preventDefault();
     };
+
     document.body.addEventListener("click", function () {});
 
     $(".enroll .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/book/lesson/category?id={0}&studentId={1}&minLesson={2}&maxLesson={3}"
             .format($("#lessonId").val(), $("#studentId").val(), $("#minLesson").val(), $("#maxLesson").val());
     });
+
     getRequest();
     // -- audio functions
     curAudio.onerror = function (e) {
@@ -152,7 +155,8 @@ function pauseAll() {
     rePlayAudio.pause();
     // stopRecord();
 }
-var $wordBody = $('.panel-group.wordlist');
+var $wordBody = $('.panel-group.wordlist'),
+    $sentenceBody;
 
 function loadWord() {
     //加载单词，句子，课文
@@ -184,10 +188,19 @@ function loadWord() {
             if ($("#curType").val() == "0") {
                 $wordBody.append('<div class="lesson-title">课文</div>');
                 if (data[0]) {
+                    pageData = data;
+
                     data[0].replaceName = "分数：";
                     var d = $(document.createDocumentFragment());
                     d.append(generatePanel(data[0]));
                     $wordBody.append(d);
+
+                    $sentenceBody = $("<div class='sentence'></div>");
+                    $wordBody.append($sentenceBody);
+
+                    if (data[0].scoreResult) {
+                        initParaDetails(data[0].scoreResult);
+                    }
                 }
             }
         }
@@ -197,7 +210,7 @@ function loadWord() {
 function generatePanel(word) {
     var panel = $('<div class="panel panel-default">\
                 <div class="wordlevel">\
-                    <h4 class="title" role="button" >\
+                    <h4 class="title mainTitle" role="button" >\
                         ' + (word.replaceName || word.name) + '&nbsp;<span class="score">' + (word.score || '') + '</span>\
                     </h4>\
                 </div>\
@@ -209,6 +222,33 @@ function generatePanel(word) {
             </div>');
     panel.data("obj", word);
     return panel;
+};
+
+function generateSentence(result, word) {
+    var panel = $('<div class="panel panel-default">\
+                <div class="wordlevel">\
+                    <h4 class="title" role="button" >\
+                        ' + result.text + '&nbsp;<span class="score">' + result.score + '</span>\
+                    </h4>\
+                </div>\
+                <div class="flex-wrp buttons">\
+                    <button class="btn btn-default toplay pull-right">原声</button>\
+                </div>\
+            </div>');
+    panel.data("obj", word);
+    return panel;
+};
+
+function initParaDetails(result) {
+    // 段落的评测结果，通过句子的形式保留下来
+    var objResult = JSON.parse(result);
+    $sentenceBody.empty();
+    $sentenceBody.append('<div class="lesson-title">句子</div>');
+    var d = $(document.createDocumentFragment());
+    for (var i = 0; i < objResult.length; i++) {
+        d.append(generateSentence(objResult[i], pageData[i + 1]));
+    };
+    $sentenceBody.append(d);
 };
 
 function getRequest() {
@@ -248,9 +288,11 @@ function startRecord(obj, panel) {
             obj.recordId = res.audioUrl;
             var sentences = ($('#curType').val() == "0" && res.result.details); // word
 
-            saveScore(obj, sentences);
+            initParaDetails(sentences); // show sentence score
+            saveScore(obj, sentences); // save score to db
+
             console.log("start sucess");
-            panel.find(".wordlevel .title .score").text(obj.score);
+            panel.find(".wordlevel .title.mainTitle .score").text(obj.score); // set score to para
         },
         fail: function (err) {
             log += "start Record fail:" + JSON.stringify(err) + "\r\n";
@@ -262,6 +304,7 @@ function startRecord(obj, panel) {
             log += "start Record complete:" + JSON.stringify(res) + "\r\n";
             $("#jsalert").val(log);
             console.log("start complete");
+            hideLoading();
         }
     });
 };
@@ -272,6 +315,8 @@ function stopRecord() {
             log += "stop Record sucess\r\n";
             $("#jsalert").val(log);
             console.log("stop sucess!");
+
+            loading();
         },
         fail: function (err) {
             log += "stop Record fail:" + JSON.stringify(err) + "\r\n";

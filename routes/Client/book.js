@@ -320,7 +320,7 @@ module.exports = function (app) {
             return;
         }
 
-        var sql = "select C._id, S.score, S._id as scoreId, C.contentType, C.name, C.duration \
+        var sql = "select C._id, S.score, S._id as scoreId, C.contentType, C.name, C.duration, S.scoreResult \
         from lessonContents C left join studentLessonScores S  \
         on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
         where  C.isDeleted=false and ";
