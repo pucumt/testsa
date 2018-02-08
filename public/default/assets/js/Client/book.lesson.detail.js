@@ -221,7 +221,10 @@ function getRequest() {
                 lm: "It was Sunday.", //必填，评分参考文本
                 qid: "PAPER-000005-QT-000002" //必填，考题ID　
             },
-            precision: 0.5
+            precision: 0.5,
+            client_params: {　　　　
+                ext_subitem_rank4: 0　　
+            }
         };
     } else {
         request = {
