@@ -206,7 +206,7 @@ function loadWord() {
                         $wordBody.append($sentenceBody);
 
                         if (data[0].scoreResult) {
-                            initParaDetails(data[0].scoreResult);
+                            initParaDetails(JSON.parse(data[0].scoreResult));
                         }
                     }
                 }
@@ -249,9 +249,8 @@ function generateSentence(result, word) {
     return panel;
 };
 
-function initParaDetails(result) {
+function initParaDetails(objResult) {
     // 段落的评测结果，通过句子的形式保留下来
-    var objResult = JSON.parse(result);
     $sentenceBody.empty();
     $sentenceBody.append('<div class="lesson-title">句子</div>');
     var d = $(document.createDocumentFragment());
