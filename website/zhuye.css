@@ -150,6 +150,15 @@ body {
     background: #f5f5f5;
 }
 
+.nav3-content .job-type {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-weight: bold;
+}
+
+.nav3-content table tr td.bold-td {
+    font-weight: bold;
+}
+
 .nav4-content img {
     width: 100%;
 }
