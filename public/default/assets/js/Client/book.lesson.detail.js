@@ -42,6 +42,11 @@ $(document).ready(function () {
         }
     };
     // end -- audio functions
+    // 点击内容
+    $('.wordlist').on("click", ".panel", function (e) {
+        hideRecords();
+        showRecord(e);
+    });
 
     // to play 原声
     $('.wordlist').on("click", ".buttons .toplay", function (e) {
@@ -55,6 +60,9 @@ $(document).ready(function () {
                 .format($('#bookId').val(), $('#lessonId').val(), word._id);
             curAudio.play();
         }, 0);
+
+        e.preventDefault();
+        e.stopPropagation();
     });
 
     // 录音
@@ -71,11 +79,17 @@ $(document).ready(function () {
         $(e.target).text("录音...");
         // aiengine.ctButton = $(e.target);
         startRecord(word, panel);
+
+        e.preventDefault();
+        e.stopPropagation();
     });
 
     $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
         $(e.target).text("录音");
         stopRecord();
+
+        e.preventDefault();
+        e.stopPropagation();
     });
 
     // 回放
@@ -101,6 +115,9 @@ $(document).ready(function () {
                 rePlayAudio.play();
             }, 0);
         }
+
+        e.preventDefault();
+        e.stopPropagation();
     });
 
     loadWord();
@@ -211,6 +228,8 @@ function loadWord() {
                     }
                 }
             }
+            hideRecords();
+            showFirstRecord();
             loadAiengine();
         });
 };
@@ -351,4 +370,16 @@ function saveScore(word, sentences) {
         scoreResult: JSON.stringify(sentences)
     };
     $.post("/app/score", filter);
+};
+
+function hideRecords() {
+    $(".wordlist .panel .flex-wrp").hide();
+};
+
+function showRecord(e) {
+    $(e.target).parents(".panel").find(".flex-wrp").show();
+};
+
+function showFirstRecord() {
+    $(".wordlist .panel:first .flex-wrp").show();
 };
