@@ -83,6 +83,9 @@ $(document).ready(function () {
         START = new Date().getTime();
         // aiengine.ctButton = $(e.target);
         recordTimer = setTimeout(function () {
+            if ($("#curType").val() == "0") {
+                $sentenceBody.empty();
+            }
             startRecord(word, panel);
         }, 300);
 
@@ -237,9 +240,9 @@ function loadWord() {
                         $sentenceBody = $("<div class='sentence'></div>");
                         $wordBody.append($sentenceBody);
 
-                        // if (data[0].scoreResult) {
-                        //     initParaDetails(JSON.parse(data[0].scoreResult));
-                        // }
+                        if (data[0].scoreResult) {
+                            initParaDetails(JSON.parse(data[0].scoreResult));
+                        }
                     }
                 }
             }
