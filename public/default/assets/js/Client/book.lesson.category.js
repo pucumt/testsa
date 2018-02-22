@@ -25,7 +25,7 @@ function loadCategory() {
         if (data) {
             if (data.wordCount) {
                 var process = "进度(" + (data.stuLesson && data.stuLesson.wordProcess || 0) + "/" + data.wordCount + ")",
-                    score = (data.stuLesson && parseFloat(data.stuLesson.wordAve) || ''),
+                    score = Math.round((data.stuLesson && parseFloat(data.stuLesson.wordAve) || 0) * 100) / 100,
                     $word = $('<div class="picker"><div><span>单词</span><span  class="score">' + score + '</span><span class="process">' + process + '</span></div></div>');
                 $categoryBody.append($word);
                 $word.data("type", 1);
@@ -33,7 +33,7 @@ function loadCategory() {
 
             if (data.sentCount) {
                 var process = "进度(" + (data.stuLesson && data.stuLesson.sentProcess || 0) + "/" + data.sentCount + ")",
-                    score = (data.stuLesson && parseFloat(data.stuLesson.sentAve) || ''),
+                    score = Math.round((data.stuLesson && parseFloat(data.stuLesson.sentAve) || '') * 100) / 100,
                     $word = $('<div class="picker"><div><span>朗诵</span><span  class="score">' + score + '</span><span class="process">' + process + '</span></div></div>');
                 $categoryBody.append($word);
                 $word.data("type", 2);
