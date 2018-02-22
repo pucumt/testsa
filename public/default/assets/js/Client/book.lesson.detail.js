@@ -95,6 +95,7 @@ $(document).ready(function () {
 
     $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
         $(e.target).text("录音");
+        END = new Date().getTime();
         if ((END - START) < 300) {
             END = 0;
             START = 0;
@@ -114,7 +115,7 @@ $(document).ready(function () {
 
         var word = $(e.target).parents(".panel").data("obj");
         log += "回放：" + JSON.stringify(word) + "\r\n";
-        $("#jsalert").val(log);
+        // $("#jsalert").val(log);
         if (word.localId) { // use wx
             if (wx) {
                 wx.playVoice({
@@ -151,7 +152,7 @@ function loadAiengine() {
             if (data.error) {
                 console.log(data.error);
                 log += JSON.stringify(data) + "\r\n";
-                $("#jsalert").val(log);
+                // $("#jsalert").val(log);
                 return;
             }
             if (!wx) {
@@ -164,7 +165,7 @@ function loadAiengine() {
                 // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
                 console.log(res);
                 log += JSON.stringify(res) + "\r\n";
-                $("#jsalert").val(log);
+                // $("#jsalert").val(log);
             });
             wx.config(data); //完成接口注入权限验证配置
             aiengine.aiengine_new({
@@ -173,13 +174,13 @@ function loadAiengine() {
                 success: function () {
                     console.log("sucess");
                     log += "ai new sucess \r\n";
-                    $("#jsalert").val(log);
+                    // $("#jsalert").val(log);
                     hideLoading();
                 },
                 fail: function (err) {
                     console.log(err);
                     log += JSON.stringify(err) + "\r\n";
-                    $("#jsalert").val(log);
+                    // $("#jsalert").val(log);
                     hideLoading();
                     showAlert("语音引擎加载失败，将刷新页面", "提示", function (e) {
                         location.reload();
@@ -329,7 +330,7 @@ function startRecord(obj, panel) {
         success: function (res) {
             // upload score
             log += "start Record sucess:" + JSON.stringify(res) + "\r\n";
-            $("#jsalert").val(log);
+            // $("#jsalert").val(log);
             obj.score = res.result.overall;
             obj.recordId = res.audioUrl;
             var sentences = ($('#curType').val() == "0" && res.result.details); // word
@@ -345,7 +346,7 @@ function startRecord(obj, panel) {
         },
         fail: function (err) {
             log += "start Record fail:" + JSON.stringify(err) + "\r\n";
-            $("#jsalert").val(log);
+            // $("#jsalert").val(log);
             console.log(err);
             hideLoading();
             showAlert("语音解析失败，请重新录音");
@@ -353,7 +354,7 @@ function startRecord(obj, panel) {
         complete: function (res) {
             obj.localId = res.localId || "";
             log += "start Record complete:" + JSON.stringify(res) + "\r\n";
-            $("#jsalert").val(log);
+            // $("#jsalert").val(log);
             console.log("start complete");
 
         }
@@ -365,12 +366,12 @@ function stopRecord() {
         success: function () {
             loading();
             log += "stop Record sucess\r\n";
-            $("#jsalert").val(log);
+            // $("#jsalert").val(log);
             console.log("stop sucess!");
         },
         fail: function (err) {
             log += "stop Record fail:" + JSON.stringify(err) + "\r\n";
-            $("#jsalert").val(log);
+            // $("#jsalert").val(log);
             console.log("stop failed!");
         },
     });
