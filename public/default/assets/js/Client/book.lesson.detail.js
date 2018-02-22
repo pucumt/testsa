@@ -2,7 +2,10 @@ var curAudio = new Audio(),
     log = "",
     request,
     pageData,
-    rePlayAudio = new Audio(); // 音频播放器
+    rePlayAudio = new Audio(),
+    recordTimer,
+    START,
+    END; // 音频播放器
 $(document).ready(function () {
     document.oncontextmenu = function (e) {
         //或者return false;
@@ -77,8 +80,11 @@ $(document).ready(function () {
         }
 
         $(e.target).text("录音...");
+        START = new Date().getTime();
         // aiengine.ctButton = $(e.target);
-        startRecord(word, panel);
+        recordTimer = setTimeout(function () {
+            startRecord(word, panel);
+        }, 300);
 
         e.preventDefault();
         e.stopPropagation();
@@ -86,7 +92,14 @@ $(document).ready(function () {
 
     $('.wordlist').on("touchend", ".buttons .toRecord", function (e) {
         $(e.target).text("录音");
-        stopRecord();
+        if ((END - START) < 300) {
+            END = 0;
+            START = 0;
+            //小于300ms，不录音
+            clearTimeout(recordTimer);
+        } else {
+            stopRecord();
+        }
 
         e.preventDefault();
         e.stopPropagation();
@@ -165,7 +178,9 @@ function loadAiengine() {
                     log += JSON.stringify(err) + "\r\n";
                     $("#jsalert").val(log);
                     hideLoading();
-                    showAlert("语音引擎加载失败，请手动刷新");
+                    showAlert("语音引擎加载失败，将刷新页面", "提示", function (e) {
+                        location.reload();
+                    });
                 },
             });
         }
@@ -222,9 +237,9 @@ function loadWord() {
                         $sentenceBody = $("<div class='sentence'></div>");
                         $wordBody.append($sentenceBody);
 
-                        if (data[0].scoreResult) {
-                            initParaDetails(JSON.parse(data[0].scoreResult));
-                        }
+                        // if (data[0].scoreResult) {
+                        //     initParaDetails(JSON.parse(data[0].scoreResult));
+                        // }
                     }
                 }
             }
