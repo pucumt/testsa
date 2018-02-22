@@ -70,6 +70,8 @@ $(document).ready(function () {
 
     // 录音
     $('.wordlist').on("touchstart", ".buttons .toRecord", function (e) {
+        pauseAll();
+
         var panel = $(e.target).parents(".panel"),
             word = panel.data("obj");
         // pauseAll();
