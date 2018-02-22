@@ -34,14 +34,14 @@ $(document).ready(function () {
     };
 
     rePlayAudio.onerror = function (e) {
-        if (curAudio.ctButton) {
-            curAudio.ctButton.text("回放");
+        if (rePlayAudio.ctButton) {
+            rePlayAudio.ctButton.text("回放");
         }
     };
 
     rePlayAudio.onpause = function (e) {
-        if (curAudio.ctButton) {
-            curAudio.ctButton.text("回放");
+        if (rePlayAudio.ctButton) {
+            rePlayAudio.ctButton.text("回放");
         }
     };
     // end -- audio functions
