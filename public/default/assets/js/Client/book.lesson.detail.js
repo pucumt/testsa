@@ -398,7 +398,8 @@ function hideRecords() {
 };
 
 function showRecord(e) {
-    $(e.target).parents(".panel").find(".flex-wrp").show();
+    var cur = $(e.target).hasClass("panel") ? $(e.target) : $(e.target).parents(".panel");
+    cur.find(".flex-wrp").show();
 };
 
 function showFirstRecord() {
