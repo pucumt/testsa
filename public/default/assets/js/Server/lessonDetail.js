@@ -181,11 +181,6 @@ function addValidation(callback) {
                     validators: {
                         notEmpty: {
                             message: '名称不能为空'
-                        },
-                        stringLength: {
-                            min: 1,
-                            max: 30,
-                            message: '名称在1-100个字符之间'
                         }
                     }
                 }
