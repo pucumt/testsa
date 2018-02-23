@@ -74,8 +74,8 @@ function addValidation(callback) {
                         },
                         stringLength: {
                             min: 4,
-                            max: 30,
-                            message: '名称在4-30个字符之间'
+                            max: 50,
+                            message: '名称在4-50个字符之间'
                         }
                     }
                 },
