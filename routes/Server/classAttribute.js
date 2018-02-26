@@ -17,7 +17,7 @@ module.exports = function (app) {
     app.post('/admin/classAttribute/add', function (req, res) {
         ClassAttribute.create({
                 name: req.body.name,
-                address: req.body.address,
+                sequence: req.body.sequence,
                 createdBy: req.session.admin._id
             })
             .then(function (classAttribute) {
@@ -29,7 +29,9 @@ module.exports = function (app) {
     app.post('/admin/classAttribute/edit', function (req, res) {
         ClassAttribute.update({
                 name: req.body.name,
-                address: req.body.address
+                sequence: req.body.sequence,
+                updatedDate: Date.now(),
+                deletedBy: req.session.admin._id
             }, {
                 where: {
                     _id: req.body.id
@@ -95,7 +97,7 @@ module.exports = function (app) {
     app.post('/admin/classAttribute/getChecked', function (req, res) {
         // get currentYear attributes
         model.db.sequelize.query("select A._id, A.name from classAttributes A join yearAttributeRelations R \
-            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId", {
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false and R.yearId=:yearId  order by A.sequence", {
                 replacements: {
                     yearId: global.currentYear._id
                 },

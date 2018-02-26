@@ -67,7 +67,6 @@ module.exports = function (app) {
                         var p = handleContent(lesson, sourceFolder, lessonPath);
 
                         pArray.push(p);
-
                         // break;
                     }
 

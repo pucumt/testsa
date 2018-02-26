@@ -81,7 +81,9 @@ module.exports = function (app) {
             name: req.body.name,
             sequence: req.body.sequence,
             calculateDate: req.body.calculateDate,
-            isCurrentYear: false
+            isCurrentYear: false,
+            updatedDate: Date.now(),
+            deletedBy: req.session.admin._id
         };
 
         if (req.body.iscurrent == "true") {

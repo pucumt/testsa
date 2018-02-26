@@ -372,7 +372,7 @@ module.exports = function (app) {
                 console.log('errored');
             });
         var p9 = model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
-            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false ", {
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false order by A.sequence ", {
                 replacements: {},
                 type: model.db.sequelize.QueryTypes.SELECT
             })
@@ -409,7 +409,7 @@ module.exports = function (app) {
                 console.log('errored');
             });
         var p9 = model.db.sequelize.query("select R.yearId, A._id, A.name from classAttributes A join yearAttributeRelations R \
-            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false ", {
+            on R.attributeId=A._id where R.isDeleted=false and A.isDeleted=false order by A.sequence", {
                 replacements: {},
                 type: model.db.sequelize.QueryTypes.SELECT
             })

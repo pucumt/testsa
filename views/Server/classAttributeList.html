@@ -34,6 +34,7 @@
         <thead>
             <tr>
                 <th style="width:150px">属性</th>
+                <th style="width:150px;">顺序</th>
                 <th style="width:200px">使用状态</th>
                 <th>操作</th>
             </tr>
@@ -62,6 +63,10 @@
                     <div class="form-group">
                         <label for="name" class="control-label">属性:</label>
                         <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="sequence" class="control-label">顺序:</label>
+                        <input type="text" maxlength="30" class="form-control" name="sequence" id="sequence">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -94,5 +99,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/classAttribute.js?v=1.001"></script>
+<script type="text/javascript" src="/default/assets/js/Server/classAttribute.js?v=1.002"></script>
 {% endblock %}

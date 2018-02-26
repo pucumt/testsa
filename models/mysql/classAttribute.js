@@ -11,6 +11,10 @@ const ClassAttribute = db.defineModel('classAttributes', {
     isChecked: {
         type: db.BOOLEAN,
         defaultValue: true
+    },
+    sequence: {
+        type: Number,
+        default: 0
     }
 });
 module.exports = ClassAttribute;

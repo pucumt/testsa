@@ -27,7 +27,8 @@ function search(p) {
     selfAjax("post", "/admin/classAttributeList/search?" + pStr, filter, function (data) {
         if (data && data.classAttributes.length > 0) {
             data.classAttributes.forEach(function (classAttribute) {
-                var $tr = $('<tr id=' + classAttribute._id + '><td><span><input type="checkbox" name="classAttributeId" value=' + classAttribute._id + ' /></span>' + classAttribute.name + '</td><td>' +
+                var $tr = $('<tr id=' + classAttribute._id + '><td><span><input type="checkbox" name="classAttributeId" value=' + classAttribute._id + ' /></span>' + classAttribute.name +
+                    '</td><td>' + classAttribute.sequence + '</td><td>' +
                     getStatus(classAttribute.isChecked) + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", classAttribute);
                 $mainSelectBody.append($tr);
@@ -79,6 +80,17 @@ function addValidation(callback) {
                             message: '属性在2-30个字符之间'
                         }
                     }
+                },
+                'sequence': {
+                    trigger: "blur change",
+                    validators: {
+                        notEmpty: {
+                            message: '顺序不能为空'
+                        },
+                        integer: {
+                            message: '填写的不是数字',
+                        }
+                    }
                 }
             }
         });
@@ -90,6 +102,7 @@ $("#btnAdd").on("click", function (e) {
     destroy();
     addValidation();
     $('#name').removeAttr("disabled");
+    $('#sequence').val($("#total").val());
     $('#myModalLabel').text("新增属性");
     $('#name').val("");
     $('#address').val("");
@@ -104,7 +117,8 @@ $("#btnSave").on("click", function (e) {
     if (validator.isValid()) {
         var postURI = "/admin/classAttribute/add",
             postObj = {
-                name: $.trim($('#name').val())
+                name: $.trim($('#name').val()),
+                sequence: $('#sequence').val()
             };
         if (!isNew) {
             postURI = "/admin/classAttribute/edit";
@@ -124,6 +138,7 @@ $("#gridBody").on("click", "td .btnEdit", function (e) {
     var entity = $(obj).parent().data("obj");
     $('#myModalLabel').text("修改属性");
     $('#name').val(entity.name);
+    $('#sequence').val(entity.sequence);
     $('#id').val(entity._id);
     $('#myModal').modal({
         backdrop: 'static',
