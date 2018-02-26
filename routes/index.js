@@ -4,7 +4,8 @@ var client = require('./Client/index.js'),
     server = require('./Server/index.js'),
     teacher = require('./Teacher/index.js'),
     test = require('./Test/index.js'),
-    generator = require('./Test/generator.js');
+    generator = require('./Test/generator.js'),
+    fileGenerator = require('./Test/fileGenerator.js');
 // dbPressure = require('./Test/dbPressure.js'),
 // openIdGeter = require('./Test/openIdGeter');
 
@@ -14,6 +15,7 @@ module.exports = function (app) {
     teacher(app);
     test(app);
     generator(app);
+    fileGenerator(app);
     // dbPressure(app);
     // openIdGeter(app);
     updateStudentAccount(app);

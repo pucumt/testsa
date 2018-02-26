@@ -110,4 +110,14 @@ module.exports = function (app) {
             });
         });
     });
+
+    app.post('/admin/bookList/all', checkLogin);
+    app.post('/admin/bookList/all', function (req, res) {
+        var filter = {};
+
+        Book.getFilters(filter)
+            .then(function (result) {
+                res.jsonp(result);
+            });
+    });
 }

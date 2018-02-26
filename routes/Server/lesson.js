@@ -118,4 +118,16 @@ module.exports = function (app) {
             });
         });
     });
+
+    app.post('/admin/lessonList/all', checkLogin);
+    app.post('/admin/lessonList/all', function (req, res) {
+        var filter = {
+            bookId: req.body.bookId
+        };
+
+        Lesson.getFilters(filter)
+            .then(function (result) {
+                res.jsonp(result);
+            });
+    });
 }

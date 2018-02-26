@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>百分百</title>
+    <link rel="stylesheet" href="/default/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/default/assets/css/admin.css">
+    <script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/default/assets/js/Server/index.js"></script>
+    <script>
+        var lessons;
+        $(document).ready(function () {
+            selfAjax("post", "/admin/bookList/all", null, function (data) {
+                if (data) {
+                    if (data && data.length > 0) {
+                        data.forEach(function (book) {
+                            $("#book").append("<option value='" + book._id +
+                                "'>" + book.name + "</option>");
+                        });
+                    }
+                }
+            });
+
+            $("#book").on('change', function (e) {
+                selfAjax("post", "/admin/lessonList/all", {
+                    bookId: $("#book").val()
+                }, function (data) {
+                    if (data) {
+                        if (data && data.length > 0) {
+                            data.forEach(function (book) {
+                                $("#lesson").append("<option value='" + book._id +
+                                    "'>" + book.name + "</option>");
+                            });
+                        }
+                    }
+                });
+            });
+
+            $("#btnGenerate").on('click', function (e) {
+                selfAjax("post", "/filegenerator", function (data) {
+                    showAlert("成功！");
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div style="width:500px; margin: 0 auto;">
+        <div>{{ title }}</div>
+        <div>课本：
+            <select name="book" id="book" class="form-control">
+            </select>
+        </div>
+        <div>第几课：
+            <select name="lesson" id="lesson" class="form-control">
+            </select>
+        </div>
+        <div>类别：
+            <select name="contentType" id="contentType" class="form-control">
+                <option value="1">单词</option>
+                <option value="2">句子</option>
+                <option value="0">课文</option>
+            </select>
+        </div>
+        <div>
+            <input type="button" name="btnGenerate" id="btnGenerate" value="提交" />
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+                </div>
+                <div class="modal-body">
+                    确定要删除吗?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
