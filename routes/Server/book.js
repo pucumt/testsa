@@ -120,4 +120,16 @@ module.exports = function (app) {
                 res.jsonp(result);
             });
     });
+
+    app.post('/admin/bookList/getBook', checkLogin);
+    app.post('/admin/bookList/getBook', function (req, res) {
+        var filter = {
+            bookId: req.body.id
+        };
+
+        Book.getFilter(filter)
+            .then(function (result) {
+                res.jsonp(result);
+            });
+    });
 }

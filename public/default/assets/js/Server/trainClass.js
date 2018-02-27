@@ -519,6 +519,8 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
     $('#myModal #schoolid').val(entity.schoolId); //
     $('#myModal #teacher').val(entity.teacherName); //
     $('#myModal #teacherid').val(entity.teacherId); //
+    $('#myModal #bookId').val(entity.bookId); //
+    $('#myModal #book').val(entity.bookId); //
     // $('#minScore').val(entity.minScore);
 
     selfAjax("post", "/admin/trainClass/getExams", {
@@ -533,6 +535,12 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
             exams: data || []
         });
     });
+
+    // selfAjax("post", "/admin/bookList/getBook", {
+    //     bookId: entity.bookId
+    // }, function (data) {
+
+    // });
 
     $('#myModal #id').val(entity._id);
     $("#myModal").find(".modal-body").height($(window).height() - 189);
