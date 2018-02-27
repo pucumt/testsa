@@ -55,7 +55,7 @@ $(document).ready(function () {
     $('.wordlist').on("click", ".buttons .toplay", function (e) {
         pauseAll();
 
-        setTimeout(() => {
+        setTimeout(function () {
             var word = $(e.target).parents(".panel").data("obj");
             $(e.target).text("播放...");
             curAudio.ctButton = $(e.target);
@@ -126,7 +126,7 @@ $(document).ready(function () {
             }
         } else if (word.score) {
             // use audio
-            setTimeout(() => {
+            setTimeout(function () {
                 $(e.target).text("回放...");
                 rePlayAudio.ctButton = $(e.target);
                 rePlayAudio.src = "/uploads/scores/{0}/{1}.mp3"
