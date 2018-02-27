@@ -322,8 +322,8 @@ module.exports = function (app) {
 
         var sql = "select C._id, S.score, S._id as scoreId, C.contentType, C.name, C.duration, S.scoreResult \
         from lessonContents C left join studentLessonScores S  \
-        on S.contentId=C._id and S.studentId=:studentId and S.lessonId=:lessonId and S.isDeleted=false \
-        where  C.isDeleted=false and ";
+        on S.contentId=C._id and S.studentId=:studentId and S.isDeleted=false \
+        where  C.isDeleted=false and C.lessonId=:lessonId and ";
         switch (req.body.contentType) {
             case "0":
                 sql += " C.contentType in (0, 2) ";
