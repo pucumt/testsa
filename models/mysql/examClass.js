@@ -62,6 +62,10 @@ const ExamClass = db.defineModel('examClasss', {
     sequence: {
         type: db.INTEGER,
         defaultValue: 0
+    },
+    examPrice: { // 报名费
+        type: db.FLOAT,
+        defaultValue: 0
     }
 });
 module.exports = ExamClass;
@@ -80,7 +84,7 @@ ExamClass.getFilters = function (filter) {
     return ExamClass.findAll({
         'where': filter,
         order: [
-            ['createdDate'],
+            ['createdDate', 'DESC'],
             ['_id']
         ]
     });
@@ -91,7 +95,7 @@ ExamClass.getFiltersWithPage = function (page, filter) {
     return ExamClass.findAndCountAll({
         'where': filter,
         order: [
-            ['createdDate'],
+            ['createdDate', 'DESC'],
             ['_id']
         ],
         offset: config.pageSize * (page - 1),

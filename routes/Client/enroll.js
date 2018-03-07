@@ -324,6 +324,8 @@ module.exports = function (app) {
                                                                                     examCategoryName: examClass.examCategoryName,
                                                                                     isSucceed: 1,
                                                                                     scores: examClass.subjects,
+                                                                                    examPrice: examClass.examPrice, // 原始订单价格
+                                                                                    payPrice: examClass.examPrice, // 支付订单价格
                                                                                     examAreaId: examClassExamArea.examAreaId,
                                                                                     examAreaName: examClassExamArea.examAreaName
                                                                                 });
@@ -340,7 +342,9 @@ module.exports = function (app) {
                                                                 res.jsonp(order);
                                                             } else {
                                                                 res.jsonp({
-                                                                    sucess: true
+                                                                    _id: order._id,
+                                                                    sucess: true,
+                                                                    toPay: order.payPrice > 0
                                                                 });
                                                             }
                                                         })

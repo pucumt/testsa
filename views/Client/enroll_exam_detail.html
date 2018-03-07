@@ -11,6 +11,7 @@
                     <h2>{{ exam.name }}</h2>
                 </div>
                 <div>日期：{{ exam.examDate.toLocaleDateString() }}&nbsp;&nbsp;时间：{{ exam.examTime }}</div>
+                <div>报名费：{{ exam.examPrice }}</div>
                 <div class="enroll-info">
                     <p class="exam-count">已报{{ exam.enrollCount }}&nbsp;&nbsp;共{{exam.examCount}} {% if exam.enrollCount >= exam.examCount %}
                         <span class="full">(已满)</span>{% endif %}

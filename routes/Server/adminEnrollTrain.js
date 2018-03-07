@@ -1024,7 +1024,7 @@ module.exports = function (app) {
             var history = {
                 historyid: req.body.id,
                 createdBy: req.session.admin._id,
-                payWay: req.body.payWay,
+                payWay: order.payWay,
                 comment: "修改支付方式"
             };
             // 1. 生成历史记录

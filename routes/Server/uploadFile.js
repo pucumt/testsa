@@ -1722,7 +1722,7 @@ module.exports = function (app) {
         var strArr = data[2].split(";"),
             name = strArr[0].split(":")[1],
             mobile = strArr[4].split(":")[1],
-            url = strArr[3].substr(5),
+            url = strArr[5].substr(6),
             newFile = path.join(uploadFolder, 'pics', name + mobile + '.jpg');
         if (!fs.existsSync(newFile)) {
             var x = request(url)

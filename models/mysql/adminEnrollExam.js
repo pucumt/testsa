@@ -43,7 +43,7 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
     payWay: {
         type: db.INTEGER,
         defaultValue: 0
-    }, // 0 cash 1 offline card 8 online zhifubao 9 online weixin 
+    }, // 0 cash 1 offline card 8 zhifubao 9 weixin 6 weixinOnline 7 zhifubaoOnline
     examAreaId: {
         type: db.STRING(50),
         defaultValue: ''
@@ -52,6 +52,18 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
         type: db.STRING(50),
         defaultValue: ''
     },
+    examPrice: {
+        type: db.FLOAT,
+        defaultValue: 0
+    }, // 测试需要的金额
+    payPrice: {
+        type: db.FLOAT,
+        defaultValue: 0
+    }, // 支付金额
+    rebatePrice: {
+        type: db.FLOAT,
+        defaultValue: 0
+    }, // 退款金额
     isHide: {
         type: db.BOOLEAN,
         defaultValue: false

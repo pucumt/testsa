@@ -182,6 +182,16 @@ module.exports = function (app) {
             //openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
         }
     });
+
+    // 考试订单
+    app.get('/personalCenter/exam/wechatpay/:id', checkLogin);
+    app.get('/personalCenter/exam/wechatpay/:id', function (req, res) {
+        if (req.params.id) {
+            payHelper.getExamOpenId(res, req.params.id);
+            //openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
+        }
+    });
+
     app.get('/personalCenter/order/zhifubaopay/:id', checkLogin);
     app.get('/personalCenter/order/zhifubaopay/:id', function (req, res) {
         debugger;
@@ -198,6 +208,7 @@ module.exports = function (app) {
         // openWechatPay(res, req.params.id, "o1ykmwwG2MbGSLMRuDYItN65kpQ0");
     });
 
+    // class order
     function opennativeWechatPay(res, id, openId) {
         debugger;
         AdminEnrollTrain.getFilter({
@@ -214,6 +225,27 @@ module.exports = function (app) {
                     };
                     //time_expire is new function, maybe there is something wrong
                     payHelper.jsPay(payParas, res, order.schoolArea);
+                }
+            });
+    };
+
+    // exam order
+    function opennativeWechatPayExam(res, id, openId) {
+        debugger;
+        AdminEnrollExam.getFilter({
+                _id: id
+            })
+            .then(function (order) {
+                if (order) {
+                    var payParas = {
+                        out_trade_no: order._id,
+                        body: order.examName,
+                        total_fee: (parseFloat(order.examPrice) || 0) * 100,
+                        openId: openId,
+                        time_expire: moment().add(20, 'minute').format("YYYYMMDDHHmmss")
+                    };
+                    //time_expire is new function, maybe there is something wrong
+                    payHelper.jsPay(payParas, res, '');
                 }
             });
     };
@@ -257,6 +289,12 @@ module.exports = function (app) {
     app.get('/get_wx_access_token/:id', function (req, res) {
         debugger;
         payHelper.wechatPay(req, res, opennativeWechatPay);
+    });
+
+    // exam order
+    app.get('/get_wx_exam/:id', function (req, res) {
+        debugger;
+        payHelper.wechatPay(req, res, opennativeWechatPayExam);
     });
 
     // 取消测试订单

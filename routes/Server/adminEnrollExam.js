@@ -1,7 +1,9 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     AdminEnrollExam = model.adminEnrollExam,
+    AdminEnrollExamHistory = model.adminEnrollExamHistory,
     AdminEnrollExamScore = model.adminEnrollExamScore,
+    RebateEnrollExam = model.rebateEnrollExam,
     ExamClass = model.examClass,
     StudentInfo = model.studentInfo,
     StudentAccount = model.studentAccount,
@@ -28,6 +30,15 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/admin/examOrderList/id/:id', checkLogin);
+    app.get('/admin/examOrderList/id/:id', function (req, res) {
+        res.render('Server/examOrderList.html', {
+            title: '>课程订单',
+            user: req.session.admin,
+            orderId: req.params.id
+        });
+    });
+
     app.get('/admin/cardSearch', checkLogin);
     app.get('/admin/cardSearch', function (req, res) {
         res.render('Server/cardSearch.html', {
@@ -40,6 +51,44 @@ module.exports = function (app) {
     app.get('/admin/ScoreInput', function (req, res) {
         res.render('Server/ScoreInput.html', {
             title: '>成绩录入',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/payexam/:id', checkLogin);
+    app.get('/admin/payexam/:id', function (req, res) {
+        AdminEnrollExam.getFilter({
+                _id: req.params.id
+            })
+            .then(function (examOrder) {
+                res.render('Server/payExam.html', {
+                    title: '>订单支付',
+                    user: req.session.admin,
+                    examOrder: examOrder
+                });
+            });
+    });
+
+    app.get('/admin/rebateExamOrderList', checkLogin);
+    app.get('/admin/rebateExamOrderList', function (req, res) {
+        res.render('Server/rebateExamOrderList.html', {
+            title: '>退费管理',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/paywayExamOrderList', checkLogin);
+    app.get('/admin/paywayExamOrderList', function (req, res) {
+        res.render('Server/paywayExamOrderList.html', {
+            title: '>支付方式修改',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/rebatewayExamOrderList', checkLogin);
+    app.get('/admin/rebatewayExamOrderList', function (req, res) {
+        res.render('Server/rebatewayExamOrderList.html', {
+            title: '>退款方式修改',
             user: req.session.admin
         });
     });
@@ -66,6 +115,10 @@ module.exports = function (app) {
         if (req.body.studentId) {
             filter.studentId = req.body.studentId;
         }
+        if (req.body.orderId) {
+            filter._id = req.body.orderId;
+        }
+
         AdminEnrollExam.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
                 adminEnrollExams: result.rows,
@@ -73,6 +126,121 @@ module.exports = function (app) {
                 page: page,
                 isFirstPage: (page - 1) == 0,
                 isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+            });
+        });
+    });
+
+    app.post('/admin/adminEnrollExam/searchPayed', checkLogin);
+    app.post('/admin/adminEnrollExam/searchPayed', function (req, res) {
+        //判断是否是第一页，并把请求的页数转换成 number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+        //查询并返回第 page 页的 20 篇文章
+        var filter = {
+            isSucceed: 1,
+            isPayed: true
+        };
+        if (req.body.studentName && req.body.studentName.trim()) {
+            filter.studentName = {
+                $like: `%${req.body.studentName.trim()}%`
+            };
+        }
+        if (req.body.className && req.body.className.trim()) {
+            filter.examName = {
+                $like: `%${req.body.className.trim()}%`
+            };
+        }
+        if (req.body.isSucceed) {
+            filter.isSucceed = req.body.isSucceed;
+        }
+        if (req.body.studentId) {
+            filter.studentId = req.body.studentId;
+        }
+        AdminEnrollExam.getFiltersWithPage(page, filter).then(function (result) {
+            res.jsonp({
+                adminEnrollExams: result.rows,
+                total: result.count,
+                page: page,
+                isFirstPage: (page - 1) == 0,
+                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+            });
+        });
+    });
+
+    app.post('/admin/adminEnrollExam/changePayway', checkLogin);
+    app.post('/admin/adminEnrollExam/changePayway', function (req, res) {
+        AdminEnrollExam.getFilter({
+            _id: req.body.id
+        }).then(function (order) {
+            var history = {
+                examOrderId: req.body.id,
+                createdBy: req.session.admin._id,
+                payWay: order.payWay,
+                comment: "修改支付方式"
+            };
+            // 1. 生成历史记录
+            // 2. 更新订单
+            model.db.sequelize.transaction(function (t1) {
+                return AdminEnrollExamHistory.create(history, {
+                        transaction: t1
+                    })
+                    .then(function (resultArea) {
+                        return AdminEnrollExam.update({
+                            payWay: req.body.payWay
+                        }, {
+                            where: {
+                                _id: req.body.id
+                            },
+                            transaction: t1
+                        });
+                    });
+            }).then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            }).catch(function () {
+                res.jsonp({
+                    error: "修改失败"
+                });
+            });
+        });
+    });
+
+    // 退款
+    app.post('/admin/adminEnrollExam/rebate', checkLogin);
+    app.post('/admin/adminEnrollExam/rebate', function (req, res) {
+        var price = parseFloat(req.body.price);
+
+        model.db.sequelize.transaction(function (t1) {
+            // 订单退款
+            return AdminEnrollExam.update({
+                rebatePrice: model.db.sequelize.literal('`rebatePrice`+' + (price)),
+                payPrice: model.db.sequelize.literal('`payPrice`-' + price),
+                comment: req.body.comment
+            }, {
+                where: {
+                    _id: req.body.Id
+                },
+                transaction: t1
+            }).then(result => {
+                // 保存退款记录
+                return RebateEnrollExam.create({
+                    examOrderId: req.body.Id,
+                    originalPrice: req.body.originalPrice,
+                    rebatePrice: req.body.price,
+                    rebateWay: req.body.payWay,
+                    comment: req.body.comment,
+                    createdBy: req.session.admin._id
+                }, {
+                    transaction: t1
+                });
+            });
+        }).then(function () {
+            res.jsonp({
+                sucess: true
+            });
+        }).catch(function () {
+            res.jsonp({
+                error: "退费失败"
             });
         });
     });
@@ -342,6 +510,27 @@ module.exports = function (app) {
                         exam.scores = scores;
                         res.jsonp(exam);
                     });
+            });
+    });
+
+    app.post('/admin/adminEnrollExam/pay', checkLogin);
+    app.post('/admin/adminEnrollExam/pay', function (req, res) {
+        AdminEnrollExam.update({
+                isPayed: true,
+                payWay: req.body.payWay
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            }).catch(function () {
+                res.jsonp({
+                    error: "付款失败"
+                });
             });
     });
 

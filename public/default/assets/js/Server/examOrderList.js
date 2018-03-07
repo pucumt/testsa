@@ -12,16 +12,21 @@ function searchOrder(p) {
     var filter = {
             studentName: $("#InfoSearch #studentName").val(),
             className: $("#InfoSearch #className").val(),
-            isSucceed: $("#InfoSearch #isSucceed").val()
+            isSucceed: $("#InfoSearch #isSucceed").val(),
+            orderId: $("#InfoSearch #orderId").val()
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
     selfAjax("post", "/admin/adminEnrollExam/search?" + pStr, filter, function (data) {
         $selectBody.empty();
         if (data && data.adminEnrollExams.length > 0) {
-            var getButtons = function (isSucceed) {
+            var getButtons = function (needPay, isSucceed) {
+                var buttons = "";
+                if (needPay && isSucceed == 1) {
+                    buttons = '<a class="btn btn-default btnPay">支付</a>';
+                }
                 if (isSucceed == 1) {
-                    return '<a class="btn btn-default btnDelete">取消</a>';
+                    return buttons + '<a class="btn btn-default btnDelete">取消</a>';
                 }
                 return '';
             };
@@ -30,8 +35,11 @@ function searchOrder(p) {
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
                     getTrainOrderStatus(examOrder.isSucceed) + '</td><td>' +
                     examOrder.studentName + '</td><td>' + examOrder.examName + '</td><td>' +
+                    (examOrder.isPayed ? "是" : "否") + '</td><td>' +
+                    (examOrder.payPrice || 0) + '</td><td>' +
+                    (examOrder.rebatePrice || 0) + '</td><td>' +
                     examOrder.examCategoryName + '</td><td>' +
-                    deletedDate + '</td><td><div class="btn-group">' + getButtons(examOrder.isSucceed) + '</div></td></tr>');
+                    deletedDate + '</td><td><div class="btn-group">' + getButtons((!examOrder.isPayed) && (examOrder.payPrice > 0), examOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", examOrder);
                 $selectBody.append($tr);
             });
@@ -78,4 +86,11 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
             $(obj).removeAttr("disabled");
         });
     });
+});
+
+// pay for exam
+$("#gridBody").on("click", "td .btnPay", function (e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/payexam/" + entity._id;
 });

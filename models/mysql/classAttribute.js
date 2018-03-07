@@ -13,7 +13,7 @@ const ClassAttribute = db.defineModel('classAttributes', {
         defaultValue: true
     },
     sequence: {
-        type: Number,
+        type: db.INTEGER,
         default: 0
     }
 });

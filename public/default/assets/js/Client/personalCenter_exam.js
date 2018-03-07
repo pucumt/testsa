@@ -46,10 +46,10 @@ function renderOrders(orders) {
         var d = $(document.createDocumentFragment());
         // d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
         orders.forEach(function (order) {
-            var price = (order.totalPrice + order.realMaterialPrice).toFixed(2),
+            var price = order.payPrice,
                 status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '',
                 cancelButton = '';
-            if ((new Date()) < (new Date(order.examDate.substr(0, 10)))) {
+            if ((new Date()) < (new Date(order.examDate.substr(0, 10))) && price > 0) {
                 cancelButton = '<button type="button" id="btnCancel" style="margin-left:40px;" class="btn btn-primary btn-xs pull-right">取消</button>';
             }
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +

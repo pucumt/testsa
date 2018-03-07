@@ -151,10 +151,15 @@ $(document).ready(function () {
                 filter.examClassExamAreaId = examClassExamAreaId;
                 selfAjax("post", "/enroll/exam/enroll", filter, function (data) {
                     if (data.sucess) {
+                        // 报名成功如果价格为0直接跳转，如果有价格跳转到支付页面
                         $("#Enroll-select").hide();
-                        showAlert("报名成功！", null, function () {
-                            location.href = "/enroll/exam/card/" + $("#id").val();
-                        });
+                        if (data.toPay) {
+                            location.replace("/personalCenter/exam/id/{0}".format(data._id));
+                        } else {
+                            showAlert("报名成功！", null, function () {
+                                location.href = "/enroll/exam/card/" + $("#id").val();
+                            });
+                        }
                     } else {
                         $("#Enroll-select").hide();
                         showAlert(data.error, null, function () {
