@@ -38,7 +38,6 @@ $(document).ready(function () {
     $("#uploadModal #btnUpload").on("click", function (e) {
         if ($("#uploadModal #contentType").val() == 0) {
             //check if save the content first
-
         }
         var files = document.getElementById('upfileAudio').files;
         if (files.length > 0) {

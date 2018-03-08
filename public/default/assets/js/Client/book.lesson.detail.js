@@ -45,10 +45,31 @@ $(document).ready(function () {
         }
     };
     // end -- audio functions
+    // 测评结果的title 点击，只要显示自己的按钮
+    $('.wordlist').on("click", ".panel .sentenceList .sentence .wordlevel2", function (e) {
+        hideTestRecords(e); // 隐藏所有的测评按钮
+        showRecord(e); // 显示自己的按钮
+        e.stopPropagation();
+    });
+
     // 点击内容
-    $('.wordlist').on("click", ".panel", function (e) {
+    $('.wordlist').on("click", ".panel .wordlevel", function (e) {
+        hideRecords(); // 隐藏所有的按钮和测评
+        showRecord(e); // 显示自己的按钮
+    });
+
+    // 段落测评结果
+    $('.wordlist').on("click", ".panel .lesson-title", function (e) {
+        var obj = $(e.target).parent().find(".sentenceList"),
+            isHidden = obj.is(":hidden");
         hideRecords();
-        showRecord(e);
+        if (isHidden) {
+            obj.show();
+        } else {
+            obj.hide();
+        }
+        obj.parents(".panel").children(".flex-wrp").show();
+        e.stopPropagation();
     });
 
     // to play 原声
@@ -86,7 +107,8 @@ $(document).ready(function () {
         // aiengine.ctButton = $(e.target);
         recordTimer = setTimeout(function () {
             if ($("#curType").val() == "0") {
-                $sentenceBody.empty();
+                panel.find(".wordlevel").hide();
+                panel.find(".sentenceList .sentence").empty();
             }
             startRecord(word, panel);
         }, 300);
@@ -231,27 +253,39 @@ function loadWord() {
                 }
 
                 if ($("#curType").val() == "0") {
-                    $wordBody.append('<div class="lesson-title">课文</div>');
-                    if (data[0]) {
+                    if (data.length > 0) {
                         pageData = data;
 
-                        data[0].replaceName = "分数：";
+                        // data[0].replaceName = "分数：";
                         var d = $(document.createDocumentFragment());
-                        d.append(generatePanel(data[0]));
-                        $wordBody.append(d);
+                        var contents = data.filter(function (content) {
+                            return content.contentType == 0;
+                        });
 
-                        $sentenceBody = $("<div class='sentence'></div>");
-                        $wordBody.append($sentenceBody);
+                        contents.forEach(function (content) {
+                            $wordBody.append('<div class="lesson-title">课文</div>');
+                            var $divContent = generatePanel(content);
+                            d.append($divContent);
+                            $divContent.append('<div class="lesson-title">评分详情</div>');
+                            $sentenceBody = $("<div class='sentence flex-wrp'></div>");
+                            var $sentenceList = $("<div class='sentenceList'></div>");
+                            $sentenceList.append($sentenceBody);
+                            $divContent.append($sentenceList);
+                            if (content.scoreResult) {
+                                initParaDetails($sentenceBody, JSON.parse(content.scoreResult));
+                            }
+                            $wordBody.append(d);
+                        });
+                        // d.append(generatePanel(data[0]));
 
-                        if (data[0].scoreResult) {
-                            initParaDetails(JSON.parse(data[0].scoreResult));
-                        }
                     }
                 }
             }
             hideRecords();
             showFirstRecord();
-            loadAiengine();
+            // loadAiengine();
+
+            hideLoading();
         });
 };
 
@@ -272,9 +306,9 @@ function generatePanel(word) {
     return panel;
 };
 
-function generateSentence(result, word) {
+function generateSentence(result, word, level) {
     var panel = $('<div class="panel panel-default">\
-                <div class="wordlevel">\
+                <div class="wordlevel' + level + '">\
                     <h4 class="title" role="button" >\
                         ' + result.text + '&nbsp;<span class="score">' + result.score + '</span>\
                     </h4>\
@@ -289,13 +323,12 @@ function generateSentence(result, word) {
     return panel;
 };
 
-function initParaDetails(objResult) {
+function initParaDetails($sentenceBody, objResult) {
     // 段落的评测结果，通过句子的形式保留下来
     $sentenceBody.empty();
-    $sentenceBody.append('<div class="lesson-title">句子</div>');
     var d = $(document.createDocumentFragment());
     for (var i = 0; i < objResult.length; i++) {
-        d.append(generateSentence(objResult[i], pageData[i + 1]));
+        d.append(generateSentence(objResult[i], pageData[i + 1], 2));
     };
     $sentenceBody.append(d);
 };
@@ -344,6 +377,7 @@ function startRecord(obj, panel) {
             saveScore(obj, sentences); // save score to db
             hideLoading();
             console.log("start sucess");
+            panel.find(".wordlevel").show();
             panel.find(".wordlevel .title.mainTitle .score").text(obj.score); // set score to para
         },
         fail: function (err) {
@@ -352,8 +386,10 @@ function startRecord(obj, panel) {
             console.log(err);
             hideLoading();
             showAlert("语音解析失败，请重新录音");
+            panel.find(".wordlevel").show();
         },
         complete: function (res) {
+            // panel.find(".wordlevel").show();
             obj.localId = res.localId || "";
             log += "start Record complete:" + JSON.stringify(res) + "\r\n";
             // $("#jsalert").val(log);
@@ -393,13 +429,19 @@ function saveScore(word, sentences) {
     $.post("/app/score", filter);
 };
 
+// 同时隐藏按钮和测评结果
 function hideRecords() {
-    $(".wordlist .panel .flex-wrp").hide();
+    $(".wordlist .panel .buttons.flex-wrp").hide();
+    $(".wordlist .panel .sentenceList").hide();
+};
+
+function hideTestRecords(e) {
+    $(e.target).parents(".sentence").find(".buttons.flex-wrp").hide();
 };
 
 function showRecord(e) {
     var cur = $(e.target).hasClass("panel") ? $(e.target) : $(e.target).parents(".panel");
-    cur.find(".flex-wrp").show();
+    cur.children(".flex-wrp").show();
 };
 
 function showFirstRecord() {

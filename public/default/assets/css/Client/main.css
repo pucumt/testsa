@@ -489,6 +489,17 @@ footer,
     font-size: 20px;
 }
 
+.lesson .panel .lesson-title {
+    font-size: 16px;
+    text-align: center;
+    color: green;
+    border-top: 1px solid #dddddd;
+}
+
+.lesson .panel .sentence.flex-wrp .wordlevel .title {
+    margin: 0;
+}
+
 .lesson .panel {
     padding: 5px 0 0;
     font-size: 20px;
@@ -502,14 +513,16 @@ footer,
     border-bottom: 0;
 }
 
-.lesson .panel .wordlevel {
+.lesson .panel .wordlevel,
+.lesson .panel .sentenceList .sentence .wordlevel2 {
     padding-left: 20px;
     padding-bottom: 10px;
     text-align: left;
     clear: both;
 }
 
-.lesson .wordlevel .title .score {
+.lesson .wordlevel .title .score,
+.lesson .panel .sentenceList .sentence .wordlevel2 .title .score {
     font-size: 14px;
     color: #286090;
 }
