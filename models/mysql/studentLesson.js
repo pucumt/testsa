@@ -28,10 +28,14 @@ const StudentLesson = db.defineModel('studentLessons', {
         type: db.FLOAT,
         defaultValue: 0
     }, //句子平均分
+    paraProcess: {
+        type: db.INTEGER,
+        defaultValue: 0
+    }, //段落进度
     paragraphAve: {
         type: db.FLOAT,
         defaultValue: 0
-    } //课文平均分
+    } //段落平均分
 });
 module.exports = StudentLesson;
 

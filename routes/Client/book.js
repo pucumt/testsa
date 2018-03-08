@@ -173,9 +173,18 @@ module.exports = function (app) {
             .then(function (avg) {
                 switch (req.body.contentType) {
                     case "0":
-                        return {
-                            paragraphAve: req.body.score
-                        };
+                        var option = {
+                            paragraphAve: avg
+                        }
+                        if (scoreResult._id) {
+                            //new;
+                            if (isExist) {
+                                option.paraProcess = model.db.sequelize.literal('`paraProcess`+1');
+                            } else {
+                                option.paraProcess = 1;
+                            }
+                        }
+                        return option;
                     case "1":
                         var option = {
                             wordAve: avg
@@ -208,9 +217,9 @@ module.exports = function (app) {
     };
 
     function getAvg(req) {
-        if (req.body.contentType == "0") {
-            return Promise.resolve();
-        }
+        // if (req.body.contentType == "0") {
+        //     return Promise.resolve();
+        // }
         return model.db.sequelize.query("select avg(score) as score from studentLessonScores \
                 where isDeleted=false and lessonId=:lessonId and studentId=:studentId and contentType=:contentType", {
                 replacements: {
