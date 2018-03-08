@@ -6,21 +6,25 @@
         <input type="hidden" name="lessonId" id="lessonId" value="{{ lesson._id }}">
     </h1>
 </div>
-<div class="panel panel-default mainModal content">
+<div class="panel panel-default mainModal content para">
     <div class="panel-heading">课文</div>
     <div class="panel-body">
         <div class="toolbar-list">
-            <button id="btnSaveContent" class="btn btn-default btn-sm">保存</button>
+            <!-- <button id="btnSaveContent" class="btn btn-default btn-sm">保存</button> -->
+            <button id="btnAddContent" class="btn btn-default btn-sm">新增课文</button>
             <button id="btnUploadContent" class="btn btn-default btn-sm">上传原声</button>
         </div>
         <div class="content mainModal">
-            <textarea maxlength="1000" rows="5" class="form-control" name="content" id="content"></textarea>
-            <div class="form-inline" style="margin-top:10px;">
-                <div class="form-group">
-                    <label for="duration" class="control-label">时间长度:</label>
-                    <input type="text" maxlength="100" class="form-control" required name="duration" id="duration">
-                </div>
-            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>段落</th>
+                        <th style="width:150px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="gridBody">
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -84,6 +88,10 @@
                     <div class="form-group">
                         <label for="name" class="control-label">名称:</label>
                         <textarea maxlength="1000" rows="5" class="form-control" name="name" id="name"></textarea>
+                    </div>
+                    <div class="form-group startSent">
+                        <label for="startSent" class="control-label">从第几句开始:</label>
+                        <input type="text" maxlength="10" class="form-control" name="startSent" id="startSent">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

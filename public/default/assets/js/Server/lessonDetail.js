@@ -130,29 +130,37 @@ function searchSentence() {
     });
 };
 
+var $mainContentSelectBody = $('.mainModal.content.para table tbody');
+
 function searchContent() {
     var filter = {
         lessonId: $("#lessonId").val()
     };
-    $mainSentenceSelectBody.empty();
+    $mainContentSelectBody.empty();
     selfAjax("post", "/admin/lessonList/search/content", filter, function (data) {
-        if (data && data.content) {
-            $(".mainModal.content #content").val(data.content.name);
-            $(".mainModal.content #duration").val(data.content.duration);
+        if (data && data.contents.length > 0) {
+            var $tr;
+            data.contents.forEach(function (content) {
+                $tr = $('<tr>');
+                $mainContentSelectBody.append($tr);
+                $tr.append($('<td class="lessonSentence">' + content.name + '</td><td id=' +
+                    content._id + '><div class="btn-group">' + getButtons() + '</div></td>'));
+                $tr.find("#" + content._id + " .btn-group").data("obj", content);
+            });
         }
     });
 };
+
 //------------end
 
 $("#btnSaveContent").on("click", function (e) {
-    if ($.trim($(".mainModal.content #content").val()) == "" || $.trim($(".mainModal.content #duration").val()) == "") {
+    if ($.trim($(".mainModal.content #content").val()) == "") {
         showAlert("课文内容和时间不能为空！");
         return;
     }
 
     selfAjax("post", "/admin/lessonContent/save", {
         content: $.trim($('.mainModal.content #content').val()),
-        duration: $.trim($('.mainModal.content #duration').val()),
         lessonId: $("#lessonId").val()
     }, function (data) {
         if (data.error) {
@@ -189,10 +197,29 @@ function addValidation(callback) {
     }, 0);
 };
 
+$("#btnAddContent").on("click", function (e) {
+    isNew = true;
+    destroy();
+    addValidation();
+    $('#myModal #startSent').val(0);
+    $('#myModal .startSent').show();
+    $('#myModal .modal-dialog').addClass("modal-sm");
+    postType = "lessonContent";
+    // $('#name').removeAttr("disabled");
+    $('#myModalLabel').text("新增段落");
+    $('#name').val("");
+    $('#name').attr("rows", 5);
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+});
+
 $("#btnAddWord").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
+    $('#myModal .startSent').hide();
     $('#myModal .modal-dialog').addClass("modal-sm");
     postType = "lessonWord";
     // $('#name').removeAttr("disabled");
@@ -211,7 +238,8 @@ $("#btnSave").on("click", function (e) {
         var postURI = "/admin/" + postType + "/add",
             postObj = {
                 name: $.trim($('#name').val()),
-                lessonId: $("#lessonId").val()
+                lessonId: $("#lessonId").val(),
+                startSent: $('#myModal #startSent').val()
             };
         if (!isNew) {
             postURI = "/admin/" + postType + "/edit";
@@ -225,6 +253,25 @@ $("#btnSave").on("click", function (e) {
             location.reload();
         });
     }
+});
+
+$(".mainModal.content.para #gridBody").on("click", "td .btnEdit", function (e) {
+    isNew = false;
+    destroy();
+    addValidation();
+    $('#myModal .modal-dialog').addClass("modal-sm");
+    postType = "lessonContent";
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    // $('#name').attr("disabled", "disabled");
+    $('#myModalLabel').text("修改段落");
+    $('#name').val(entity.name);
+    $('#myModal #startSent').val(entity.startSent);
+    $('#id').val(entity._id);
+    $('#myModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 });
 
 $(".mainModal.word #gridBody").on("click", "td .btnEdit", function (e) {
@@ -267,6 +314,7 @@ $("#btnAddSentence").on("click", function (e) {
     isNew = true;
     destroy();
     addValidation();
+    $('#myModal .startSent').hide();
     $('#myModal .modal-dialog').removeClass("modal-sm");
     postType = "lessonSentence";
     // $('#name').removeAttr("disabled");

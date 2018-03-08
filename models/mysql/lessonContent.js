@@ -20,7 +20,7 @@ const LessonContent = db.defineModel('lessonContents', {
         type: db.INTEGER,
         defaultValue: 0
     },
-    duration: {
+    startSent: { // 从第几句开始
         type: db.INTEGER,
         defaultValue: 0
     } // 课文需要设置时间段，就是大概要录音多久

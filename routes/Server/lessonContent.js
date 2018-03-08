@@ -14,8 +14,7 @@ module.exports = function (app) {
             .then(function (content) {
                 if (content) {
                     LessonContent.update({
-                            name: req.body.content,
-                            duration: req.body.duration
+                            name: req.body.content
                         }, {
                             where: {
                                 _id: content._id
@@ -31,7 +30,6 @@ module.exports = function (app) {
                             contentType: 0,
                             name: req.body.content,
                             lessonId: req.body.lessonId,
-                            duration: req.body.duration,
                             createdBy: req.session.admin._id
                         })
                         .then(function (result) {
@@ -43,15 +41,68 @@ module.exports = function (app) {
             });
     });
 
+    app.post('/admin/lessonContent/add', checkLogin);
+    app.post('/admin/lessonContent/add', function (req, res) {
+        LessonContent.create({
+                name: req.body.name,
+                lessonId: req.body.lessonId,
+                startSent: req.body.startSent,
+                createdBy: req.session.admin._id,
+                contentType: 0
+            })
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
+
+    app.post('/admin/lessonContent/edit', checkLogin);
+    app.post('/admin/lessonContent/edit', function (req, res) {
+        LessonContent.update({
+                name: req.body.name,
+                startSent: req.body.startSent,
+                updatedDate: new Date(),
+                deletedBy: req.session.admin._id
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
+
+    app.post('/admin/lessonContent/delete', checkLogin);
+    app.post('/admin/lessonContent/delete', function (req, res) {
+        LessonContent.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
+
     app.post('/admin/lessonList/search/content', checkLogin);
     app.post('/admin/lessonList/search/content', function (req, res) {
-        LessonContent.getFilter({
+        LessonContent.getFilters({
                 lessonId: req.body.lessonId,
                 contentType: 0
             })
-            .then(function (content) {
+            .then(function (contents) {
                 res.jsonp({
-                    content: content
+                    contents: contents
                 });
             });
     });
