@@ -151,7 +151,12 @@ $("#btnEnroll").on("click", function (e) {
             };
         selfAjax("post", postURI, postObj, function (data) {
             if (data && data.sucess) {
-                showAlert("报名成功");
+                if (data.orderId) {
+                    // to pay
+                    location.replace("/admin/payexam/" + data.orderId);
+                } else {
+                    location.replace("/admin/examOrderList");
+                }
             } else {
                 showAlert(data.error);
             }
@@ -180,7 +185,12 @@ $("#btnHideEnroll").on("click", function (e) {
             };
         selfAjax("post", postURI, postObj, function (data) {
             if (data && data.sucess) {
-                showAlert("报名成功");
+                if (data.orderId) {
+                    // to pay
+                    location.replace("/admin/payexam/" + data.orderId);
+                } else {
+                    location.replace("/admin/examOrderList");
+                }
             } else {
                 showAlert(data.error);
             }

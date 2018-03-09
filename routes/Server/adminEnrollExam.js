@@ -295,133 +295,164 @@ module.exports = function (app) {
     //examClassExamAreaId: examArea
     app.post('/admin/adminEnrollExam/enroll', checkLogin);
     app.post('/admin/adminEnrollExam/enroll', function (req, res) {
-        model.db.sequelize.query("select 1 from adminEnrollExams O join examClasss C \
-                on C._id=:id and C.isDeleted=false and O.examCategoryId=C.examCategoryId where O.studentId=:studentId and O.isDeleted=false", {
-                replacements: {
-                    id: req.body.examId,
-                    studentId: req.body.studentId
-                },
-                type: model.db.sequelize.QueryTypes.SELECT
+        ExamClass.getFilter({
+                _id: req.body.examId
             })
-            .then(orders => {
-                if (orders.length > 0) {
-                    res.jsonp({
-                        error: "你已经报过名了，此课程不允许多次报名"
-                    });
-                    return;
+            .then(function (examclass) {
+                var strQuery = "select count(0) as count from adminEnrollExams \
+                        where isDeleted=false and isSucceed=1 and studentId=:studentId ";
+                if (examclass.examCategoryId) {
+                    strQuery += " and examCategoryId=:examCategoryId ";
+                } else {
+                    strQuery += " and examId=:examId ";
                 }
-
-                ExamClassExamArea.getFilter({
-                        _id: req.body.examClassExamAreaId
+                model.db.sequelize.query(strQuery, {
+                        replacements: {
+                            studentId: req.body.studentId,
+                            examCategoryId: examclass.examCategoryId,
+                            examId: examclass._id
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
                     })
-                    .then(examClassExamArea => {
-                        // 1. 更新报名考场名额
-                        // 2. 更新总考试名额
-                        // 3. 插入订单
-                        model.db.sequelize.transaction(function (t1) {
-                            return ExamClassExamArea.update({
-                                    enrollCount: model.db.sequelize.literal('`enrollCount`+1')
-                                }, {
-                                    where: {
-                                        _id: req.body.examClassExamAreaId,
-                                        'enrollCount': model.db.sequelize.literal('`enrollCount`<`examCount`')
-                                    },
-                                    transaction: t1
-                                })
-                                .then(function (resultArea) {
-                                    if (resultArea.length && resultArea[0]) {
-                                        // 必须操作成功
-                                        return ExamClass.update({
-                                                enrollCount: model.db.sequelize.literal('`enrollCount` +1')
-                                            }, {
-                                                where: {
-                                                    _id: req.body.examId
-                                                },
-                                                transaction: t1
-                                            })
-                                            .then(function () {
-                                                return AdminEnrollExam.create({
-                                                    studentId: req.body.studentId,
-                                                    studentName: req.body.studentName,
-                                                    mobile: req.body.mobile,
-                                                    examId: req.body.examId,
-                                                    examName: req.body.examName,
-                                                    examCategoryId: req.body.examCategoryId,
-                                                    examCategoryName: req.body.examCategoryName,
-                                                    examAreaId: examClassExamArea.examAreaId,
-                                                    examAreaName: examClassExamArea.examAreaName,
-                                                    createdBy: req.session.admin._id
-                                                }, {
-                                                    transaction: t1
-                                                });
-                                            });
-                                    } else {
-                                        return {
-                                            error: "已经报满了"
-                                        };
+                    .then(function (result) {
+                        if (result && result[0] && result[0].count) {
+                            // 已经报过名了
+                            res.jsonp({
+                                error: "你已经报过名了，此测试不允许多次报名"
+                            });
+                            return;
+                        }
+                        ExamClassExamArea.getFilter({
+                                _id: req.body.examClassExamAreaId
+                            })
+                            .then(examClassExamArea => {
+                                // 1. 更新报名考场名额
+                                // 2. 更新总考试名额
+                                // 3. 插入订单
+                                model.db.sequelize.transaction(function (t1) {
+                                    return ExamClassExamArea.update({
+                                            enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+                                        }, {
+                                            where: {
+                                                _id: req.body.examClassExamAreaId,
+                                                'enrollCount': model.db.sequelize.literal('`enrollCount`<`examCount`')
+                                            },
+                                            transaction: t1
+                                        })
+                                        .then(function (resultArea) {
+                                            if (resultArea.length && resultArea[0]) {
+                                                // 必须操作成功
+                                                return ExamClass.update({
+                                                        enrollCount: model.db.sequelize.literal('`enrollCount` +1')
+                                                    }, {
+                                                        where: {
+                                                            _id: req.body.examId
+                                                        },
+                                                        transaction: t1
+                                                    })
+                                                    .then(function () {
+                                                        return AdminEnrollExam.create({
+                                                            studentId: req.body.studentId,
+                                                            studentName: req.body.studentName,
+                                                            mobile: req.body.mobile,
+                                                            examId: req.body.examId,
+                                                            examName: req.body.examName,
+                                                            examPrice: examclass.examPrice,
+                                                            payPrice: examclass.examPrice,
+                                                            examCategoryId: req.body.examCategoryId,
+                                                            examCategoryName: req.body.examCategoryName,
+                                                            examAreaId: examClassExamArea.examAreaId,
+                                                            examAreaName: examClassExamArea.examAreaName,
+                                                            createdBy: req.session.admin._id
+                                                        }, {
+                                                            transaction: t1
+                                                        });
+                                                    });
+                                            } else {
+                                                return {
+                                                    error: "已经报满了"
+                                                };
+                                            }
+                                        });
+                                }).then(function (result) {
+                                    if (result.error) {
+                                        res.jsonp(result);
+                                        return;
                                     }
+                                    res.jsonp({
+                                        orderId: result.payPrice && result._id,
+                                        sucess: true
+                                    });
+                                }).catch(function () {
+                                    res.jsonp({
+                                        error: "报名失败"
+                                    });
                                 });
-                        }).then(function (result) {
-                            if (result.error) {
-                                res.jsonp(result);
-                                return;
-                            }
-                            res.jsonp({
-                                sucess: true
                             });
-                        }).catch(function () {
-                            res.jsonp({
-                                error: "报名失败"
-                            });
-                        });
                     });
             });
     });
 
     app.post('/admin/adminEnrollExam/hideEnroll', checkLogin);
     app.post('/admin/adminEnrollExam/hideEnroll', function (req, res) {
-        model.db.sequelize.query("select 1 from adminEnrollExams O join examClasss C \
-        on C._id=:id and C.isDeleted=false and O.examCategoryId=C.examCategoryId where O.studentId=:studentId and O.isDeleted=false", {
-                replacements: {
-                    id: req.body.examId,
-                    studentId: req.body.studentId
-                },
-                type: model.db.sequelize.QueryTypes.SELECT
+        ExamClass.getFilter({
+                _id: req.body.examId
             })
-            .then(orders => {
-                if (orders.length > 0) {
-                    res.jsonp({
-                        error: "你已经报过名了，此课程不允许多次报名"
-                    });
-                    return;
+            .then(function (examclass) {
+                var strQuery = "select count(0) as count from adminEnrollExams \
+                        where isDeleted=false and isSucceed=1 and studentId=:studentId ";
+                if (examclass.examCategoryId) {
+                    strQuery += " and examCategoryId=:examCategoryId ";
+                } else {
+                    strQuery += " and examId=:examId ";
                 }
-
-                ExamClassExamArea.getFilter({
-                        _id: req.body.examClassExamAreaId
-                    })
-                    .then(examClassExamArea => {
-                        // 直接插入订单，不更改名额
-                        return AdminEnrollExam.create({
+                model.db.sequelize.query(strQuery, {
+                        replacements: {
                             studentId: req.body.studentId,
-                            studentName: req.body.studentName,
-                            mobile: req.body.mobile,
-                            examId: req.body.examId,
-                            examName: req.body.examName,
-                            isHide: true,
-                            examCategoryId: req.body.examCategoryId,
-                            examCategoryName: req.body.examCategoryName,
-                            examAreaId: examClassExamArea.examAreaId,
-                            examAreaName: examClassExamArea.examAreaName,
-                            createdBy: req.session.admin._id
-                        }).then(function () {
+                            examCategoryId: examclass.examCategoryId,
+                            examId: examclass._id
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(function (result) {
+                        if (result && result[0] && result[0].count) {
+                            // 已经报过名了
                             res.jsonp({
-                                sucess: true
+                                error: "你已经报过名了，此测试不允许多次报名"
                             });
-                        }).catch(function () {
-                            res.jsonp({
-                                error: "报名失败"
+                            return;
+                        }
+
+                        ExamClassExamArea.getFilter({
+                                _id: req.body.examClassExamAreaId
+                            })
+                            .then(examClassExamArea => {
+                                // 直接插入订单，不更改名额
+                                return AdminEnrollExam.create({
+                                    studentId: req.body.studentId,
+                                    studentName: req.body.studentName,
+                                    mobile: req.body.mobile,
+                                    examId: req.body.examId,
+                                    examName: req.body.examName,
+                                    examPrice: examclass.examPrice,
+                                    payPrice: examclass.examPrice,
+                                    isHide: true,
+                                    examCategoryId: req.body.examCategoryId,
+                                    examCategoryName: req.body.examCategoryName,
+                                    examAreaId: examClassExamArea.examAreaId,
+                                    examAreaName: examClassExamArea.examAreaName,
+                                    createdBy: req.session.admin._id
+                                }).then(function (order) {
+                                    res.jsonp({
+                                        orderId: order.payPrice && order._id,
+                                        sucess: true
+                                    });
+                                }).catch(function () {
+                                    res.jsonp({
+                                        error: "报名失败"
+                                    });
+                                });
                             });
-                        });
                     });
             });
     });
@@ -452,10 +483,12 @@ module.exports = function (app) {
                             transaction: t1
                         })
                         .then(function () {
+                            var curDate = new Date();
                             return AdminEnrollExam.update({
-                                isDeleted: true,
+                                isSucceed: 9,
                                 deletedBy: req.session.admin._id,
-                                deletedDate: new Date()
+                                updatedDate: curDate,
+                                deletedDate: curDate
                             }, {
                                 where: {
                                     _id: req.body.id

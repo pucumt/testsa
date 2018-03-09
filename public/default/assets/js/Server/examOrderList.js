@@ -68,6 +68,12 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
     var obj = e.currentTarget;
     $(obj).attr("disabled", "disabled");
     var entity = $(obj).parent().data("obj");
+
+    if (entity.payPrice > 0) {
+        showAlert("订单有支付金额，请先退费");
+        return;
+    }
+
     showConfirm("确定要取消订单" + entity._id + "吗？");
 
     $("#btnConfirmSave").off("click").on("click", function (e) {
@@ -78,12 +84,8 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("已取消");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnDelete").remove();
+                location.reload();
             }
-            $(obj).removeAttr("disabled");
         });
     });
 });
