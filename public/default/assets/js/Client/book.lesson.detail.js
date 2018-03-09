@@ -283,9 +283,9 @@ function loadWord() {
             }
             hideRecords();
             showFirstRecord();
-            // loadAiengine();
+            loadAiengine();
 
-            hideLoading();
+            // hideLoading();
         });
 };
 
