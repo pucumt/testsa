@@ -371,7 +371,7 @@ function startRecord(obj, panel) {
             var sentences = ($('#curType').val() == "0" && res.result.details); // word
 
             if (sentences) {
-                initParaDetails(sentences); // show sentence score
+                initParaDetails(panel.find(".sentenceList .sentence"), sentences); // show sentence score
             }
 
             saveScore(obj, sentences); // save score to db
