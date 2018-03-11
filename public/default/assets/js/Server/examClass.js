@@ -12,13 +12,19 @@ $(document).ready(function () {
 
         }
     });
+
+    $("#enrollEndDate").datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        autoclose: true,
+        language: "zh-CN"
+    });
     searchExams();
 });
 
 //------------search funfunction
 
 var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function (isWeixin, isScorePublished) {
+var getButtons = function (isWeixin, isScorePublished, examDate) {
     var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
     if (isScorePublished) {
         buttons = buttons + '<a class="btn btn-default btnScorePublish">隐藏成绩</a>';
@@ -30,6 +36,10 @@ var getButtons = function (isWeixin, isScorePublished) {
     } else {
         buttons += '<a class="btn btn-default btnPublish">发布</a>';
     }
+    if (examDate && moment(examDate).isAfter(moment())) {
+        buttons += '<a class="btn btn-default btnExamNum">生成考号</a>';
+    }
+
     return buttons;
 };
 var getClassStatus = function (isWeixin) {
@@ -55,7 +65,7 @@ function searchExams(p) {
                 var $tr = $('<tr id=' + examClass._id + '><td><span><input type="checkbox" name="examId" value=' + examClass._id + ' /></span>' + examClass.name + '</td><td>' +
                     getClassStatus(examClass.isWeixin) + '</td><td>' + moment(examClass.examDate).format("YYYY-MM-DD") + '</td><td>' + examClass.examTime +
                     '</td><td>' + examClass.examCategoryName + '</td><td>' + examClass.examCount + '</td><td>' +
-                    examClass.enrollCount + '</td><td><div class="btn-group">' + getButtons(examClass.isWeixin, examClass.isScorePublished) + '</div></td></tr>');
+                    examClass.enrollCount + '</td><td><div class="btn-group">' + getButtons(examClass.isWeixin, examClass.isScorePublished, examClass.examDate) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", examClass);
                 $mainSelectBody.append($tr);
             });
@@ -253,6 +263,7 @@ $("#btnAdd").on("click", function (e) {
     $('#courseContent').val("");
     $('#examPrice').val(0);
     $('#examSequence').val(0);
+    $('#enrollEndDate').val("");
     resetDropDown();
     resetCheckBox();
     resetExamArea();
@@ -309,6 +320,7 @@ $("#btnSave").on("click", function (e) {
                 courseContent: $('#courseContent').val(),
                 examPrice: $('#examPrice').val(),
                 sequence: $('#examSequence').val(),
+                enrollEndDate: $('#enrollEndDate').val(),
                 subjects: subjects.length > 0 ? JSON.stringify(subjects) : [],
                 examAreas: examAreas.length > 0 ? JSON.stringify(examAreas) : []
             };
@@ -341,6 +353,7 @@ $("#gridBody").on("click", "td .btnEdit", function (e) {
     $('#examCount').val(entity.examCount);
     $('#examPrice').val(entity.examPrice);
     $('#examSequence').val(entity.sequence);
+    $('#enrollEndDate').val(entity.enrollEndDate && moment(entity.enrollEndDate).format("YYYY-MM-DD HH:mm"));
     $('#id').val(entity._id);
     $('#courseContent').val(entity.courseContent);
     resetDropDown(entity.examCategoryId);
@@ -362,7 +375,7 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                $(obj).parents()[2].remove();
+                refreshPage();
             }
         });
     });
@@ -379,13 +392,7 @@ $("#gridBody").on("click", "td .btnScorePublish", function (e) {
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                if (entity.isScorePublished) {
-                    operation.find(".btnScorePublish").text("显示成绩");
-                } else {
-                    operation.find(".btnScorePublish").text("隐藏成绩");
-                }
-
+                refreshPage();
             }
         });
     });
@@ -401,11 +408,7 @@ $("#gridBody").on("click", "td .btnPublish", function (e) {
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("发布");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnPublish").remove();
-                operation.append("<a class='btn btn-default btnUnPublish'>停用</a>");
+                refreshPage();
             }
         });
     });
@@ -421,15 +424,29 @@ $("#gridBody").on("click", "td .btnUnPublish", function (e) {
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("停用");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnUnPublish").remove();
-                operation.append("<a class='btn btn-default btnPublish'>发布</a>");
+                refreshPage();
             }
         });
     });
 });
+
+// 生成考号
+$("#gridBody").on("click", "td .btnExamNum", function (e) {
+    showConfirm("确定要生成考试号吗？");
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    $("#btnConfirmSave").off("click").on("click", function (e) {
+        selfAjax("post", "/admin/examClass/generateExamNumber", {
+            id: entity._id
+        }, function (data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                refreshPage();
+            }
+        });
+    });
+});
+
 
 function getAllCheckedExams() {
     var examIds = [];
@@ -453,8 +470,7 @@ $(".toolbar #btnPublishAll").on("click", function (e) {
                 if (data.sucess) {
                     showAlert("发布成功！");
                     $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
-                        var page = parseInt($("#mainModal #page").val());
-                        searchExams(page);
+                        refreshPage();
                     });
                 }
             });
@@ -473,11 +489,15 @@ $(".toolbar #btnStopAll").on("click", function (e) {
                 if (data.sucess) {
                     showAlert("停用成功！");
                     $("#confirmModal .modal-footer .btn-default").off("click").on("click", function (e) {
-                        var page = parseInt($("#mainModal #page").val());
-                        searchExams(page);
+                        refreshPage();
                     });
                 }
             });
         });
     }
 });
+
+function refreshPage() {
+    var page = parseInt($("#mainModal #page").val());
+    searchExams(page);
+};

@@ -64,6 +64,10 @@ const AdminEnrollExam = db.defineModel('adminEnrollExams', {
         type: db.FLOAT,
         defaultValue: 0
     }, // 退款金额
+    examNum: {
+        type: db.INTEGER,
+        defaultValue: 0
+    }, // 考试号
     isHide: {
         type: db.BOOLEAN,
         defaultValue: false

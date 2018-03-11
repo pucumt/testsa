@@ -35,6 +35,7 @@ function searchOrder(p) {
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
                     getTrainOrderStatus(examOrder.isSucceed) + '</td><td>' +
                     examOrder.studentName + '</td><td>' + examOrder.examName + '</td><td>' +
+                    (examOrder.examNum) + '</td><td>' +
                     (examOrder.isPayed ? "是" : "否") + '</td><td>' +
                     (examOrder.payPrice || 0) + '</td><td>' +
                     (examOrder.rebatePrice || 0) + '</td><td>' +

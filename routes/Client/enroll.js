@@ -217,7 +217,7 @@ module.exports = function (app) {
                 res.render('Client/enroll_exam_detail.html', {
                     title: '考试报名',
                     exam: exam,
-                    isExpired: ((new Date((new Date()).toLocaleDateString())) > exam.examDate)
+                    isExpired: ((new Date()) > exam.enrollEndDate)
                 });
             });
     });

@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     loadData();
     $("#page").val(1);
 });
@@ -7,10 +7,10 @@ var $selectBody = $('.container.enroll .exam-list');
 
 function loadData(p) {
     var pStr = p ? "p=" + p : "";
-    selfAjax("get", "/enroll/exam?" + pStr, null, function(data) {
+    selfAjax("get", "/enroll/exam?" + pStr, null, function (data) {
         if (data && data.examClasss.length > 0) {
             var d = $(document.createDocumentFragment());
-            data.examClasss.forEach(function(examClass) {
+            data.examClasss.forEach(function (examClass) {
                 d.append(generateLi(examClass));
             });
             $selectBody.append(d);
@@ -45,7 +45,7 @@ function generateLi(examClass) {
     $infoContainer.append($('<div><h3>' + examClass.name + '</h3></div>'));
     $infoContainer.append($('<div>日期：' + moment(examClass.examDate).format("YYYY-M-D") + '&nbsp;&nbsp;时间：' + examClass.examTime + '</div>'));
     var isFull = "";
-    if (moment().subtract(1, 'd').isAfter(examClass.examDate)) {
+    if (moment().isAfter(moment(examClass.enrollEndDate))) {
         isFull = "<span class='full'>(已过期)</span>";
     } else if (examClass.enrollCount == examClass.examCount) {
         isFull = "<span class='full'>(已满)</span>";
@@ -58,18 +58,18 @@ function generateLi(examClass) {
     return $li;
 };
 
-$("#btnMore").on("click", function(e) {
+$("#btnMore").on("click", function (e) {
     var page = parseInt($("#page").val()) + 1;
     loadData(page);
 });
 
-$selectBody.on("click", "li", function(e) {
+$selectBody.on("click", "li", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).data("obj");
     location.href = "/enroll/exam/" + entity._id;
 });
 
-$selectBody.on("click", "li .btnExam", function(e) {
+$selectBody.on("click", "li .btnExam", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parents("li").data("obj");
     location.href = "enroll/exam/card/" + entity._id;
@@ -77,7 +77,7 @@ $selectBody.on("click", "li .btnExam", function(e) {
     e.stopPropagation();
 });
 
-$selectBody.on("click", "li .btnScore", function(e) {
+$selectBody.on("click", "li .btnScore", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parents("li").data("obj");
     location.href = "enroll/exam/score/" + entity._id;

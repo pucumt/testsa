@@ -567,6 +567,33 @@ module.exports = function (app) {
             });
     });
 
+    // 生成考试号
+    app.post('/admin/examClass/generateExamNumber', checkLogin);
+    app.post('/admin/examClass/generateExamNumber', function (req, res) {
+        // ExamClassExamArea.getFilters({})
+        //     .then(function (examClassExamAreas) {
+        AdminEnrollExam.getFilters({
+                examId: req.body.id
+            })
+            .then(function (orders) {
+                var i = 0,
+                    areaJson = {};
+                orders.sort(function (orderA, orderB) {
+                        return orderA.examAreaId > orderB.examAreaId;
+                    })
+                    .forEach(function (order) {
+                        i++;
+                        order.update({
+                            examNum: i
+                        });
+                    });
+                res.jsonp({
+                    sucess: true
+                });
+            });
+        // });
+    });
+
     function isEmptyObject(e) {
         var t;
         for (t in e) {

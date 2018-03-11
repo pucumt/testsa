@@ -66,6 +66,9 @@ const ExamClass = db.defineModel('examClasss', {
     examPrice: { // 报名费
         type: db.FLOAT,
         defaultValue: 0
+    },
+    enrollEndDate: {
+        type: db.DATE
     }
 });
 module.exports = ExamClass;
