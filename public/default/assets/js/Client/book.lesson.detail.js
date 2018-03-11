@@ -254,7 +254,10 @@ function loadWord() {
 
                 if ($("#curType").val() == "0") {
                     if (data.length > 0) {
-                        pageData = data;
+                        pageData = data.filter(function (content) {
+                            return content.contentType == 2;
+                            // only save sentences to show org sound
+                        });
 
                         // data[0].replaceName = "分数：";
                         var d = $(document.createDocumentFragment());
@@ -272,7 +275,7 @@ function loadWord() {
                             $sentenceList.append($sentenceBody);
                             $divContent.append($sentenceList);
                             if (content.scoreResult) {
-                                initParaDetails($sentenceBody, JSON.parse(content.scoreResult));
+                                initParaDetails($sentenceBody, JSON.parse(content.scoreResult), content.startSent);
                             }
                             $wordBody.append(d);
                         });
@@ -323,12 +326,12 @@ function generateSentence(result, word, level) {
     return panel;
 };
 
-function initParaDetails($sentenceBody, objResult) {
+function initParaDetails($sentenceBody, objResult, startSent) {
     // 段落的评测结果，通过句子的形式保留下来
     $sentenceBody.empty();
     var d = $(document.createDocumentFragment());
     for (var i = 0; i < objResult.length; i++) {
-        d.append(generateSentence(objResult[i], pageData[i + 1], 2));
+        d.append(generateSentence(objResult[i], pageData[i + startSent], 2));
     };
     $sentenceBody.append(d);
 };
@@ -371,7 +374,7 @@ function startRecord(obj, panel) {
             var sentences = ($('#curType').val() == "0" && res.result.details); // word
 
             if (sentences) {
-                initParaDetails(panel.find(".sentenceList .sentence"), sentences); // show sentence score
+                initParaDetails(panel.find(".sentenceList .sentence"), sentences, obj.startSent); // show sentence score
             }
 
             saveScore(obj, sentences); // save score to db
