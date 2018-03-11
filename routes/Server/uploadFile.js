@@ -1670,7 +1670,8 @@ module.exports = function (app) {
         LessonContent.findAll({
                 'where': {
                     lessonId: lessonId,
-                    contentType: contentType
+                    contentType: contentType,
+                    isDeleted: false
                 },
                 order: [
                     ['sequence'],
