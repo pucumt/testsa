@@ -31,7 +31,7 @@ function searchOrder(p) {
                 return '';
             };
             data.adminEnrollExams.forEach(function (examOrder) {
-                var deletedDate = examOrder.deletedDate ? moment(examOrder.deletedDate).format() : "";
+                var deletedDate = examOrder.deletedDate ? moment(examOrder.deletedDate).format("YYYY-MM-DD HH:mm") : "";
                 var $tr = $('<tr id=' + examOrder._id + '><td>' + examOrder._id + '</td><td>' +
                     getTrainOrderStatus(examOrder.isSucceed) + '</td><td>' +
                     examOrder.studentName + '</td><td>' + examOrder.examName + '</td><td>' +
