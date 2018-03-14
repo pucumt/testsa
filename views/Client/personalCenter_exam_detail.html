@@ -35,7 +35,7 @@
                         {% endfor %} {% endif %}
                     </div>
                     <div>
-                        {% if not order.isPayed %}
+                        {% if (not order.isPayed) and (order.payPrice >0) %}
                         <button type="button" id="btnPay" orderId="{{ order._id }}" class="btn btn-danger btn-xs">支付</button> {% endif %}
                         <button type="button" class="btn btn-primary btn-xs btnEnroll pull-right">课程报名</button>
                     </div>

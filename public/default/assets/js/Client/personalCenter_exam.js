@@ -49,9 +49,13 @@ function renderOrders(orders) {
             var price = order.payPrice,
                 status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '',
                 cancelButton = '';
-            if ((new Date()) < (new Date(order.examDate.substr(0, 10))) && price > 0) {
+            if (moment(order.enrollEndDate).isAfter(moment()) && price == 0) {
                 cancelButton = '<button type="button" id="btnCancel" style="margin-left:40px;" class="btn btn-primary btn-xs pull-right">取消</button>';
             }
+            if (order.payPrice > 0 && (!order.isPayed)) {
+                status = '<button type="button" id="btnPay" style="margin-right: 10px;" class="btn btn-danger btn-xs pull-right">支付</button>' + status;
+            }
+
             d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
                 '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
                 moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
