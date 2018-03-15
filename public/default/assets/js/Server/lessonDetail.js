@@ -263,6 +263,7 @@ $(".mainModal.content.para #gridBody").on("click", "td .btnEdit", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     // $('#name').attr("disabled", "disabled");
+    $('#myModal .startSent').show();
     $('#myModalLabel').text("修改段落");
     $('#name').val(entity.name);
     $('#myModal #startSent').val(entity.startSent);
@@ -282,6 +283,7 @@ $(".mainModal.word #gridBody").on("click", "td .btnEdit", function (e) {
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
     // $('#name').attr("disabled", "disabled");
+    $('#myModal .startSent').hide();
     $('#myModalLabel').text("修改单词");
     $('#name').val(entity.name);
     $('#name').attr("rows", 1);
@@ -334,7 +336,7 @@ $(".mainModal.sentence #gridBody").on("click", "td .btnEdit", function (e) {
     postType = "lessonSentence";
     var obj = e.currentTarget;
     var entity = $(obj).parent().data("obj");
-    // $('#name').attr("disabled", "disabled");
+    $('#myModal .startSent').hide();
     $('#myModalLabel').text("修改单词");
     $('#name').val(entity.name);
     $('#name').attr("rows", 1);
