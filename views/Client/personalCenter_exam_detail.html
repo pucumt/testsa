@@ -6,7 +6,7 @@
     <div class="orderList">
         <ul class="student-list clearfix list-unstyled">
             {% if order %}
-            <li class="clearfix" style="padding-bottom: 10px;">
+            <li class="clearfix" style="padding-bottom: 10px;border-bottom:0;">
                 <div>
                     <div class="detail">
                         <div class="studentName">学员:{{ order.studentName }}</div>
@@ -25,16 +25,29 @@
                     </div>
                     {% endif %}
 
-                    <div class="price">
-                        {% if order.scores and order.scores.length>0 %} {% for score in order.scores %}
-                        <div class="score">
-                            <div>科目:{{ score.subjectName }} 成绩:{% if train and train.isScorePublished %}{{ score.score }}{% endif
-                                %} {% if score.report and train and train.isScorePublished %} 报告:
+                    <div class="price" style="margin-top: 10px;">
+                        {% if order.scores and order.scores.length>0 %}
+                        <div class="score row">
+                            <div class="col-xs-6">科目</div>
+                            <div class="col-xs-6">成绩</div>
+                            <div class="col-xs-6 gradeS1">查看等级</div>
+                            <div class="col-xs-6">报告</div>
+                        </div>
+                        {% for score in order.scores %}
+                        <div class="score row">
+                            <div class="col-xs-6">{{ score.subjectName }}</div>
+                            <div class="col-xs-6">{% if train and train.isScorePublished %}{{ score.score }}{% endif %}</div>
+                            <div class="col-xs-6 grade gradeS1">
+                                <a href="/showGrade/{{ score.grade }}">等级</a>
+                            </div>
+                            <div class="col-xs-6">{% if score.report and train and train.isScorePublished %}
                                 <a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
                         </div>
-                        {% endfor %} {% endif %}
+                        {% endfor %}
+                        <div class="score row"></div>
+                        {% endif %}
                     </div>
-                    <div>
+                    <div class="clearfix" style="margin-top: 10px;">
                         {% if (not order.isPayed) and (order.payPrice >0) %}
                         <button type="button" id="btnPay" orderId="{{ order._id }}" class="btn btn-danger btn-xs">支付</button> {% endif %}
                         <button type="button" class="btn btn-primary btn-xs btnEnroll pull-right">课程报名</button>
@@ -45,6 +58,7 @@
         </ul>
     </div>
 </div>
+
 <!--modal-->
 <div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
 <div id="pay-select" style="display:none;">
@@ -52,6 +66,7 @@
         微信支付(推荐)
     </div>
 </div>
+
 <div class="modal" id="confirmModal" style="display:none; height: 100%;">
     <div class="modal-backdrop fade in" style="height: 100%;"></div>
     <div class="modal-dialog" role="document">
@@ -69,6 +84,7 @@
         </div>
     </div>
 </div>
+
 <script type="text/javascript" src="/default/assets/js/Client/personalCenter_exam.detail.js?v=1.000"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

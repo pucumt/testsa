@@ -18,6 +18,10 @@ $(document).ready(function () {
     $(".enroll.personalCenter .orderList ul").on("click", "#btnCancel", function (e) {
         CancelOrder(e);
     });
+
+    $(".enroll.personalCenter .orderList ul").on("click", "#btnPay", function (e) {
+        GotoDetail(e);
+    });
 });
 
 function loadOrders() {
@@ -50,7 +54,7 @@ function renderOrders(orders) {
                 status = order.score ? '<span class="status pull-right">' + order.score + '</span>' : '',
                 cancelButton = '';
             if (moment(order.enrollEndDate).isAfter(moment()) && price == 0) {
-                cancelButton = '<button type="button" id="btnCancel" style="margin-left:40px;" class="btn btn-primary btn-xs pull-right">取消</button>';
+                cancelButton = '<button type="button" id="btnCancel" style="margin-left:10px;" class="btn btn-primary btn-xs pull-right">取消</button>';
             }
             if (order.payPrice > 0 && (!order.isPayed)) {
                 status = '<button type="button" id="btnPay" style="margin-right: 10px;" class="btn btn-danger btn-xs pull-right">支付</button>' + status;

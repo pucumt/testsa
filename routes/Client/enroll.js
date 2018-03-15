@@ -68,6 +68,16 @@ module.exports = function (app) {
         });
     });
 
+    // /showGrade/{{ score.grade }}
+    // 显示级别
+    app.get('/showGrade/:grade', function (req, res) {
+        res.render('Client/score_grade.html', {
+            title: '成绩等级',
+            user: req.session.user,
+            grade: req.params.grade
+        });
+    });
+
     app.post('/enroll/class', function (req, res) {
         //debugger;
         // number 类型

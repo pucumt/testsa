@@ -1,6 +1,7 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     AdminEnrollExam = model.adminEnrollExam,
+    AdminEnrollExamScore = model.adminEnrollExamScore,
     AdminEnrollTrain = model.adminEnrollTrain,
     ExamClassExamArea = model.examClassExamArea,
     TrainClass = model.trainClass,
@@ -143,34 +144,41 @@ module.exports = function (app) {
             })
             .then(function (order) {
                 if (order) {
-                    ExamClass.getFilter({
-                            _id: order.examId
+                    AdminEnrollExamScore.getFilters({
+                            examOrderId: order._id
                         })
-                        .then(function (train) {
-                            if (train) {
-                                if (order.classRoomId) {
-                                    ClassRoom.getFilter({
-                                            _id: order.classRoomId
-                                        })
-                                        .then(function (classRoom) {
+                        .then(function (scores) {
+                            order.scores = scores;
+
+                            ExamClass.getFilter({
+                                    _id: order.examId
+                                })
+                                .then(function (train) {
+                                    if (train) {
+                                        if (order.classRoomId) {
+                                            ClassRoom.getFilter({
+                                                    _id: order.classRoomId
+                                                })
+                                                .then(function (classRoom) {
+                                                    res.render('Client/personalCenter_exam_detail.html', {
+                                                        title: '测试列表',
+                                                        user: req.session.user,
+                                                        order: order,
+                                                        train: train,
+                                                        classRoom: classRoom
+                                                    });
+                                                })
+                                        } else {
                                             res.render('Client/personalCenter_exam_detail.html', {
                                                 title: '测试列表',
                                                 user: req.session.user,
                                                 order: order,
-                                                train: train,
-                                                classRoom: classRoom
+                                                train: train
                                             });
-                                        })
-                                } else {
-                                    res.render('Client/personalCenter_exam_detail.html', {
-                                        title: '测试列表',
-                                        user: req.session.user,
-                                        order: order,
-                                        train: train
-                                    });
-                                }
-                            }
-                        })
+                                        }
+                                    }
+                                })
+                        });
                 }
             });
     });

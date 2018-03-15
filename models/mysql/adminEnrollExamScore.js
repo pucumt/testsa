@@ -23,6 +23,10 @@ const AdminEnrollExamScore = db.defineModel('adminEnrollExamScores', {
     report: {
         type: db.STRING(100),
         defaultValue: ''
+    },
+    grade: {
+        type: db.INTEGER,
+        defaultValue: 0
     }
 });
 module.exports = AdminEnrollExamScore;
