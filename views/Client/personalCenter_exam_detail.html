@@ -41,7 +41,7 @@
                                 <a href="/showGrade/{{ score.grade }}">等级</a>
                             </div>
                             <div class="col-xs-6">{% if score.report and train and train.isScorePublished %}
-                                <a href="/uploads/{{ score.report }}">下载</a>{% endif %}</div>
+                                <a href="/uploads/exams/{{ order.examId }}/{{ score.subjectName }}/{{ score.report }}">下载</a>{% endif %}</div>
                         </div>
                         {% endfor %}
                         <div class="score row"></div>

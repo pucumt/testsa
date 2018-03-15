@@ -74,7 +74,7 @@ module.exports = function (app) {
                                                     subjectId: subjectId
                                                 })
                                                 .then(function (orgScore) {
-                                                    var report = student.name + "_" + account.name + "_" + subjectName + "_" + order.examName.substr(0, 19) + ".pdf";
+                                                    var report = student.name + "_" + account.name + ".pdf";
                                                     if (orgScore) {
                                                         // update
                                                         return AdminEnrollExamScore.update({
