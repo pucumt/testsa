@@ -30,15 +30,15 @@
                         <div class="score row">
                             <div class="col-xs-6">科目</div>
                             <div class="col-xs-6">成绩</div>
-                            <div class="col-xs-6 gradeS1">查看等级</div>
+                            <div class="col-xs-6 gradeS1">可报班型</div>
                             <div class="col-xs-6">报告</div>
                         </div>
                         {% for score in order.scores %}
                         <div class="score row">
                             <div class="col-xs-6">{{ score.subjectName }}</div>
                             <div class="col-xs-6">{% if train and train.isScorePublished %}{{ score.score }}{% endif %}</div>
-                            <div class="col-xs-6 grade gradeS1">
-                                <a href="/showGrade/{{ score.grade }}">等级</a>
+                            <div class="col-xs-6 grade gradeS1" id="{{ score.grade }}">
+                                <a href="/showGrade/{{ score.grade }}/{{ order.studentName }}">点击查看</a>
                             </div>
                             <div class="col-xs-6">{% if score.report and train and train.isScorePublished %}
                                 <a href="/uploads/exams/{{ order.examId }}/{{ score.subjectName }}/{{ score.report }}">下载</a>{% endif %}</div>

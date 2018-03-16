@@ -50,6 +50,21 @@ var xlsx = require("node-xlsx"),
     });
 
 module.exports = function (app) {
+    function getGradeNumber(gradeName) {
+        switch (gradeName) {
+            case '基础班':
+                return 1;
+            case '培优班':
+                return 2;
+            case '通中班':
+                return 3;
+            case '尖子班':
+                return 4;
+            default:
+                return 0;
+        }
+    };
+
     function updateScore(scoreEntity, examId, subjectId, subjectName) {
         return StudentAccount.getFilter({
                 name: scoreEntity[1]
@@ -79,6 +94,7 @@ module.exports = function (app) {
                                                         // update
                                                         return AdminEnrollExamScore.update({
                                                             score: scoreEntity[2],
+                                                            grade: getGradeNumber(scoreEntity[3]),
                                                             report: report
                                                         }, {
                                                             where: {
@@ -92,6 +108,7 @@ module.exports = function (app) {
                                                             subjectId: subjectId,
                                                             subjectName: subjectName,
                                                             score: scoreEntity[2],
+                                                            grade: getGradeNumber(scoreEntity[3]),
                                                             report: report
                                                         });
                                                     }
@@ -140,6 +157,7 @@ module.exports = function (app) {
             });
     });
 
+    // 提交成绩
     app.post('/admin/score', upload.single('avatar'), function (req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
@@ -692,7 +710,7 @@ module.exports = function (app) {
 
     app.post('/admin/export/scoreTemplate', function (req, res) {
         var data = [
-            ['姓名', '联系方式', '成绩']
+            ['姓名', '联系方式', '成绩', '等级']
         ];
         var p = AdminEnrollExam.getFilters({
                 examId: req.body.examId,
@@ -739,7 +757,7 @@ module.exports = function (app) {
 
     app.post('/admin/export/scoreSchoolTemplate', function (req, res) {
         var data = [
-            ['姓名', '联系方式', '考场', '学校', '班级', '成绩']
+            ['姓名', '联系方式', '考场', '学校', '班级', '成绩', '等级']
         ];
         var p = AdminEnrollExam.getFilters({
                 examId: req.body.examId,

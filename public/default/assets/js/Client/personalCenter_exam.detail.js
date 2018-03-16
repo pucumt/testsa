@@ -38,12 +38,18 @@ $(document).ready(function () {
         });
     });
 
-    $(".price").on("click", ".score .grade", function (e) {
-        location.replace("/score/");
-    });
+    // $(".price").on("click", ".score .grade", function (e) {
+    //     location.replace("/score/");
+    // });
 
-    if ($(".orderList ul li .title").text().indexOf("小升初") < 0) {
-        // 不是小升初测试，隐藏等级显示
-        // $(".orderList ul li .gradeS1").hide();
-    }
+    // if ($(".orderList ul li .title").text().indexOf("小升初") < 0) {
+    //     // 不是小升初测试，隐藏等级显示
+    //     // $(".orderList ul li .gradeS1").hide();
+    // }
+
+    $(".score .gradeS1").each(function () {
+        if ($(this).attr("id") == 0) {
+            $(this).html("&nbsp;");
+        }
+    });
 });

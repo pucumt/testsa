@@ -1,6 +1,17 @@
 ﻿{% extends "Client/partial/main-header.html" %} {% block main %}
-<div class="container score-grade">
-    <img class="bgGrade" src="/default/assets/images/grade.jpg" />
+<div class="grade bgColor">
+    <div>
+        <img class="bgGrade" src="/default/assets/images/{{ grade }}.png" />
+    </div>
+    <div class="imgHeight">
+    </div>
+    <div class="container score-grade-words">
+        <div class="row student">
+            <div class="col-xs-6 edge"></div>
+            <div class="col-xs-12 word">{{ student }}</div>
+            <div class="col-xs-6 edge"></div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript" src="/default/assets/js/Client/score.grade.js?v=1.0"></script>

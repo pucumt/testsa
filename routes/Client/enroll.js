@@ -70,11 +70,12 @@ module.exports = function (app) {
 
     // /showGrade/{{ score.grade }}
     // 显示级别
-    app.get('/showGrade/:grade', function (req, res) {
+    app.get('/showGrade/:grade/:student', function (req, res) {
         res.render('Client/score_grade.html', {
             title: '成绩等级',
             user: req.session.user,
-            grade: req.params.grade
+            grade: req.params.grade,
+            student: req.params.student
         });
     });
 
