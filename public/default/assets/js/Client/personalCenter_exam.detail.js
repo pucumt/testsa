@@ -24,7 +24,7 @@ $(document).ready(function () {
 
     $("#pay-select .wechat").on("click", function (e) {
         $("#pay-select").hide();
-        selfAjax("get", "/personalCenter/order/wechatpay/" + $("#orderId").val(), null, function (data) {
+        selfAjax("get", "/personalCenter/exam/wechatpay/" + $("#orderId").val(), null, function (data) {
             if (data.error) {
                 showAlert("生成付款码失败");
             } else {
@@ -37,15 +37,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    // $(".price").on("click", ".score .grade", function (e) {
-    //     location.replace("/score/");
-    // });
-
-    // if ($(".orderList ul li .title").text().indexOf("小升初") < 0) {
-    //     // 不是小升初测试，隐藏等级显示
-    //     // $(".orderList ul li .gradeS1").hide();
-    // }
 
     $(".score .gradeS1").each(function () {
         if ($(this).attr("id") == 0) {
