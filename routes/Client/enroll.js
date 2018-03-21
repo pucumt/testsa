@@ -79,6 +79,14 @@ module.exports = function (app) {
         });
     });
 
+    // 管理办法协议
+    app.get('/bfbRule', checkLogin);
+    app.get('/bfbRule', function (req, res) {
+        res.render('Client/bfbRule.html', {
+            title: '百分百学校学员缴费、退费、请假、补课管理办法'
+        });
+    });
+
     app.post('/enroll/class', function (req, res) {
         //debugger;
         // number 类型

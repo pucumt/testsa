@@ -86,8 +86,12 @@ function setPrice() {
 };
 
 $("#btnPay").on("click", function (e) {
-    $("#bgBack").show();
-    $("#pay-select").show();
+    if ($("#bfbRule").prop('checked')) {
+        $("#bgBack").show();
+        $("#pay-select").show();
+    } else {
+        showAlert("请先同意《百分百学校学员缴费、退费、请假、补课管理办法》");
+    }
 });
 
 function getOrderId(payWay, callback) {

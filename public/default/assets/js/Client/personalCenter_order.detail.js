@@ -2,15 +2,19 @@ var newStudent = true,
     editStudent,
     orderId;
 
-$(document).ready(function() {
-    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function(e) {
+$(document).ready(function () {
+    $(".enroll.personalCenter .pageTitle .glyphicon-menu-left").on("click", function (e) {
         location.href = "/personalCenter/order";
     });
 
-    $("#btnPay").on("click", function(e) {
-        $("#btnPay").attr("disabled", "disabled");
-        $("#bgBack").show();
-        $("#pay-select").show();
+    $("#btnPay").on("click", function (e) {
+        if ($("#bfbRule").prop('checked')) {
+            $("#btnPay").attr("disabled", "disabled");
+            $("#bgBack").show();
+            $("#pay-select").show();
+        } else {
+            showAlert("请先同意《百分百学校学员缴费、退费、请假、补课管理办法》");
+        }
     });
 
     if ($("#payway").val() == "7") {
@@ -22,9 +26,9 @@ $(document).ready(function() {
     }
 });
 
-$("#pay-select .wechat").on("click", function(e) {
+$("#pay-select .wechat").on("click", function (e) {
     $("#pay-select").hide();
-    selfAjax("get", "/personalCenter/order/wechatpay/" + $("#orderId").val(), null, function(data) {
+    selfAjax("get", "/personalCenter/order/wechatpay/" + $("#orderId").val(), null, function (data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
@@ -42,15 +46,15 @@ $("#pay-select .wechat").on("click", function(e) {
     });
 });
 
-$("#pay-select .zhifubao").on("click", function(e) {
+$("#pay-select .zhifubao").on("click", function (e) {
     $("#pay-select").hide();
-    selfAjax("get", "/personalCenter/order/zhifubaopay/" + $("#orderId").val(), null, function(data) {
+    selfAjax("get", "/personalCenter/order/zhifubaopay/" + $("#orderId").val(), null, function (data) {
         if (data.error) {
             showAlert("生成付款码失败");
         } else {
             //location.href = data.url;
             if (data.imgCode == "") {
-                showAlert("付款失败，请选择微信支付尝试", null, function() {
+                showAlert("付款失败，请选择微信支付尝试", null, function () {
                     $("#btnPay").removeAttr("disabled");
                     $("#bgBack").hide();
                 });
@@ -62,7 +66,7 @@ $("#pay-select .zhifubao").on("click", function(e) {
     });
 });
 
-$("#bgBack").on("click", function(e) {
+$("#bgBack").on("click", function (e) {
     $("#bgBack").hide();
     $("#pay-select").hide();
     $(".imgCode").hide();
