@@ -39,7 +39,7 @@ $(document).ready(function () {
     });
 
     $(".score .gradeS1").each(function () {
-        if ($(this).attr("id") == 0) {
+        if ($(this).attr("id") == "0") {
             $(this).html("&nbsp;");
         }
     });

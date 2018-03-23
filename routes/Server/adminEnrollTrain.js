@@ -886,7 +886,7 @@ module.exports = function (app) {
         }
     };
 
-    // to be check in production
+    // to be check in production, normal order pay
     app.post('/admin/pay/notify', function (req, res) {
         //xingye pay result
         debugger;
@@ -928,6 +928,74 @@ module.exports = function (app) {
                                     if (orderFee.toString() == (result.total_fee + "")) {
                                         // wechat online, zhifubao is wrong
                                         AdminEnrollTrain.update({
+                                                isPayed: true,
+                                                payWay: 6
+                                            }, {
+                                                where: {
+                                                    _id: orderId
+                                                }
+                                            })
+                                            .then(function (result) {
+                                                if (result && result.nModified == 1) {
+                                                    res.end("success");
+                                                    return;
+                                                }
+                                            });
+                                    }
+                                } else {
+                                    res.end("failure1");
+                                }
+                            } else {
+                                res.end("failure2");
+                            }
+                        });
+                });
+            } catch (err) {}
+        })
+    });
+
+    // exam order pay result
+    app.post('/admin/pay/examNotify', function (req, res) {
+        //xingye pay result
+        debugger;
+        var arr = [];
+        req.on("data", function (data) {
+            arr.push(data);
+            debugger;
+        });
+        req.on("end", function () {
+            var data = Buffer.concat(arr).toString(),
+                ret;
+            try {
+                debugger;
+                var newLog = fs.createWriteStream('newLog.log', {
+                    flags: 'a'
+                });
+                parseString(data, function (err, resultObject) {
+                    var result = resultObject.xml;
+                    var orderId = result.out_trade_no + "";
+                    AdminEnrollExam.getFilter({
+                            _id: orderId
+                        })
+                        .then(function (order) {
+                            var paySetting = getPaySetting(""),
+                                keys = Object.getOwnPropertyNames(result).sort(),
+                                strResult = "";
+                            keys.forEach(function (key) {
+                                var v = result[key];
+                                if ("sign" != key && "key" != key) {
+                                    strResult = strResult + key + "=" + v + "&";
+                                }
+                            });
+                            strResult = strResult + "key=" + paySetting.key;
+                            var md5 = crypto.createHash('md5'),
+                                sign = md5.update(strResult).digest('hex').toUpperCase();
+                            if (sign == (result.sign + "")) {
+                                if (parseInt(result.status + "") == 0 && parseInt(result.result_code + "") == 0) {
+                                    var orderFee = (parseFloat(order.payPrice) || 0) * 100;
+                                    if (orderFee.toString() == (result.total_fee + "")) {
+                                        // wechat online, zhifubao is wrong
+                                        AdminEnrollExam.update({
                                                 isPayed: true,
                                                 payWay: 6
                                             }, {

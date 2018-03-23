@@ -1,0 +1,71 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/financialSetting.html" %} {% endblock
+%} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="startDate" class="control-label" style="width: 65px;">开始日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="startDate" id="startDate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="endDate" class="control-label" style="width: 65px;">截至日期:</label>
+                        <input type="text" maxlength="30" class="form-control" name="endDate" id="endDate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:50%;">支付方式</th>
+                <th style="width:120px;">订单数</th>
+                <th>总金额</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/examReport.js?v=1.00"></script>
+{% endblock %}

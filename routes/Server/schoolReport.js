@@ -123,6 +123,27 @@ module.exports = function (app) {
             });
     });
 
+    // 考试金额报表
+    app.post('/admin/examReportList/search', checkLogin);
+    app.post('/admin/examReportList/search', function (req, res) {
+        var strSql = "select O.payWay, count(0) as orderCount, sum(O.payPrice) as payPrice \
+        from adminEnrollExams O\
+        where O.isDeleted=false and O.isPayed=true and (O.isSucceed=1 or O.isSucceed=7) ";
+        strSql += " and O.createdDate between :startDate and :endDate \
+        group by O.payWay";
+
+        model.db.sequelize.query(strSql, {
+                replacements: {
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(orders => {
+                res.json(orders);
+            });
+    });
+
     app.post('/admin/payWayReportList/search', checkLogin);
     app.post('/admin/payWayReportList/search', function (req, res) {
         function getPayWay(way) {
@@ -657,6 +678,14 @@ module.exports = function (app) {
     app.get('/admin/otherReportList', function (req, res) {
         res.render('Server/otherReportList.html', {
             title: '>其他报表情况',
+            user: req.session.admin
+        });
+    });
+
+    app.get('/admin/examReportList', checkLogin);
+    app.get('/admin/examReportList', function (req, res) {
+        res.render('Server/examReportList.html', {
+            title: '>考试报表情况',
             user: req.session.admin
         });
     });

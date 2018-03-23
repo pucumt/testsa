@@ -47,6 +47,10 @@ $(document).ready(function () {
         location.href = "/admin/otherReportList";
     });
 
+    $("#left_btnExamReport").on("click", function (e) {
+        location.replace("/admin/examReportList");
+    });
+
     $(".admin-header .menu-top #header_btnFinancial").addClass("active");
     $(".admin-header .menu-top #header_btnFinancial2").addClass("active");
 });

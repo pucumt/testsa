@@ -40,5 +40,9 @@ $(document).ready(function () {
         location.href = "/admin/timeType";
     });
 
+    $("#left_btnPublicSchool").on("click", function (e) {
+        location.href = "/admin/publicSchool";
+    });
+
     $(".admin-header .menu-top #header_btnBasic").addClass("active");
 });

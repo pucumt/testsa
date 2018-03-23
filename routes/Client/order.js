@@ -253,7 +253,7 @@ module.exports = function (app) {
                         time_expire: moment().add(20, 'minute').format("YYYYMMDDHHmmss")
                     };
                     //time_expire is new function, maybe there is something wrong
-                    payHelper.jsPay(payParas, res, '');
+                    payHelper.jsPay(payParas, res, '', true);
                 }
             });
     };

@@ -140,7 +140,7 @@ var Pay = {
         reqPay.write(data);
         reqPay.end();
     },
-    jsPay: function (payParas, res, schoolName) {
+    jsPay: function (payParas, res, schoolName, isExam) {
         debugger;
         var paySetting = getPaySetting(schoolName),
             sendObject = {
@@ -148,7 +148,7 @@ var Pay = {
                 'mch_create_ip': settings.create_ip,
                 'mch_id': paySetting.mch_id,
                 'nonce_str': 'bfbeducation',
-                'notify_url': settings.notify_Url,
+                'notify_url': (isExam ? settings.notify_Url_exam : settings.notify_Url),
                 'out_trade_no': payParas.out_trade_no,
                 'service': 'pay.weixin.jspay',
                 'sub_appid': settings.AppID,
