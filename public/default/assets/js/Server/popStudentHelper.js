@@ -36,11 +36,13 @@ function openStudent(p) {
                 $('#enrollInfo #studentId').val(entity._id); //
                 $('#enrollInfo #mobile').val(entity.mobile); //
                 $('#enrollInfo #sex').val(entity.sex ? 1 : 0); //
-                $('#enrollInfo #discount').val(entity.discount ? entity.discount : 100); //
                 $('#selectModal').modal('hide');
-                setPrice();
-                renderCoupon();
-                renderAttributeCoupon();
+                if (isTrain) {
+                    $('#enrollInfo #discount').val(entity.discount ? entity.discount : 100); //
+                    setPrice();
+                    renderCoupon();
+                    renderAttributeCoupon();
+                }
             });
         }
         $("#selectModal #total").val(data.total);

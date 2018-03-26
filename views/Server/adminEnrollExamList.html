@@ -36,12 +36,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="School" class="control-label">学校:</label>
-                            <input type="text" maxlength="30" class="form-control" name="School" id="School">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label for="grade" class="control-label">年级:</label>
                             <select name="grade" id="grade" class="form-control"></select>
                         </div>
@@ -49,7 +43,21 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="className" class="control-label">班级:</label>
-                            <input type="text" maxlength="30" class="form-control" name="className" id="className">
+                            <input type="number" maxlength="30" class="form-control" name="className" id="className">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="publicSchool" class="control-label">学校:</label>
+                            <div class="btn-group">
+                                <input type="hidden" class="form-control" name="publicSchoolId" id="publicSchoolId">
+                                <input type="text" readonly maxlength="30" class="form-control" name="publicSchool" id="publicSchool">
+                                <button type="button" id="panel_btnSchool" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -130,10 +138,14 @@
                     <div class="col-md-6">
                         <button type="button" id="btnEnroll" class="btn btn-primary panelButton">报名</button>
                         <button type="button" id="btnHideEnroll" class="btn btn-primary panelButton">隐式报名</button>
-                        <!--<div class="form-group">
-                        <label for="discount" class="control-label">折扣(%)</label>
-                        <input type="text" maxlength="30" class="form-control" name="discount" id="discount">
-                    </div>-->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="examPrice" class="control-label">报名费(元):</label>
+                            <input type="text" class="form-control" readonly name="examPrice" id="examPrice">
+                        </div>
                     </div>
                 </div>
             </form>
@@ -216,5 +228,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/adminEnrollExam.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminEnrollExam.js?v=1.003"></script>
+<script type="text/javascript" src="/default/assets/js/Server/popSchoolHelper.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/popStudentHelper.js?v=1.0"></script>
 {% endblock %}

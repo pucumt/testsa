@@ -44,5 +44,13 @@ $(document).ready(function () {
         location.href = "/admin/publicSchool";
     });
 
+    $("#left_btnPublicGrade").on("click", function (e) {
+        location.href = "/admin/publicGrade";
+    });
+
+    $("#left_btnCityArea").on("click", function (e) {
+        location.href = "/admin/cityArea";
+    });
+
     $(".admin-header .menu-top #header_btnBasic").addClass("active");
 });

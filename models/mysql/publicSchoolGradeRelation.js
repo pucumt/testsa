@@ -3,52 +3,43 @@
 const db = require('../../db'),
     config = require('../../settings');
 
-const PublicSchool = db.defineModel('publicSchools', {
-    name: {
+const PublicSchoolGradeRelation = db.defineModel('publicSchoolGradeRelations', {
+    publicSchoolId: {
         type: db.STRING(50),
         defaultValue: ""
     },
-    cityAreaId: {
+    publicGradeId: {
+        // 小学 初中
         type: db.STRING(50),
         defaultValue: ""
-    },
-    cityArea: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    sequence: {
-        type: db.INTEGER,
-        defaultValue: 0
     }
 });
-module.exports = PublicSchool;
+module.exports = PublicSchoolGradeRelation;
 
 //读取用户信息
-PublicSchool.getFilter = function (filter) {
+PublicSchoolGradeRelation.getFilter = function (filter) {
     filter.isDeleted = false;
-    return PublicSchool.findOne({
+    return PublicSchoolGradeRelation.findOne({
         'where': filter
     });
 };
 
-PublicSchool.getFilters = function (filter) {
+PublicSchoolGradeRelation.getFilters = function (filter) {
     filter.isDeleted = false;
-    return PublicSchool.findAll({
+    return PublicSchoolGradeRelation.findAll({
         'where': filter,
         order: [
-            ['sequence'],
             ['createdDate'],
             ['_id']
         ]
     });
 };
 
-PublicSchool.getFiltersWithPage = function (page, filter) {
+PublicSchoolGradeRelation.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return PublicSchool.findAndCountAll({
+    return PublicSchoolGradeRelation.findAndCountAll({
         'where': filter,
         order: [
-            ['sequence'],
             ['createdDate'],
             ['_id']
         ],

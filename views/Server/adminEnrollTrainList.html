@@ -36,12 +36,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="School" class="control-label">学校:</label>
-                            <input type="text" maxlength="30" class="form-control" name="School" id="School">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label for="grade" class="control-label">年级:</label>
                             <select name="grade" id="grade" class="form-control"></select>
                         </div>
@@ -50,6 +44,20 @@
                         <div class="form-group">
                             <label for="className" class="control-label">班级:</label>
                             <input type="text" maxlength="30" class="form-control" name="className" id="className">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="School" class="control-label">学校:</label>
+                            <div class="btn-group">
+                                <input type="hidden" class="form-control" name="publicSchoolId" id="publicSchoolId">
+                                <input type="text" readonly maxlength="30" class="form-control" name="publicSchool" id="publicSchool">
+                                <button type="button" id="panel_btnSchool" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -117,13 +125,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="trainPrice" class="control-label">培训费:</label>
+                            <label for="trainPrice" class="control-label">培训费(元):</label>
                             <input type="text" maxlength="10" class="form-control" readonly name="trainPrice" id="trainPrice">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="materialPrice" class="control-label">教材费:</label>
+                            <label for="materialPrice" class="control-label">教材费(元):</label>
                             <input type="text" maxlength="10" class="form-control" readonly name="materialPrice" id="materialPrice">
                         </div>
                         <input type="hidden" class="form-control" name="attributeId" id="attributeId">
@@ -139,13 +147,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="totalPrice" class="control-label">实收培训:</label>
+                            <label for="totalPrice" class="control-label">实收培训(元):</label>
                             <input type="text" maxlength="10" class="form-control" name="totalPrice" id="totalPrice" value="0">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="realMaterialPrice" class="control-label">实收教材:</label>
+                            <label for="realMaterialPrice" class="control-label">实收教材(元):</label>
                             <input type="text" maxlength="10" class="form-control" name="realMaterialPrice" id="realMaterialPrice" value="0">
                         </div>
                     </div>
@@ -269,8 +277,9 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/adminEnrollTrain.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Server/adminEnrollTrain.js?v=1.003"></script>
 <script type="text/javascript" src="/default/assets/js/Server/popTrainHelper.js?v=1.000"></script>
 <script type="text/javascript" src="/default/assets/js/Server/popStudentHelper.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/popSchoolHelper.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

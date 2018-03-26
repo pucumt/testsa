@@ -1,4 +1,5 @@
-var isNew = true;
+var isNew = true,
+    isTrain = true;
 
 $(document).ready(function () {
     $("#left_btnAdminEnrollTrain").addClass("active");
@@ -43,7 +44,7 @@ function addValidation(callback) {
                     }
                 }
             },
-            'School': {
+            'publicSchool': {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
@@ -159,7 +160,7 @@ $("#btnAddStudent").on("click", function (e) {
                 name: $('#studentInfo #studentName').val(),
                 mobile: $('#studentInfo #mobile').val(),
                 sex: $('#studentInfo #sex').val(),
-                School: $('#studentInfo #School').val(),
+                School: $('#studentInfo #publicSchool').val(),
                 className: $('#studentInfo #className').val(),
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
@@ -241,11 +242,19 @@ $("#panel_btnTrain").on("click", function (e) {
     renderTrainSearchCriteria();
 });
 
+$("#panel_btnSchool").on("click", function (e) {
+    openEntity = "school";
+
+    renderSchoolSearchCriteria();
+});
+
 $("#selectModal #InfoSearch").on("click", "#btnSearch", function (e) {
     if (openEntity == "student") {
         openStudent();
     } else if (openEntity == "train") {
         openTrain();
+    } else if (openEntity == "school") {
+        openSchool();
     }
 });
 
@@ -255,6 +264,8 @@ $("#selectModal .paging .prepage").on("click", function (e) {
         openStudent(page);
     } else if (openEntity == "train") {
         openTrain(page);
+    } else if (openEntity == "school") {
+        openSchool();
     }
 });
 
@@ -264,6 +275,8 @@ $("#selectModal .paging .nextpage").on("click", function (e) {
         openStudent(page);
     } else if (openEntity == "train") {
         openTrain(page);
+    } else if (openEntity == "school") {
+        openSchool();
     }
 });
 

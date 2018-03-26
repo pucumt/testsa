@@ -17,6 +17,9 @@
     gradeSubjectCategoryRelation = require('./gradeSubjectCategoryRelation.js'),
     yearAttributeRelation = require('./yearAttributeRelation.js'),
     publicSchool = require('./publicSchool.js'),
+    publicGrade = require('./publicGrade.js'),
+    cityArea = require('./cityArea.js'),
+    publicSchoolGradeRelation = require('./publicSchoolGradeRelation.js'),
 
     quiz = require('./quiz.js'),
     quizStudentScore = require('./quizStudentScore.js'),
@@ -85,6 +88,9 @@ module.exports = function (app) {
     gradeSubjectCategoryRelation(app);
     yearAttributeRelation(app);
     publicSchool(app);
+    publicGrade(app);
+    cityArea(app);
+    publicSchoolGradeRelation(app);
 
     category(app);
     subject(app);

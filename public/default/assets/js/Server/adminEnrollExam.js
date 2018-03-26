@@ -53,7 +53,7 @@ function addValidation(callback) {
                     }
                 }
             },
-            'School': {
+            'publicSchool': {
                 trigger: "blur change",
                 validators: {
                     notEmpty: {
@@ -115,7 +115,7 @@ $("#btnAddStudent").on("click", function (e) {
                 name: $('#studentInfo #studentName').val(),
                 mobile: $('#studentInfo #mobile').val(),
                 sex: $('#studentInfo #sex').val(),
-                School: $('#studentInfo #School').val(),
+                School: $('#studentInfo #publicSchool').val(),
                 className: $('#studentInfo #className').val(),
                 gradeId: $('#studentInfo #grade').val(),
                 gradeName: $('#studentInfo #grade').find("option:selected").text()
@@ -203,50 +203,10 @@ var $selectHeader = $('#selectModal .modal-body table thead');
 var $selectBody = $('#selectModal .modal-body table tbody');
 var $selectSearch = $('#selectModal #InfoSearch');
 
-function openStudent(p) {
-    $('#selectModal #selectModalLabel').text("选择学生");
-    var filter = {
-            name: $("#selectModal #InfoSearch #studentName").val(),
-            mobile: $("#selectModal #InfoSearch #mobile").val()
-        },
-        pStr = p ? "p=" + p : "";
-    $selectHeader.empty();
-    $selectBody.empty();
-    $selectHeader.append('<tr><th>学生姓名</th><th width="120px">电话号码</th><th width="120px">性别</th></tr>');
-    selfAjax("post", "/admin/studentInfo/search?" + pStr, filter, function (data) {
-        if (data && data.studentInfos.length > 0) {
-            data.studentInfos.forEach(function (student) {
-                student.School = "";
-                student.className = "";
-                var sex = student.sex ? "女" : "男";
-                var $tr = $('<tr><td>' + student.name +
-                    '</td><td>' + student.mobile + '</td><td>' + sex + '</td></tr>');
-                $tr.data("obj", student);
-                $selectBody.append($tr);
-            });
-            setSelectEvent($selectBody, function (entity) {
-                $('#enrollInfo #studentName').val(entity.name); //
-                $('#enrollInfo #studentId').val(entity._id); //
-                $('#enrollInfo #mobile').val(entity.mobile); //
-                $('#enrollInfo #sex').val(entity.sex ? 1 : 0); //
-                $('#selectModal').modal('hide');
-            });
-        }
-        $("#selectModal #total").val(data.total);
-        $("#selectModal #page").val(data.page);
-        setPaging("#selectModal", data);
-        $('#selectModal').modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-    });
-};
-
 function openExam(p) {
     $('#selectModal #selectModalLabel').text("选择测试");
     var filter = {
-            name: $("#selectModal #InfoSearch #studentName").val(),
-            mobile: $("#selectModal #InfoSearch #mobile").val()
+            name: $("#selectModal #InfoSearch #examName").val()
         },
         pStr = p ? "p=" + p : "";
     $selectHeader.empty();
@@ -267,6 +227,7 @@ function openExam(p) {
                 $('#enrollInfo #examId').val(entity._id); //
                 $('#enrollInfo #examCategoryName').val(entity.examCategoryName); //
                 $('#enrollInfo #examCategoryId').val(entity.examCategoryId); //
+                $('#enrollInfo #examPrice').val(entity.examPrice); //
                 renderExamAreas(entity._id);
                 $('#selectModal').modal('hide');
             });
@@ -284,14 +245,8 @@ function openExam(p) {
 var openEntity = "student";
 $("#panel_btnStudent").on("click", function (e) {
     openEntity = "student";
-    $selectSearch.empty();
-    $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
-        '<label for="studentName" class="control-label">姓名:</label>' +
-        '<input type="text" maxlength="30" class="form-control" name="studentName" id="studentName"></div></div>' +
-        '<div class="col-md-8"><div class="form-group"><label for="mobile" class="control-label">手机号:</label>' +
-        '<input type="text" maxlength="30" class="form-control" name="mobile" id="mobile"></div></div>' +
-        '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');
-    openStudent();
+
+    renderStudentSearchCriteria();
 });
 
 $("#panel_btnExam").on("click", function (e) {
@@ -304,11 +259,19 @@ $("#panel_btnExam").on("click", function (e) {
     openExam();
 });
 
+$("#panel_btnSchool").on("click", function (e) {
+    openEntity = "school";
+
+    renderSchoolSearchCriteria();
+});
+
 $("#selectModal #InfoSearch").on("click", "#btnSearch", function (e) {
     if (openEntity == "student") {
         openStudent();
     } else if (openEntity == "exam") {
         openExam();
+    } else if (openEntity == "school") {
+        openSchool();
     }
 });
 
@@ -318,6 +281,8 @@ $("#selectModal .paging .prepage").on("click", function (e) {
         openStudent(page);
     } else if (openEntity == "exam") {
         openExam(page);
+    } else if (openEntity == "school") {
+        openSchool(page);
     }
 });
 
@@ -327,6 +292,8 @@ $("#selectModal .paging .nextpage").on("click", function (e) {
         openStudent(page);
     } else if (openEntity == "exam") {
         openExam(page);
+    } else if (openEntity == "school") {
+        openSchool(page);
     }
 });
 
