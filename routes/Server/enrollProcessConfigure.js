@@ -50,7 +50,9 @@ module.exports = function (app) {
                     case "grade":
                         option.isGradeUpgrade = !configure.isGradeUpgrade;
                         break;
-
+                    case "openReg":
+                        option.isOpenRigister = !configure.isOpenRigister;
+                        break;
                 }
                 EnrollProcessConfigure.update(option, {
                         where: {}

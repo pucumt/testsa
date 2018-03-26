@@ -65,6 +65,29 @@ module.exports = function (app) {
             });
     });
 
+    app.post('/admin/publicSchool/rawSearch', checkLogin);
+    app.post('/admin/publicSchool/rawSearch', function (req, res) {
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+        //查询并返回第 page 页的 20 篇文章
+        var filter = {};
+        if (req.body.name && req.body.name.trim()) {
+            filter.name = {
+                $like: `%${req.body.name.trim()}%`
+            };
+        }
+
+        PublicSchool.getFiltersWithPage(page, filter)
+            .then(function (result) {
+                res.jsonp({
+                    publicSchools: result.rows,
+                    total: result.count,
+                    page: page,
+                    isFirstPage: (page - 1) == 0,
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+                });
+            });
+    });
+
     app.post('/admin/publicSchool/search', checkLogin);
     app.post('/admin/publicSchool/search', function (req, res) {
         var page = req.query.p ? parseInt(req.query.p) : 1;

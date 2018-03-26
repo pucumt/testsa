@@ -1,11 +1,13 @@
 {% extends "Client/partial/main-header.html" %} {% block main %}
 <div class="login content_body">
     <form id="loginForm" method="post" action="/login">
+        {% if isOpenRigister %}
         <div class="form-group">
             <label>还没有账号？去
                 <a href="/reg">注册</a>
             </label>
         </div>
+        {% endif %}
         <div class="form-group">
             <label>用户名(手机号)</label>
             <input class="form-control" maxlength="20" type="text" name="name" />

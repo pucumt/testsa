@@ -61,7 +61,7 @@ function renderSchoolSearchCriteria() {
     $selectSearch.append('<div class="row form-horizontal"><div class="col-md-8"><div class="form-group">' +
         '<label for="schoolName" class="control-label">名称:</label>' +
         '<input type="text" maxlength="30" class="form-control" name="schoolName" id="schoolName"></div></div>' +
-        '<div class="col-md-8"><div class="form-group">' +
+        '<div class="col-md-8 hidden"><div class="form-group">' +
         '<label for="schoolArea" class="control-label">所在区:</label>' +
         '<select name="schoolArea" id="schoolArea" class="form-control"></select></div></div>' +
         '<div class="col-md-8"><button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button></div></div>');

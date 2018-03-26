@@ -2,6 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     crypto = require('crypto'),
     StudentAccount = model.studentAccount,
+    EnrollProcessConfigure = model.enrollProcessConfigure,
     auth = require("./auth"),
     checkNotLogin = auth.checkNotLogin;
 
@@ -14,10 +15,14 @@ module.exports = function (app) {
 
     app.get('/login', checkNotLogin);
     app.get('/login', function (req, res) {
-        res.render('Client/login.html', {
-            title: '登录',
-            user: req.session.user
-        });
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                res.render('Client/login.html', {
+                    title: '登录',
+                    user: req.session.user,
+                    isOpenRigister: configure.isOpenRigister
+                });
+            });
     });
 
     app.post('/login', checkNotLogin);

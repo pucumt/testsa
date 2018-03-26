@@ -23,7 +23,7 @@ function search(p) {
         },
         pStr = p ? "p=" + p : "";
     $mainSelectBody.empty();
-    selfAjax("post", "/admin/publicSchool/search?" + pStr, filter, function (data) {
+    selfAjax("post", "/admin/publicSchool/rawSearch?" + pStr, filter, function (data) {
         if (data && data.publicSchools.length > 0) {
             data.publicSchools.forEach(function (publicSchool) {
                 var $tr = $('<tr id=' + publicSchool._id + '><td>' + publicSchool.name + '</td><td>' + publicSchool.cityArea + '</td><td>' +

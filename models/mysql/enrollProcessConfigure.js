@@ -19,7 +19,11 @@ const EnrollProcessConfigure = db.defineModel('enrollProcessConfigures', {
     isGradeUpgrade: {
         type: db.BOOLEAN,
         defaultValue: false
-    } //老生年级是否调整
+    }, //老生年级是否调整
+    isOpenRigister: {
+        type: db.BOOLEAN,
+        defaultValue: false
+    } //是否开放注册
 });
 module.exports = EnrollProcessConfigure;
 

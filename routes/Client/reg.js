@@ -2,16 +2,24 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     crypto = require('crypto'),
     StudentAccount = model.studentAccount,
+    EnrollProcessConfigure = model.enrollProcessConfigure,
     auth = require("./auth"),
     checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
     app.get('/reg', checkNotLogin);
     app.get('/reg', function (req, res) {
-        res.render('Client/reg.html', {
-            title: '注册',
-            user: req.session.user
-        });
+        EnrollProcessConfigure.getFilter({})
+            .then(function (configure) {
+                if (configure.isOpenRigister) {
+                    res.render('Client/reg.html', {
+                        title: '注册',
+                        user: req.session.user
+                    });
+                } else {
+                    res.redirect('/login');
+                }
+            });
     });
 
     app.post('/reg', checkNotLogin);
