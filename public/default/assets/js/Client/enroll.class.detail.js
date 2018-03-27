@@ -9,7 +9,7 @@ $(document).ready(function () {
     });
 
     $("#btnEnroll").on("click", function (e) {
-        selfAjax("post", "/enroll/students", {
+        selfAjax("post", "/enroll/studentsPublicSchool", {
             originalUrl: "/enroll/class/" + $("#id").val()
         }, function (data) {
             if (data) {
@@ -17,7 +17,9 @@ $(document).ready(function () {
                     location.href = "/login";
                     return;
                 }
-
+                if (data.schools) {
+                    publicSchools = data.schools;
+                }
                 if (data.students) {
                     $("#bgBack").show();
                     $("#Enroll-select").show();
@@ -29,7 +31,6 @@ $(document).ready(function () {
                     } else {
                         $("#Enroll-select .student .name").text("请先添加学员");
                     }
-                    return;
                 }
             }
         });
@@ -53,6 +54,7 @@ $(document).ready(function () {
         $('#studentInfo #School').val("");
         $('#studentInfo #className').val("");
         resetDropDown();
+        $('#studentInfo #School').hide();
         newStudent = true;
     });
 
@@ -123,6 +125,7 @@ $(document).ready(function () {
         $('#studentInfo #className').val(entity.className);
         resetDropDown(null, function () {
             $('#studentInfo #grade').val(entity.gradeId);
+            initSchool(entity);
         });
         newStudent = false;
 
@@ -254,6 +257,11 @@ function resetDropDown(id, callback) {
                     $("#studentInfo #grade").append("<option " + select + " value='" + grade._id + "'>" + grade.name + "</option>");
                 });
             }
+
+            if (publicSchools) {
+                renderSchoolDropDown();
+            }
+
             callback && callback();
         }
     });

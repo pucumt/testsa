@@ -19,6 +19,7 @@ $(document).ready(function () {
         $('#studentInfo #School').val("");
         $('#studentInfo #className').val("");
         resetDropDown();
+        $('#studentInfo #School').hide();
         newStudent = true;
     });
 
@@ -38,12 +39,12 @@ $(document).ready(function () {
         $('#studentInfo #className').val(entity.className);
         resetDropDown(null, function () {
             $('#studentInfo #grade').val(entity.gradeId);
+            initSchool(entity);
         });
         newStudent = false;
 
         e.stopPropagation();
     });
-
 
     $("#Enroll-student-edit .glyphicon").on("click", function (e) {
         $("#Enroll-student-edit").hide();
@@ -93,7 +94,7 @@ $(document).ready(function () {
 });
 
 function loadStudents() {
-    selfAjax("post", "/enroll/students", {
+    selfAjax("post", "/enroll/studentsPublicSchool", {
         originalUrl: "/personalCenter/students"
     }, function (data) {
         if (data) {
@@ -101,13 +102,14 @@ function loadStudents() {
                 location.href = "/login";
                 return;
             }
-
+            if (data.schools) {
+                publicSchools = data.schools;
+            }
             if (data.students) {
                 if (data.students.length > 0) {
                     var student = data.students[0];
                     renderStudents(data.students, student._id);
                 }
-                return;
             }
         }
     });
@@ -183,6 +185,10 @@ function resetDropDown(id, callback) {
                     $("#studentInfo #grade").append("<option " + select + " value='" + grade._id + "'>" + grade.name + "</option>");
                 });
             }
+            if (publicSchools) {
+                renderSchoolDropDown();
+            }
+
             callback && callback();
         }
     });

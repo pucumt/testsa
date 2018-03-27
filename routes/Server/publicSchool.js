@@ -113,7 +113,7 @@ module.exports = function (app) {
         }
 
         var offset = ((page - 1) * pageSize);
-        strSql2 += strSqlMiddle + " order by S.createdDate desc, S._id desc LIMIT " + offset + ", " + pageSize;
+        strSql2 += strSqlMiddle + " order by S.sequence, S.createdDate, S._id LIMIT " + offset + ", " + pageSize;
         strSql1 += strSqlMiddle;
 
         model.db.sequelize.query(strSql1, {

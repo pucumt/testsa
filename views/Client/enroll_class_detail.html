@@ -88,16 +88,17 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="School" class="control-label">学校(当前就读学校):</label>
-                <input type="text" maxlength="30" class="form-control" name="School" id="School">
-            </div>
-            <div class="form-group">
                 <label for="grade" class="control-label">年级:</label>
                 <select name="grade" id="grade" class="form-control"></select>
             </div>
             <div class="form-group">
                 <label for="className" class="control-label">班级(填写阿拉伯数字):</label>
                 <input type="number" maxlength="30" class="form-control" name="className" id="className">
+            </div>
+            <div class="form-group">
+                <label for="School" class="control-label">学校(当前就读学校):</label>
+                <select name="schoolSelect" id="schoolSelect" class="form-control"></select>
+                <input type="text" style="display: none;" maxlength="30" class="form-control" name="School" id="School">
             </div>
         </form>
     </div>
@@ -125,4 +126,5 @@
 
 <script type="text/javascript" src="/default/assets/js/Client/enroll.class.detail.js?v=1.000"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
+<script type="text/javascript" src="/default/assets/js/Client/popSchoolHelper.js?v=1.0"></script>
 {% endblock %}

@@ -399,6 +399,29 @@ module.exports = function (app) {
             });
     });
 
+    // 新增学生信息的时候使用
+    app.post('/enroll/studentsPublicSchool', checkJSONLogin);
+    app.post('/enroll/studentsPublicSchool', function (req, res) {
+        var filter = {
+            accountId: req.session.user._id
+        };
+        StudentInfo.getFilters(filter)
+            .then(function (students) {
+                var strSql = "select S.*, G.name as gradeName from publicSchools S join publicSchoolGradeRelations R on R.publicSchoolId=S._id \
+                join publicGrades G on R.publicGradeId=G._id \
+                where S.isDeleted=false and R.isDeleted=false and G.isDeleted=false order by S.sequence, S.createdDate, S._id";
+                model.db.sequelize.query(strSql, {
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(schools => {
+                        res.jsonp({
+                            students: students,
+                            schools: schools
+                        });
+                    });
+            });
+    });
+
     app.get('/enroll/exam/examClassExamAreas/:id', function (req, res) {
         ExamClassExamArea.getFilters({
                 examId: req.params.id
