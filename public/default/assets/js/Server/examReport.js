@@ -19,6 +19,13 @@ $(document).ready(function () {
     $("#endDate").datepicker("setDate", new Date());
 });
 
+function toDecimal(x) {
+    if (isNaN(x)) {
+        return;
+    }
+    return Math.round(x * 100) / 100;
+};
+
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
 
@@ -33,7 +40,7 @@ function search(p) {
         if (data && data.length > 0) {
             data.forEach(function (schoolReport) {
                 var $tr = $('<tr id=' + schoolReport._id + '><td>' + getPayway(schoolReport.payWay) + '</td><td>' +
-                    schoolReport.orderCount + '</td><td>' + schoolReport.payPrice + '</td></tr>');
+                    schoolReport.orderCount + '</td><td>' + toDecimal(schoolReport.payPrice) + '</td></tr>');
                 $mainSelectBody.append($tr);
             });
         }
