@@ -8,13 +8,9 @@ $(document).ready(function () {
     });
 
     $("#btnPay").on("click", function (e) {
-        if ($("#bfbRule").prop('checked')) {
-            $("#btnPay").attr("disabled", "disabled");
-            $("#bgBack").show();
-            $("#pay-select").show();
-        } else {
-            showAlert("请先同意《百分百学校学员缴费、退费、请假、补课管理办法》");
-        }
+        $("#btnPay").attr("disabled", "disabled");
+        $("#bgBack").show();
+        $("#pay-select").show();
     });
 
     if ($("#payway").val() == "7") {
