@@ -97,6 +97,14 @@ AdminEnrollExam.getFilters = function (filter) {
     });
 };
 
+AdminEnrollExam.getFiltersOfSort = function (filter, sort) {
+    filter.isDeleted = false;
+    return AdminEnrollExam.findAll({
+        'where': filter,
+        order: sort
+    });
+};
+
 AdminEnrollExam.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
     return AdminEnrollExam.findAndCountAll({

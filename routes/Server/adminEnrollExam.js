@@ -572,9 +572,13 @@ module.exports = function (app) {
     app.post('/admin/examClass/generateExamNumber', function (req, res) {
         // ExamClassExamArea.getFilters({})
         //     .then(function (examClassExamAreas) {
-        AdminEnrollExam.getFilters({
-                examId: req.body.id
-            })
+        AdminEnrollExam.getFiltersOfSort({
+                examId: req.body.id,
+                isSucceed: 1
+            }, [
+                ['createdDate'],
+                ['_id']
+            ])
             .then(function (orders) {
                 var i = 0,
                     areaJson = {};

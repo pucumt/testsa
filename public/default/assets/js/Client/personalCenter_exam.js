@@ -60,10 +60,18 @@ function renderOrders(orders) {
                 status = '<button type="button" id="btnPay" style="margin-right: 10px;" class="btn btn-danger btn-xs pull-right">支付</button>' + status;
             }
 
-            d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
-                '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
-                moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
-                order.className + '</div><div class="price">' + cancelButton + '<button type="button" id="btnDetail" class="btn btn-primary btn-xs pull-right">详情</button>' + status + '</div></div></li>');
+            var $li = $('<li class="clearfix" orderId=' + order._id + '></li>'),
+                $container = $('<div><div class="detail"><div class="studentName">学员:' + order.studentName +
+                    '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
+                    moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' +
+                    order.className + '</div></div>');
+            $li.append($container);
+
+            if (order.examNum > 0) {
+                $container.append('<div class="price">考试号:&nbsp;&nbsp;' + order.examNum + '</div>');
+            }
+            $container.append('<div class="price">' + cancelButton + '<button type="button" id="btnDetail" class="btn btn-primary btn-xs pull-right">详情</button>' + status + '</div>');
+            d.append($li);
         });
         $ul.append(d);
     }

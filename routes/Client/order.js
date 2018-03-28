@@ -74,7 +74,7 @@ module.exports = function (app) {
     app.post('/personalCenter/exam/all', function (req, res) {
         var currentUser = req.session.user;
         return model.db.sequelize.query("select O.studentName, O._id, O.examName as className,\
-                     O.createdDate, C.examDate, O.isPayed, O.payPrice, C.enrollEndDate\
+                     O.createdDate, C.examDate, O.isPayed, O.payPrice, O.examNum, C.enrollEndDate\
                     from studentInfos S join adminEnrollExams O \
                     on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 \
                     join examClasss C on O.examId=C._id and C.isDeleted=false where S.isDeleted=false and S.accountId=:accountId", {

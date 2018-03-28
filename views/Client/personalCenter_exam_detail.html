@@ -10,10 +10,15 @@
                 <div>
                     <input type="hidden" id="orderId" value="{{ order._id }}" />
                     <div class="detail">
-                        <div class="studentName">学员:{{ order.studentName }}</div>
+                        <div class="studentName">学员:&nbsp;&nbsp;{{ order.studentName }}</div>
                         <div class="">订单编号:{{ order._id }}</div>
-                        <div class="">订单日期:{{ order.createdDate.toLocaleDateString() }}</div>
-                        <div class="">订单金额:{{ order.examPrice }}</div>
+                        <div class="">订单日期:&nbsp;&nbsp;{{ order.createdDate.toLocaleDateString() }}</div>
+                        <div class="">订单金额:&nbsp;&nbsp;{{ order.examPrice }}&nbsp;&nbsp;（元）</div>
+                        {% if order.examNum>0 %}
+                        <div class="">
+                            <strong>考试号:{{ order.examNum }}</strong>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="title">{{ order.examName }}</div>
                     {% if train %}
@@ -24,8 +29,13 @@
                         <div class="">地点:&nbsp;&nbsp;{{ order.examAreaName }}</div>
                         {% endif %}
                     </div>
+                    {% endif %} {% if order.examPrice>0 %}
+                    <div style="margin:10px 0; ">
+                        <strong style="color:#d9534f">特别说明：</strong>考试
+                        <strong>免费</strong>，为避免恶意抢占名额影响他人正常报名，考前
+                        <strong>预收{{ order.examPrice }}元押金</strong>，考试当天现场返还。
+                    </div>
                     {% endif %}
-
                     <div class="price" style="margin-top: 10px;">
                         {% if order.scores and order.scores.length>0 %}
                         <div class="score row">
