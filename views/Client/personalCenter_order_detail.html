@@ -34,10 +34,12 @@
                         <button type="button" id="btnPay" orderId="{{ order._id }}" class="btn btn-danger btn-xs">支付</button> {% endif %}
                         <span class="pull-right">总金额:{{ (order.totalPrice|float) + (order.realMaterialPrice|float) }}元</span>
                     </div>
+                    {% if not order.isPayed %}
                     <div class="detail">
                         <input type="checkbox" id="bfbRule">我已阅读《
                         <a href="/bfbRule" target="_blank">百分百学校学员缴费、退费、请假、补课管理办法</a>》，并同意以上内容
                     </div>
+                    {% endif %}
                 </div>
             </li>
             {% endif %}
