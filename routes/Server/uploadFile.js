@@ -84,6 +84,14 @@ module.exports = function (app) {
                                     })
                                     .then(function (order) {
                                         if (order) {
+                                            // 自动批量更新
+                                            if (order.payPrice > 0) {
+                                                order.update({
+                                                    payPrice: 0,
+                                                    rebatePrice: order.payPrice
+                                                });
+                                            }
+
                                             return AdminEnrollExamScore.getFilter({
                                                     examOrderId: order._id,
                                                     subjectId: subjectId
