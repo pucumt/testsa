@@ -178,10 +178,10 @@ $("#btnAddStudent").on("click", function (e) {
 function enroll(enrollURI) {
     var validator = $('#enrollInfo').data('formValidation').validate();
     if (validator.isValid()) {
-        var couponId;
+        var couponIds = [];
         checkCoupons(function (index) {
             if (this.checked) {
-                couponId = $(this).data("obj")._id;
+                couponIds.push($(this).data("obj")._id);
             }
         });
         var postURI = enrollURI,
@@ -201,7 +201,7 @@ function enroll(enrollURI) {
                 comment: $('#enrollInfo #comment').val(),
                 schoolId: $('#enrollInfo #schoolId').val(),
                 schoolArea: $('#enrollInfo #schoolArea').val(),
-                couponId: couponId
+                couponIds: JSON.stringify(couponIds)
             };
         selfAjax("post", postURI, postObj, function (data) {
             if (data && data.sucess) {
@@ -289,7 +289,7 @@ function setPrice() {
             var $this = $(this);
             reducePrice = $this.data("obj").reducePrice;
             trainPrice = trainPrice - reducePrice;
-            discount = 100;
+            // discount = 100;
         }
     });
     realPrice = (trainPrice * discount / 100).toFixed(2);
@@ -358,7 +358,7 @@ function searchCoupon(p) {
         if (data && data.couponAssigns.length > 0) {
             data.couponAssigns.forEach(function (coupon) {
                 var dateStr = moment(coupon.couponStartDate).format("YYYY-M-D") + " - " + moment(coupon.couponEndDate).format("YYYY-M-D");
-                var $tr = $('<tr id=' + coupon._id + ' ><td><input disabled name="coupon" id="coupon" type="radio" value="' + coupon.reducePrice + '" /></td><td>' + coupon.couponName + '</td><td>' + dateStr +
+                var $tr = $('<tr id=' + coupon._id + ' ><td><input name="coupon" id="coupon" type="checkbox" value="' + coupon.reducePrice + '" /></td><td>' + coupon.couponName + '</td><td>' + dateStr +
                     '</td><td>' + coupon.reducePrice + '</td></tr>');
                 $tr.find("#coupon").data("obj", coupon);
                 $couponSelectBody.append($tr);
@@ -386,21 +386,21 @@ $("#enrollInfo table #gridBody").on("change", "tr td input", function () {
     setPrice();
 });
 
-$("#enrollInfo #onsale").on("change", function (e) {
-    if ($("#enrollInfo #onsale").val() == 0) {
-        checkCoupons(function (index) {
-            if (this.checked) {
-                this.checked = false;
-            }
-            $(this).attr("disabled", "disabled");
-        });
-    } else {
-        checkCoupons(function (index) {
-            $(this).removeAttr("disabled");
-        });
-    }
-    setPrice();
-});
+// $("#enrollInfo #onsale").on("change", function (e) {
+//     if ($("#enrollInfo #onsale").val() == 0) {
+//         checkCoupons(function (index) {
+//             if (this.checked) {
+//                 this.checked = false;
+//             }
+//             $(this).attr("disabled", "disabled");
+//         });
+//     } else {
+//         checkCoupons(function (index) {
+//             $(this).removeAttr("disabled");
+//         });
+//     }
+//     setPrice();
+// });
 
 function checkCoupons(func) {
     $(":input[name='coupon']").each(func);

@@ -31,8 +31,8 @@
         <input type="hidden" id="orderId" value="{{ orderId }}" />
         <div class="form-group coupon" style="display: none;">
             <label for="coupon" class="control-label">优惠:</label>
-            <select style="margin-left:20px; width: calc(100% - 20px);" name="coupon" id="coupon" class="form-control">
-            </select>
+            <div class="couponlist ">
+            </div>
         </div>
         <div class="form-group">
             <label class="control-label">合计:</label>
@@ -48,6 +48,7 @@
         <button id="btnPay" class="btn btn-danger" type="button">立刻支付</button> {% endif %}
     </div>
 </div>
+
 <!--modal-->
 <div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
 <div id="pay-select" style="display:none;">
@@ -73,6 +74,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.originalclass.order.js?v=1.003"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.originalclass.order.js?v=1.004"></script>
+<script type="text/javascript" src="/default/assets/js/Client/popCouponHelper.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}

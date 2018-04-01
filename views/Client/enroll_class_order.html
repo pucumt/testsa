@@ -30,8 +30,8 @@
         <input type="hidden" id="studentId" value="{{ studentId }}" />
         <div class="form-group coupon" style="display: none;">
             <label for="coupon" class="control-label">优惠:</label>
-            <select style="margin-left:20px; width: calc(100% - 20px);" name="coupon" id="coupon" class="form-control">
-            </select>
+            <div class="couponlist ">
+            </div>
         </div>
         <div class="form-group">
             <label class="control-label">合计:</label>
@@ -72,6 +72,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.005"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.006"></script>
+<script type="text/javascript" src="/default/assets/js/Client/popCouponHelper.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}

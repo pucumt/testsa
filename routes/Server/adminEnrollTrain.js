@@ -343,14 +343,17 @@ module.exports = function (app) {
                                                     transaction: t1
                                                 })
                                                 .then(order => {
-                                                    if (req.body.couponId) {
-                                                        // 假定是优惠券的ID而不是分配好的优惠券
-                                                        return Coupon.getFilter({
-                                                                _id: req.body.couponId
-                                                            })
-                                                            .then(coupon => {
-                                                                if (coupon) { // 报名3科减
-                                                                    return CouponAssign.create({
+                                                    var couponArray = [],
+                                                        couponIds = JSON.parse(req.body.couponIds);
+                                                    if (couponIds && couponIds.length > 0) {
+                                                        couponIds.forEach(function (couponId) {
+                                                            // 假定是优惠券的ID而不是分配好的优惠券
+                                                            var curCoupon = Coupon.getFilter({
+                                                                    _id: couponId
+                                                                })
+                                                                .then(coupon => {
+                                                                    if (coupon) { // 报名3科减
+                                                                        return CouponAssign.create({
                                                                             couponId: coupon._id,
                                                                             couponName: coupon.name,
                                                                             gradeId: coupon.gradeId,
@@ -365,22 +368,19 @@ module.exports = function (app) {
                                                                             isUsed: true,
                                                                             orderId: order._id,
                                                                             createdBy: req.session.admin._id
-                                                                        })
-                                                                        .then(assign => {
-                                                                            return order;
                                                                         });
-                                                                } else {
-                                                                    // 分配好的优惠券, couponId 就是assignId
-                                                                    return CouponAssign.getFilter({
-                                                                            _id: req.body.couponId,
-                                                                            studentId: req.body.studentId,
-                                                                            isDeleted: false,
-                                                                            isUsed: false
-                                                                        })
-                                                                        .then(function (couponAssign) {
-                                                                            if (couponAssign) {
-                                                                                // 优惠券就是真实未使用的
-                                                                                return CouponAssign.update({
+                                                                    } else {
+                                                                        // 分配好的优惠券, couponId 就是assignId
+                                                                        return CouponAssign.getFilter({
+                                                                                _id: couponId,
+                                                                                studentId: req.body.studentId,
+                                                                                isDeleted: false,
+                                                                                isUsed: false
+                                                                            })
+                                                                            .then(function (couponAssign) {
+                                                                                if (couponAssign) {
+                                                                                    // 优惠券就是真实未使用的
+                                                                                    return CouponAssign.update({
                                                                                         isUsed: true,
                                                                                         orderId: order._id
                                                                                     }, {
@@ -388,16 +388,19 @@ module.exports = function (app) {
                                                                                             _id: couponAssign._id
                                                                                         },
                                                                                         transaction: t1
-                                                                                    })
-                                                                                    .then(result => {
-                                                                                        return order;
                                                                                     });
-                                                                            } else {
-                                                                                // 优惠券状态更改,报名失败
-                                                                                throw new Error("优惠券状态发生更改");
-                                                                            }
-                                                                        });
-                                                                }
+                                                                                } else {
+                                                                                    // 优惠券状态更改,报名失败
+                                                                                    throw new Error("优惠券状态发生更改");
+                                                                                }
+                                                                            });
+                                                                    }
+                                                                });
+                                                            couponArray.push(curCoupon);
+                                                        });
+                                                        return Promise.all(couponArray)
+                                                            .then(function () {
+                                                                return order;
                                                             });
                                                     } else {
                                                         return order;
