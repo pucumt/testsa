@@ -31,7 +31,7 @@ $(document).ready(function () {
             showAlert("出错了，请刷新重试！");
         } else {
             location.href = "/enroll/original/order?classId=" + $("#id").val() + "&studentId=" +
-                $("#Enroll-select #studentId").val();
+                $("#Enroll-select #studentId").val() + "&orderId=" + $("#orderId").val();
         }
     });
 

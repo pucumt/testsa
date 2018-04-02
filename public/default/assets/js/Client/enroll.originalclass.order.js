@@ -1,6 +1,6 @@
 var originalUrl, payUrl;
 $(document).ready(function () {
-    originalUrl = "/enroll/original/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val();
+    originalUrl = "/enroll/original/order?classId=" + $("#classId").val() + "&studentId=" + $("#studentId").val() + "&orderId=" + $("#orderId").val();
     payUrl = "/enroll/original/pay";
 
     $("#btnPay").hide();
