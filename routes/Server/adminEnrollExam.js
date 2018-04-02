@@ -580,7 +580,38 @@ module.exports = function (app) {
                 ['_id']
             ])
             .then(function (orders) {
-                var i = 0,
+                var i = 0, // Generate number begin from 1.
+                    areaJson = {};
+                orders.sort(function (orderA, orderB) {
+                        return orderA.examAreaId > orderB.examAreaId;
+                    })
+                    .forEach(function (order) {
+                        i++;
+                        order.update({
+                            examNum: i
+                        });
+                    });
+                res.jsonp({
+                    sucess: true
+                });
+            });
+        // });
+    });
+
+    // 生成自定义考试号
+    app.post('/admin/examClass/generateSelfExamNumber', checkLogin);
+    app.post('/admin/examClass/generateSelfExamNumber', function (req, res) {
+        // ExamClassExamArea.getFilters({})
+        //     .then(function (examClassExamAreas) {
+        AdminEnrollExam.getFiltersOfSort({
+                examId: req.body.id,
+                isSucceed: 1
+            }, [
+                ['createdDate'],
+                ['_id']
+            ])
+            .then(function (orders) {
+                var i = parseInt(req.body.num) - 1, // Generate number could be set from client.
                     areaJson = {};
                 orders.sort(function (orderA, orderB) {
                         return orderA.examAreaId > orderB.examAreaId;

@@ -37,7 +37,7 @@ var getButtons = function (isWeixin, isScorePublished, examDate) {
         buttons += '<a class="btn btn-default btnPublish">发布</a>';
     }
     if (examDate && moment(examDate).isAfter(moment())) {
-        buttons += '<a class="btn btn-default btnExamNum">生成考号</a>';
+        buttons += '<a class="btn btn-default btnExamNum">生成考号</a><a class="btn btn-default btnExamSelfNum hidden">自定义考号</a>';
     }
 
     return buttons;
@@ -438,6 +438,23 @@ $("#gridBody").on("click", "td .btnExamNum", function (e) {
     $("#btnConfirmSave").off("click").on("click", function (e) {
         selfAjax("post", "/admin/examClass/generateExamNumber", {
             id: entity._id
+        }, function (data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                refreshPage();
+            }
+        });
+    });
+});
+
+$("#gridBody").on("click", "td .btnExamSelfNum", function (e) {
+    showConfirm("确定要生成考试号吗？");
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    $("#btnConfirmSave").off("click").on("click", function (e) {
+        selfAjax("post", "/admin/examClass/generateSelfExamNumber", {
+            id: entity._id,
+            num: 1
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
