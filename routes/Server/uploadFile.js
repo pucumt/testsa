@@ -320,6 +320,16 @@ module.exports = function (app) {
         }
     };
 
+    function getExcelDate(excelDate) {
+        if (typeof (excelDate) == "string") {
+            return new Date(excelDate);
+        } else if (typeof (excelDate) == "number") {
+            return (new Date(1900, 0, parseInt(excelDate) - 1));
+        } else {
+            return new Date("1900-1-1");
+        }
+    };
+
     // last column 20: yearName, 23: teacher mobile
     function createNewClass(data, adminId) {
         var option = {
@@ -328,8 +338,8 @@ module.exports = function (app) {
             totalClassCount: data[8],
             trainPrice: data[10],
             materialPrice: data[11],
-            courseStartDate: (new Date(1900, 0, parseInt(data[5]) - 1)),
-            courseEndDate: (new Date(1900, 0, parseInt(data[6]) - 1)),
+            courseStartDate: getExcelDate(data[5]),
+            courseEndDate: getExcelDate(data[6]),
             courseTime: data[7],
             courseContent: data[18] && data[18].trim()
         };
