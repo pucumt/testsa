@@ -107,7 +107,7 @@ $(document).ready(function () {
         // aiengine.ctButton = $(e.target);
         recordTimer = setTimeout(function () {
             if ($("#curType").val() == "0") {
-                panel.find(".wordlevel").hide();
+                panel.find(".wordlevel").css("visibility", "visible");
                 panel.find(".sentenceList .sentence").empty();
             }
             startRecord(word, panel);
@@ -380,7 +380,7 @@ function startRecord(obj, panel) {
             saveScore(obj, sentences); // save score to db
             hideLoading();
             console.log("start sucess");
-            panel.find(".wordlevel").show();
+            panel.find(".wordlevel").css("visibility", "visible");
             panel.find(".wordlevel .title.mainTitle .score").text(obj.score); // set score to para
         },
         fail: function (err) {
@@ -389,7 +389,7 @@ function startRecord(obj, panel) {
             console.log(err);
             hideLoading();
             showAlert("语音解析失败，请重新录音");
-            panel.find(".wordlevel").show();
+            panel.find(".wordlevel").css("visibility", "visible");
         },
         complete: function (res) {
             // panel.find(".wordlevel").show();
