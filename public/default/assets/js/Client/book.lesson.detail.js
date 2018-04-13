@@ -107,7 +107,7 @@ $(document).ready(function () {
         // aiengine.ctButton = $(e.target);
         recordTimer = setTimeout(function () {
             if ($("#curType").val() == "0") {
-                panel.find(".wordlevel").css("visibility", "visible");
+                panel.find(".wordlevel").css("visibility", "hidden");
                 panel.find(".sentenceList .sentence").empty();
             }
             startRecord(word, panel);
