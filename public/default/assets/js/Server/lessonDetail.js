@@ -274,6 +274,23 @@ $(".mainModal.content.para #gridBody").on("click", "td .btnEdit", function (e) {
     });
 });
 
+$(".mainModal.content.para #gridBody").on("click", "td .btnDelete", function (e) {
+    showConfirm("确定要删除吗？");
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    $("#btnConfirmSave").off("click").on("click", function (e) {
+        selfAjax("post", "/admin/lessonContent/delete", {
+            id: entity._id
+        }, function (data) {
+            if (data.error) {
+                showAlert(data.error);
+                return;
+            }
+            location.reload();
+        });
+    });
+});
+
 $(".mainModal.word #gridBody").on("click", "td .btnEdit", function (e) {
     isNew = false;
     destroy();
