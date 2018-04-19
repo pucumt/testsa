@@ -1,7 +1,7 @@
 ﻿{% extends "Client/partial/main-header.html" %} {% block main %}
 <div class="container enroll">
     <div class="pageTitle">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>课程内容
+        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>活动内容
     </div>
     <div class="row exam-detail">
         {% if trainClass %}
@@ -17,10 +17,6 @@
                 <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString()
                     }} 共 {{ trainClass.totalClassCount }}课时</div>
                 <div>上课时间：{{ trainClass.courseTime }} </div>
-                <div>上课地点：{{ trainClass.schoolArea }} {{ trainClass.classRoomName or '(待定)'}} 室</div>
-                <div>培训费：{{ trainClass.trainPrice }}元 </div>
-                <div>教材费：{{ trainClass.materialPrice }}元 </div>
-                <div>合计：{{ totalPrice }}元</div>
                 <div class="enroll-info">
                     <p class="exam-count">已报{{ trainClass.enrollCount }}&nbsp;&nbsp;共{{trainClass.totalStudentCount}} {% if trainClass.enrollCount
                         == trainClass.totalStudentCount %}
@@ -41,71 +37,6 @@
     </div>
     {% endif %}
 </div>
-<div id="bgBack" style="display:none; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.701961); z-index: 1000; transition: none 0.2s ease; opacity: 1;"></div>
-<div id="Enroll-select" style="display:none;">
-    <div class="title">
-        选择学员
-        <span class="glyphicon glyphicon-remove-circle pull-right" aria-hidden="true"></span>
-    </div>
-    <div class="student">
-        <span class="name"></span>
-        <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
-        <input type="hidden" id="studentId" />
-    </div>
-    <div class="enroll-submit exam">
-        <button id="btnNext" class="btn btn-primary" type="button">下一步</button>
-    </div>
-</div>
-<div id="Enroll-student" style="display:none; height: 100%;">
-    <div class="title">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>
-        <span class="title">学员</span>
-    </div>
-    <div class="student">
-        <ul class="student-list clearfix list-unstyled">
-        </ul>
-    </div>
-    <div class="enroll-submit exam">
-        <button id="btnNewStudent" class="btn btn-primary" type="button">新建学员</button>
-    </div>
-</div>
-<div id="Enroll-student-edit" style="display:none; overflow: auto; height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; z-index: 1000; transition: none 0.2s ease; opacity: 1;">
-    <div class="title">
-        <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>
-        <span class="title">新建学员信息</span>
-    </div>
-    <div class="student">
-        <form id="studentInfo">
-            <div class="form-group">
-                <label for="studentName" class="control-label">学生姓名:</label>
-                <input type="text" maxlength="30" class="form-control" name="studentName" id="studentName">
-            </div>
-            <div class="form-group">
-                <label for="sex" class="control-label">性别:</label>
-                <select name="sex" id="sex" class="form-control">
-                    <option value="0">男</option>
-                    <option value="1">女</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="grade" class="control-label">年级:</label>
-                <select name="grade" id="grade" class="form-control"></select>
-            </div>
-            <div class="form-group">
-                <label for="className" class="control-label">班级(填写阿拉伯数字):</label>
-                <input type="number" maxlength="30" class="form-control" name="className" id="className">
-            </div>
-            <div class="form-group">
-                <label for="School" class="control-label">学校(当前就读学校):</label>
-                <select name="schoolSelect" id="schoolSelect" class="form-control"></select>
-                <input type="text" style="display: none;" maxlength="30" class="form-control" name="School" id="School">
-            </div>
-        </form>
-    </div>
-    <div class="enroll-submit exam">
-        <button id="btnSave" class="btn btn-primary" type="button">保存并使用</button>
-    </div>
-</div>
 
 <div class="modal" id="confirmModal" style="display:none; height: 100%;">
     <div class="modal-dialog" role="document">
@@ -124,7 +55,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.class.detail.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.class.detail.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
-<script type="text/javascript" src="/default/assets/js/Client/popSchoolHelper.js?v=1.0"></script>
 {% endblock %}

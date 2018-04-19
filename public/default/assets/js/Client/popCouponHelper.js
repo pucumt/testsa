@@ -55,7 +55,6 @@ function getOrderId(payWay, callback) {
 function renderData() {
     var filter = {
         classId: $("#classId").val(),
-        studentId: $("#studentId").val(),
         originalUrl: originalUrl
     };
     selfAjax("post", "/studentInfo/coupon", filter, function (data) {

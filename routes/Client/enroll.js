@@ -628,34 +628,11 @@ module.exports = function (app) {
                 _id: req.query.classId
             })
             .then(function (trainClass) {
-                checkEnroll(req.query.studentId, trainClass, function (isTimeDuplicated) {
-                        res.render('Client/enroll_class_order.html', {
-                            title: '课程报名',
-                            trainClass: trainClass,
-                            classId: req.query.classId,
-                            studentId: req.query.studentId,
-                            isTimeDuplicated: isTimeDuplicated
-                        });
-                    },
-                    function () {
-                        res.render('Client/enroll_class_order.html', {
-                            title: '课程报名',
-                            trainClass: trainClass,
-                            classId: req.query.classId,
-                            studentId: req.query.studentId,
-                            disability: 1
-                        });
-                    },
-                    function (isTimeDuplicated) {
-                        res.render('Client/enroll_class_order.html', {
-                            title: '课程报名',
-                            trainClass: trainClass,
-                            classId: req.query.classId,
-                            studentId: req.query.studentId,
-                            isTimeDuplicated: isTimeDuplicated
-                        });
-                    }
-                );
+                res.render('Client/enroll_class_order.html', {
+                    title: '课程报名',
+                    trainClass: trainClass,
+                    classId: req.query.classId
+                });
             });
     });
 

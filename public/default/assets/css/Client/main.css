@@ -637,3 +637,70 @@ img.bgGrade {
     letter-spacing: 5px;
     padding-left: 5px;
 }
+
+.num_wrap {
+    position: relative;
+    display: block;
+    width: 107px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #ccc;
+}
+
+.num_wrap input,
+.num_wrap span {
+    position: relative;
+    float: left;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.num_wrap .input_wrap {
+    float: left;
+    position: relative;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+}
+
+.num_wrap .num {
+    background: none;
+    -webkit-border-radius: 0;
+    -webkit-appearance: none;
+    border: none;
+    width: 45px;
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0;
+}
+
+.num_wrap .minus:after,
+.num_wrap .plus:after,
+.num_wrap .plus:before {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    content: "";
+    display: block;
+    width: 16px;
+    height: 2px;
+    margin: -1px 0 0 -8px;
+    background: #999;
+    border-radius: 1px;
+}
+
+.num_wrap .plus:before {
+    width: 2px;
+    height: 16px;
+    margin: -8px 0 0 -1px;
+    border-radius: 1px;
+}
+
+.num_wrap .plus {
+    float: right;
+}

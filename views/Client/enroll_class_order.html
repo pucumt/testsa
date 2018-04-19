@@ -1,8 +1,4 @@
 ﻿{% extends "Client/partial/main-header.html" %} {% block main %}
-<input type="hidden" id="disability" value="{{ disability }}" />
-<input type="hidden" id="isTimeDuplicated" value="{{ isTimeDuplicated }}" />
-<input type="hidden" id="notOriginal" value="{{ notOriginal }}" />
-<input type="hidden" id="originalOrder" value="{{ originalOrder }}" />
 <div class="container enroll">
     <div class="pageTitle">
         <span class="glyphicon glyphicon-menu-left pull-left" aria-hidden="true"></span>课程订单
@@ -17,17 +13,31 @@
                             <h3>{{ trainClass.name }}</h3>
                         </div>
                         <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString()
-                            }} 共 {{ trainClass.totalClassCount }}课时</div>
+                            }} </div>
                         <div>上课时间：{{ trainClass.courseTime }} </div>
-                        <div>上课地点：{{ trainClass.schoolArea }} {{ trainClass.classRoomName }} 室</div>
-                        <div>培训费：{{ trainClass.trainPrice }}元 </div>
-                        <div>教材费：{{ trainClass.materialPrice }}元 </div>
+                        <div>剩余名额：{{ trainClass.totalStudentCount-trainClass.enrollCount }} </div>
                     </div>
                 </div>
             </li> {% endif %}
         </ul>
+        <ul class="exams clearfix list-unstyled">
+            <li>
+                <div class="form-group">
+                    <label class="control-label">数量:</label>
+                    <div class="num_and_more pull-right">
+                        <div class="num_wrap">
+                            <span class="minus"></span>
+                            <div class="input_wrap">
+                                <input class="num" id="counts" name="counts" type="tel" value="1" max="200" lowestbuy="1">
+                            </div>
+                            <span class="plus"></span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
         <input type="hidden" id="classId" value="{{ classId }}" />
-        <input type="hidden" id="studentId" value="{{ studentId }}" />
         <div class="form-group coupon" style="display: none;">
             <label for="coupon" class="control-label">优惠:</label>
             <div class="couponlist ">
@@ -72,7 +82,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.006"></script>
+<script type="text/javascript" src="/default/assets/js/Client/enroll.order.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/Client/popCouponHelper.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 {% endblock %}
