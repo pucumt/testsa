@@ -5,7 +5,6 @@ $(document).ready(function () {
     $("#left_btnTrainClass").addClass("active");
     $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
     $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
-    $("#selectModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
 
     $("#myModal").find(".modal-body").css("overflow-y", "auto");
 
@@ -43,7 +42,7 @@ $(document).ready(function () {
     $(" #InfoSearch #searchYear")
         .off("change")
         .on("change", function (e) {
-            changeAttributes();
+
         });
 });
 
@@ -63,36 +62,8 @@ function renderSearchSchoolYearAttributeDropDown() {
             });
         };
         $("#InfoSearch #searchSchool").append("<option value='' ></option>");
-        if (data.schools && data.schools.length > 0) {
-            data.schools.forEach(function (school) {
-                var select = "";
-                if ($("#adminSchoolId").val() == school._id) {
-                    select = "selected";
-                }
-                $("#InfoSearch #searchSchool").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
-            });
-        };
-        changeAttributes();
-
         searchClass();
     });
-};
-
-function changeAttributes() {
-    $(' #InfoSearch #searchAttribute').find("option").remove();
-    if (objFilters.classAttributes.length > 0) {
-        var yearAttributeRelations = objFilters.classAttributes.filter(function (relation) {
-            return relation.yearId == $(" #InfoSearch #searchYear").val();
-        });
-        if (yearAttributeRelations.length > 0) {
-            $(' #InfoSearch .attribute').show();
-            yearAttributeRelations.forEach(function (classAttribute) {
-                $(" #InfoSearch #searchAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
-            });
-        } else {
-            $(' #InfoSearch .attribute').hide();
-        }
-    }
 };
 
 var $mainSelectBody = $('.content.mainModal table tbody');
@@ -124,8 +95,6 @@ function searchClass(p) {
     var filter = {
             name: $.trim($(".mainModal #InfoSearch #className").val()),
             gradeName: $.trim($(".mainModal #InfoSearch #searchGrade").val()),
-            schoolId: $("#InfoSearch #searchSchool").val(),
-            attributeId: $('#InfoSearch #searchAttribute').val(),
             yearId: $(".mainModal #InfoSearch #searchYear").val()
         },
         pStr = p ? "p=" + p : "";
@@ -136,8 +105,7 @@ function searchClass(p) {
             var d = $(document.createDocumentFragment());
             data.trainClasss.forEach(function (trainClass) {
                 var trObject = $('<tr id=' + trainClass._id + '><td><span><input type="checkbox" name="trainId" value=' + trainClass._id + ' /></span>' + trainClass.name + '</td><td>' +
-                    getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.trainPrice + '</td><td>' + trainClass.materialPrice +
-                    '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
+                    getClassStatus(trainClass.isWeixin) + '</td><td>' + trainClass.gradeName + '</td><td>' + trainClass.subjectName + '</td><td>' +
                     trainClass.categoryName + '</td><td>' + trainClass.enrollCount + '/' + trainClass.totalStudentCount + '</td><td><div class="btn-group">' + getButtons(trainClass.isWeixin) + '</div></td></tr>');
                 trObject.find(".btn-group").data("obj", trainClass);
                 d.append(trObject);
@@ -212,36 +180,6 @@ function addValidation(callback) {
                             }
                         }
                     },
-                    'trainPrice': {
-                        trigger: "blur change",
-                        validators: {
-                            notEmpty: {
-                                message: '培训费不能为空'
-                            },
-                            stringLength: {
-                                max: 10,
-                                message: '培训费不能超过10个字符'
-                            },
-                            numeric: {
-                                message: '填写的不是数字',
-                            }
-                        }
-                    },
-                    'materialPrice': {
-                        trigger: "blur change",
-                        validators: {
-                            notEmpty: {
-                                message: '材料费不能为空'
-                            },
-                            stringLength: {
-                                max: 10,
-                                message: '材料费不能超过10个字符'
-                            },
-                            numeric: {
-                                message: '填写的不是数字',
-                            }
-                        }
-                    },
                     'totalStudentCount': {
                         trigger: "blur change",
                         validators: {
@@ -253,21 +191,6 @@ function addValidation(callback) {
                                 message: '招生人数不能超过10个字符'
                             },
                             integer: {
-                                message: '填写的不是数字',
-                            }
-                        }
-                    },
-                    'totalClassCount': {
-                        trigger: "blur change",
-                        validators: {
-                            notEmpty: {
-                                message: '课时总数不能为空'
-                            },
-                            stringLength: {
-                                max: 10,
-                                message: '课时总数不能超过10个字符'
-                            },
-                            numeric: {
                                 message: '填写的不是数字',
                             }
                         }
@@ -301,20 +224,25 @@ function resetDropDown(objs) {
     $('#myModal').find("#grade option").remove();
     $('#myModal').find("#subject option").remove();
     $('#myModal').find("#category option").remove();
-    $('#myModal').find("#classAttribute option").remove();
     $('#myModal').find("#examCategoryName option").remove();
     $("#myModal .examList .extraExams").empty();
-    $('#myModal').find(".examList [name='examName'] option").remove();
+    $('#myModal').find(".examList [name='examName']").val(0);
     $("#myModal .examList [name='minScore']").val(0);
-    $("#myModal #classAttribute").append("<option value=''></option>");
+    $("#myModal .examList [name='minCount']").val(0);
 
     selfAjax("get", "/admin/trainClass/yeargradesubjectcategoryexamattribute", null, function (data) {
         if (data) {
             if (data.years && data.years.length > 0) {
                 data.years.forEach(function (year) {
                     var select = "";
-                    if (objs && year._id == objs.yearid) {
-                        select = "selected";
+                    if (objs) {
+                        if (year._id == objs.yearid) {
+                            select = "selected";
+                        }
+                    } else {
+                        if (year.isCurrentYear) {
+                            select = "selected";
+                        }
                     }
                     $("#myModal #year").append("<option " + select + " value='" + year._id + "'>" + year.name + "</option>");
                 });
@@ -346,55 +274,32 @@ function resetDropDown(objs) {
                     $("#myModal #category").append("<option " + select + " value='" + category._id + "'>" + category.name + "</option>");
                 });
             }
-            if (data.attributes && data.attributes.length > 0) {
-                data.attributes.forEach(function (attribute) {
-                    var select = "";
-                    if (objs && attribute._id == objs.attributeid) {
-                        select = "selected";
+
+            var exams = objs ? objs.exams : [],
+                length = exams.length;
+            if (length > 0) {
+                var d = $(document.createDocumentFragment());
+                for (var i = 0; i < length; i++) {
+                    if (i == 0) {
+                        $("#myModal .examList [name='examName']").val(exams[i].examName);
+                        $("#myModal .examList [name='minScore']").val(exams[i].minScore);
+                        $("#myModal .examList [name='minCount']").val(exams[i].minCount);
+                    } else {
+                        var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><input type="text" maxlength="50" class="form-control" name="examName"></div></div>\
+                            <div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div>\
+                            <div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minCount" value="0"></div></div></div>');
+                        source.find("[name='examName']").val(exams[i].examName);
+                        source.find("[name='minScore']").val(exams[i].minScore);
+                        source.find("[name='minCount']").val(exams[i].minCount);
+                        d.append(source);
                     }
-                    $("#myModal #classAttribute").append("<option " + select + " value='" + attribute._id + "'>" + attribute.name + "</option>");
-                });
-            }
-            if (data.exams && data.exams.length > 0) {
-                var exams = objs ? objs.exams : [],
-                    length = exams.length;
-                fullExams = data.exams;
-                if (length > 0) {
-                    var d = $(document.createDocumentFragment());
-                    for (var i = 0; i < length; i++) {
-                        if (i == 0) {
-                            $("#myModal .examList [name='examName']").append(renderExams(exams[i].examId));
-                            $("#myModal .examList [name='minScore']").val(exams[i].minScore);
-                        } else {
-                            var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><select name="examName" class="form-control"></select></div></div><div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div></div>');
-                            source.find("[name='examName']").append(renderExams(exams[i].examId));
-                            source.find("[name='minScore']").val(exams[i].minScore);
-                            d.append(source);
-                        }
-                    }
-                    $("#myModal .examList .extraExams").append(d);
-                } else {
-                    //new class
-                    $("#myModal .examList [name='examName']").append(renderExams());
                 }
+                $("#myModal .examList .extraExams").append(d);
+            } else {
+                //new class
             }
         }
     });
-};
-
-function renderExams(id) {
-    var d = $(document.createDocumentFragment());
-    if (fullExams && fullExams.length > 0) {
-        d.append("<option value=''></option>");
-        fullExams.forEach(function (exam) {
-            var select = "";
-            if (id && exam._id == id) {
-                select = "selected";
-            }
-            d.append("<option " + select + " value='" + exam._id + "'>" + exam.name + "</option>");
-        });
-    }
-    return d;
 };
 
 $("#myModal #btnSave").on("click", function (e) {
@@ -409,14 +314,7 @@ $("#myModal #btnSave").on("click", function (e) {
                 courseEndDate: $.trim($('#myModal #courseEndDate').val()),
                 courseTime: $.trim($('#myModal #courseTime').val()),
                 totalStudentCount: $.trim($('#myModal #totalStudentCount').val()),
-                totalClassCount: $.trim($('#myModal #totalClassCount').val()),
                 courseContent: $.trim($('#myModal #courseContent').val()),
-                classRoomName: $.trim($('#myModal #classRoom').val()),
-                classRoomId: $('#myModal #classRoomid').val(),
-                schoolArea: $('#myModal #school').val(),
-                schoolId: $('#myModal #schoolid').val(), //
-                teacherName: $('#myModal #teacher').val(), //
-                teacherId: $('#myModal #teacherid').val(), //
                 yearId: $('#myModal #year').val(),
                 yearName: $('#myModal #year').find("option:selected").text(),
                 gradeId: $('#myModal #grade').val(),
@@ -425,8 +323,6 @@ $("#myModal #btnSave").on("click", function (e) {
                 subjectName: $('#myModal #subject').find("option:selected").text(),
                 categoryId: $('#myModal #category').val(),
                 categoryName: $('#myModal #category').find("option:selected").text(),
-                attributeId: $('#myModal #classAttribute').val(),
-                attributeName: $('#myModal #classAttribute').find("option:selected").text(),
                 exams: getAllExams()
             };
         if (!isNew) {
@@ -448,9 +344,9 @@ function getAllExams() {
     $("#myModal .examList [name='examName']").each(function (index) {
         if ($(this).val() != "") {
             returnObjecgs.push({
-                examId: $(this).val(),
-                examName: $(this).find("option:selected").text(),
-                minScore: $.trim($(this).parents(".row").find("[name='minScore']").val())
+                examName: $(this).val(),
+                minScore: $.trim($(this).parents(".row").find("[name='minScore']").val()),
+                minCount: $.trim($(this).parents(".row").find("[name='minCount']").val())
             });
         }
     });
@@ -465,20 +361,12 @@ $("#btnAdd").on("click", function (e) {
     $('#name').removeAttr("disabled");
     $('#myModalLabel').text("新增课程");
     $('#myModal #name').val("");
-    $('#myModal #trainPrice').val(0);
-    $('#myModal #materialPrice').val(0);
     $('#myModal #courseStartDate').val("");
     $('#myModal #courseEndDate').val("");
     $('#myModal #courseTime').val("");
     $('#myModal #totalStudentCount').val(0);
     $('#myModal #totalClassCount').val(0);
     $('#myModal #courseContent').val("");
-    $('#myModal #classRoom').val(""); //
-    $('#myModal #classRoomid').val(""); //
-    $('#myModal #school').val(""); //
-    $('#myModal #schoolid').val(""); //
-    $('#myModal #teacher').val(""); //
-    $('#myModal #teacherid').val(""); //
     // $('#minScore').val(0);
     resetDropDown();
     $("#myModal").find(".modal-body").height($(window).height() - 189);
@@ -531,7 +419,6 @@ $(".content.mainModal #gridBody").on("click", "td .btnEdit", function (e) {
             gradeid: entity.gradeId,
             subjectid: entity.subjectId,
             categoryid: entity.categoryId,
-            attributeid: entity.attributeId,
             exams: data || []
         });
     });
@@ -771,8 +658,9 @@ $("#selectModal #InfoSearch").on("click", " #btnSearch", function (e) {
 });
 
 $("#myModal #btnNewExam").on("click", function (e) {
-    var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><select name="examName" class="form-control"></select></div></div><div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div></div>');
-    source.find("[name='examName']").append(renderExams());
+    var source = $('<div class="row"><div class="col-md-6"><div class="form-group"><input type="text" maxlength="50" class="form-control" name="examName"></div></div>\
+        <div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minScore" value="0"></div></div>\
+        <div class="col-md-6"><div class="form-group"><input type="text" maxlength="10" class="form-control" name="minCount" value="0"></div></div></div>');
     $("#myModal .examList .extraExams").append(source);
 });
 //------------end

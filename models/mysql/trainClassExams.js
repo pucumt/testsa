@@ -7,18 +7,18 @@ const TrainClassExams = db.defineModel('trainClassExams', {
     trainClassId: {
         type: db.STRING(50)
     },
-    examId: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
     examName: {
         type: db.STRING(50),
         defaultValue: ""
-    },
+    }, // 选择的小类别
     minScore: {
         type: db.FLOAT,
         defaultValue: 0
-    }
+    }, // 小类别的价格
+    minCount: {
+        type: db.INTEGER,
+        defaultValue: 0
+    } // 对应的名额数量
 });
 module.exports = TrainClassExams;
 

@@ -6,11 +6,12 @@ var path = require('path'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    MongoStore = require('connect-mongo')(session),
+    mySqlStore = require('express-mysql-session'),
+    // MongoStore = require('connect-mongo')(session),
 
     routes = require('./routes/index.js'),
     settings = require('./settings'),
-    db = require('./models/db.js'),
+    // db = require('./models/db.js'),
 
     fs = require('fs'),
     accessLog = fs.createWriteStream('access.log', {
@@ -56,12 +57,16 @@ app.use(session({
     secret: settings.cookieSecret,
     key: settings.db, //cookie name
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 30
-    }, //30 days
+        maxAge: 1000 * 60 * 60 * 24
+    }, //1 day
     resave: false,
     saveUninitialized: true,
-    store: new MongoStore({
-        url: db.uri
+    store: new mySqlStore({
+        host: settings.host,
+        user: "root",
+        password: "root",
+        port: "3306",
+        database: "sessiondata"
     })
 }));
 //app.use(flash());

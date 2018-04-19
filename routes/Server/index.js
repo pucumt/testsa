@@ -47,7 +47,7 @@
     uploadFile = require('./uploadFile.js'),
 
     schoolReport = require('./schoolReport.js'),
-    session = require('./session.js'),
+    // session = require('./session.js'),
 
     absentStudents = require('./absentStudents.js'),
 
@@ -121,7 +121,7 @@ module.exports = function (app) {
 
     //finatial
     schoolReport(app);
-    session(app);
+    // session(app);
 
     absentStudents(app);
 

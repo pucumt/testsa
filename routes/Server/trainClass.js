@@ -73,21 +73,10 @@ module.exports = function (app) {
             categoryId: req.body.categoryId,
             categoryName: req.body.categoryName,
             totalStudentCount: req.body.totalStudentCount, // 招生人数
-            totalClassCount: req.body.totalClassCount, // 共多少课时
-            trainPrice: req.body.trainPrice,
-            materialPrice: req.body.materialPrice,
-            teacherId: (req.body.teacherId || null),
-            teacherName: req.body.teacherName,
-            attributeId: req.body.attributeId,
-            attributeName: req.body.attributeName,
             courseStartDate: req.body.courseStartDate,
             courseEndDate: req.body.courseEndDate,
             courseTime: req.body.courseTime,
             courseContent: req.body.courseContent,
-            classRoomId: req.body.classRoomId,
-            classRoomName: req.body.classRoomName,
-            schoolId: req.body.schoolId,
-            schoolArea: req.body.schoolArea,
             isWeixin: 0,
             enrollCount: 0,
             createdBy: req.session.admin._id
@@ -99,11 +88,11 @@ module.exports = function (app) {
                     .then(function (result) {
                         var exams = JSON.parse(req.body.exams);
                         if (exams.length > 0) {
-                            var examArray = [];
                             exams.forEach(function (exam) {
                                 exam.trainClassId = result._id;
+                                exam._id = model.db.generateId();
                             });
-                            return TrainClassExam.bulkCreate(examArray, {
+                            return TrainClassExam.bulkCreate(exams, {
                                 transaction: t1
                             }).then(function () {
                                 return result;
@@ -134,21 +123,10 @@ module.exports = function (app) {
                 categoryId: req.body.categoryId,
                 categoryName: req.body.categoryName,
                 totalStudentCount: req.body.totalStudentCount, //招生人数
-                totalClassCount: req.body.totalClassCount, //共多少课时
-                trainPrice: req.body.trainPrice,
-                materialPrice: req.body.materialPrice,
-                teacherId: (req.body.teacherId || ''),
-                teacherName: req.body.teacherName,
-                attributeId: req.body.attributeId,
-                attributeName: req.body.attributeName,
                 courseStartDate: req.body.courseStartDate,
                 courseEndDate: req.body.courseEndDate,
                 courseTime: req.body.courseTime,
                 courseContent: req.body.courseContent,
-                classRoomId: req.body.classRoomId,
-                classRoomName: req.body.classRoomName,
-                schoolId: req.body.schoolId,
-                schoolArea: req.body.schoolArea
             },
             exams = JSON.parse(req.body.exams),
             toCreateExams = [],
@@ -159,10 +137,11 @@ module.exports = function (app) {
             })
             .then(function (orgExams) {
                 exams.forEach(function (exam) {
-                    var updateExam;
+                    var updateExam = null;
                     if (orgExams.some(orgExam => {
-                            if (orgExam.examId == exam.examId) {
+                            if (orgExam.examName == exam.examName) {
                                 orgExam.minScore = exam.minScore;
+                                orgExam.minCount = exam.minCount;
                                 updateExam = orgExam;
                                 return true;
                             }
@@ -180,7 +159,7 @@ module.exports = function (app) {
 
                 orgExams.forEach(orgExam => {
                     if (!toUpdateExams.some(exam => {
-                            return orgExam.examId == exam.examId;
+                            return orgExam.examName == exam.examName;
                         })) {
                         // 删除的考场
                         toDeleteExamIds.push(orgExam._id);
