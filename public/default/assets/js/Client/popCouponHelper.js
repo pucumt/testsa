@@ -57,17 +57,24 @@ function renderData() {
         classId: $("#classId").val(),
         originalUrl: originalUrl
     };
-    selfAjax("post", "/studentInfo/coupon", filter, function (data) {
+    selfAjax("post", "/classInfo/examscoupon", filter, function (data) {
         if (data) {
             if (data.notLogin) {
                 location.href = "/login";
                 return;
             }
             // var couponList = [];
-            if (data.student && data.student.discount && data.student.discount != 100) {
-                $(".enroll .exam-detail .coupon").show();
-                $(".enroll .exam-detail .coupon .couponlist").append('<div class="checkbox"><label><input name="discount" disabled id="discount" type="checkbox" checked value="' + data.student.discount + '" />' + (data.student.discount / 100) + '折</label></div>');
+            if (data.exams && data.exams.length > 0) {
+                var d = $(document.createDocumentFragment());
+                data.exams.forEach(function (exam) {
+                    d.append('<li><div class="form-group"><label class="control-label counts">' + exam.examName + '(' + exam.minScore + '元)' + ':</label>\
+                    <div class="num_and_more pull-right"><div class="num_wrap"><span class="minus"></span>\
+                    <div class="input_wrap"><input class="num" id="counts" name="counts" type="tel" value="0" max="200" lowestbuy="1">\
+                    </div><span class="plus"></span></div></div></div></li>');
+                });
+                $(".enroll .exam-detail .exams").append(d);
             }
+
             if (data.assigns && data.assigns.length > 0) {
                 $(".enroll .exam-detail .coupon").show();
                 var d = $(document.createDocumentFragment());

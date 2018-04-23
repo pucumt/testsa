@@ -12,11 +12,11 @@ const CouponAssign = db.defineModel('couponAssigns', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    studentId: {
+    accountId: {
         type: db.STRING(50),
         defaultValue: ''
     },
-    studentName: {
+    mobile: {
         type: db.STRING(50),
         defaultValue: ''
     },

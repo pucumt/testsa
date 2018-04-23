@@ -42,22 +42,22 @@ module.exports = function (app) {
             reducePrice: coupon.reducePrice,
             couponStartDate: coupon.couponStartDate,
             couponEndDate: coupon.couponEndDate,
-            studentId: student.studentId,
-            studentName: student.studentName,
+            accountId: student.accountId,
+            mobile: student.mobile,
             createdBy: admin._id
         };
     };
 
     app.post('/admin/couponAssign/assign', checkLogin);
     app.post('/admin/couponAssign/assign', function (req, res) {
-        var students = JSON.parse(req.body.students);
+        var students = JSON.parse(req.body.accounts);
         var coupon = JSON.parse(req.body.coupon);
 
         var pArray = [];
         students.forEach(function (student) {
             var p = CouponAssign.getFilter({
                     couponId: coupon.couponId,
-                    studentId: student.studentId
+                    accountId: student.accountId
                 })
                 .then(function (assign) {
                     if (assign) {
@@ -125,9 +125,6 @@ module.exports = function (app) {
         if (req.body.couponId) {
             filter.couponId = req.body.couponId;
         }
-        if (req.body.studentId) {
-            filter.studentId = req.body.studentId;
-        }
         if (req.body.gradeId) {
             filter.gradeId = req.body.gradeId;
         }
@@ -135,7 +132,7 @@ module.exports = function (app) {
             filter.subjectId = req.body.subjectId;
         }
         if (req.body.name) {
-            filter.studentName = req.body.name;
+            filter.mobile = req.body.name;
         }
         CouponAssign.getFiltersWithPage(page, filter).then(function (result) {
             res.jsonp({
@@ -148,8 +145,8 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/admin/couponAssignList/withoutpage/onlystudentId', checkLogin);
-    app.post('/admin/couponAssignList/withoutpage/onlystudentId', function (req, res) {
+    app.post('/admin/couponAssignList/withoutpage/onlyaccountId', checkLogin);
+    app.post('/admin/couponAssignList/withoutpage/onlyaccountId', function (req, res) {
         var filter = {
             isDeleted: false
         };
@@ -159,7 +156,7 @@ module.exports = function (app) {
 
         CouponAssign.findAll({
             where: filter,
-            attributes: ['studentId']
+            attributes: ['accountId']
         }).then(function (couponAssigns) {
             res.jsonp(couponAssigns);
         });

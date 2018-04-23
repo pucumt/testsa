@@ -704,3 +704,9 @@ img.bgGrade {
 .num_wrap .plus {
     float: right;
 }
+
+ul.exams li label.counts {
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 0;
+}

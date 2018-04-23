@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/studentSetting.html" %} {% endblock
+%} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -11,7 +12,7 @@
             <div class="row form-horizontal">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="Name" class="control-label">姓名:</label>
+                        <label for="Name" class="control-label">手机号:</label>
                         <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
                     </div>
                 </div>
@@ -27,7 +28,7 @@
         <thead>
             <tr>
                 <th>优惠券</th>
-                <th style="width:120px;">姓名</th>
+                <th style="width:120px;">手机号</th>
                 <th style="width:160px;">开始日期</th>
                 <th style="width:160px;">过期日期</th>
                 <th style="width:160px;">科目</th>
@@ -50,7 +51,9 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="confirmModalLabel">确认</h4>
             </div>
             <div class="modal-body">
@@ -64,6 +67,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/couponassignlist.js?v=1.000"></script>
+<script type="text/javascript" src="/default/assets/js/Server/couponassignlist.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

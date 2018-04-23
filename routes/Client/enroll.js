@@ -1550,4 +1550,46 @@ module.exports = function (app) {
                     });
             });
     });
+
+    // 优惠券直接跟账号关联，不需要放到具体学生身上
+    app.post('/classInfo/examscoupon', checkJSONLogin);
+    app.post('/classInfo/examscoupon', function (req, res) {
+        var accountId = req.session.user._id;
+        TrainClass.getFilter({
+                _id: req.body.classId
+            })
+            .then(function (trainClass) {
+                TrainClassExams.getFilters({
+                        trainClassId: req.body.classId
+                    })
+                    .then(function (exams) {
+                        var now = new Date((new Date()).toLocaleDateString());
+                        var filter = {
+                            accountId: accountId,
+                            gradeId: {
+                                $in: [trainClass.gradeId, ""]
+                            },
+                            subjectId: {
+                                $in: [trainClass.subjectId, ""]
+                            },
+                            isUsed: {
+                                $ne: true
+                            },
+                            couponStartDate: {
+                                $lte: now
+                            },
+                            couponEndDate: {
+                                $gte: now
+                            }
+                        };
+                        CouponAssign.getFilters(filter)
+                            .then(function (assigns) {
+                                res.jsonp({
+                                    assigns: assigns,
+                                    exams: exams
+                                });
+                            });
+                    });
+            });
+    });
 };

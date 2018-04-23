@@ -10,7 +10,7 @@ $(document).ready(function () {
     });
 
     $("#btnPay").show();
-    // renderData();
+    renderData();
 
     $(".enroll .exam-detail #coupon").on("change blur", setPrice);
 });
