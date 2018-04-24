@@ -12,7 +12,7 @@ var client = require('./Client/index.js'),
 module.exports = function (app) {
     client(app);
     server(app);
-    teacher(app);
+    // teacher(app);
     test(app);
     generator(app);
     fileGenerator(app);

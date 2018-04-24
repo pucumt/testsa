@@ -29,18 +29,8 @@
                         {% endif %} {% if user.role
                         < 9 %} <li id="header_btnStudent" role="presentation">学生管理</li>
                             {% endif %} {% if user.role
-                            < 8 %} <li id="header_btnFinancial" role="presentation">财务管理</li>
-                                {% endif %} {% if user.role == 9 or user.role == 11 %}
-                                <li id="header_btnFinancial2" role="presentation">统计管理</li>
-                                {% endif %} {% if user.role
-                                < 8 %} <li id="header_btnBasic" role="presentation">基本设置</li>
-                                    {% endif %} {% if user.role
-                                    < 9 %} <li id="header_btnEnrollExam" role="presentation">测试报名</li>
-                                        {% endif %} {% if (user.role == 11 or user.role == 20) %}
-                                        <li id="header_btnQuiz" role="presentation">日常事务</li>
-                                        {% endif %} {% if (user.role == 11) %}
-                                        <li id="header_btnBook" role="presentation">课本管理</li>
-                                        {% endif %}
+                            < 8 %} <li id="header_btnBasic" role="presentation">基本设置</li>
+                                {% endif %}
             </ul>
         </div>
         <div class="userinfo pull-right">

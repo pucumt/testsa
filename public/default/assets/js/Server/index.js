@@ -15,7 +15,7 @@ $(document).ready(function () {
         location.href = "/admin/peopleCountList";
     });
     $("#header_btnBasic").on("click", function (e) {
-        location.href = "/admin/schoolAreaList";
+        location.href = "/admin/adminList";
     });
     $("#header_btnEnrollExam").on("click", function (e) {
         location.href = "/admin/adminEnrollExamList";
