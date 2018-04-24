@@ -64,20 +64,12 @@ function renderOrders(orders) {
         var d = $(document.createDocumentFragment());
         // d.append('<li class="header"><span class="studentName">学员</span><span class="">优惠券</span></li>');
         orders.forEach(function (order) {
-            var price = (parseFloat(order.totalPrice) + parseFloat(order.realMaterialPrice)).toFixed(2),
+            var price = parseFloat(order.totalPrice).toFixed(2),
                 status = order.isPayed ? '<span class="status pull-right">已支付</span>' : '<button type="button" id="btnPay" class="btn btn-danger btn-xs">支付</button>',
                 buttons = '<button type="button" id="btnDetail" style="margin-right: 10px;" class="btn btn-primary btn-xs">详情</button>';
-            if (moment().isBefore(order.courseStartDate)) {
-                buttons += '<button type="button" id="btnChangeClass" style="margin-right: 10px;" class="btn btn-primary btn-xs">调班</button>';
-            }
-            // if (order.bookId) {
-            //     buttons += '<button type="button" bookId="' + order.bookId + '" minLesson="' + order.minLesson + '" maxLesson="' + order.maxLesson + '" studentId="' + order.studentId +
-            //         '" id="btnOpenBook" style="margin-right: 10px;" class="btn btn-primary btn-xs">课程</button>';
-            // }
-            d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="studentName">学员:' + order.studentName +
-                '</div><div class="">订单编号:' + order._id + '</div><div class="">订单日期:' +
-                moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div><div class="">上课时间:' +
-                order.courseTime + '</div></div><div class="title">' + order.className +
+            d.append('<li class="clearfix" orderId=' + order._id + '><div><div class="detail"><div class="">订单编号:' +
+                order._id + '</div><div class="">订单日期:' +
+                moment(order.createdDate).format("YYYY-MM-DD HH:mm") + '</div></div><div class="title">' + order.className +
                 '</div><div class="price">' + buttons + '<span class="pull-right">总金额:' +
                 price + '元</span>' + status + '</div></div></li>');
         });

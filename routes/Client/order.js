@@ -20,27 +20,16 @@ module.exports = function (app) {
     app.post('/personalCenter/order/all', checkJSONLogin);
     app.post('/personalCenter/order/all', function (req, res) {
         var currentUser = req.session.user;
-        ChangeEnd.getFilter({})
-            .then(function (changeEnd) {
-                return model.db.sequelize.query("select O.studentId, O.studentName, O._id, O.isPayed, O.trainName as className,\
-                        O.totalPrice, O.realMaterialPrice, O.createdDate, C.courseTime, C.bookId, C.minLesson, C.maxLesson, C.courseStartDate\
-                        from studentInfos S join adminEnrollTrains O \
-                        on S._id=O.studentId and O.isDeleted=false and O.isSucceed=1 and O.yearId=:yearId \
-                        join trainClasss C on O.trainId=C._id where S.isDeleted=false and S.accountId=:accountId", {
-                        replacements: {
-                            yearId: global.currentYear._id,
-                            accountId: currentUser._id
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
-                    .then(function (orders) {
-                        if (changeEnd && changeEnd.endDate) {
-                            orders.forEach(function (order) {
-                                order.courseStartDate = changeEnd.endDate;
-                            });
-                        }
-                        res.jsonp(orders);
-                    });
+        return model.db.sequelize.query("select O._id, O.isPayed, O.trainName as className,\
+                        O.totalPrice, O.createdDate from adminEnrollTrains O \
+                        join trainClasss C on O.trainId=C._id where O.isDeleted=false and O.isSucceed=1 and O.accountId=:accountId", {
+                replacements: {
+                    accountId: currentUser._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (orders) {
+                res.jsonp(orders);
             });
     });
 

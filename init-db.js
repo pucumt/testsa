@@ -1,4 +1,5 @@
-const model = require('./model.js');
+const model = require('./model.js'),
+    crypto = require('crypto');
 
 function step1() {
     console.log("begin step 1 ... ");
@@ -12,31 +13,33 @@ function step1() {
 };
 
 function step2() {
-    model.db.sequelize.query("select T._id, S.name from trainClasss T join schoolAreas S \
-        on S._id=T.schoolId \
-        where T.schoolArea='' ", {
-            replacements: {},
-            type: model.db.sequelize.QueryTypes.SELECT
-        })
-        .then(entities => {
-            var tmpArray = [];
-            entities.forEach(function (obj) {
-                var p = model.trainClass.update({
-                    schoolArea: obj.name
-                }, {
-                    where: {
-                        _id: obj._id
-                    }
-                });
-                tmpArray.push(p);
-            });
+    var md5 = crypto.createHash('md5'),
+        password = md5.update("admin12345").digest('hex');
 
-            return Promise.all(tmpArray);
+    return model.user.create({
+            name: "admin",
+            password: password,
+            role: 0
+        })
+        .then(function () {
+            return model.enrollProcessConfigure.create({
+                newStudentStatus: false,
+                oldStudentStatus: false,
+                oldStudentSwitch: false,
+                isGradeUpgrade: false
+            });
         });
 };
 
 function toRun() {
-    return step2();
+    return step1()
+        .then(function () {
+            try {
+                return step2();
+            } catch (err) {
+                console.log(err);
+            }
+        });
 };
 
 toRun();

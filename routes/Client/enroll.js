@@ -93,7 +93,6 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         var filter = {
             isWeixin: 1,
-            yearId: global.currentYear._id,
             enrollCount: model.db.sequelize.literal('`enrollCount`<`totalStudentCount`')
         };
         if (req.body.schoolId) {
@@ -759,7 +758,7 @@ module.exports = function (app) {
     };
 
     // pay with transaction
-    function transPayWithCoupon(req, res, totalPrice, examName) {
+    function transPayWithCoupon(req, res, totalPrice, className, examName, reduceCount) {
         // 1. 修改报名人数
         // 2. 如果报满修改字段为满员 (may useless)
         // 3. 添加新订单
@@ -777,8 +776,8 @@ module.exports = function (app) {
                         if (updateResult && updateResult[0]) {
                             return AdminEnrollTrain.create({
                                     accountId: req.session.user._id,
-                                    trainId: trainClass._id,
-                                    trainName: trainClass.name,
+                                    trainId: req.body.classId,
+                                    trainName: className,
                                     totalPrice: totalPrice.toFixed(2),
                                     examId: req.body.examId,
                                     examName: examName,
@@ -795,7 +794,7 @@ module.exports = function (app) {
                                             // 假定是优惠券的ID而不是分配好的优惠券
                                             var p = CouponAssign.getFilter({
                                                     _id: coupon,
-                                                    accountId: req.body.accountId,
+                                                    accountId: req.session.user._id,
                                                     isDeleted: false,
                                                     isUsed: false
                                                 })
@@ -850,9 +849,9 @@ module.exports = function (app) {
             });
     };
 
-    function payWithOrderExams(req, res) {
+    function payWithOrderExams(req, res, className) {
         TrainClassExams.getFilter({
-                _id: examId
+                _id: req.body.examId
             })
             .then(function (orderExam) {
                 var coupons = JSON.parse(req.body.couponIds),
@@ -884,7 +883,7 @@ module.exports = function (app) {
                     p = Promise.resolve(price);
                 }
                 p.then(function (totalPrice) {
-                    transPayWithCoupon(req, res, totalPrice, orderExam.examName);
+                    transPayWithCoupon(req, res, totalPrice, className, orderExam.examName, reduceCount);
                 });
             });
     };
@@ -897,7 +896,7 @@ module.exports = function (app) {
             })
             .then(function (trainClass) {
                 if (trainClass.enrollCount < trainClass.totalStudentCount) {
-                    payWithOrderExams(req, res);
+                    payWithOrderExams(req, res, trainClass.name);
                 } else {
                     res.jsonp({
                         error: "此活动已报满"
@@ -1500,25 +1499,17 @@ module.exports = function (app) {
                     })
                     .then(function (exams) {
                         var now = new Date((new Date()).toLocaleDateString());
-                        var filter = {
-                            accountId: accountId,
-                            gradeId: {
-                                $in: [trainClass.gradeId, ""]
-                            },
-                            subjectId: {
-                                $in: [trainClass.subjectId, ""]
-                            },
-                            isUsed: {
-                                $ne: true
-                            },
-                            couponStartDate: {
-                                $lte: now
-                            },
-                            couponEndDate: {
-                                $gte: now
-                            }
-                        };
-                        CouponAssign.getFilters(filter)
+                        model.db.sequelize.query("select A.* from couponAssigns A join coupons C \
+                            on A.couponId=C._id join couponSubjects S on S.couponId=C._id \
+                            where S.isDeleted=false and C.isDeleted=false and A.isDeleted=false and A.isUsed=false\
+                            and A.accountId=:accountId and S.subjectId=:subjectId and C.couponStartDate<=:curDate and C.couponEndDate>=:curDate", {
+                                replacements: {
+                                    accountId: req.session.user._id,
+                                    subjectId: trainClass.subjectId,
+                                    curDate: now
+                                },
+                                type: model.db.sequelize.QueryTypes.SELECT
+                            })
                             .then(function (assigns) {
                                 res.jsonp({
                                     assigns: assigns,

@@ -2,6 +2,7 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Coupon = model.coupon,
     CouponSubject = model.couponSubject,
+    Subject = model.subject,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -18,7 +19,7 @@ module.exports = function (app) {
     app.post('/admin/coupon/add', checkLogin);
     app.post('/admin/coupon/add', function (req, res) {
         model.db.sequelize.transaction(function (t1) {
-                Coupon.create({
+                return Coupon.create({
                         name: req.body.name,
                         category: req.body.category,
                         categoryName: req.body.categoryName,
@@ -210,6 +211,22 @@ module.exports = function (app) {
                 sucess: true
             });
         });
+    });
+
+    app.post('/admin/coupon/couponSubjectAndSubjects', checkLogin);
+    app.post('/admin/coupon/couponSubjectAndSubjects', function (req, res) {
+        CouponSubject.getFilters({
+                couponId: req.body.id
+            })
+            .then(function (couponSubjects) {
+                Subject.getFilters({})
+                    .then(function (subjects) {
+                        res.jsonp({
+                            couponSubjects: couponSubjects,
+                            subjects: subjects
+                        });
+                    });
+            });
     });
 
 }

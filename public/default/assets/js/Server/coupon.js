@@ -52,8 +52,7 @@ function search(p) {
             data.coupons.forEach(function (coupon) {
                 var $tr = $('<tr id=' + coupon._id + '><td>' + coupon.name + '</td><td>' +
                     coupon.categoryName + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
-                    moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' +
-                    coupon.subjectName + '</td><td>' + coupon.reducePrice + '</td><td>' + coupon.reduceMax + '</td><td><div class="btn-group">' + getButtons(coupon) + '</div></td></tr>');
+                    moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' + coupon.reducePrice + '</td><td>' + coupon.reduceMax + '</td><td><div class="btn-group">' + getButtons(coupon) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", coupon);
                 $mainSelectBody.append($tr);
             });
@@ -198,9 +197,9 @@ $("#gridBody").on("click", "td .btnEdit", function (e) {
     $('#myModal #reducePrice').val(entity.reducePrice);
     $("#myModal #reduceMax").val(entity.reduceMax);
     $("#myModal #category").val(entity.category);
-    resetDropDown({
-        subjectid: entity.subjectId
-    });
+
+    resetDropDown(entity._id);
+
     if (entity.category = "固定") {
         $("#myModal .reduceMax").hide();
     } else {
@@ -274,14 +273,16 @@ $("#gridBody").on("click", "td .btnCheck", function (e) {
 });
 
 /**---------------dropdowns------------------- */
-function resetDropDown(objs) {
+function resetDropDown(entityId) {
     $('#myModal').find(".subject").empty();
-    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function (data) {
+    selfAjax("post", "/admin/coupon/couponSubjectAndSubjects", {
+        id: entityId
+    }, function (data) {
         if (data) {
-            if (data && data.length > 0) {
-                data.forEach(function (subject) {
+            if (data && data.subjects.length > 0) {
+                data.subjects.forEach(function (subject) {
                     var select = "";
-                    if (objs && objs.subjects && objs.subjects.some(function (entity) {
+                    if (data.couponSubjects && data.couponSubjects.some(function (entity) {
                             return entity.subjectId == subject._id;
                         })) {
                         select = "checked";
