@@ -12,9 +12,11 @@
                         <div>
                             <h3>{{ trainClass.name }}</h3>
                         </div>
-                        <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString()
-                            }} </div>
-                        <div>上课时间：{{ trainClass.courseTime }} </div>
+                        <div class="class-price">
+                            <strong class="price">
+                                ￥0
+                            </strong>
+                        </div>
                         <div>剩余名额：{{ trainClass.totalStudentCount-trainClass.enrollCount }} </div>
                     </div>
                 </div>
@@ -22,7 +24,18 @@
         </ul>
         <ul class="exams clearfix list-unstyled">
         </ul>
-
+        <div class="form-group">
+            <label class="control-label">数量:</label>
+            <div class="num_and_more pull-right">
+                <div class="num_wrap">
+                    <span class="minus"></span>
+                    <div class="input_wrap">
+                        <input class="num" id="counts" name="counts" type="tel" value="1" max="200" lowestbuy="1">
+                    </div>
+                    <span class="plus"></span>
+                </div>
+            </div>
+        </div>
         <input type="hidden" id="classId" value="{{ classId }}" />
         <div class="form-group coupon" style="display: none;">
             <label for="coupon" class="control-label">优惠:</label>
@@ -32,10 +45,6 @@
         <div class="form-group">
             <label class="control-label">合计:</label>
             <span class="total"></span>元
-        </div>
-        <div class="form-group">
-            <input type="checkbox" id="bfbRule">我已阅读《
-            <a href="/bfbRule" target="_blank">百分百学校学员缴费、退费、请假、补课管理办法</a>》，并同意以上内容
         </div>
     </div>
     <div class="enroll-submit exam">

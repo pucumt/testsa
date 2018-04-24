@@ -9,34 +9,10 @@
     <div class="panel-body">
         <form id="InfoSearch">
             <div class="row form-horizontal">
-                <div class="col-md-4">
+                <div class="col-md-8">
                     <div class="form-group">
                         <label for="className" class="control-label">课程:</label>
                         <input type="text" maxlength="30" class="form-control" name="className" id="className">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="searchSchool" class="control-label">校区:</label>
-                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="searchGrade" class="control-label">年级:</label>
-                        <input type="text" maxlength="30" class="form-control" name="searchGrade" id="searchGrade">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="searchYear" class="control-label">年度:</label>
-                        <select name="searchYear" id="searchYear" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-4 attribute">
-                    <div class="form-group">
-                        <label for="searchAttribute" class="control-label">学期:</label>
-                        <select name="searchAttribute" id="searchAttribute" class="form-control"></select>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -67,9 +43,7 @@
                         <input type="checkbox" name="selectAll" id="selectAll" />
                     </span>课程名称</th>
                 <th style="width:80px">发布</th>
-                <th style="width:100px">年级</th>
                 <th style="width:100px">科目</th>
-                <th style="width:100px">类别</th>
                 <th style="width:100px">报名</th>
                 <th style="width:240px">操作</th>
             </tr>
@@ -103,48 +77,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="year" class="control-label">年度:</label>
-                                <select name="year" id="year" class="form-control"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="grade" class="control-label">年级:</label>
-                                <select name="grade" id="grade" class="form-control"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
                                 <label for="subject" class="control-label">科目:</label>
                                 <select name="subject" id="subject" class="form-control"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="category" class="control-label">难度:</label>
-                                <select name="category" id="category" class="form-control"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="courseStartDate" class="control-label">开课日期:</label>
-                                <input type="text" maxlength="30" class="form-control" name="courseStartDate" id="courseStartDate">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="courseEndDate" class="control-label">结课日期:</label>
-                                <input type="text" maxlength="30" class="form-control" name="courseEndDate" id="courseEndDate">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="courseTime" class="control-label">上课时间:</label>
-                                <input type="text" maxlength="20" class="form-control" name="courseTime" id="courseTime">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -243,5 +177,4 @@
 </div>
 
 <script type="text/javascript" src="/default/assets/js/Server/trainClass.js?v=1.0"></script>
-<script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

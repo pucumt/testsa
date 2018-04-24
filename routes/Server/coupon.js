@@ -1,6 +1,7 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Coupon = model.coupon,
+    CouponSubject = model.couponSubject,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -16,45 +17,127 @@ module.exports = function (app) {
 
     app.post('/admin/coupon/add', checkLogin);
     app.post('/admin/coupon/add', function (req, res) {
-        Coupon.create({
-                name: req.body.name,
-                category: req.body.category,
-                categoryName: req.body.categoryName,
-                couponStartDate: req.body.couponStartDate,
-                couponEndDate: req.body.couponEndDate,
-                gradeId: req.body.gradeId,
-                gradeName: req.body.gradeName,
-                subjectId: req.body.subjectId,
-                subjectName: req.body.subjectName,
-                reducePrice: req.body.reducePrice,
-                reduceMax: req.body.reduceMax,
-                createdBy: req.session.admin._id
+        model.db.sequelize.transaction(function (t1) {
+                Coupon.create({
+                        name: req.body.name,
+                        category: req.body.category,
+                        categoryName: req.body.categoryName,
+                        couponStartDate: req.body.couponStartDate,
+                        couponEndDate: req.body.couponEndDate,
+                        reducePrice: req.body.reducePrice,
+                        reduceMax: req.body.reduceMax,
+                        createdBy: req.session.admin._id
+                    }, {
+                        transaction: t1
+                    })
+                    .then(function (coupon) {
+                        var subjects = (req.body.subjects ? JSON.parse(req.body.subjects) : []),
+                            p;
+                        if (subjects.length > 0) {
+                            subjects.forEach(function (subject) {
+                                subject.CouponId = coupon._id;
+                                subject._id = model.db.generateId();
+                            });
+                            return CouponSubject.bulkCreate(subjects, {
+                                transaction: t1
+                            });
+                        }
+                    });
             })
-            .then(function (coupon) {
-                res.jsonp(coupon);
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function () {
+                res.jsonp({
+                    error: "添加失败"
+                });
             });
     });
 
     app.post('/admin/coupon/edit', checkLogin);
     app.post('/admin/coupon/edit', function (req, res) {
-        Coupon.update({
-            name: req.body.name,
-            category: req.body.category,
-            categoryName: req.body.categoryName,
-            couponStartDate: req.body.couponStartDate,
-            couponEndDate: req.body.couponEndDate,
-            gradeId: req.body.gradeId,
-            gradeName: req.body.gradeName,
-            subjectId: req.body.subjectId,
-            subjectName: req.body.subjectName,
-            reducePrice: req.body.reducePrice,
-            reduceMax: req.body.reduceMax
-        }, {
-            where: {
-                _id: req.body.id
-            }
-        }).then(function (coupon) {
-            res.jsonp(coupon);
+        var subjects = (req.body.subjects ? JSON.parse(req.body.subjects) : []),
+            toCreateSubjects = [],
+            toDeleteSubjectIds = [];
+        var p = CouponSubject.getFilters({
+                CouponId: req.body.id
+            })
+            .then(orgSubjects => {
+                subjects.forEach(subject => {
+                    if (!orgSubjects.some(orgSubject => {
+                            return orgSubject.subjectId == subject.subjectId;
+                        })) {
+                        // 原来没有的科目
+                        subject._id = model.db.generateId();
+                        subject.CouponId = req.body.id;
+                        toCreateSubjects.push(subject);
+                    }
+                });
+                orgSubjects.forEach(orgSubject => {
+                    if (!subjects.some(subject => {
+                            return orgSubject.subjectId == subject.subjectId;
+                        })) {
+                        // 要被删除的科目
+                        toDeleteSubjectIds.push(orgSubject._id);
+                    }
+                });
+            });
+
+        p.then(function () {
+            model.db.sequelize.transaction(function (t1) {
+                    return Coupon.update({
+                            name: req.body.name,
+                            category: req.body.category,
+                            categoryName: req.body.categoryName,
+                            couponStartDate: req.body.couponStartDate,
+                            couponEndDate: req.body.couponEndDate,
+                            reducePrice: req.body.reducePrice,
+                            reduceMax: req.body.reduceMax
+                        }, {
+                            where: {
+                                _id: req.body.id
+                            },
+                            transaction: t1
+                        })
+                        .then(function (resultExam) {
+                            // 科目
+                            var pArray = [];
+                            if (toCreateSubjects.length > 0) {
+                                var p = CouponSubject.bulkCreate(toCreateSubjects, {
+                                    transaction: t1
+                                });
+                                pArray.push(p);
+                            }
+                            if (toDeleteSubjectIds.length > 0) {
+                                var p = CouponSubject.update({
+                                    isDeleted: true,
+                                    deletedBy: req.session.admin._id,
+                                    deletedDate: new Date()
+                                }, {
+                                    where: {
+                                        _id: {
+                                            $in: toDeleteSubjectIds
+                                        }
+                                    },
+                                    transaction: t1
+                                });
+                                pArray.push(p);
+                            }
+                            return Promise.all(pArray);
+                        });
+                })
+                .then(function (result) {
+                    res.jsonp({
+                        sucess: true
+                    });
+                })
+                .catch(function () {
+                    res.jsonp({
+                        error: "修改失败"
+                    });
+                });
         });
     });
 

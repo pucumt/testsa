@@ -21,22 +21,6 @@ const Coupon = db.defineModel('coupons', {
     couponEndDate: {
         type: db.DATE
     },
-    gradeId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    gradeName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    subjectId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    subjectName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
     reducePrice: {
         type: db.FLOAT,
         defaultValue: 0

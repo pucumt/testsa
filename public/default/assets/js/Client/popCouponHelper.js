@@ -1,9 +1,9 @@
 $("#btnPay").on("click", function (e) {
-    if ($("#bfbRule").prop('checked')) {
+    if (getSelectCounts() > getLastCounts()) {
+        showAlert("购买数量超出活动数量！");
+    } else {
         $("#bgBack").show();
         $("#pay-select").show();
-    } else {
-        showAlert("请先同意《百分百学校学员缴费、退费、请假、补课管理办法》");
     }
 });
 
@@ -20,9 +20,11 @@ function getCouponIds() {
 
 function getOrderId(payWay, callback) {
     $("#btnPay").attr("disabled", "disabled");
+    var curSelect = $('.exam-detail .exams li.counts.active').data("obj");
     var filter = {
         classId: $("#classId").val(),
-        studentId: $("#studentId").val(),
+        examId: curSelect._id,
+        count: $('.exam-detail .num_and_more .num_wrap #counts').val(),
         couponIds: getCouponIds(),
         payWay: payWay
     };
@@ -65,12 +67,16 @@ function renderData() {
             }
             // var couponList = [];
             if (data.exams && data.exams.length > 0) {
-                var d = $(document.createDocumentFragment());
+                var d = $(document.createDocumentFragment()),
+                    isFirst = true;
                 data.exams.forEach(function (exam) {
-                    d.append('<li><div class="form-group"><label class="control-label counts">' + exam.examName + '(' + exam.minScore + '元)' + ':</label>\
-                    <div class="num_and_more pull-right"><div class="num_wrap"><span class="minus"></span>\
-                    <div class="input_wrap"><input class="num" id="counts" name="counts" type="tel" value="0" max="200" lowestbuy="1">\
-                    </div><span class="plus"></span></div></div></div></li>');
+                    var $li = $('<li class="tag counts">' + exam.examName + '(' + exam.minScore + '元)' + '</li>');
+                    d.append($li);
+                    $li.data("obj", exam);
+                    if (isFirst) {
+                        $li.addClass("active");
+                        isFirst = false;
+                    }
                 });
                 $(".enroll .exam-detail .exams").append(d);
             }
@@ -91,23 +97,20 @@ function renderData() {
 };
 
 function setPrice() {
-    var tranClass = $(".enroll .exam-detail .exam-list .exam-card").data("obj");
-    var price = parseFloat(tranClass.materialPrice),
-        trainPrice = parseFloat(tranClass.trainPrice),
-        discount = parseFloat($(".coupon .couponlist #discount").val() || 100);
+    var tranClass = $(".enroll .exam-detail .exam-list .exam-card").data("obj"),
+        curSelect = $('.exam-detail .exams li.counts.active').data("obj"),
+        singlePrice = curSelect.minScore,
+        price = parseInt($('.exam-detail .num_and_more .num_wrap #counts').val()) * singlePrice;
+    $('.exam-detail .exam-list .class-price .price').text('￥' + singlePrice);
     var coupon = $('.enroll .exam-detail .coupon .couponlist #coupon');
     coupon.each(function (index) {
         if (this.checked) {
-            trainPrice = trainPrice - parseFloat($(this).attr("price"));
+            price = price - parseFloat($(this).attr("price"));
         }
     });
-
-    // 折扣
-    if (discount != 100) {
-        trainPrice = trainPrice * discount / 100;
+    if (price < 0) {
+        price = 0;
     }
-    // 加上教材费
-    price = trainPrice + price;
     $(".enroll .exam-detail .total").text(price.toFixed(2));
 };
 
@@ -115,3 +118,47 @@ $('.enroll .exam-detail .coupon .couponlist')
     .on("change", "#coupon", function (e) {
         setPrice();
     });
+
+$('.exam-detail .num_and_more .num_wrap .minus')
+    .on("click", function (e) {
+        var $num = $(this).parent().find("#counts");
+        if ($num.val() != "1") {
+            $num.val(parseInt($num.val()) - 1);
+            setPrice();
+        }
+    });
+
+$('.exam-detail .num_and_more .num_wrap .plus')
+    .on("click", function (e) {
+        var $num = $(this).parent().find("#counts"),
+            num = parseInt($num.val());
+        if (num < 200) {
+            $num.val(num + 1);
+            setPrice();
+        }
+    });
+
+// 选项变化了
+$('.exam-detail .exams')
+    .on("click", "li.counts", function (e) {
+        // remove active li
+        // add active to cur li
+        $('.exam-detail .exams li.counts.active').removeClass("active");
+        $(this).addClass("active");
+        setPrice();
+    });
+
+function getSelectCounts() {
+    // get counts to check if there are enough counts to sell
+    var count = $('.exam-detail .num_and_more .num_wrap #counts').val();
+    if (count != "0" && $('.exam-detail .exams li.counts.active').length == 1) {
+        return parseInt(count) * $('.exam-detail .exams li.counts.active').data("obj").minCount;
+    }
+    return 0;
+};
+
+function getLastCounts() {
+    var tranClass = $(".enroll .exam-detail .exam-list .exam-card").data("obj"),
+        lastCount = tranClass.totalStudentCount - tranClass.enrollCount;
+    return lastCount;
+};

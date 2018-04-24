@@ -14,9 +14,6 @@
                 <div>
                     <h2>{{ trainClass.name }}</h2>
                 </div>
-                <div>开课日期：{{ trainClass.courseStartDate.toLocaleDateString() }} 到 {{ trainClass.courseEndDate.toLocaleDateString()
-                    }} 共 {{ trainClass.totalClassCount }}课时</div>
-                <div>上课时间：{{ trainClass.courseTime }} </div>
                 <div class="enroll-info">
                     <p class="exam-count">已报{{ trainClass.enrollCount }}&nbsp;&nbsp;共{{trainClass.totalStudentCount}} {% if trainClass.enrollCount
                         == trainClass.totalStudentCount %}

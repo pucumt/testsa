@@ -58,8 +58,6 @@ function generateLi(trainclass) {
     $goodContainer.append($infoContainer);
     //$goodContainer.append($countContainer);
     $infoContainer.append($('<div><h3>' + trainclass.name + '</h3></div>'));
-    $infoContainer.append($('<div>开课日期：' + moment(trainclass.courseStartDate).format("YYYY-M-D") + '&nbsp;到&nbsp;' + moment(trainclass.courseEndDate).format("YYYY-M-D") + '&nbsp;共' + trainclass.totalClassCount + '课时</div>'));
-    $infoContainer.append($('<div>上课时间：' + trainclass.courseTime + '</div>'));
     var isFull = trainclass.enrollCount == trainclass.totalStudentCount ? "<span class='full'>(已满)</span>" : "";
     $infoContainer.append($('<div class="enroll-info"><p class="exam-count">已报' + trainclass.enrollCount + '&nbsp;&nbsp;共' + trainclass.totalStudentCount + isFull + '</p><button type="button" class="btn btn-primary btn-xs">报名</button></div>'));
     //$infoContainer.append($('<div>' + trainclass.address + '</div>'));

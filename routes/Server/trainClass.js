@@ -64,18 +64,9 @@ module.exports = function (app) {
     app.post('/admin/trainClass/add', function (req, res) {
         var option = {
             name: req.body.name,
-            yearId: req.body.yearId,
-            yearName: req.body.yearName,
-            gradeId: req.body.gradeId,
-            gradeName: req.body.gradeName,
             subjectId: req.body.subjectId,
             subjectName: req.body.subjectName,
-            categoryId: req.body.categoryId,
-            categoryName: req.body.categoryName,
             totalStudentCount: req.body.totalStudentCount, // 招生人数
-            courseStartDate: req.body.courseStartDate,
-            courseEndDate: req.body.courseEndDate,
-            courseTime: req.body.courseTime,
             courseContent: req.body.courseContent,
             isWeixin: 0,
             enrollCount: 0,
@@ -114,18 +105,9 @@ module.exports = function (app) {
     app.post('/admin/trainClass/edit', function (req, res) {
         var option = {
                 name: req.body.name,
-                yearId: req.body.yearId,
-                yearName: req.body.yearName,
-                gradeId: req.body.gradeId,
-                gradeName: req.body.gradeName,
                 subjectId: req.body.subjectId,
                 subjectName: req.body.subjectName,
-                categoryId: req.body.categoryId,
-                categoryName: req.body.categoryName,
                 totalStudentCount: req.body.totalStudentCount, //招生人数
-                courseStartDate: req.body.courseStartDate,
-                courseEndDate: req.body.courseEndDate,
-                courseTime: req.body.courseTime,
                 courseContent: req.body.courseContent,
             },
             exams = JSON.parse(req.body.exams),

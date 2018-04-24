@@ -52,7 +52,7 @@ function search(p) {
             data.coupons.forEach(function (coupon) {
                 var $tr = $('<tr id=' + coupon._id + '><td>' + coupon.name + '</td><td>' +
                     coupon.categoryName + '</td><td>' + moment(coupon.couponStartDate).format("YYYY-M-D") + '</td><td>' +
-                    moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' + coupon.gradeName + '</td><td>' +
+                    moment(coupon.couponEndDate).format("YYYY-M-D") + '</td><td>' +
                     coupon.subjectName + '</td><td>' + coupon.reducePrice + '</td><td>' + coupon.reduceMax + '</td><td><div class="btn-group">' + getButtons(coupon) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", coupon);
                 $mainSelectBody.append($tr);
@@ -77,6 +77,11 @@ $("#mainModal .paging .nextpage").on("click", function (e) {
     var page = parseInt($("#mainModal #page").val()) + 1;
     search(page);
 });
+
+function refresh() {
+    var page = parseInt($("#mainModal #page").val());
+    search(page);
+}
 //------------end
 
 function destroy() {
@@ -164,10 +169,7 @@ $("#btnSave").on("click", function (e) {
                 categoryName: $('#myModal #category').find("option:selected").text(),
                 couponStartDate: $('#myModal #couponStartDate').val(),
                 couponEndDate: $('#myModal #couponEndDate').val(),
-                gradeId: $('#grade').val(),
-                gradeName: $('#grade').find("option:selected").text(),
-                subjectId: $('#subject').val(),
-                subjectName: $('#subject').find("option:selected").text(),
+                subjects: JSON.stringify(getAllCheckedSubjects()),
                 reducePrice: $('#myModal #reducePrice').val(),
                 reduceMax: ($('#myModal #category').val() == "随机" ? $("#myModal #reduceMax").val() : 0)
             };
@@ -177,26 +179,7 @@ $("#btnSave").on("click", function (e) {
         }
         selfAjax("post", postURI, postObj, function (data) {
             $('#myModal').modal('hide');
-            if (isNew) {
-                var $tr = $("<tr id=" + data._id + "><td>" + data.name + "</td><td>" + data.categoryName + "</td><td>" +
-                    moment(data.couponStartDate).format("YYYY-M-D") + "</td><td>" + moment(data.couponEndDate).format("YYYY-M-D") +
-                    "</td><td>" + data.gradeName + "</td><td>" + data.subjectName + "</td><td>" + data.reducePrice +
-                    "</td><td>" + data.reduceMax + "</td><td><div class='btn-group'>" + getButtons(data) + "</div></td></tr>");
-                $tr.find(".btn-group").data("obj", data);
-                $('#gridBody').append($tr);
-            } else {
-                var name = $('#' + data._id + ' td:first-child');
-                name.text(data.name);
-                var category = name.next().text(data.categoryName);
-                var start = category.next().text(data.couponStartDate);
-                var end = start.next().text(data.couponEndDate);
-                var grade = end.next().text(data.gradeName);
-                var subject = grade.next().text(data.subjectName);
-                var price = subject.next().text(data.reducePrice);
-                price.next().text(data.reduceMax);
-                var $lastDiv = $('#' + data._id + ' td:last-child div');
-                $lastDiv.data("obj", data);
-            }
+            refresh();
         });
     }
 });
@@ -214,11 +197,15 @@ $("#gridBody").on("click", "td .btnEdit", function (e) {
     $('#id').val(entity._id);
     $('#myModal #reducePrice').val(entity.reducePrice);
     $("#myModal #reduceMax").val(entity.reduceMax);
+    $("#myModal #category").val(entity.category);
     resetDropDown({
-        gradeid: entity.gradeId,
-        subjectid: entity.subjectId,
-        attributeid: entity.category
+        subjectid: entity.subjectId
     });
+    if (entity.category = "固定") {
+        $("#myModal .reduceMax").hide();
+    } else {
+        $("#myModal .reduceMax").show();
+    }
     $("#myModal").find(".modal-body").height($(window).height() - 189);
     $('#myModal').modal({
         backdrop: 'static',
@@ -236,7 +223,7 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {
-                $(obj).parents()[2].remove();
+                refresh();
             }
         });
     });
@@ -252,11 +239,7 @@ $("#gridBody").on("click", "td .btnPublish", function (e) {
         }, function (data) {
             if (data.sucess) {
                 showAlert("发布成功！");
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("发布");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnPublish").remove();
-                operation.append("<a class='btn btn-default btnUnPublish'>停用</a>");
+                refresh();
             }
         });
     });
@@ -272,11 +255,7 @@ $("#gridBody").on("click", "td .btnUnPublish", function (e) {
         }, function (data) {
             if (data.sucess) {
                 showAlert("停用成功！");
-                var name = $('#' + entity._id + ' td:first-child');
-                name.next().text("停用");
-                var operation = $('#' + entity._id + ' td:last-child .btn-group');
-                operation.find(".btnUnPublish").remove();
-                operation.append("<a class='btn btn-default btnPublish'>发布</a>");
+                refresh();
             }
         });
     });
@@ -296,42 +275,19 @@ $("#gridBody").on("click", "td .btnCheck", function (e) {
 
 /**---------------dropdowns------------------- */
 function resetDropDown(objs) {
-    $('#myModal').find("#grade option").remove();
-    $('#myModal').find("#subject option").remove();
-    $('#myModal').find("#category option").remove();
-    $("#myModal #grade").append("<option value=''></option>");
-    $("#myModal #subject").append("<option value=''></option>");
-    $("#myModal #examCategoryName").append("<option value=''></option>");
-    $("#myModal #category").append('<option value="固定">固定</option><option value="随机">随机</option>');
-
-    selfAjax("get", "/admin/trainClass/gradesubjectattribute", null, function (data) {
+    $('#myModal').find(".subject").empty();
+    selfAjax("get", "/admin/subject/getAllWithoutPage", null, function (data) {
         if (data) {
-            if (data.grades && data.grades.length > 0) {
-                data.grades.forEach(function (grade) {
+            if (data && data.length > 0) {
+                data.forEach(function (subject) {
                     var select = "";
-                    if (objs && grade._id == objs.gradeid) {
-                        select = "selected";
+                    if (objs && objs.subjects && objs.subjects.some(function (entity) {
+                            return entity.subjectId == subject._id;
+                        })) {
+                        select = "checked";
                     }
-                    $("#myModal #grade").append("<option " + select + " value='" + grade._id + "'>" + grade.name + "</option>");
+                    $("#myModal .subject").append('<label class="checkbox-inline"><input type="checkbox" id=' + subject._id + ' ' + select + ' value=' + subject.name + '> ' + subject.name + '</label>');
                 });
-            }
-            if (data.subjects && data.subjects.length > 0) {
-                data.subjects.forEach(function (subject) {
-                    var select = "";
-                    if (objs && subject._id == objs.subjectid) {
-                        select = "selected";
-                    }
-                    $("#myModal #subject").append("<option " + select + " value='" + subject._id + "'>" + subject.name + "</option>");
-                });
-            }
-
-            if (data.attributes && data.attributes.length > 0) {
-                data.attributes.forEach(function (attribute) {
-                    $("#myModal #category").append("<option  value='" + attribute._id + "'>" + attribute.name + "</option>");
-                });
-                if (objs && objs.attributeid) {
-                    $("#myModal #category").val(objs.attributeid);
-                }
             }
         }
     });
@@ -344,3 +300,16 @@ $("#myModal #category").on("change blur", function () {
         $("#myModal .reduceMax").hide();
     }
 });
+
+function getAllCheckedSubjects() {
+    var subjects = [];
+    $("#myModal .subject .checkbox-inline input").each(function (index) {
+        if (this.checked) {
+            subjects.push({
+                subjectId: $(this).attr("id"),
+                subjectName: $(this).val()
+            });
+        }
+    });
+    return subjects;
+};

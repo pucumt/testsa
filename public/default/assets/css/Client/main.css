@@ -710,3 +710,26 @@ ul.exams li label.counts {
     line-height: 30px;
     margin-bottom: 0;
 }
+
+.enroll .exam-detail .class-price {
+    color: #f60;
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.enroll .exam-detail .class-price .goods-rmb {
+    font-style: inherit;
+}
+
+.enroll .exam-detail .exams li.tag {
+    display: inline-block;
+    padding: 5px 9px;
+    margin-right: 10px;
+    background-color: #ddd;
+    font-size: 12px;
+}
+
+.enroll .exam-detail .exams li.tag.active {
+    color: #fff;
+    background-color: #f44;
+}

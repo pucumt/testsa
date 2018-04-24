@@ -8,35 +8,11 @@ const TrainClass = db.defineModel('trainClasss', {
         type: db.STRING(50),
         defaultValue: ""
     },
-    yearId: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    yearName: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    gradeId: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    gradeName: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
     subjectId: {
         type: db.STRING(50),
         defaultValue: ""
     },
     subjectName: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    categoryId: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    categoryName: {
         type: db.STRING(50),
         defaultValue: ""
     },
@@ -48,16 +24,6 @@ const TrainClass = db.defineModel('trainClasss', {
         type: db.INTEGER,
         defaultValue: 0
     }, //报名人数
-    courseStartDate: {
-        type: db.DATE
-    },
-    courseEndDate: {
-        type: db.DATE
-    },
-    courseTime: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
     courseContent: {
         type: db.STRING(1000),
         defaultValue: ""

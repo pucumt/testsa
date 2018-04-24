@@ -4,18 +4,10 @@ const db = require('../../db'),
     config = require('../../settings');
 
 const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
-    studentId: {
+    accountId: {
         type: db.STRING(50),
         defaultValue: ''
     },
-    studentName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    mobile: {
-        type: db.STRING(50),
-        defaultValue: ''
-    }, //useless
     trainId: {
         type: db.STRING(50),
         defaultValue: ''
@@ -24,26 +16,10 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    trainPrice: {
-        type: db.FLOAT,
-        defaultValue: 0
-    },
-    materialPrice: {
-        type: db.FLOAT,
-        defaultValue: 0
-    },
-    discount: {
-        type: db.FLOAT,
-        defaultValue: 100
-    },
     totalPrice: {
         type: db.FLOAT,
         defaultValue: 0
     }, //实际培训费
-    realMaterialPrice: {
-        type: db.FLOAT,
-        defaultValue: 0
-    }, //实际教材费
     rebatePrice: {
         type: db.FLOAT,
         defaultValue: 0
@@ -64,14 +40,18 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         type: db.INTEGER,
         defaultValue: 0
     }, //0 cash 1 offline card 2 zhuanzhang 8 zhifubao 9 weixin 6 weixinOnline 7 zhifubaoOnline
-    attributeId: {
+    examId: {
         type: db.STRING(50),
         defaultValue: ''
-    }, //now used to check coupon, maybe change later
-    attributeName: {
+    }, // the select option
+    examName: {
         type: db.STRING(50),
         defaultValue: ''
-    },
+    }, // the select option name
+    peopleCount: {
+        type: db.INTEGER,
+        defaultValue: 0
+    }, // the join person count
     comment: {
         type: db.STRING(100),
         defaultValue: ''
@@ -83,31 +63,7 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
     baseId: {
         type: db.STRING(50),
         defaultValue: ''
-    }, //根订单（原始订单）
-    yearId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    yearName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    superCategoryId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    }, //提升难度
-    superCategoryName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    }, //提升难度
-    schoolId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    schoolArea: {
-        type: db.STRING(50),
-        defaultValue: ''
-    }
+    } //根订单（原始订单）
 });
 module.exports = AdminEnrollTrain;
 
