@@ -11,28 +11,14 @@
                 <input type="hidden" id="payway" value="{{ order.payWay }}" />
                 <div>
                     <div class="detail">
-                        <div class="studentName">学员:{{ order.studentName }}</div>
                         <div class="">订单编号:{{ order._id }}</div>
                         <div class="">订单日期:{{ order.createdDate.toLocaleDateString() }}</div>
                     </div>
                     <div class="title">{{ order.trainName }}</div>
-                    {% if train %}
-                    <div class="classDetail">
-                        <div class="">年级:&nbsp;&nbsp;{{ train.gradeName }}</div>
-                        <div class="">科目:&nbsp;&nbsp;{{ train.subjectName }}</div>
-                        <div class="">类别:&nbsp;&nbsp;{{ train.categoryName }}</div>
-                        <div class="">日期:&nbsp;&nbsp;{{ train.courseStartDate.toLocaleDateString() }} - {{ train.courseEndDate.toLocaleDateString()
-                            }}
-                        </div>
-                        <div class="">时间:&nbsp;&nbsp;{{ train.courseTime }}</div>
-                        <div class="">教室:&nbsp;&nbsp;{{ train.classRoomName }}</div>
-                        <div class="">校区:&nbsp;&nbsp;{{ train.schoolArea }}</div>
-                    </div>
-                    {% endif %}
                     <div class="price clearfix">
                         {% if not order.isPayed %}
                         <button type="button" id="btnPay" orderId="{{ order._id }}" class="btn btn-danger btn-xs">支付</button> {% endif %}
-                        <span class="pull-right">总金额:{{ (order.totalPrice|float) + (order.realMaterialPrice|float) }}元</span>
+                        <span class="pull-right">总金额:{{ (order.totalPrice|float) }}元</span>
                     </div>
                 </div>
             </li>
@@ -77,6 +63,6 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/default/assets/js/Client/personalCenter_order.detail.js?v=1.002"></script>
+<script type="text/javascript" src="/default/assets/js/Client/personalCenter_order.detail.js?v=1.0"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

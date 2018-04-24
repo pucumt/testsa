@@ -29,12 +29,12 @@ var model = require("../../model.js"),
     checkJSONLogin = auth.checkJSONLogin;
 
 module.exports = function (app) {
-    app.get('/enrollExam', function (req, res) {
-        res.render('Client/enroll_exam.html', {
-            title: '考试报名',
-            user: req.session.user
-        });
-    });
+    // app.get('/enrollExam', function (req, res) {
+    //     res.render('Client/enroll_exam.html', {
+    //         title: '考试报名',
+    //         user: req.session.user
+    //     });
+    // });
 
     app.get('/enrollClass', function (req, res) {
         res.render('Client/enroll_class.html', {
@@ -47,26 +47,26 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/enrollOriginalClass', function (req, res) {
-        res.render('Client/enroll_originalclass.html', {
-            title: '课程报名',
-            user: req.session.user
-        });
-    });
+    // app.get('/enrollOriginalClass', function (req, res) {
+    //     res.render('Client/enroll_originalclass.html', {
+    //         title: '课程报名',
+    //         user: req.session.user
+    //     });
+    // });
 
-    app.get('/enroll/exam', function (req, res) {
-        // number 类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第 page 页的 14 篇文章
-        ExamClass.getFiltersWithPage(page, {
-            isWeixin: 1
-        }).then(function (result) {
-            res.jsonp({
-                examClasss: result.rows,
-                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
-            });
-        });
-    });
+    // app.get('/enroll/exam', function (req, res) {
+    //     // number 类型
+    //     var page = req.query.p ? parseInt(req.query.p) : 1;
+    //     //查询并返回第 page 页的 14 篇文章
+    //     ExamClass.getFiltersWithPage(page, {
+    //         isWeixin: 1
+    //     }).then(function (result) {
+    //         res.jsonp({
+    //             examClasss: result.rows,
+    //             isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+    //         });
+    //     });
+    // });
 
     // /showGrade/{{ score.grade }}
     // 显示级别
@@ -79,13 +79,13 @@ module.exports = function (app) {
         });
     });
 
-    // 管理办法协议
-    app.get('/bfbRule', checkLogin);
-    app.get('/bfbRule', function (req, res) {
-        res.render('Client/bfbRule.html', {
-            title: '百分百学校学员缴费、退费、请假、补课管理办法'
-        });
-    });
+    // // 管理办法协议
+    // app.get('/bfbRule', checkLogin);
+    // app.get('/bfbRule', function (req, res) {
+    //     res.render('Client/bfbRule.html', {
+    //         title: '百分百学校学员缴费、退费、请假、补课管理办法'
+    //     });
+    // });
 
     app.post('/enroll/class', function (req, res) {
         //debugger;
@@ -270,119 +270,119 @@ module.exports = function (app) {
             });
     });
 
-    // 测试报名
-    app.post('/enroll/exam/enroll', checkLogin);
-    app.post('/enroll/exam/enroll', function (req, res) {
-        ExamClass.getFilter({
-                _id: req.body.examId
-            })
-            .then(function (examClass) {
-                if (examClass) {
-                    var strQuery = "select count(0) as count from adminEnrollExams \
-                        where isDeleted=false and isSucceed=1 and studentId=:studentId ";
-                    if (examClass.examCategoryId) {
-                        strQuery += " and examCategoryId=:examCategoryId ";
-                    } else {
-                        strQuery += " and examId=:examId ";
-                    }
-                    return model.db.sequelize.query(strQuery, {
-                            replacements: {
-                                studentId: req.body.studentId,
-                                examCategoryId: examClass.examCategoryId,
-                                examId: examClass._id
-                            },
-                            type: model.db.sequelize.QueryTypes.SELECT
-                        })
-                        .then(function (result) {
-                            if (result && result[0] && result[0].count) {
-                                // 已经报过名了
-                                res.jsonp({
-                                    error: "你已经报过名了，此测试不允许多次报名"
-                                });
-                            } else {
-                                return ExamClassExamArea.getFilter({
-                                        _id: req.body.examClassExamAreaId
-                                    })
-                                    .then(function (examClassExamArea) {
-                                        if (examClassExamArea.enrollCount < examClassExamArea.examCount) {
-                                            return StudentInfo.getFilter({
-                                                    _id: req.body.studentId
-                                                })
-                                                .then(function (student) {
-                                                    // 1. 查看名额并修改
-                                                    // 2. 生成订单
-                                                    model.db.sequelize.transaction(function (t1) {
-                                                            return ExamClassExamArea.update({
-                                                                    enrollCount: model.db.sequelize.literal('`enrollCount`+1')
-                                                                }, {
-                                                                    where: {
-                                                                        _id: req.body.examClassExamAreaId,
-                                                                        enrollCount: model.db.sequelize.literal('`enrollCount`<`examCount`')
-                                                                    },
-                                                                    transaction: t1
-                                                                })
-                                                                .then(function (updateResult) {
-                                                                    if (updateResult && updateResult[0]) {
-                                                                        return ExamClass.update({
-                                                                                enrollCount: model.db.sequelize.literal('`enrollCount`+1')
-                                                                            }, {
-                                                                                where: {
-                                                                                    _id: req.body.examId
-                                                                                },
-                                                                                transaction: t1
-                                                                            })
-                                                                            .then(function () {
-                                                                                return AdminEnrollExam.create({
-                                                                                    studentId: student._id,
-                                                                                    studentName: student.name,
-                                                                                    mobile: student.mobile,
-                                                                                    examId: examClass._id,
-                                                                                    examName: examClass.name,
-                                                                                    examCategoryId: examClass.examCategoryId,
-                                                                                    examCategoryName: examClass.examCategoryName,
-                                                                                    isSucceed: 1,
-                                                                                    scores: examClass.subjects,
-                                                                                    examPrice: examClass.examPrice, // 原始订单价格
-                                                                                    payPrice: examClass.examPrice, // 支付订单价格
-                                                                                    examAreaId: examClassExamArea.examAreaId,
-                                                                                    examAreaName: examClassExamArea.examAreaName
-                                                                                });
-                                                                            });
-                                                                    } else {
-                                                                        return {
-                                                                            error: "报名失败,很可能此考点已报满"
-                                                                        };
-                                                                    }
-                                                                });
-                                                        })
-                                                        .then(function (order) {
-                                                            if (order.error) {
-                                                                res.jsonp(order);
-                                                            } else {
-                                                                res.jsonp({
-                                                                    _id: order._id,
-                                                                    sucess: true,
-                                                                    toPay: order.payPrice > 0
-                                                                });
-                                                            }
-                                                        })
-                                                        .catch(function (err) {
-                                                            res.jsonp({
-                                                                error: "报名失败"
-                                                            });
-                                                        });
-                                                });
-                                        } else {
-                                            res.jsonp({
-                                                error: "此考点已报满"
-                                            });
-                                        }
-                                    });
-                            }
-                        });
-                }
-            });
-    });
+    // // 测试报名
+    // app.post('/enroll/exam/enroll', checkLogin);
+    // app.post('/enroll/exam/enroll', function (req, res) {
+    //     ExamClass.getFilter({
+    //             _id: req.body.examId
+    //         })
+    //         .then(function (examClass) {
+    //             if (examClass) {
+    //                 var strQuery = "select count(0) as count from adminEnrollExams \
+    //                     where isDeleted=false and isSucceed=1 and studentId=:studentId ";
+    //                 if (examClass.examCategoryId) {
+    //                     strQuery += " and examCategoryId=:examCategoryId ";
+    //                 } else {
+    //                     strQuery += " and examId=:examId ";
+    //                 }
+    //                 return model.db.sequelize.query(strQuery, {
+    //                         replacements: {
+    //                             studentId: req.body.studentId,
+    //                             examCategoryId: examClass.examCategoryId,
+    //                             examId: examClass._id
+    //                         },
+    //                         type: model.db.sequelize.QueryTypes.SELECT
+    //                     })
+    //                     .then(function (result) {
+    //                         if (result && result[0] && result[0].count) {
+    //                             // 已经报过名了
+    //                             res.jsonp({
+    //                                 error: "你已经报过名了，此测试不允许多次报名"
+    //                             });
+    //                         } else {
+    //                             return ExamClassExamArea.getFilter({
+    //                                     _id: req.body.examClassExamAreaId
+    //                                 })
+    //                                 .then(function (examClassExamArea) {
+    //                                     if (examClassExamArea.enrollCount < examClassExamArea.examCount) {
+    //                                         return StudentInfo.getFilter({
+    //                                                 _id: req.body.studentId
+    //                                             })
+    //                                             .then(function (student) {
+    //                                                 // 1. 查看名额并修改
+    //                                                 // 2. 生成订单
+    //                                                 model.db.sequelize.transaction(function (t1) {
+    //                                                         return ExamClassExamArea.update({
+    //                                                                 enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+    //                                                             }, {
+    //                                                                 where: {
+    //                                                                     _id: req.body.examClassExamAreaId,
+    //                                                                     enrollCount: model.db.sequelize.literal('`enrollCount`<`examCount`')
+    //                                                                 },
+    //                                                                 transaction: t1
+    //                                                             })
+    //                                                             .then(function (updateResult) {
+    //                                                                 if (updateResult && updateResult[0]) {
+    //                                                                     return ExamClass.update({
+    //                                                                             enrollCount: model.db.sequelize.literal('`enrollCount`+1')
+    //                                                                         }, {
+    //                                                                             where: {
+    //                                                                                 _id: req.body.examId
+    //                                                                             },
+    //                                                                             transaction: t1
+    //                                                                         })
+    //                                                                         .then(function () {
+    //                                                                             return AdminEnrollExam.create({
+    //                                                                                 studentId: student._id,
+    //                                                                                 studentName: student.name,
+    //                                                                                 mobile: student.mobile,
+    //                                                                                 examId: examClass._id,
+    //                                                                                 examName: examClass.name,
+    //                                                                                 examCategoryId: examClass.examCategoryId,
+    //                                                                                 examCategoryName: examClass.examCategoryName,
+    //                                                                                 isSucceed: 1,
+    //                                                                                 scores: examClass.subjects,
+    //                                                                                 examPrice: examClass.examPrice, // 原始订单价格
+    //                                                                                 payPrice: examClass.examPrice, // 支付订单价格
+    //                                                                                 examAreaId: examClassExamArea.examAreaId,
+    //                                                                                 examAreaName: examClassExamArea.examAreaName
+    //                                                                             });
+    //                                                                         });
+    //                                                                 } else {
+    //                                                                     return {
+    //                                                                         error: "报名失败,很可能此考点已报满"
+    //                                                                     };
+    //                                                                 }
+    //                                                             });
+    //                                                     })
+    //                                                     .then(function (order) {
+    //                                                         if (order.error) {
+    //                                                             res.jsonp(order);
+    //                                                         } else {
+    //                                                             res.jsonp({
+    //                                                                 _id: order._id,
+    //                                                                 sucess: true,
+    //                                                                 toPay: order.payPrice > 0
+    //                                                             });
+    //                                                         }
+    //                                                     })
+    //                                                     .catch(function (err) {
+    //                                                         res.jsonp({
+    //                                                             error: "报名失败"
+    //                                                         });
+    //                                                     });
+    //                                             });
+    //                                     } else {
+    //                                         res.jsonp({
+    //                                             error: "此考点已报满"
+    //                                         });
+    //                                     }
+    //                                 });
+    //                         }
+    //                     });
+    //             }
+    //         });
+    // });
 
     app.post('/enroll/students', checkJSONLogin);
     app.post('/enroll/students', function (req, res) {
