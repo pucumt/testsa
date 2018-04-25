@@ -19,10 +19,8 @@ function searchOrder() {
             var d = $(document.createDocumentFragment());
             data.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
-                    getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' +
-                    trainOrder.realMaterialPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
+                    getTrainOrderStatus(trainOrder.isSucceed) + '</td><td>' + trainOrder.mobile + '</td><td>' + trainOrder.trainName +
+                    '</td><td>' + trainOrder.totalPrice + '</td><td>' + (trainOrder.rebatePrice || '') + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
                 d.append($tr);
             });

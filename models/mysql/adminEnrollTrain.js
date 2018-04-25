@@ -8,6 +8,10 @@ const AdminEnrollTrain = db.defineModel('adminEnrollTrains', {
         type: db.STRING(50),
         defaultValue: ''
     },
+    mobile: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
     trainId: {
         type: db.STRING(50),
         defaultValue: ''

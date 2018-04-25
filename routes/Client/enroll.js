@@ -776,13 +776,16 @@ module.exports = function (app) {
                         if (updateResult && updateResult[0]) {
                             return AdminEnrollTrain.create({
                                     accountId: req.session.user._id,
+                                    mobile: req.session.user.name,
                                     trainId: req.body.classId,
                                     trainName: className,
                                     totalPrice: totalPrice.toFixed(2),
                                     examId: req.body.examId,
                                     examName: examName,
+                                    peopleCount: req.body.count,
                                     isSucceed: 1,
-                                    payWay: req.body.payWay
+                                    payWay: req.body.payWay,
+                                    isPayed: (totalPrice == 0 ? true : false)
                                 }, {
                                     transaction: t1
                                 })
@@ -839,7 +842,8 @@ module.exports = function (app) {
                     return;
                 }
                 res.jsonp({
-                    orderId: order._id
+                    orderId: order._id,
+                    totalPrice: totalPrice
                 });
             })
             .catch(function (err) {

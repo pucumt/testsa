@@ -9,19 +9,19 @@
     <div class="panel-body">
         <form id="InfoSearch">
             <div class="row form-horizontal">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="studentName" class="control-label">学生:</label>
+                        <label for="studentName" class="control-label">手机:</label>
                         <input type="text" maxlength="30" class="form-control" name="studentName" id="studentName">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="className" class="control-label">课程:</label>
+                        <label for="className" class="control-label">活动:</label>
                         <input type="text" maxlength="30" class="form-control" name="className" id="className">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="orderId" class="control-label">订单号:</label>
                         <input type="text" maxlength="32" class="form-control" name="orderId" id="orderId" value="{{ orderId }}">
@@ -33,29 +33,8 @@
                         <select name="isSucceed" id="isSucceed" class="form-control">
                             <option value="9">已取消</option>
                             <option value="7">已退班</option>
-                            <option value="6">已预存</option>
                             <option value="1">已报名</option>
                         </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row form-horizontal" style="margin-top: 10px;">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="searchYear" class="control-label">年度:</label>
-                        <select name="searchYear" id="searchYear" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-6 attribute">
-                    <div class="form-group">
-                        <label for="searchAttribute" class="control-label">学期:</label>
-                        <select name="searchAttribute" id="searchAttribute" class="form-control"></select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="searchSchool" class="control-label">校区:</label>
-                        <select name="searchSchool" id="searchSchool" class="form-control"></select>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -70,13 +49,11 @@
         <thead>
             <tr>
                 <th style="width:180px;">订单号</th>
-                <th style="width:80px;">学生</th>
-                <th>课程</th>
-                <th style="width:160px;">校区</th>
-                <th style="width:70px;">培训费</th>
-                <th style="width:70px;">教材费</th>
-                <th style="width:90px;">实收培训</th>
-                <th style="width:70px;">教材费</th>
+                <th style="width:80px;">手机</th>
+                <th>活动</th>
+                <th style="width:100px;">选项</th>
+                <th style="width:80px;">数量</th>
+                <th style="width:90px;">价格</th>
                 <th style="width:70px;">已支付</th>
                 <th style="width:80px;">支付方式</th>
                 <th style="width:80px;">已退金额</th>
@@ -113,5 +90,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/trainOrderList.js?v=1.006"></script>
+<script type="text/javascript" src="/default/assets/js/Server/trainOrderList.js?v=1.0"></script>
 {% endblock %}

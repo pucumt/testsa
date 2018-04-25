@@ -6,23 +6,8 @@ $(document).ready(function () {
 
     $("#left_btnPayway").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
-    renderSearchYearDropDown(); //search orders after get years
+    searchOrder(); //search orders after get years
 });
-
-function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", {}, function (data) {
-        if (data && data.length > 0) {
-            data.forEach(function (year) {
-                var select = "";
-                if (year.isCurrentYear) {
-                    select = "selected";
-                }
-                $("#InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
-            });
-        };
-        searchOrder();
-    });
-};
 
 var $selectBody = $('.content table tbody');
 
@@ -37,20 +22,17 @@ function searchOrder(p) {
     var filter = {
             studentName: $("#InfoSearch #studentName").val(),
             className: $("#InfoSearch #className").val(),
-            isSucceed: $("#InfoSearch #isSucceed").val(),
-            yearId: $("#InfoSearch #searchYear").val()
+            isSucceed: $("#InfoSearch #isSucceed").val()
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
     selfAjax("post", "/admin/adminEnrollTrain/search?" + pStr, filter, function (data) {
         $selectBody.empty();
         if (data && data.adminEnrollTrains.length > 0) {
-
             data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + trainOrder._id + '</td><td>' +
-                    trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + trainOrder.realMaterialPrice + '</td><td>' +
+                    trainOrder.mobile + '</td><td>' + trainOrder.trainName +
+                    '</td><td>' + trainOrder.totalPrice + '</td><td>' +
                     (trainOrder.isPayed ? "是" : "否") + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') +
                     '</td><td><div class="btn-group">' + getButtons(trainOrder.payWay) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);

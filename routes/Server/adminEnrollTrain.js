@@ -54,9 +54,10 @@ module.exports = function (app) {
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
         if (req.body.studentName && req.body.studentName.trim()) {
-            strSqlMiddle += " and O.studentName like :studentName ";
+            strSqlMiddle += " and O.mobile like :studentName ";
             replacements.studentName = "%" + req.body.studentName.trim() + "%";
-        }
+        } // mobile
+
         if (req.body.className) {
             strSqlMiddle += " and O.trainName like :trainName ";
             replacements.trainName = "%" + req.body.className.trim() + "%";
@@ -73,25 +74,13 @@ module.exports = function (app) {
             strSqlMiddle += " and O.isPayed=:isPayed ";
             replacements.isPayed = (req.body.isPayed == "true" ? true : false);
         }
-        if (req.body.studentId) {
-            strSqlMiddle += " and O.studentId=:studentId ";
-            replacements.studentId = req.body.studentId;
-        }
-        if (req.body.yearId) {
-            strSqlMiddle += " and O.yearId=:yearId ";
-            replacements.yearId = req.body.yearId;
-        }
+        // if (req.body.studentId) {
+        //     strSqlMiddle += " and O.studentId=:studentId ";
+        //     replacements.studentId = req.body.studentId;
+        // }
         if (req.body.orderId) {
             strSqlMiddle += " and O._id=:orderId ";
             replacements.orderId = req.body.orderId;
-        }
-        if (req.body.schoolId) {
-            strSqlMiddle += " and O.schoolId=:schoolId ";
-            replacements.schoolId = req.body.schoolId;
-        }
-        if (req.body.attributeId) {
-            strSqlMiddle += " and C.attributeId=:attributeId ";
-            replacements.attributeId = req.body.attributeId;
         }
         var offset = ((page - 1) * pageSize);
         strSql2 += strSqlMiddle + " order by O.createdDate desc, O._id desc LIMIT " + offset + ", " + pageSize;
@@ -482,7 +471,7 @@ module.exports = function (app) {
     app.post('/admin/adminEnrollTrain/enrollwithcheck', checkScore);
     app.post('/admin/adminEnrollTrain/enrollwithcheck', enroll);
 
-    // 人为只能退班，不能真的取消
+    // 人为只能退班，不能真的取消，不退优惠券
     app.post('/admin/adminEnrollTrain/cancel', checkLogin);
     app.post('/admin/adminEnrollTrain/cancel', function (req, res) {
         AdminEnrollTrain.getFilter({
@@ -508,25 +497,15 @@ module.exports = function (app) {
                                 .then(function (updateResult) {
                                     if (updateResult && updateResult[0]) {
                                         return TrainClass.update({
-                                                enrollCount: model.db.sequelize.literal('`enrollCount`-1')
-                                            }, {
-                                                where: {
-                                                    _id: req.body.trainId
-                                                },
-                                                transaction: t1
-                                            })
-                                            .then(function () {
-                                                return CouponAssign.update({
-                                                    isUsed: false
-                                                }, {
-                                                    where: {
-                                                        orderId: req.body.id
-                                                    },
-                                                    transaction: t1
-                                                });
-                                            });
+                                            enrollCount: model.db.sequelize.literal('`enrollCount`-1')
+                                        }, {
+                                            where: {
+                                                _id: req.body.trainId
+                                            },
+                                            transaction: t1
+                                        });
                                     }
-                                });
+                                }); // 不退优惠券
                         })
                         .then(function () {
                             if (order.payWay == 6 || order.payWay == 7) {
@@ -549,6 +528,28 @@ module.exports = function (app) {
                     });
                     return;
                 }
+            });
+    });
+
+    // 返还优惠券
+    app.post('/admin/adminEnrollTrain/recoverCoupon', checkLogin);
+    app.post('/admin/adminEnrollTrain/recoverCoupon', function (req, res) {
+        CouponAssign.update({
+                isUsed: false
+            }, {
+                where: {
+                    orderId: req.body.id
+                }
+            })
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(function () {
+                res.jsonp({
+                    error: "出错了"
+                });
             });
     });
 
@@ -594,14 +595,12 @@ module.exports = function (app) {
     // 退款
     app.post('/admin/adminEnrollTrain/rebate', checkLogin);
     app.post('/admin/adminEnrollTrain/rebate', function (req, res) {
-        var price = parseFloat(req.body.price),
-            materialPrice = parseFloat(req.body.materialPrice);
+        var price = parseFloat(req.body.price);
 
         model.db.sequelize.transaction(function (t1) {
             // 订单退款
             return AdminEnrollTrain.update({
-                rebatePrice: model.db.sequelize.literal('`rebatePrice`+' + (price + materialPrice)),
-                realMaterialPrice: model.db.sequelize.literal('`realMaterialPrice`-' + materialPrice),
+                rebatePrice: model.db.sequelize.literal('`rebatePrice`+' + price),
                 totalPrice: model.db.sequelize.literal('`totalPrice`-' + price),
                 comment: req.body.comment
             }, {
@@ -614,10 +613,8 @@ module.exports = function (app) {
                 return RebateEnrollTrain.create({
                     trainOrderId: req.body.Id,
                     originalPrice: req.body.originalPrice,
-                    rebateTotalPrice: price + materialPrice,
-                    rebatePrice: req.body.price,
+                    rebateTotalPrice: price,
                     rebateWay: req.body.payWay,
-                    rebateMaterialPrice: req.body.materialPrice,
                     comment: req.body.comment,
                     createdBy: req.session.admin._id
                 }, {

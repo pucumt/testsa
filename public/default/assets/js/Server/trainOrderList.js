@@ -3,61 +3,8 @@ var isNew = true;
 $(document).ready(function () {
     $("#left_btnTrainOrder").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
-    renderSearchSchoolYearAttributeDropDown(); //search orders after get years
-
-    $(" #InfoSearch #searchYear")
-        .off("change")
-        .on("change", function (e) {
-            changeAttributes();
-        });
+    searchOrder(); //search orders after get years
 });
-
-var objFilters;
-
-function renderSearchSchoolYearAttributeDropDown() {
-    selfAjax("get", "/admin/trainClass/schoolyearattribute", {}, function (data) {
-        objFilters = data;
-        if (data.years && data.years.length > 0) {
-            data.years.forEach(function (year) {
-                var select = "";
-                if (year.isCurrentYear) {
-                    select = "selected";
-                }
-                $("#InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
-            });
-        };
-        if (data.schools && data.schools.length > 0) {
-            data.schools.forEach(function (school) {
-                var select = "";
-                if ($("#adminSchoolId").val() == school._id) {
-                    select = "selected";
-                }
-                $("#InfoSearch #searchSchool").append("<option value='" + school._id + "' " + select + ">" + school.name + "</option>");
-            });
-        };
-        changeAttributes();
-
-        searchOrder();
-    });
-};
-
-
-function changeAttributes() {
-    $(' #InfoSearch #searchAttribute').find("option").remove();
-    if (objFilters.classAttributes.length > 0) {
-        var yearAttributeRelations = objFilters.classAttributes.filter(function (relation) {
-            return relation.yearId == $(" #InfoSearch #searchYear").val();
-        });
-        if (yearAttributeRelations.length > 0) {
-            $(' #InfoSearch .attribute').show();
-            yearAttributeRelations.forEach(function (classAttribute) {
-                $(" #InfoSearch #searchAttribute").append("<option value='" + classAttribute._id + "'>" + classAttribute.name + "</option>");
-            });
-        } else {
-            $(' #InfoSearch .attribute').hide();
-        }
-    }
-};
 
 var $selectBody = $('.content table tbody');
 
@@ -66,9 +13,6 @@ function searchOrder(p) {
             studentName: $("#InfoSearch #studentName").val(),
             className: $("#InfoSearch #className").val(),
             isSucceed: $("#InfoSearch #isSucceed").val(),
-            yearId: $("#InfoSearch #searchYear").val(),
-            schoolId: $("#InfoSearch #searchSchool").val(),
-            attributeId: $("#InfoSearch #searchAttribute").val(),
             orderId: $("#InfoSearch #orderId").val()
         },
         pStr = p ? "p=" + p : "";
@@ -80,19 +24,20 @@ function searchOrder(p) {
                 var buttons = "";
                 if (!isPayed && isSucceed == 1) {
                     buttons = '<a class="btn btn-default btnPay">支付</a>';
-                } else if (isPayed && isSucceed == 1) {
-                    // buttons = '<a class="btn btn-default btnPreSave">预存</a>';
                 }
                 if (isSucceed == 1) {
                     buttons += '<a class="btn btn-default btnDelete">退班</a>';
+                }
+                if (isSucceed == 7) {
+                    buttons += '<a class="btn btn-default btnRecoverCoupon">恢复优惠券</a>';
                 }
                 return buttons;
             };
             data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td class="id">' + trainOrder._id + '</td><td>' +
-                    trainOrder.studentName + '</td><td class="train" id="' + trainOrder.trainId +
-                    '">' + trainOrder.trainName + '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.trainPrice + '</td><td>' + trainOrder.materialPrice + '</td><td>' +
-                    trainOrder.totalPrice + '</td><td>' + trainOrder.realMaterialPrice + '</td><td>' +
+                    trainOrder.mobile + '</td><td class="train" id="' + trainOrder.trainId +
+                    '">' + trainOrder.trainName + '</td><td>' + trainOrder.examName + '</td><td>' + trainOrder.peopleCount + '</td><td>' +
+                    trainOrder.totalPrice + '</td><td>' +
                     (trainOrder.isPayed ? "是" : "否") + '</td><td>' + getPayway(trainOrder.payWay) + '</td><td>' + (trainOrder.rebatePrice || '') +
                     '</td><td><div class="btn-group">' + getButtons(trainOrder.isPayed, trainOrder.isSucceed) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
@@ -128,6 +73,24 @@ $("#gridBody").on("click", "td .btnDelete", function (e) {
         selfAjax("post", "/admin/adminEnrollTrain/cancel", {
             id: entity._id,
             trainId: entity.trainId
+        }, function (data) {
+            $('#confirmModal').modal('hide');
+            if (data.sucess) {
+                var page = parseInt($("#selectModal #page").val());
+                searchOrder(page);
+            }
+        });
+    });
+});
+
+$("#gridBody").on("click", "td .btnRecoverCoupon", function (e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    showConfirm("确定要恢复订单" + entity._id + "的优惠券吗？");
+
+    $("#btnConfirmSave").off("click").on("click", function (e) {
+        selfAjax("post", "/admin/adminEnrollTrain/recoverCoupon", {
+            id: entity._id
         }, function (data) {
             $('#confirmModal').modal('hide');
             if (data.sucess) {

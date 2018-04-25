@@ -46,6 +46,9 @@ function getOrderId(payWay, callback) {
                     }
                 });
                 return;
+            } else if (data.totalPrice == 0) {
+                location.href = "/personalCenter/order";
+                return;
             }
             if (data.orderId) {
                 callback(data.orderId);
