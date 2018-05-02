@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#header_btnEnroll").on("click", function (e) {
-        location.href = "/admin/adminEnrollTrainList";
+        location.href = "/admin/trainOrderList";
     });
     $("#header_btnClass").on("click", function (e) {
         location.href = "/admin/trainClassList";

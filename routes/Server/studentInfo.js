@@ -127,21 +127,17 @@ module.exports = function (app) {
                 $like: `%${req.body.name.trim()}%`
             };
         }
-        var pPromise;
+
         if (req.body.mobile) {
-            pPromise = StudentAccount.getFilter({
-                name: req.body.mobile
-            });
-        } else {
-            pPromise = Promise.resolve();
+            filter.mobile = req.body.mobile;
         }
 
-        pPromise.then(function (account) {
-            if (req.body.mobile) {
-                filter.accountId = account ? account._id : "";
-            }
+        if (req.body.accountId) {
+            filter.accountId = req.body.accountId;
+        }
 
-            StudentInfo.getFiltersWithPage(page, filter).then(function (result) {
+        StudentInfo.getFiltersWithPage(page, filter)
+            .then(function (result) {
                 res.jsonp({
                     studentInfos: result.rows,
                     total: result.count,
@@ -150,7 +146,6 @@ module.exports = function (app) {
                     isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
                 });
             });
-        });
     });
 
     app.get('/admin/studentInfo/:id', checkLogin);

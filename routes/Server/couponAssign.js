@@ -125,24 +125,22 @@ module.exports = function (app) {
         if (req.body.couponId) {
             filter.couponId = req.body.couponId;
         }
-        if (req.body.gradeId) {
-            filter.gradeId = req.body.gradeId;
-        }
-        if (req.body.subjectId) {
-            filter.subjectId = req.body.subjectId;
+        if (req.body.studentId) {
+            filter.accountId = req.body.studentId;
         }
         if (req.body.name) {
             filter.mobile = req.body.name;
         }
-        CouponAssign.getFiltersWithPage(page, filter).then(function (result) {
-            res.jsonp({
-                couponAssigns: result.rows,
-                total: result.count,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+        CouponAssign.getFiltersWithPage(page, filter)
+            .then(function (result) {
+                res.jsonp({
+                    couponAssigns: result.rows,
+                    total: result.count,
+                    page: page,
+                    isFirstPage: (page - 1) == 0,
+                    isLastPage: ((page - 1) * pageSize + result.rows.length) == result.count
+                });
             });
-        });
     });
 
     app.post('/admin/couponAssignList/withoutpage/onlyaccountId', checkLogin);

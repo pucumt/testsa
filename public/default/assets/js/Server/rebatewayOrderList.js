@@ -6,23 +6,8 @@ $(document).ready(function () {
 
     $("#left_btnRebateway").addClass("active");
     $("#InfoSearch #isSucceed").val(1);
-    renderSearchYearDropDown(); //search orders after get years
+    searchOrder(); //search orders after get years
 });
-
-function renderSearchYearDropDown() {
-    selfAjax("post", "/admin/year/all", {}, function (data) {
-        if (data && data.length > 0) {
-            data.forEach(function (year) {
-                var select = "";
-                if (year.isCurrentYear) {
-                    select = "selected";
-                }
-                $("#InfoSearch #searchYear").append("<option value='" + year._id + "' " + select + ">" + year.name + "</option>");
-            });
-        };
-        searchOrder();
-    });
-};
 
 var $selectBody = $('.content table tbody');
 
@@ -33,8 +18,7 @@ function getButtons(way) {
 function searchOrder(p) {
     var filter = {
             studentName: $("#InfoSearch #studentName").val(),
-            className: $("#InfoSearch #className").val(),
-            yearId: $("#InfoSearch #searchYear").val()
+            className: $("#InfoSearch #className").val()
         },
         pStr = p ? "p=" + p : "";
     $selectBody.empty();
@@ -44,8 +28,8 @@ function searchOrder(p) {
 
             data.adminEnrollTrains.forEach(function (trainOrder) {
                 var $tr = $('<tr id=' + trainOrder._id + '><td>' + moment(trainOrder.createdDate).format("YYYY-MM-DD HH:mm") + '</td><td>' +
-                    trainOrder.studentName + '</td><td>' + trainOrder.trainName +
-                    '</td><td>' + trainOrder.schoolArea + '</td><td>' + trainOrder.rebateTotalPrice + '</td><td>' +
+                    trainOrder.mobile + '</td><td>' + trainOrder.trainName +
+                    '</td><td>' + trainOrder.rebateTotalPrice + '</td><td>' +
                     getPayway(trainOrder.rebateWay) + '</td><td><div class="btn-group">' + getButtons(trainOrder.payWay) + '</div></td></tr>');
                 $tr.find(".btn-group").data("obj", trainOrder);
                 $selectBody.append($tr);

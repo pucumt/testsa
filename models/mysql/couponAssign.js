@@ -20,22 +20,6 @@ const CouponAssign = db.defineModel('couponAssigns', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    gradeId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    gradeName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    subjectId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    subjectName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
     reducePrice: {
         type: db.FLOAT,
         defaultValue: 0

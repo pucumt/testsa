@@ -74,10 +74,10 @@ module.exports = function (app) {
             strSqlMiddle += " and O.isPayed=:isPayed ";
             replacements.isPayed = (req.body.isPayed == "true" ? true : false);
         }
-        // if (req.body.studentId) {
-        //     strSqlMiddle += " and O.studentId=:studentId ";
-        //     replacements.studentId = req.body.studentId;
-        // }
+        if (req.body.studentId) {
+            strSqlMiddle += " and O.accountId=:accountId ";
+            replacements.accountId = req.body.studentId;
+        }
         if (req.body.orderId) {
             strSqlMiddle += " and O._id=:orderId ";
             replacements.orderId = req.body.orderId;

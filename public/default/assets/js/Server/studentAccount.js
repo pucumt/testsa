@@ -11,7 +11,7 @@ $(document).ready(function () {
 //------------search funfunction
 var $mainSelectBody = $('.content.mainModal table tbody');
 var getButtons = function () {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnReset">重置</a><a class="btn btn-default btnDelete">删除</a>';
+    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDetail">详情</a><a class="btn btn-default btnReset">重置</a><a class="btn btn-default btnDelete">删除</a>';
     return buttons;
 };
 
@@ -157,6 +157,13 @@ $("#gridBody").on("click", "td .btnReset", function (e) {
             showAlert(msg, null, true);
         });
     });
+});
+
+
+$("#gridBody").on("click", "td .btnDetail", function (e) {
+    var obj = e.currentTarget;
+    var entity = $(obj).parent().data("obj");
+    location.href = "/admin/studentDetail/" + entity._id;
 });
 
 $("#btnUpdateMobile").on("click", function (e) {

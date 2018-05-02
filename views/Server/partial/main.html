@@ -23,9 +23,9 @@
         <div class="menu-top pull-left">
             <ul class="nav nav-pills">
                 {% if user.role
-                < 9 %} <li id="header_btnEnroll" role="presentation">课程报名</li>
+                < 9 %} <li id="header_btnEnroll" role="presentation">活动报名</li>
                     {% endif %} {% if user.role
-                    < 8 %} <li id="header_btnClass" role="presentation">课程管理</li>
+                    < 8 %} <li id="header_btnClass" role="presentation">活动管理</li>
                         {% endif %} {% if user.role
                         < 9 %} <li id="header_btnStudent" role="presentation">学生管理</li>
                             {% endif %} {% if user.role

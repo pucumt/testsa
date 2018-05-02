@@ -10,14 +10,14 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var sql1 = "select count(0) as total from rebateEnrollTrains R join adminEnrollTrains O \
         on O._id=R.trainOrderId \
-        where R.isDeleted=false and O.yearId=:yearId",
-            sql2 = "select R._id, R.rebateWay, O.studentName, O.trainName, O.schoolArea,  \
+        where R.isDeleted=false ",
+            sql2 = "select R._id, R.rebateWay, O.mobile, O.trainName,  \
         R.rebateTotalPrice, R.createdDate from rebateEnrollTrains R join adminEnrollTrains O \
         on O._id=R.trainOrderId \
-        where R.isDeleted=false and O.yearId=:yearId";
+        where R.isDeleted=false ";
         if (req.body.studentName.trim()) {
-            sql1 += " and O.studentName=:studentName ";
-            sql2 += " and O.studentName=:studentName ";
+            sql1 += " and O.mobile=:mobile ";
+            sql2 += " and O.mobile=:mobile ";
         }
         if (req.body.className.trim()) {
             sql1 += " and O.trainName=:trainName ";
@@ -25,9 +25,8 @@ module.exports = function (app) {
         }
         model.db.sequelize.query(sql1, {
                 replacements: {
-                    studentName: req.body.studentName,
-                    trainName: req.body.className,
-                    yearId: req.body.yearId
+                    mobile: req.body.studentName,
+                    trainName: req.body.className
                 },
                 type: model.db.sequelize.QueryTypes.SELECT
             })
